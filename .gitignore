@@ -1,6 +1,6 @@
 # Miscellaneous
 *.class
-<<<<<<< HEAD
+*.lock
 *.log
 *.pyc
 *.swp
@@ -30,9 +30,17 @@ migrate_working_dir/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
+.packages.generated
 .pub-cache/
 .pub/
+.pub-preload-cache/
 /build/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
 
 # Symbolication related
 app.*.symbols
@@ -44,15 +52,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-=======
-*.lock
-*.log
-*.pyc
-*.swp
-.buildlog/
-.history
-
-
 
 # Flutter repo-specific
 /bin/cache/
@@ -73,23 +72,8 @@ app.*.map.json
 version
 analysis_benchmark.json
 
-# packages file containing multi-root paths
-.packages.generated
-
-# Flutter/Dart/Pub related
-**/doc/api/
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
+# Generated plugin registrants
 **/generated_plugin_registrant.dart
-.packages
-.pub-preload-cache/
-.pub/
-build/
-flutter_*.png
-linked_*.ds
-unlinked.ds
-unlinked_spec.ds
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -162,4 +146,3 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
->>>>>>> bf6216d0ab0cea15c00d63fa3836bf5d3ef1f6ba
