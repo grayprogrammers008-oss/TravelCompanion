@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub run build_runner build:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(flutter:*)",
+      "Bash(find:*)",
+      "Bash(xcrun simctl list:*)",
+      "Bash(xcrun simctl boot:*)",
+      "Bash(open:*)",
+      "Bash(dart pub global run:*)",
+      "Bash(dart analyze:*)",
+      "Bash(dart:*)",
+      "Bash(killall:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

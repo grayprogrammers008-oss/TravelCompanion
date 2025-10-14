@@ -1,0 +1,370 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/utils/extensions.dart';
+import '../../../../shared/models/trip_model.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
+import '../providers/trip_providers.dart';
+
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userTripsAsync = ref.watch(userTripsProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Trips'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () {
+              _showProfileMenu(context, ref);
+            },
+          ),
+        ],
+      ),
+      body: userTripsAsync.when(
+        data: (trips) {
+          print('DEBUG HomePage: Received ${trips.length} trips');
+          if (trips.isEmpty) {
+            print('DEBUG HomePage: Showing empty state');
+            return _buildEmptyState(context);
+          }
+          print('DEBUG HomePage: Showing trips list');
+          return _buildTripsList(context, trips);
+        },
+        loading: () {
+          print('DEBUG HomePage: Loading trips...');
+          return const Center(child: CircularProgressIndicator());
+        },
+        error: (error, stack) {
+          print('DEBUG HomePage: Error loading trips: $error');
+          return _buildErrorState(context, error.toString(), ref);
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          context.push('/trips/create');
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('New Trip'),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.flight_takeoff,
+              size: 120,
+              color: Colors.grey[300],
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No trips yet',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Create your first trip and start planning your adventure!',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.push('/trips/create');
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Create Trip'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTripsList(BuildContext context, List<TripWithMembers> trips) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: trips.length,
+      itemBuilder: (context, index) {
+          final tripWithMembers = trips[index];
+          final trip = tripWithMembers.trip;
+          final members = tripWithMembers.members;
+
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () {
+                context.push('/trips/${trip.id}');
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Cover Image
+                  if (trip.coverImageUrl != null)
+                    Image.network(
+                      trip.coverImageUrl!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildDefaultCover(context),
+                    )
+                  else
+                    _buildDefaultCover(context),
+
+                  // Trip Info
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title and Destination
+                        Text(
+                          trip.name,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        if (trip.destination != null) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 16,
+                                color: Colors.grey[600],
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                trip.destination!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Colors.grey[600],
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+
+                        // Dates
+                        if (trip.startDate != null || trip.endDate != null) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 16,
+                                color: Colors.grey[600],
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _formatDateRange(trip.startDate, trip.endDate),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.grey[600],
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+
+                        // Members
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            _buildMemberAvatars(members),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${members.length} ${members.length == 1 ? 'member' : 'members'}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+    );
+  }
+
+  Widget _buildDefaultCover(BuildContext context) {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
+        ),
+      ),
+      child: const Center(
+        child: Icon(
+          Icons.flight_takeoff,
+          size: 64,
+          color: Colors.white70,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberAvatars(List<TripMemberModel> members) {
+    final displayMembers = members.take(3).toList();
+    return SizedBox(
+      height: 32,
+      child: Stack(
+        children: [
+          for (var i = 0; i < displayMembers.length; i++)
+            Positioned(
+              left: i * 24.0,
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: displayMembers[i].avatarUrl != null
+                    ? NetworkImage(displayMembers[i].avatarUrl!)
+                    : null,
+                child: displayMembers[i].avatarUrl == null
+                    ? Text(
+                        displayMembers[i].fullName?.substring(0, 1).toUpperCase() ?? '?',
+                        style: const TextStyle(fontSize: 12),
+                      )
+                    : null,
+              ),
+            ),
+          if (members.length > 3)
+            Positioned(
+              left: 72.0,
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.grey[400],
+                child: Text(
+                  '+${members.length - 3}',
+                  style: const TextStyle(fontSize: 10, color: Colors.white),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String error, WidgetRef ref) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Oops! Something went wrong',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                ref.invalidate(userTripsProvider);
+              },
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDateRange(DateTime? start, DateTime? end) {
+    if (start == null && end == null) return 'Dates not set';
+    if (start != null && end != null) {
+      return '${start.toFormattedDate()} - ${end.toFormattedDate()}';
+    }
+    if (start != null) return 'From ${start.toFormattedDate()}';
+    return 'Until ${end!.toFormattedDate()}';
+  }
+
+  void _showProfileMenu(BuildContext context, WidgetRef ref) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Navigate to profile
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Navigate to settings
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Logout', style: TextStyle(color: Colors.red)),
+              onTap: () async {
+                Navigator.pop(context);
+                await ref.read(authControllerProvider.notifier).signOut();
+                if (context.mounted) {
+                  context.go(AppRoutes.login);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
