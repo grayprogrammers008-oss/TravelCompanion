@@ -13,7 +13,8 @@ import 'package:crypto/crypto.dart';
 class ImageService {
   // Unsplash Access Key - In production, move to environment variables
   // Get your key at: https://unsplash.com/developers
-  static const String _accessKey = 'YOUR_UNSPLASH_ACCESS_KEY_HERE';
+  static const String _accessKey =
+      'iLIdeLGraeoRJUQPJMY01oZT4wDo3RlHouy0cMG5zXA';
   static const String _baseUrl = 'https://api.unsplash.com';
 
   // Cache duration (7 days)
@@ -53,7 +54,7 @@ class ImageService {
       }
 
       // If no API key configured, return null (use gradient fallback)
-      if (_accessKey == 'YOUR_UNSPLASH_ACCESS_KEY_HERE') {
+      if (_accessKey == 'YOUR_UNSPLASH_ACCESS_KEY_HERE' || _accessKey.isEmpty) {
         print('⚠️  Unsplash API key not configured. Using gradient fallback.');
         return null;
       }
@@ -81,6 +82,7 @@ class ImageService {
     try {
       // Create search query with travel-related keywords
       final query = _buildSearchQuery(destination);
+      print('🔍 Searching Unsplash for: $query');
 
       final uri = Uri.parse('$_baseUrl/photos/random').replace(
         queryParameters: {
@@ -90,13 +92,19 @@ class ImageService {
         },
       );
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Authorization': 'Client-ID $_accessKey',
-          'Accept-Version': 'v1',
-        },
-      ).timeout(const Duration(seconds: 10));
+      print('📡 Calling Unsplash API: $uri');
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Authorization': 'Client-ID $_accessKey',
+              'Accept-Version': 'v1',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print('📥 Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -110,10 +118,13 @@ class ImageService {
 
         return imageUrl;
       } else if (response.statusCode == 403) {
-        print('⚠️  Unsplash API rate limit reached. Using cached/gradient images.');
+        print(
+          '⚠️  Unsplash API rate limit reached. Using cached/gradient images.',
+        );
         return null;
       } else {
         print('⚠️  Unsplash API error: ${response.statusCode}');
+        print('   Response: ${response.body}');
         return null;
       }
     } catch (e) {
@@ -261,10 +272,7 @@ class CachedImage {
   final String url;
   final DateTime cachedAt;
 
-  CachedImage({
-    required this.url,
-    required this.cachedAt,
-  });
+  CachedImage({required this.url, required this.cachedAt});
 
   bool get isExpired {
     return DateTime.now().difference(cachedAt) > const Duration(days: 7);
