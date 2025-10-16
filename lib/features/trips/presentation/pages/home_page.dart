@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/destination_image.dart';
+import '../../../../core/animations/animation_constants.dart';
+import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/trip_providers.dart';
@@ -155,12 +157,17 @@ class _HomePageState extends ConsumerState<HomePage>
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final tripWithMembers = trips[index];
-                      return TripCard(
-                        key: ValueKey(tripWithMembers.trip.id),
-                        tripWithMembers: tripWithMembers,
-                        onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
-                        onEdit: () => _editTrip(context, tripWithMembers.trip),
-                        onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
+                      // Staggered animation for each card
+                      return FadeSlideAnimation(
+                        delay: AppAnimations.staggerMedium * index,
+                        duration: AppAnimations.medium,
+                        child: TripCard(
+                          key: ValueKey(tripWithMembers.trip.id),
+                          tripWithMembers: tripWithMembers,
+                          onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
+                          onEdit: () => _editTrip(context, tripWithMembers.trip),
+                          onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
+                        ),
                       );
                     },
                     childCount: trips.length,
@@ -203,22 +210,29 @@ class _HomePageState extends ConsumerState<HomePage>
           ),
         ],
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          boxShadow: AppTheme.shadowTeal,
-        ),
-        child: FloatingActionButton.extended(
-          onPressed: () => context.push('/trips/create'),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text(
-            'New Trip',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
+      floatingActionButton: ScaleAnimation(
+        duration: AppAnimations.slow,
+        curve: AppAnimations.spring,
+        child: AnimatedScaleButton(
+          onTap: () => context.push('/trips/create'),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: AppTheme.primaryGradient,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              boxShadow: AppTheme.shadowTeal,
+            ),
+            child: FloatingActionButton.extended(
+              onPressed: null, // Handled by AnimatedScaleButton
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text(
+                'New Trip',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),
