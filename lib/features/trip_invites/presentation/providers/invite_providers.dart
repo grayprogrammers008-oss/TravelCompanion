@@ -8,6 +8,7 @@ import '../../domain/usecases/revoke_invite_usecase.dart';
 import '../../domain/usecases/get_trip_invites_usecase.dart';
 import '../../domain/entities/invite_entity.dart';
 import '../../../trips/data/datasources/trip_local_datasource.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 
 // ============================================================================
 // DATA SOURCES
@@ -15,7 +16,11 @@ import '../../../trips/data/datasources/trip_local_datasource.dart';
 
 /// Provider for invite local data source
 final inviteLocalDataSourceProvider = Provider<InviteLocalDataSource>((ref) {
-  return InviteLocalDataSource();
+  final dataSource = InviteLocalDataSource();
+  // Set current user ID from auth
+  final authDataSource = ref.watch(authLocalDataSourceProvider);
+  dataSource.setCurrentUserId(authDataSource.currentUserId);
+  return dataSource;
 });
 
 // ============================================================================
