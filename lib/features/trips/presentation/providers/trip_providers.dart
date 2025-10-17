@@ -6,6 +6,7 @@ import '../../data/datasources/trip_local_datasource.dart';
 import '../../data/repositories/trip_repository_impl.dart';
 import '../../domain/repositories/trip_repository.dart';
 import '../../domain/usecases/create_trip_usecase.dart';
+import '../../domain/usecases/update_trip_usecase.dart';
 import '../../domain/usecases/get_trip_usecase.dart';
 import '../../domain/usecases/get_user_trips_usecase.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -45,6 +46,11 @@ final getUserTripsUseCaseProvider = Provider<GetUserTripsUseCase>((ref) {
 final getTripUseCaseProvider = Provider<GetTripUseCase>((ref) {
   final repository = ref.watch(tripRepositoryProvider);
   return GetTripUseCase(repository);
+});
+
+final updateTripUseCaseProvider = Provider<UpdateTripUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return UpdateTripUseCase(repository);
 });
 
 // User Trips Provider - fetches all trips for current user
@@ -89,12 +95,14 @@ class TripState {
 // Trip Controller - Updated for Riverpod 3.0
 class TripController extends Notifier<TripState> {
   late final CreateTripUseCase _createTripUseCase;
+  late final UpdateTripUseCase _updateTripUseCase;
   late final TripRepository _repository;
 
   @override
   TripState build() {
     // Initialize dependencies from ref
     _createTripUseCase = ref.read(createTripUseCaseProvider);
+    _updateTripUseCase = ref.read(updateTripUseCaseProvider);
     _repository = ref.read(tripRepositoryProvider);
 
     return TripState();
@@ -127,8 +135,8 @@ class TripController extends Notifier<TripState> {
     }
   }
 
-  /// Update trip
-  Future<void> updateTrip({
+  /// Update trip (with validation via use case)
+  Future<TripModel> updateTrip({
     required String tripId,
     String? name,
     String? description,
@@ -139,7 +147,7 @@ class TripController extends Notifier<TripState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final trip = await _repository.updateTrip(
+      final trip = await _updateTripUseCase(
         tripId: tripId,
         name: name,
         description: description,
@@ -149,6 +157,7 @@ class TripController extends Notifier<TripState> {
         coverImageUrl: coverImageUrl,
       );
       state = state.copyWith(isLoading: false, currentTrip: trip);
+      return trip;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;

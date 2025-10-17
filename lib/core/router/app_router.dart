@@ -101,9 +101,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.editTrip,
         name: 'editTrip',
         builder: (context, state) {
-          // TODO: Implement edit trip page
-          // For now, redirect to create trip page
-          return const CreateTripPage();
+          final tripId = state.pathParameters['tripId']!;
+          return CreateTripPage(tripId: tripId);
         },
       ),
       GoRoute(

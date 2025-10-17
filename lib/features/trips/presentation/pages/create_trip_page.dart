@@ -8,7 +8,9 @@ import '../../../../core/utils/extensions.dart';
 import '../providers/trip_providers.dart';
 
 class CreateTripPage extends ConsumerStatefulWidget {
-  const CreateTripPage({super.key});
+  final String? tripId; // If provided, page is in edit mode
+
+  const CreateTripPage({super.key, this.tripId});
 
   @override
   ConsumerState<CreateTripPage> createState() => _CreateTripPageState();
@@ -34,6 +36,40 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       vsync: this,
     );
     _animationController.forward();
+
+    // Load trip data if editing
+    if (widget.tripId != null) {
+      _loadTripData();
+    }
+  }
+
+  Future<void> _loadTripData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final trip = await ref.read(tripProvider(widget.tripId!).future);
+
+      if (mounted) {
+        setState(() {
+          _nameController.text = trip.trip.name;
+          _descriptionController.text = trip.trip.description ?? '';
+          _destinationController.text = trip.trip.destination ?? '';
+          _startDate = trip.trip.startDate;
+          _endDate = trip.trip.endDate;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading trip: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -75,24 +111,46 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     setState(() => _isLoading = true);
 
     try {
-      print('DEBUG: Creating trip with name: ${_nameController.text.trim()}');
+      final isEditMode = widget.tripId != null;
 
-      // Create trip using trip controller
-      final trip = await ref
-          .read(tripControllerProvider.notifier)
-          .createTrip(
-            name: _nameController.text.trim(),
-            description: _descriptionController.text.trim().isEmpty
-                ? null
-                : _descriptionController.text.trim(),
-            destination: _destinationController.text.trim().isEmpty
-                ? null
-                : _destinationController.text.trim(),
-            startDate: _startDate,
-            endDate: _endDate,
-          );
+      if (isEditMode) {
+        // Update existing trip
+        print('DEBUG: Updating trip with ID: ${widget.tripId}');
 
-      print('DEBUG: Trip created with ID: ${trip.id}');
+        await ref.read(tripControllerProvider.notifier).updateTrip(
+              tripId: widget.tripId!,
+              name: _nameController.text.trim(),
+              description: _descriptionController.text.trim().isEmpty
+                  ? null
+                  : _descriptionController.text.trim(),
+              destination: _destinationController.text.trim().isEmpty
+                  ? null
+                  : _destinationController.text.trim(),
+              startDate: _startDate,
+              endDate: _endDate,
+            );
+
+        print('DEBUG: Trip updated successfully');
+      } else {
+        // Create new trip
+        print('DEBUG: Creating trip with name: ${_nameController.text.trim()}');
+
+        final trip = await ref
+            .read(tripControllerProvider.notifier)
+            .createTrip(
+              name: _nameController.text.trim(),
+              description: _descriptionController.text.trim().isEmpty
+                  ? null
+                  : _descriptionController.text.trim(),
+              destination: _destinationController.text.trim().isEmpty
+                  ? null
+                  : _destinationController.text.trim(),
+              startDate: _startDate,
+              endDate: _endDate,
+            );
+
+        print('DEBUG: Trip created with ID: ${trip.id}');
+      }
 
       if (mounted) {
         // Refresh the trips list
@@ -103,14 +161,15 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         context.pop(); // Go back to trips list
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Trip created successfully!'),
+          SnackBar(
+            content: Text(
+                isEditMode ? 'Trip updated successfully!' : 'Trip created successfully!'),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
-      print('DEBUG: Error creating trip: $e');
+      print('DEBUG: Error saving trip: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -128,10 +187,12 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
   @override
   Widget build(BuildContext context) {
+    final isEditMode = widget.tripId != null;
+
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
-        title: const Text('Create New Trip'),
+        title: Text(isEditMode ? 'Edit Trip' : 'Create New Trip'),
         backgroundColor: AppTheme.primaryTeal,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -304,11 +365,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.add_circle_outline,
+                                  Icon(
+                                      isEditMode
+                                          ? Icons.save
+                                          : Icons.add_circle_outline,
                                       color: Colors.white),
                                   const SizedBox(width: AppTheme.spacingXs),
                                   Text(
-                                    'Create Trip',
+                                    isEditMode ? 'Save Changes' : 'Create Trip',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
