@@ -1,9 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/destination_image.dart';
+import '../../../../core/widgets/glassmorphic_card.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';

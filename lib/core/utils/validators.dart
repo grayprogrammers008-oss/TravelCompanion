@@ -1,12 +1,20 @@
 /// Validation utilities for forms
 class Validators {
+  /// Check if email is valid (returns boolean)
+  static bool isValidEmail(String email) {
+    // More permissive email regex that handles +, -, _, . in local part
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    return emailRegex.hasMatch(email);
+  }
+
   /// Email validation
   static String? email(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
+    if (!isValidEmail(value)) {
       return 'Please enter a valid email';
     }
     return null;
