@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       dbPath,
-      version: 2, // Bumped from 1 to 2 for migration
+      version: 3, // Bumped from 2 to 3 for trip_invites table
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -40,6 +40,41 @@ class DatabaseHelper {
       } catch (e) {
         // Column might already exist, ignore error
         print('Migration note: $e');
+      }
+    }
+
+    if (oldVersion < 3) {
+      // Add trip_invites table
+      try {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS trip_invites (
+            id TEXT PRIMARY KEY,
+            trip_id TEXT NOT NULL,
+            invited_by TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone_number TEXT,
+            status TEXT NOT NULL DEFAULT 'pending',
+            invite_code TEXT UNIQUE NOT NULL,
+            created_at TEXT NOT NULL,
+            expires_at TEXT NOT NULL,
+            FOREIGN KEY (trip_id) REFERENCES trips (id) ON DELETE CASCADE,
+            FOREIGN KEY (invited_by) REFERENCES profiles (id) ON DELETE CASCADE
+          )
+        ''');
+
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_trip_invites_trip_id ON trip_invites(trip_id)',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_trip_invites_invite_code ON trip_invites(invite_code)',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_trip_invites_email ON trip_invites(email)',
+        );
+
+        print('✅ Trip invites table created');
+      } catch (e) {
+        print('Migration error (trip_invites): $e');
       }
     }
   }
@@ -210,6 +245,23 @@ class DatabaseHelper {
       )
     ''');
 
+    // Create Trip Invites table
+    await db.execute('''
+      CREATE TABLE trip_invites (
+        id TEXT PRIMARY KEY,
+        trip_id TEXT NOT NULL,
+        invited_by TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone_number TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        invite_code TEXT UNIQUE NOT NULL,
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        FOREIGN KEY (trip_id) REFERENCES trips (id) ON DELETE CASCADE,
+        FOREIGN KEY (invited_by) REFERENCES profiles (id) ON DELETE CASCADE
+      )
+    ''');
+
     // Create indexes for better query performance
     await db.execute(
       'CREATE INDEX idx_trip_members_trip_id ON trip_members(trip_id)',
@@ -226,6 +278,15 @@ class DatabaseHelper {
     );
     await db.execute(
       'CREATE INDEX idx_settlements_trip_id ON settlements(trip_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_trip_invites_trip_id ON trip_invites(trip_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_trip_invites_invite_code ON trip_invites(invite_code)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_trip_invites_email ON trip_invites(email)',
     );
   }
 

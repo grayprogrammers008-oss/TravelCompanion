@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../constants/app_images.dart';
 import '../theme/app_theme.dart';
+import '../services/image_service.dart';
 
-/// Premium destination image widget with gradient fallback
+/// Premium destination image widget with real images from Unsplash
 ///
-/// Displays trip destination images with beautiful gradient fallbacks
-/// when images are not available or still loading.
-class DestinationImage extends StatelessWidget {
+/// Features:
+/// - Fetches real destination images from Unsplash API
+/// - Shows shimmer loading effect while fetching
+/// - Falls back to gradient if image unavailable
+/// - Caches images to reduce API calls
+class DestinationImage extends StatefulWidget {
   final String? imageUrl;
   final String? tripName;
+  final String? destination;
   final double? width;
   final double? height;
   final BoxFit fit;
@@ -20,6 +27,7 @@ class DestinationImage extends StatelessWidget {
     super.key,
     this.imageUrl,
     this.tripName,
+    this.destination,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
@@ -29,68 +37,160 @@ class DestinationImage extends StatelessWidget {
   });
 
   @override
+  State<DestinationImage> createState() => _DestinationImageState();
+}
+
+class _DestinationImageState extends State<DestinationImage> {
+  final ImageService _imageService = ImageService();
+  String? _fetchedImageUrl;
+  bool _isLoading = false;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    // If imageUrl is provided, use it directly
+    if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
+      return;
+    }
+
+    // Otherwise, try to fetch from Unsplash using destination or tripName
+    final searchQuery = widget.destination ?? widget.tripName;
+    if (searchQuery == null || searchQuery.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+
+    try {
+      final url = await _imageService.getDestinationImage(searchQuery);
+      if (mounted) {
+        setState(() {
+          _fetchedImageUrl = url;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final colors = (tripName ?? 'default').destinationColorPair;
+    final colors = (widget.tripName ?? widget.destination ?? 'default')
+        .destinationColorPair;
+
+    // Determine which image URL to use
+    final imageUrl = widget.imageUrl ?? _fetchedImageUrl;
 
     return Container(
-      width: width,
-      height: height,
+      width: widget.width,
+      height: widget.height,
       decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(colors[0]),
-            Color(colors[1]),
-          ],
-        ),
+        borderRadius: widget.borderRadius,
       ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Decorative pattern overlay
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _DestinationPatternPainter(),
-            ),
-          ),
+      child: ClipRRect(
+        borderRadius: widget.borderRadius ?? BorderRadius.zero,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Gradient background (fallback)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(colors[0]),
+                    Color(colors[1]),
+                  ],
+                ),
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Decorative pattern overlay
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: _DestinationPatternPainter(),
+                    ),
+                  ),
 
-          // Trip name icon
-          if (tripName != null && tripName!.isNotEmpty)
-            Center(
-              child: Icon(
-                _getDestinationIcon(tripName!),
-                size: 64,
-                color: Colors.white.withValues(alpha: 0.3),
+                  // Trip name icon (only show if no image)
+                  if (imageUrl == null &&
+                      !_isLoading &&
+                      (widget.tripName != null || widget.destination != null))
+                    Center(
+                      child: Icon(
+                        _getDestinationIcon(
+                            widget.tripName ?? widget.destination ?? ''),
+                        size: 64,
+                        color: Colors.white.withValues(alpha: 0.3),
+                      ),
+                    ),
+                ],
               ),
             ),
 
-          // Overlay gradient
-          if (showOverlay)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: borderRadius,
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
-                    ],
-                    stops: const [0.5, 1.0],
+            // Real image (if available)
+            if (imageUrl != null && !_hasError)
+              CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: widget.fit,
+                placeholder: (context, url) => _buildShimmer(),
+                errorWidget: (context, url, error) => Container(),
+              ),
+
+            // Shimmer loading effect
+            if (_isLoading) _buildShimmer(),
+
+            // Overlay gradient (for text readability)
+            if (widget.showOverlay)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.7),
+                      ],
+                      stops: const [0.5, 1.0],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-          // Overlay content
-          if (overlayChild != null)
-            Positioned.fill(
-              child: overlayChild!,
-            ),
-        ],
+            // Overlay content
+            if (widget.overlayChild != null)
+              Positioned.fill(
+                child: widget.overlayChild!,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        color: Colors.white,
       ),
     );
   }
