@@ -307,7 +307,7 @@ void main() {
           throwsA(isA<Exception>().having(
             (e) => e.toString(),
             'message',
-            contains('Start date must be before end date'),
+            contains('End date must be after or equal to start date'),
           )),
         );
 
@@ -345,7 +345,7 @@ void main() {
     });
 
     group('Repository Errors', () {
-      test('should wrap repository exceptions', () async {
+      test('should propagate repository exceptions', () async {
         // Arrange
         mockRepository.setupUpdateTripToThrow(Exception('Database error'));
 
@@ -355,12 +355,12 @@ void main() {
           throwsA(isA<Exception>().having(
             (e) => e.toString(),
             'message',
-            contains('Failed to update trip'),
+            contains('Database error'),
           )),
         );
       });
 
-      test('should wrap network errors from repository', () async {
+      test('should propagate network errors from repository', () async {
         // Arrange
         mockRepository.setupUpdateTripToThrow(Exception('Network error'));
 
@@ -369,12 +369,11 @@ void main() {
           await useCase(tripId: 'test-trip-1', name: 'Updated Name');
           fail('Should have thrown exception');
         } catch (e) {
-          expect(e.toString(), contains('Failed to update trip'));
           expect(e.toString(), contains('Network error'));
         }
       });
 
-      test('should handle trip not found error', () async {
+      test('should propagate trip not found errors', () async {
         // Arrange
         mockRepository.setupUpdateTripToThrow(Exception('Trip not found'));
 
@@ -383,7 +382,6 @@ void main() {
           await useCase(tripId: 'non-existent-trip', name: 'Updated Name');
           fail('Should have thrown exception');
         } catch (e) {
-          expect(e.toString(), contains('Failed to update trip'));
           expect(e.toString(), contains('Trip not found'));
         }
       });

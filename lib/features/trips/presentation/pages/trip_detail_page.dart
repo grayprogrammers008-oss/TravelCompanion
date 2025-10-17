@@ -111,16 +111,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   child: IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Edit feature coming soon!'),
-                          backgroundColor: AppTheme.info,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          ),
-                        ),
-                      );
+                      context.push('/trips/${widget.tripId}/edit');
                     },
                   ),
                 ),

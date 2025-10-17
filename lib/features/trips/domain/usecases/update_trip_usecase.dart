@@ -1,21 +1,12 @@
 import '../../../../shared/models/trip_model.dart';
 import '../repositories/trip_repository.dart';
 
-/// Use case for updating a trip
+/// Update an existing trip
 class UpdateTripUseCase {
-  final TripRepository repository;
+  final TripRepository _repository;
 
-  UpdateTripUseCase(this.repository);
+  UpdateTripUseCase(this._repository);
 
-  /// Update a trip with validation
-  ///
-  /// Validates:
-  /// - Trip name is not empty
-  /// - Start date is before end date (if both provided)
-  /// - Trip ID exists
-  ///
-  /// Returns the updated [TripModel]
-  /// Throws [Exception] if validation fails or update fails
   Future<TripModel> call({
     required String tripId,
     String? name,
@@ -25,35 +16,31 @@ class UpdateTripUseCase {
     DateTime? endDate,
     String? coverImageUrl,
   }) async {
-    // Validation: Trip ID is required
+    // Validation
     if (tripId.trim().isEmpty) {
       throw Exception('Trip ID is required');
     }
 
-    // Validation: Name should not be empty if provided
+    // Validate trip name if provided
     if (name != null && name.trim().isEmpty) {
       throw Exception('Trip name cannot be empty');
     }
 
-    // Validation: Start date must be before end date
+    // Validate date range if both dates are provided
     if (startDate != null && endDate != null) {
-      if (startDate.isAfter(endDate)) {
-        throw Exception('Start date must be before end date');
+      if (endDate.isBefore(startDate)) {
+        throw Exception('End date must be after or equal to start date');
       }
     }
 
-    try {
-      return await repository.updateTrip(
-        tripId: tripId,
-        name: name,
-        description: description,
-        destination: destination,
-        startDate: startDate,
-        endDate: endDate,
-        coverImageUrl: coverImageUrl,
-      );
-    } catch (e) {
-      throw Exception('Failed to update trip: $e');
-    }
+    return await _repository.updateTrip(
+      tripId: tripId,
+      name: name,
+      description: description,
+      destination: destination,
+      startDate: startDate,
+      endDate: endDate,
+      coverImageUrl: coverImageUrl,
+    );
   }
 }
