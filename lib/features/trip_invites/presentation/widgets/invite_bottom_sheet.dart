@@ -6,7 +6,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/validators.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/invite_providers.dart';
 
 /// Premium invite generation bottom sheet
@@ -103,19 +102,25 @@ class _InviteBottomSheetState extends ConsumerState<InviteBottomSheet>
     if (_generatedInviteCode == null) return;
 
     final inviteLink = 'https://travelcrew.app/invite/$_generatedInviteCode';
+
+    // Format message to make link auto-detectable by email/messaging apps
+    // Most email clients will automatically make URLs clickable
     final message = '''
 🌍 You're invited to join "${widget.tripName}"!
 
-Use this code to join: $_generatedInviteCode
+Join using this link:
+$inviteLink
 
-Or click this link: $inviteLink
+Or use invite code: $_generatedInviteCode
 
-Expires in $_expiryDays days.
+⏰ Expires in $_expiryDays days
 
 Let's make it an adventure! 🎉
 ''';
 
     try {
+      // Share via native share sheet
+      // Email apps will auto-detect and make the URL clickable
       await Share.share(
         message,
         subject: 'Join my trip: ${widget.tripName}',
@@ -165,7 +170,6 @@ Let's make it an adventure! 🎉
   @override
   Widget build(BuildContext context) {
     final inviteState = ref.watch(inviteControllerProvider);
-    final currentUser = ref.watch(currentUserProvider).value;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
