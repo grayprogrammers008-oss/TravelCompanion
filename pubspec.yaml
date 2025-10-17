@@ -56,6 +56,9 @@ dependencies:
   # URL Launcher (for UPI/Paytm)
   url_launcher: ^6.3.0
 
+  # Share functionality
+  share_plus: ^10.1.2
+
   # Permissions
   permission_handler: ^12.0.1
 

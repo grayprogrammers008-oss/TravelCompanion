@@ -8,6 +8,7 @@ import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
+import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../presentation/main_scaffold.dart';
 
@@ -24,6 +25,7 @@ class AppRoutes {
   static const String addExpense = '/trips/:tripId/expenses/add';
   static const String addStandaloneExpense = '/expenses/add';
   static const String expenseTest = '/expenses/test';
+  static const String acceptInvite = '/invite/:inviteCode';
 }
 
 // Router provider with auth redirect
@@ -37,6 +39,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthenticated = authState.value != null;
       final isLoginRoute = state.matchedLocation == AppRoutes.login;
       final isSignupRoute = state.matchedLocation == AppRoutes.signup;
+      final isInviteRoute = state.matchedLocation.startsWith('/invite/');
+
+      // Allow invite routes without authentication
+      if (isInviteRoute) {
+        return null;
+      }
 
       // If not authenticated and not on login/signup, redirect to login
       if (!isAuthenticated && !isLoginRoute && !isSignupRoute) {
@@ -93,9 +101,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.editTrip,
         name: 'editTrip',
         builder: (context, state) {
-          // TODO: Implement edit trip page
-          // For now, redirect to create trip page
-          return const CreateTripPage();
+          final tripId = state.pathParameters['tripId']!;
+          return CreateTripPage(tripId: tripId);
         },
       ),
       GoRoute(
@@ -118,6 +125,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.expenseTest,
         name: 'expenseTest',
         builder: (context, state) => const ExpenseTestPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.acceptInvite,
+        name: 'acceptInvite',
+        builder: (context, state) {
+          final inviteCode = state.pathParameters['inviteCode']!;
+          return AcceptInvitePage(inviteCode: inviteCode);
+        },
       ),
     ],
     errorBuilder: (context, state) =>
