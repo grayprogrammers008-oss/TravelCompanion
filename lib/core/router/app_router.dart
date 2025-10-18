@@ -10,7 +10,7 @@ import '../../features/expenses/presentation/pages/add_expense_page.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
-import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page.dart';
+import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../presentation/main_scaffold.dart';
 
@@ -152,7 +152,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'addItineraryItem',
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
-          return AddEditItineraryItemPage(tripId: tripId);
+          return AddEditItineraryItemPageNew(tripId: tripId);
         },
       ),
       GoRoute(
@@ -161,7 +161,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
           final itemId = state.pathParameters['itemId']!;
-          return AddEditItineraryItemPage(tripId: tripId, itemId: itemId);
+          return AddEditItineraryItemPageNew(tripId: tripId, itemId: itemId);
         },
       ),
     ],
