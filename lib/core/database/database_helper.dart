@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       dbPath,
-      version: 3, // Bumped from 2 to 3 for trip_invites table
+      version: 4, // Bumped from 3 to 4 for itinerary_items schema fix
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -75,6 +75,63 @@ class DatabaseHelper {
         print('✅ Trip invites table created');
       } catch (e) {
         print('Migration error (trip_invites): $e');
+      }
+    }
+
+    if (oldVersion < 4) {
+      // Fix itinerary_items table schema - remove old columns, add new ones
+      try {
+        // Rename old table
+        await db.execute('ALTER TABLE itinerary_items RENAME TO itinerary_items_old');
+
+        // Create new table with correct schema
+        await db.execute('''
+          CREATE TABLE itinerary_items (
+            id TEXT PRIMARY KEY,
+            trip_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            location TEXT,
+            start_time TEXT,
+            end_time TEXT,
+            day_number INTEGER,
+            order_index INTEGER NOT NULL DEFAULT 0,
+            created_by TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (trip_id) REFERENCES trips (id) ON DELETE CASCADE,
+            FOREIGN KEY (created_by) REFERENCES profiles (id) ON DELETE CASCADE
+          )
+        ''');
+
+        // Migrate data if any exists (map old date field to day_number)
+        await db.execute('''
+          INSERT INTO itinerary_items (
+            id, trip_id, title, description, location,
+            start_time, end_time, day_number, order_index,
+            created_by, created_at, updated_at
+          )
+          SELECT
+            id, trip_id, title, description, location,
+            start_time, end_time, 1 as day_number, 0 as order_index,
+            created_by, created_at, updated_at
+          FROM itinerary_items_old
+        ''');
+
+        // Drop old table
+        await db.execute('DROP TABLE itinerary_items_old');
+
+        // Create indexes for performance
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_itinerary_items_trip_id ON itinerary_items(trip_id)',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_itinerary_items_day_number ON itinerary_items(day_number)',
+        );
+
+        print('✅ Itinerary items table migrated to new schema');
+      } catch (e) {
+        print('Migration error (itinerary_items): $e');
       }
     }
   }
@@ -143,11 +200,10 @@ class DatabaseHelper {
         title TEXT NOT NULL,
         description TEXT,
         location TEXT,
-        date TEXT NOT NULL,
         start_time TEXT,
         end_time TEXT,
-        category TEXT,
-        notes TEXT,
+        day_number INTEGER,
+        order_index INTEGER NOT NULL DEFAULT 0,
         created_by TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
@@ -155,6 +211,14 @@ class DatabaseHelper {
         FOREIGN KEY (created_by) REFERENCES profiles (id) ON DELETE CASCADE
       )
     ''');
+
+    // Create indexes for itinerary_items
+    await db.execute(
+      'CREATE INDEX idx_itinerary_items_trip_id ON itinerary_items(trip_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_itinerary_items_day_number ON itinerary_items(day_number)',
+    );
 
     // Create Checklists table
     await db.execute('''
