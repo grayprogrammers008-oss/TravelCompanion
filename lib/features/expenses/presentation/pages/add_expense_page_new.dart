@@ -154,20 +154,9 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingLg),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.accentCoral, AppTheme.accentGold],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: AppTheme.primaryGradient,
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.accentCoral.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
+                        boxShadow: AppTheme.shadowTeal,
                       ),
                       child: Column(
                         children: [
@@ -401,12 +390,11 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                   // Submit Button
                   FadeSlideAnimation(
                     delay: AppAnimations.staggerSmall * 7,
-                    child: GlossyButton(
+                    child: AnimatedButton(
                       onPressed: _isLoading ? null : _handleSubmit,
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.accentCoral, AppTheme.accentGold],
-                      ),
+                      gradient: AppTheme.primaryGradient,
                       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       child: _isLoading
                           ? const SizedBox(
                               height: 24,

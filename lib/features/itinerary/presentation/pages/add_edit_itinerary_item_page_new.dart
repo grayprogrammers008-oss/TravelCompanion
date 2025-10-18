@@ -222,20 +222,9 @@ class _AddEditItineraryItemPageNewState
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingLg),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.accentPurple, AppTheme.primaryTeal],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: AppTheme.primaryGradient,
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.accentPurple.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
+                        boxShadow: AppTheme.shadowTeal,
                       ),
                       child: Column(
                         children: [
@@ -429,11 +418,9 @@ class _AddEditItineraryItemPageNewState
                   // Save Button
                   FadeSlideAnimation(
                     delay: AppAnimations.staggerSmall * 6,
-                    child: GlossyButton(
+                    child: AnimatedButton(
                       onPressed: _isLoading ? null : _saveItem,
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.primaryTeal, AppTheme.accentPurple],
-                      ),
+                      gradient: AppTheme.primaryGradient,
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       padding: const EdgeInsets.symmetric(
                         vertical: AppTheme.spacingMd + 4,
