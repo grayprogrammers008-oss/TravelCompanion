@@ -6,7 +6,7 @@ import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/expenses/presentation/pages/expense_list_page.dart';
-import '../../features/expenses/presentation/pages/add_expense_page.dart';
+import '../../features/expenses/presentation/pages/add_expense_page_new.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
@@ -92,7 +92,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.addStandaloneExpense,
         name: 'addStandaloneExpense',
-        builder: (context, state) => const AddExpensePage(),
+        builder: (context, state) => const AddExpensePageNew(),
       ),
       GoRoute(
         path: AppRoutes.tripDetail,
@@ -123,7 +123,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'addExpense',
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
-          return AddExpensePage(tripId: tripId);
+          return AddExpensePageNew(tripId: tripId);
         },
       ),
       GoRoute(
