@@ -148,6 +148,18 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Back Button
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: AppTheme.neutral700),
+                      onPressed: () => context.pop(),
+                      tooltip: 'Back',
+                    ),
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingSm),
+
                   // Header Section with Gradient
                   FadeSlideAnimation(
                     delay: Duration.zero,
