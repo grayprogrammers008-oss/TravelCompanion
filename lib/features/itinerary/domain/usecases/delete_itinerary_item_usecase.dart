@@ -7,10 +7,15 @@ class DeleteItineraryItemUseCase {
   DeleteItineraryItemUseCase(this.repository);
 
   Future<void> call(String itemId) async {
+    // Validate item ID
     if (itemId.trim().isEmpty) {
       throw Exception('Item ID is required');
     }
 
-    return await repository.deleteItineraryItem(itemId);
+    try {
+      return await repository.deleteItineraryItem(itemId);
+    } catch (e) {
+      throw Exception('Failed to delete itinerary item: $e');
+    }
   }
 }

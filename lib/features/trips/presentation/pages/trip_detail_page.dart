@@ -652,16 +652,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   label: 'Itinerary',
                   color: AppTheme.accentPurple,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Itinerary feature coming in Phase 2!'),
-                        backgroundColor: AppTheme.info,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        ),
-                      ),
-                    );
+                    context.push('/trips/${widget.tripId}/itinerary');
                   },
                 ),
               ),

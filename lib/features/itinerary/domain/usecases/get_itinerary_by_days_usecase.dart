@@ -8,10 +8,15 @@ class GetItineraryByDaysUseCase {
   GetItineraryByDaysUseCase(this.repository);
 
   Future<List<ItineraryDay>> call(String tripId) async {
+    // Validate trip ID
     if (tripId.trim().isEmpty) {
       throw Exception('Trip ID is required');
     }
 
-    return await repository.getItineraryByDays(tripId);
+    try {
+      return await repository.getItineraryByDays(tripId);
+    } catch (e) {
+      throw Exception('Failed to get itinerary by days: $e');
+    }
   }
 }

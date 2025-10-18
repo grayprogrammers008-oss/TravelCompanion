@@ -17,34 +17,54 @@ class CreateItineraryItemUseCase {
     int? dayNumber,
     int? orderIndex,
   }) async {
-    // Validation
-    if (title.trim().isEmpty) {
-      throw Exception('Title is required');
+    // Validate trip ID
+    if (tripId.trim().isEmpty) {
+      throw Exception('Trip ID is required');
     }
 
+    // Validate title
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isEmpty) {
+      throw Exception('Title is required');
+    }
+    if (trimmedTitle.length < 3) {
+      throw Exception('Title must be at least 3 characters');
+    }
+
+    // Validate times (if both provided)
     if (startTime != null && endTime != null) {
-      if (startTime.isAfter(endTime) || startTime.isAtSameMomentAs(endTime)) {
-        throw Exception('Start time must be before end time');
+      if (endTime.isBefore(startTime) || endTime.isAtSameMomentAs(startTime)) {
+        throw Exception('End time must be after start time');
       }
     }
 
+    // Validate day number (if provided)
     if (dayNumber != null && dayNumber <= 0) {
       throw Exception('Day number must be positive');
     }
 
+    // Validate order index
     if (orderIndex != null && orderIndex < 0) {
-      throw Exception('Order index must be non-negative');
+      throw Exception('Order index cannot be negative');
     }
 
-    return await repository.createItineraryItem(
-      tripId: tripId,
-      title: title.trim(),
-      description: description?.trim(),
-      location: location?.trim(),
-      startTime: startTime,
-      endTime: endTime,
-      dayNumber: dayNumber,
-      orderIndex: orderIndex ?? 0,
-    );
+    // Trim description and location if provided
+    final trimmedDescription = description?.trim();
+    final trimmedLocation = location?.trim();
+
+    try {
+      return await repository.createItineraryItem(
+        tripId: tripId,
+        title: trimmedTitle,
+        description: trimmedDescription,
+        location: trimmedLocation,
+        startTime: startTime,
+        endTime: endTime,
+        dayNumber: dayNumber,
+        orderIndex: orderIndex ?? 0,
+      );
+    } catch (e) {
+      throw Exception('Failed to create itinerary item: $e');
+    }
   }
 }

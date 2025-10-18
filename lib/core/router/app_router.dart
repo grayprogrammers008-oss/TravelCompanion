@@ -9,6 +9,8 @@ import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
+import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
+import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../presentation/main_scaffold.dart';
 
@@ -26,6 +28,9 @@ class AppRoutes {
   static const String addStandaloneExpense = '/expenses/add';
   static const String expenseTest = '/expenses/test';
   static const String acceptInvite = '/invite/:inviteCode';
+  static const String itinerary = '/trips/:tripId/itinerary';
+  static const String addItineraryItem = '/trips/:tripId/itinerary/add';
+  static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
 }
 
 // Router provider with auth redirect
@@ -132,6 +137,31 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final inviteCode = state.pathParameters['inviteCode']!;
           return AcceptInvitePage(inviteCode: inviteCode);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.itinerary,
+        name: 'itinerary',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return ItineraryListPage(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.addItineraryItem,
+        name: 'addItineraryItem',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return AddEditItineraryItemPage(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.editItineraryItem,
+        name: 'editItineraryItem',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final itemId = state.pathParameters['itemId']!;
+          return AddEditItineraryItemPage(tripId: tripId, itemId: itemId);
         },
       ),
     ],

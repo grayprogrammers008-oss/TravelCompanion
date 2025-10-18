@@ -8,10 +8,15 @@ class GetTripItineraryUseCase {
   GetTripItineraryUseCase(this.repository);
 
   Future<List<ItineraryItemModel>> call(String tripId) async {
+    // Validate trip ID
     if (tripId.trim().isEmpty) {
       throw Exception('Trip ID is required');
     }
 
-    return await repository.getTripItinerary(tripId);
+    try {
+      return await repository.getTripItinerary(tripId);
+    } catch (e) {
+      throw Exception('Failed to get trip itinerary: $e');
+    }
   }
 }
