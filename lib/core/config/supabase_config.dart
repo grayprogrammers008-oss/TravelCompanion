@@ -34,12 +34,12 @@ class SupabaseConfig {
 
   static const String mailgunDomain = String.fromEnvironment(
     'MAILGUN_DOMAIN',
-    defaultValue: 'YOUR_MAILGUN_DOMAIN_HERE', // e.g., mg.yourdomain.com
+    defaultValue: 'sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org',
   );
 
   static const String mailgunFromEmail = String.fromEnvironment(
     'MAILGUN_FROM_EMAIL',
-    defaultValue: 'Travel Crew <noreply@mg.yourdomain.com>',
+    defaultValue: 'Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>',
   );
 
   /// Validate configuration
