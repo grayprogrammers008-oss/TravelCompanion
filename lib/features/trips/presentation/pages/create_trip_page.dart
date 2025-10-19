@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/widgets/premium_header.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../providers/trip_providers.dart';
 
 class CreateTripPage extends ConsumerStatefulWidget {
@@ -191,30 +194,32 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
-      appBar: AppBar(
-        title: Text(isEditMode ? 'Edit Trip' : 'Create New Trip'),
-        backgroundColor: AppTheme.primaryTeal,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.spacingLg),
-          child: Form(
+      body: WaveGradientBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTheme.spacingLg),
+            child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Back Button
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: AppTheme.neutral700),
+                      onPressed: () => context.pop(),
+                      tooltip: 'Back',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
+
                 // Header Section with Animation
                 FadeSlideAnimation(
                   delay: Duration.zero,
-                  child: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingLg),
-                    decoration: BoxDecoration(
-                      gradient: AppTheme.primaryGradient,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                      boxShadow: AppTheme.shadowTeal,
-                    ),
+                  child: GlossyCard(
+                    useHeaderGradient: true,
                     child: Column(
                       children: [
                         Container(
@@ -331,66 +336,18 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 // Create Button with Animation
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 5,
-                  child: AnimatedScaleButton(
-                    onTap: _isLoading ? null : _handleCreateTrip,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: AppTheme.primaryGradient,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        boxShadow: AppTheme.shadowTeal,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: null, // Handled by AnimatedScaleButton
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppTheme.spacingMd,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppTheme.radiusMd),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                      isEditMode
-                                          ? Icons.save
-                                          : Icons.add_circle_outline,
-                                      color: Colors.white),
-                                  const SizedBox(width: AppTheme.spacingXs),
-                                  Text(
-                                    isEditMode ? 'Save Changes' : 'Create Trip',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                      ),
-                    ),
+                  child: GlossyButton(
+                    label: isEditMode ? 'Save Changes' : 'Create Trip',
+                    icon: isEditMode ? Icons.save : Icons.add,
+                    onPressed: _isLoading ? null : _handleCreateTrip,
+                    isLoading: _isLoading,
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -403,6 +360,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     String? Function(String?)? validator,
     int maxLines = 1,
   }) {
+    final themeData = context.appThemeData;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -413,7 +371,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppTheme.primaryTeal),
+          prefixIcon: Icon(icon, color: themeData.primaryColor),
           hintText: hint,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -436,6 +394,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     required DateTime? date,
     required VoidCallback onTap,
   }) {
+    final themeData = context.appThemeData;
     return AnimatedScaleButton(
       onTap: _isLoading ? null : onTap,
       child: Container(
@@ -450,7 +409,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           children: [
             Row(
               children: [
-                Icon(icon, size: 16, color: AppTheme.primaryTeal),
+                Icon(icon, size: 16, color: themeData.primaryColor),
                 const SizedBox(width: AppTheme.spacingXs),
                 Text(
                   label,

@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
-import '../../../../core/utils/extensions.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/widgets/premium_header.dart';
 import '../providers/trip_providers.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 
@@ -42,20 +44,22 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   @override
   Widget build(BuildContext context) {
     final tripAsync = ref.watch(tripProvider(widget.tripId));
+    final themeData = context.appThemeData;
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       body: tripAsync.when(
-        data: (trip) => CustomScrollView(
-          controller: _scrollController,
-          slivers: [
+        data: (trip) => DiagonalGradientBackground(
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
             // Premium App Bar with Parallax Hero Image
             SliverAppBar(
               expandedHeight: 280,
               floating: false,
               pinned: true,
               stretch: true,
-              backgroundColor: AppTheme.primaryTeal,
+              backgroundColor: themeData.primaryColor,
               foregroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
@@ -157,7 +161,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     // Trip Info Cards with Staggered Animation
                     FadeSlideAnimation(
                       delay: Duration.zero,
-                      child: _buildInfoSection(context, trip),
+                      child: _buildInfoSection(context, trip, themeData),
                     ),
                     const SizedBox(height: AppTheme.spacingXl),
 
@@ -174,7 +178,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     // Members Section
                     FadeSlideAnimation(
                       delay: AppAnimations.staggerSmall * 2,
-                      child: _buildMembersSection(context, trip),
+                      child: _buildMembersSection(context, trip, themeData),
                     ),
                     const SizedBox(height: AppTheme.spacingXl),
 
@@ -189,6 +193,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               ),
             ),
           ],
+          ),
         ),
         loading: () => Center(
           child: Column(
@@ -197,9 +202,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingLg),
                 decoration: BoxDecoration(
-                  gradient: AppTheme.primaryGradient,
+                  gradient: themeData.primaryGradient,
                   shape: BoxShape.circle,
-                  boxShadow: AppTheme.shadowTeal,
+                  boxShadow: themeData.primaryShadow,
                 ),
                 child: const Icon(
                   Icons.flight_takeoff,
@@ -252,30 +257,10 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       ),
                 ),
                 const SizedBox(height: AppTheme.spacingXl),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    boxShadow: AppTheme.shadowTeal,
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () => context.pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingLg,
-                        vertical: AppTheme.spacingMd,
-                      ),
-                    ),
-                    child: const Text(
-                      'Go Back',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                GlossyButton(
+                  label: 'Go Back',
+                  icon: Icons.arrow_back,
+                  onPressed: () => context.pop(),
                 ),
               ],
             ),
@@ -285,7 +270,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
-  Widget _buildInfoSection(BuildContext context, trip) {
+  Widget _buildInfoSection(BuildContext context, dynamic trip, dynamic themeData) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -300,8 +285,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             _buildInfoRow(
               context,
               icon: Icons.location_on,
-              iconColor: AppTheme.primaryTeal,
-              iconBg: AppTheme.primaryPale,
+              iconColor: themeData.primaryColor,
+              iconBg: themeData.primaryColor.withValues(alpha: 0.1),
               label: 'Destination',
               value: trip.trip.destination!,
             ),
@@ -434,7 +419,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
-  Widget _buildMembersSection(BuildContext context, trip) {
+  Widget _buildMembersSection(BuildContext context, dynamic trip, dynamic themeData) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -474,13 +459,13 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   vertical: AppTheme.spacingXs,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryPale,
+                  color: themeData.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                 ),
                 child: Text(
                   '${trip.members.length}',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppTheme.primaryTeal,
+                        color: themeData.primaryColor,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -530,7 +515,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: AppTheme.primaryTeal,
+                            backgroundColor: themeData.primaryColor,
                             child: Text(
                               entry.value.userId.substring(0, 1).toUpperCase(),
                               style: const TextStyle(
@@ -572,7 +557,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                                 vertical: AppTheme.spacingXs,
                               ),
                               decoration: BoxDecoration(
-                                gradient: AppTheme.primaryGradient,
+                                gradient: themeData.primaryGradient,
                                 borderRadius:
                                     BorderRadius.circular(AppTheme.radiusFull),
                               ),

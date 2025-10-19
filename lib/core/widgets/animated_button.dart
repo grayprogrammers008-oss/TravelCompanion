@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_access.dart';
 
 /// Premium animated button with scale and ripple effects
 class AnimatedButton extends StatefulWidget {
@@ -70,6 +71,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return GestureDetector(
       onTapDown: widget.onPressed != null && !widget.isLoading ? _handleTapDown : null,
       onTapUp: widget.onPressed != null && !widget.isLoading ? _handleTapUp : null,
@@ -87,11 +89,11 @@ class _AnimatedButtonState extends State<AnimatedButton>
                     ? LinearGradient(
                         colors: [widget.backgroundColor!, widget.backgroundColor!],
                       )
-                    : AppTheme.primaryGradient),
+                    : themeData.primaryGradient),
                 borderRadius: widget.borderRadius ?? BorderRadius.circular(AppTheme.radiusMd),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryTeal.withValues(alpha: 0.3),
+                    color: themeData.primaryColor.withValues(alpha: 0.3),
                     blurRadius: _isPressed ? widget.elevation / 2 : widget.elevation * 2,
                     offset: Offset(0, _isPressed ? widget.elevation / 4 : widget.elevation),
                   ),
@@ -176,13 +178,14 @@ class _RippleButtonState extends State<RippleButton>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return GestureDetector(
       onTapDown: widget.onPressed != null ? _handleTap : null,
       child: CustomPaint(
         painter: RipplePainter(
           animation: _animation,
           tapPosition: _tapPosition,
-          color: widget.rippleColor ?? AppTheme.primaryTeal.withValues(alpha: 0.3),
+          color: widget.rippleColor ?? themeData.primaryColor.withValues(alpha: 0.3),
         ),
         child: widget.child,
       ),
@@ -290,6 +293,7 @@ class _PulseFABState extends State<PulseFAB>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -306,8 +310,8 @@ class _PulseFABState extends State<PulseFAB>
                   gradient: widget.gradient ??
                       LinearGradient(
                         colors: [
-                          AppTheme.primaryTeal.withValues(alpha: _opacityAnimation.value),
-                          AppTheme.primaryTeal.withValues(alpha: _opacityAnimation.value * 0.5),
+                          themeData.primaryColor.withValues(alpha: _opacityAnimation.value),
+                          themeData.primaryColor.withValues(alpha: _opacityAnimation.value * 0.5),
                         ],
                       ),
                 ),

@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../constants/app_images.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_access.dart';
 import '../services/image_service.dart';
 
 /// Premium destination image widget with real images from Unsplash
@@ -284,12 +285,13 @@ class UserAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: AppTheme.primaryGradient,
+        gradient: themeData.primaryGradient,
         border: showBorder
             ? Border.all(
                 color: Colors.white,
@@ -345,6 +347,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -355,9 +358,9 @@ class EmptyStateWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
               decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
+                gradient: themeData.primaryGradient,
                 shape: BoxShape.circle,
-                boxShadow: AppTheme.shadowTeal,
+                boxShadow: themeData.primaryShadow,
               ),
               child: Icon(
                 icon,
@@ -392,9 +395,9 @@ class EmptyStateWidget extends StatelessWidget {
             if (onAction != null && actionLabel != null)
               Container(
                 decoration: BoxDecoration(
-                  gradient: AppTheme.primaryGradient,
+                  gradient: themeData.primaryGradient,
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  boxShadow: AppTheme.shadowTeal,
+                  boxShadow: themeData.primaryShadow,
                 ),
                 child: ElevatedButton.icon(
                   onPressed: onAction,

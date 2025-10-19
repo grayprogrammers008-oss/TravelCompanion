@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/premium_form_fields.dart';
-import '../../../../core/widgets/animated_button.dart';
-import '../../../../core/widgets/gradient_backgrounds.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/confetti_animation.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
@@ -136,10 +137,11 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
   @override
   Widget build(BuildContext context) {
     final isStandalone = widget.tripId == null;
+    final themeData = context.appThemeData;
 
     return Scaffold(
       body: MeshGradientBackground(
-        opacity: 0.12,
+        intensity: 0.6,
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -163,13 +165,8 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                   // Header Section with Gradient
                   FadeSlideAnimation(
                     delay: Duration.zero,
-                    child: Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingLg),
-                      decoration: BoxDecoration(
-                        gradient: AppTheme.primaryGradient,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        boxShadow: AppTheme.shadowTeal,
-                      ),
+                    child: GlossyCard(
+                      useHeaderGradient: true,
                       child: Column(
                         children: [
                           // Icon in circle
@@ -355,7 +352,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                         gradient: LinearGradient(
                           colors: [
                             AppTheme.info.withValues(alpha: 0.1),
-                            AppTheme.primaryTeal.withValues(alpha: 0.05),
+                            themeData.primaryColor.withValues(alpha: 0.05),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -402,35 +399,11 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                   // Submit Button
                   FadeSlideAnimation(
                     delay: AppAnimations.staggerSmall * 7,
-                    child: AnimatedButton(
+                    child: GlossyButton(
+                      label: 'Add Expense',
+                      icon: Icons.add,
                       onPressed: _isLoading ? null : _handleSubmit,
-                      gradient: AppTheme.primaryGradient,
-                      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.add, color: Colors.white),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                Text(
-                                  'Add Expense',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
+                      isLoading: _isLoading,
                     ),
                   ),
 

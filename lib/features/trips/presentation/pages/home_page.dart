@@ -1,11 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme_data.dart';
+import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/destination_image.dart';
-import '../../../../core/widgets/glassmorphic_card.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';
@@ -48,21 +50,24 @@ class _HomePageState extends ConsumerState<HomePage>
   Widget build(BuildContext context) {
     final userTripsAsync = ref.watch(userTripsProvider);
     final currentUser = ref.watch(currentUserProvider);
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
-      body: CustomScrollView(
-        slivers: [
+      body: MeshGradientBackground(
+        intensity: 0.5,
+        child: CustomScrollView(
+          slivers: [
           // Premium App Bar with gradient
           SliverAppBar(
             expandedHeight: 160,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.primaryTeal,
+            backgroundColor: themeData.primaryColor,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                decoration: const BoxDecoration(
-                  gradient: AppTheme.primaryGradient,
+                decoration: BoxDecoration(
+                  gradient: themeData.primaryGradient,
                 ),
                 child: SafeArea(
                   child: Padding(
@@ -185,9 +190,9 @@ class _HomePageState extends ConsumerState<HomePage>
                     Container(
                       padding: const EdgeInsets.all(AppTheme.spacingLg),
                       decoration: BoxDecoration(
-                        gradient: AppTheme.primaryGradient,
+                        gradient: themeData.primaryGradient,
                         shape: BoxShape.circle,
-                        boxShadow: AppTheme.shadowTeal,
+                        boxShadow: themeData.primaryShadow,
                       ),
                       child: const Icon(
                         Icons.flight_takeoff,
@@ -207,10 +212,11 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
             ),
             error: (error, stack) => SliverFillRemaining(
-              child: _buildErrorState(context, error.toString(), ref),
+              child: _buildErrorState(context, error.toString(), ref, themeData),
             ),
           ),
         ],
+        ),
       ),
       floatingActionButton: ScaleAnimation(
         duration: AppAnimations.slow,
@@ -219,20 +225,35 @@ class _HomePageState extends ConsumerState<HomePage>
           onTap: () => context.push('/trips/create'),
           child: Container(
             decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
+              gradient: themeData.glossyGradient,
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              boxShadow: AppTheme.shadowTeal,
+              boxShadow: themeData.glossyShadow,
             ),
-            child: FloatingActionButton.extended(
-              onPressed: null, // Handled by AnimatedScaleButton
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text(
-                'New Trip',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.2),
+                    Colors.white.withValues(alpha: 0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: null, // Handled by AnimatedScaleButton
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                icon: const Icon(Icons.add, color: Colors.white, size: 24),
+                label: const Text(
+                  'New Trip',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ),
@@ -253,7 +274,7 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _buildErrorState(BuildContext context, String error, WidgetRef ref) {
+  Widget _buildErrorState(BuildContext context, String error, WidgetRef ref, AppThemeData themeData) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -290,31 +311,10 @@ class _HomePageState extends ConsumerState<HomePage>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppTheme.spacingXl),
-            Container(
-              decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                boxShadow: AppTheme.shadowTeal,
-              ),
-              child: ElevatedButton.icon(
-                onPressed: () => ref.invalidate(userTripsProvider),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingLg,
-                    vertical: AppTheme.spacingMd,
-                  ),
-                ),
-                icon: const Icon(Icons.refresh, color: Colors.white),
-                label: const Text(
-                  'Try Again',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+            GlossyButton(
+              label: 'Try Again',
+              icon: Icons.refresh,
+              onPressed: () => ref.invalidate(userTripsProvider),
             ),
           ],
         ),

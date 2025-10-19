@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_access.dart';
 
 /// Premium confetti animation for celebrations
 ///
@@ -62,6 +63,7 @@ class _ConfettiAnimationState extends State<ConfettiAnimation>
 
   void _generateParticles() {
     _particles.clear();
+    // Get theme data in initState - store it for later use
     for (int i = 0; i < widget.particleCount; i++) {
       _particles.add(ConfettiParticle(
         color: _getRandomColor(),
@@ -78,7 +80,6 @@ class _ConfettiAnimationState extends State<ConfettiAnimation>
 
   Color _getRandomColor() {
     final colors = [
-      AppTheme.primaryTeal,
       AppTheme.accentCoral,
       AppTheme.accentGold,
       AppTheme.accentPurple,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/premium_header.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../providers/auth_providers.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
@@ -102,23 +105,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final themeData = context.appThemeData;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Gradient (Sunset variant for differentiation)
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppTheme.primaryTeal,
-                  AppTheme.accentPurple,
-                ],
-              ),
-            ),
-          ),
+      body: MeshGradientBackground(
+        intensity: 0.8,
+        child: Stack(
+          children: [
 
           // Decorative Circles
           Positioned(
@@ -317,14 +310,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                               padding: const EdgeInsets.all(
                                                   AppTheme.spacingXs),
                                               decoration: BoxDecoration(
-                                                color: AppTheme.primaryPale,
+                                                color: themeData.primaryColor.withValues(alpha: 0.1),
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         AppTheme.radiusSm),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.email_outlined,
-                                                color: AppTheme.primaryTeal,
+                                                color: themeData.primaryColor,
                                                 size: 20,
                                               ),
                                             ),
@@ -377,14 +370,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                               padding: const EdgeInsets.all(
                                                   AppTheme.spacingXs),
                                               decoration: BoxDecoration(
-                                                color: AppTheme.primaryPale,
+                                                color: themeData.primaryColor.withValues(alpha: 0.1),
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         AppTheme.radiusSm),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.lock_outlined,
-                                                color: AppTheme.primaryTeal,
+                                                color: themeData.primaryColor,
                                                 size: 20,
                                               ),
                                             ),
@@ -423,14 +416,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                               padding: const EdgeInsets.all(
                                                   AppTheme.spacingXs),
                                               decoration: BoxDecoration(
-                                                color: AppTheme.primaryPale,
+                                                color: themeData.primaryColor.withValues(alpha: 0.1),
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         AppTheme.radiusSm),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.lock_outlined,
-                                                color: AppTheme.primaryTeal,
+                                                color: themeData.primaryColor,
                                                 size: 20,
                                               ),
                                             ),
@@ -461,63 +454,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                         const SizedBox(height: AppTheme.spacingLg),
 
                                         // Sign Up Button with Gradient
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.centerLeft,
-                                              end: Alignment.centerRight,
-                                              colors: [
-                                                AppTheme.primaryTeal,
-                                                AppTheme.accentPurple,
-                                              ],
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                                AppTheme.radiusMd),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: AppTheme.accentPurple
-                                                    .withValues(alpha: 0.3),
-                                                offset: const Offset(0, 8),
-                                                blurRadius: 24,
-                                                spreadRadius: -4,
-                                              ),
-                                            ],
-                                          ),
-                                          child: ElevatedButton(
-                                            onPressed: authState.isLoading
-                                                ? null
-                                                : _handleSignUp,
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.transparent,
-                                              shadowColor: Colors.transparent,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: AppTheme.spacingMd),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    AppTheme.radiusMd),
-                                              ),
-                                            ),
-                                            child: authState.isLoading
-                                                ? const SizedBox(
-                                                    height: 20,
-                                                    width: 20,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                : Text(
-                                                    'Create Account',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelLarge
-                                                        ?.copyWith(
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                        ),
-                                                  ),
-                                          ),
+                                        GlossyButton(
+                                          label: 'Create Account',
+                                          onPressed: authState.isLoading ? null : _handleSignUp,
+                                          isLoading: authState.isLoading,
                                         ),
                                         const SizedBox(height: AppTheme.spacingMd),
 
@@ -549,7 +489,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
               ],
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

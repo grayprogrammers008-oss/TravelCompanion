@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/premium_form_fields.dart';
-import '../../../../core/widgets/gradient_backgrounds.dart';
-import '../../../../core/widgets/animated_button.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/confetti_animation.dart';
 import '../providers/itinerary_providers.dart';
 
@@ -183,31 +184,33 @@ class _AddEditItineraryItemPageNewState
 
     // Show loading while fetching existing item
     if (isEdit && !_isInitialized) {
+      final themeData = context.appThemeData;
       return Scaffold(
         backgroundColor: AppTheme.neutral50,
         appBar: AppBar(
           title: const Text('Loading...'),
-          backgroundColor: AppTheme.primaryTeal,
+          backgroundColor: themeData.primaryColor,
           foregroundColor: Colors.white,
         ),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(
-            color: AppTheme.primaryTeal,
+            color: themeData.primaryColor,
           ),
         ),
       );
     }
 
+    final themeData = context.appThemeData;
+
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
         title: Text(isEdit ? 'Edit Activity' : 'Add Activity'),
-        backgroundColor: AppTheme.primaryTeal,
+        backgroundColor: themeData.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: MeshGradientBackground(
-        opacity: 0.12,
+      body: WaveGradientBackground(
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -222,9 +225,9 @@ class _AddEditItineraryItemPageNewState
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingLg),
                       decoration: BoxDecoration(
-                        gradient: AppTheme.primaryGradient,
+                        gradient: themeData.primaryGradient,
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        boxShadow: AppTheme.shadowTeal,
+                        boxShadow: themeData.primaryShadow,
                       ),
                       child: Column(
                         children: [
@@ -418,40 +421,11 @@ class _AddEditItineraryItemPageNewState
                   // Save Button
                   FadeSlideAnimation(
                     delay: AppAnimations.staggerSmall * 6,
-                    child: AnimatedButton(
+                    child: GlossyButton(
+                      label: isEdit ? 'Update Activity' : 'Add Activity',
+                      icon: isEdit ? Icons.check : Icons.add,
                       onPressed: _isLoading ? null : _saveItem,
-                      gradient: AppTheme.primaryGradient,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppTheme.spacingMd + 4,
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  isEdit ? Icons.check : Icons.add,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                Text(
-                                  isEdit ? 'Update Activity' : 'Add Activity',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
+                      isLoading: _isLoading,
                     ),
                   ),
 

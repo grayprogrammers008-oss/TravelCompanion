@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
+import '../../../../core/animations/animation_constants.dart';
+import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../shared/models/expense_model.dart';
 import '../providers/expense_providers.dart';
@@ -19,6 +23,8 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expenses'),
@@ -71,10 +77,47 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         ],
       ),
       body: _buildExpenseList(),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/expenses/add'),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Expense'),
+      floatingActionButton: ScaleAnimation(
+        duration: AppAnimations.slow,
+        curve: AppAnimations.spring,
+        child: AnimatedScaleButton(
+          onTap: () => context.push('/expenses/add'),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: themeData.glossyGradient,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              boxShadow: themeData.glossyShadow,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.2),
+                    Colors.white.withValues(alpha: 0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: null, // Handled by AnimatedScaleButton
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                icon: const Icon(Icons.add, color: Colors.white, size: 24),
+                label: const Text(
+                  'Add Expense',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

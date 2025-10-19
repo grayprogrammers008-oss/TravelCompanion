@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_access.dart';
 
 /// Animated gradient background with wave effect
 class AnimatedGradientBackground extends StatefulWidget {
@@ -53,9 +54,10 @@ class _AnimatedGradientBackgroundState
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     final colors = widget.colors ??
         [
-          AppTheme.primaryTeal,
+          themeData.primaryColor,
           AppTheme.accentPurple,
           AppTheme.accentCoral,
         ];
@@ -98,10 +100,11 @@ class MeshGradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     final defaultGradients = [
-      [AppTheme.primaryTeal, AppTheme.accentPurple],
+      [themeData.primaryColor, AppTheme.accentPurple],
       [AppTheme.accentCoral, AppTheme.accentGold],
-      [AppTheme.accentOrange, AppTheme.primaryTeal],
+      [AppTheme.accentOrange, themeData.primaryColor],
     ];
 
     final usedGradients = gradients ?? defaultGradients;
@@ -166,6 +169,7 @@ class GlassmorphicBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return Container(
       decoration: BoxDecoration(
         gradient: gradient ??
@@ -173,7 +177,7 @@ class GlassmorphicBackground extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                AppTheme.primaryTeal.withValues(alpha: 0.1),
+                themeData.primaryColor.withValues(alpha: 0.1),
                 AppTheme.accentPurple.withValues(alpha: 0.05),
               ],
             ),
@@ -245,9 +249,10 @@ class _FloatingCirclesBackgroundState extends State<FloatingCirclesBackground>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     final colors = widget.colors ??
         [
-          AppTheme.primaryTeal.withValues(alpha: 0.1),
+          themeData.primaryColor.withValues(alpha: 0.1),
           AppTheme.accentCoral.withValues(alpha: 0.1),
           AppTheme.accentPurple.withValues(alpha: 0.1),
           AppTheme.accentGold.withValues(alpha: 0.1),
@@ -334,6 +339,7 @@ class _WaveBackgroundState extends State<WaveBackground>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return Stack(
       children: [
         Container(color: AppTheme.neutral50),
@@ -343,7 +349,7 @@ class _WaveBackgroundState extends State<WaveBackground>
             return CustomPaint(
               painter: WavePainter(
                 animation: _animation.value,
-                waveColor: widget.waveColor ?? AppTheme.primaryTeal.withValues(alpha: 0.1),
+                waveColor: widget.waveColor ?? themeData.primaryColor.withValues(alpha: 0.1),
               ),
               size: Size(MediaQuery.of(context).size.width, widget.height),
             );

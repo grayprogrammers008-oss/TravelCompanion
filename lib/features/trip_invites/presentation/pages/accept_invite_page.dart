@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
+import '../../../../core/widgets/premium_header.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/invite_providers.dart';
@@ -118,34 +121,38 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
   Widget build(BuildContext context) {
     final inviteAsync = ref.watch(inviteByCodeProvider(widget.inviteCode));
     final currentUser = ref.watch(currentUserProvider).value;
+    final themeData = context.appThemeData;
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
-      body: inviteAsync.when(
-        data: (invite) {
+      body: MeshGradientBackground(
+        intensity: 0.5,
+        child: inviteAsync.when(
+          data: (invite) {
           if (invite == null) {
-            return _buildInvalidInvite();
+            return _buildInvalidInvite(themeData);
           }
 
           // Check if invite is expired
           if (invite.isExpired) {
-            return _buildExpiredInvite();
+            return _buildExpiredInvite(themeData);
           }
 
           // Check if invite is not pending
           if (invite.status != 'pending') {
-            return _buildUsedInvite(invite.status);
+            return _buildUsedInvite(invite.status, themeData);
           }
 
-          return _buildInviteContent(invite, currentUser?.id ?? '');
-        },
-        loading: () => _buildLoading(),
-        error: (error, stack) => _buildError(error.toString()),
+            return _buildInviteContent(invite, currentUser?.id ?? '', themeData);
+          },
+          loading: () => _buildLoading(themeData),
+          error: (error, stack) => _buildError(error.toString(), themeData),
+        ),
       ),
     );
   }
 
-  Widget _buildInviteContent(dynamic invite, String userId) {
+  Widget _buildInviteContent(dynamic invite, String userId, dynamic themeData) {
     final inviteState = ref.watch(inviteControllerProvider);
     return SafeArea(
       child: CustomScrollView(
@@ -156,7 +163,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
             floating: false,
             pinned: true,
             stretch: true,
-            backgroundColor: AppTheme.primaryTeal,
+            backgroundColor: themeData.primaryColor,
             foregroundColor: Colors.white,
             flexibleSpace: FlexibleSpaceBar(
               title: const Text(
@@ -211,21 +218,21 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
                   // Welcome Card
                   FadeSlideAnimation(
                     delay: Duration.zero,
-                    child: _buildWelcomeCard(invite),
+                    child: _buildWelcomeCard(invite, themeData),
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
                   // Invite Details
                   FadeSlideAnimation(
                     delay: AppAnimations.staggerSmall,
-                    child: _buildInviteDetails(invite),
+                    child: _buildInviteDetails(invite, themeData),
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
                   // Action Buttons
                   FadeSlideAnimation(
                     delay: AppAnimations.staggerSmall * 2,
-                    child: _buildActionButtons(userId, invite.tripId),
+                    child: _buildActionButtons(userId, invite.tripId, themeData),
                   ),
 
                   // Error Display
@@ -244,7 +251,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
     );
   }
 
-  Widget _buildWelcomeCard(dynamic invite) {
+  Widget _buildWelcomeCard(dynamic invite, dynamic themeData) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -288,7 +295,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
     );
   }
 
-  Widget _buildInviteDetails(dynamic invite) {
+  Widget _buildInviteDetails(dynamic invite, dynamic themeData) {
     final daysUntilExpiry = invite.expiresAt.difference(DateTime.now()).inDays;
 
     return Container(
@@ -330,8 +337,8 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
           // Invite Code
           _buildDetailRow(
             icon: Icons.qr_code,
-            iconColor: AppTheme.primaryTeal,
-            iconBg: AppTheme.primaryPale,
+            iconColor: themeData.primaryColor,
+            iconBg: themeData.primaryColor.withValues(alpha: 0.1),
             label: 'Invite Code',
             value: invite.inviteCode,
           ),
@@ -410,94 +417,47 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
     );
   }
 
-  Widget _buildActionButtons(String userId, String tripId) {
+  Widget _buildActionButtons(String userId, String tripId, dynamic themeData) {
     return Column(
       children: [
         // Accept Button
-        AnimatedScaleButton(
-          onTap: _isAccepting || _isDeclining
-              ? null
-              : () => _acceptInvite(userId, tripId),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              boxShadow: AppTheme.shadowTeal,
-            ),
-            child: ElevatedButton.icon(
-              onPressed: null, // Handled by AnimatedScaleButton
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppTheme.spacingMd,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                ),
-              ),
-              icon: _isAccepting
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : const Icon(Icons.check_circle, color: Colors.white),
-              label: Text(
-                _isAccepting ? 'Joining...' : 'Accept Invitation',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
+        GlossyButton(
+          label: 'Accept Invitation',
+          icon: Icons.check_circle,
+          onPressed: (_isAccepting || _isDeclining) ? null : () => _acceptInvite(userId, tripId),
+          isLoading: _isAccepting,
         ),
         const SizedBox(height: AppTheme.spacingMd),
 
         // Decline Button
-        AnimatedScaleButton(
-          onTap: _isAccepting || _isDeclining ? null : _declineInvite,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: AppTheme.neutral300, width: 2),
+        OutlinedButton.icon(
+          onPressed: (_isAccepting || _isDeclining) ? null : _declineInvite,
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingLg,
+              vertical: AppTheme.spacingMd,
+            ),
+            side: const BorderSide(color: AppTheme.neutral300, width: 2),
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-            child: ElevatedButton.icon(
-              onPressed: null, // Handled by AnimatedScaleButton
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppTheme.spacingMd,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                ),
-              ),
-              icon: _isDeclining
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppTheme.neutral600),
-                      ),
-                    )
-                  : const Icon(Icons.close, color: AppTheme.neutral600),
-              label: Text(
-                _isDeclining ? 'Declining...' : 'Decline',
-                style: const TextStyle(
-                  color: AppTheme.neutral600,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
+          ),
+          icon: _isDeclining
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppTheme.neutral600,
+                  ),
+                )
+              : const Icon(Icons.close, color: AppTheme.neutral600),
+          label: Text(
+            _isDeclining ? 'Declining...' : 'Decline',
+            style: const TextStyle(
+              color: AppTheme.neutral700,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -505,7 +465,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
     );
   }
 
-  Widget _buildLoading() {
+  Widget _buildLoading(dynamic themeData) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -514,9 +474,9 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
             child: Container(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
               decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
+                gradient: themeData.primaryGradient,
                 shape: BoxShape.circle,
-                boxShadow: AppTheme.shadowTeal,
+                boxShadow: themeData.primaryShadow,
               ),
               child: const Icon(
                 Icons.mail,
@@ -537,7 +497,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
     );
   }
 
-  Widget _buildInvalidInvite() {
+  Widget _buildInvalidInvite(dynamic themeData) {
     return _buildMessageScreen(
       icon: Icons.error_outline,
       iconColor: AppTheme.error,
@@ -545,10 +505,11 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
       message: 'This invitation code is not valid or has been removed.',
       actionLabel: 'Go Home',
       onAction: () => context.go('/'),
+      themeData: themeData,
     );
   }
 
-  Widget _buildExpiredInvite() {
+  Widget _buildExpiredInvite(dynamic themeData) {
     return _buildMessageScreen(
       icon: Icons.event_busy,
       iconColor: AppTheme.warning,
@@ -557,10 +518,11 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
           'This invitation has expired. Please ask for a new invitation link.',
       actionLabel: 'Go Home',
       onAction: () => context.go('/'),
+      themeData: themeData,
     );
   }
 
-  Widget _buildUsedInvite(String status) {
+  Widget _buildUsedInvite(String status, dynamic themeData) {
     return _buildMessageScreen(
       icon: status == 'accepted' ? Icons.check_circle : Icons.cancel,
       iconColor: status == 'accepted' ? AppTheme.success : AppTheme.error,
@@ -570,10 +532,11 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
           : 'This invitation was declined.',
       actionLabel: 'Go Home',
       onAction: () => context.go('/'),
+      themeData: themeData,
     );
   }
 
-  Widget _buildError(String error) {
+  Widget _buildError(String error, dynamic themeData) {
     return _buildMessageScreen(
       icon: Icons.error_outline,
       iconColor: AppTheme.error,
@@ -581,6 +544,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
       message: error,
       actionLabel: 'Try Again',
       onAction: () => ref.invalidate(inviteByCodeProvider(widget.inviteCode)),
+      themeData: themeData,
     );
   }
 
@@ -591,6 +555,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
     required String message,
     required String actionLabel,
     required VoidCallback onAction,
+    required dynamic themeData,
   }) {
     return Center(
       child: Padding(
@@ -638,33 +603,10 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
             const SizedBox(height: AppTheme.spacingXl),
             FadeSlideAnimation(
               delay: AppAnimations.staggerSmall * 3,
-              child: AnimatedScaleButton(
-                onTap: onAction,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    boxShadow: AppTheme.shadowTeal,
-                  ),
-                  child: ElevatedButton(
-                    onPressed: null, // Handled by AnimatedScaleButton
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingLg,
-                        vertical: AppTheme.spacingMd,
-                      ),
-                    ),
-                    child: Text(
-                      actionLabel,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+              child: GlossyButton(
+                label: actionLabel,
+                icon: Icons.arrow_forward,
+                onPressed: onAction,
               ),
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/validators.dart';
@@ -170,6 +171,7 @@ Let's make it an adventure! 🎉
   @override
   Widget build(BuildContext context) {
     final inviteState = ref.watch(inviteControllerProvider);
+    final themeData = context.appThemeData;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -209,7 +211,7 @@ Let's make it an adventure! 🎉
                         // Header with animation
                         FadeSlideAnimation(
                           delay: Duration.zero,
-                          child: _buildHeader(),
+                          child: _buildHeader(themeData),
                         ),
                         const SizedBox(height: AppTheme.spacingXl),
 
@@ -217,7 +219,7 @@ Let's make it an adventure! 🎉
                           // Email Field
                           FadeSlideAnimation(
                             delay: AppAnimations.staggerSmall,
-                            child: _buildEmailField(),
+                            child: _buildEmailField(themeData),
                           ),
                           const SizedBox(height: AppTheme.spacingMd),
 
@@ -231,27 +233,27 @@ Let's make it an adventure! 🎉
                           // Expiry Selection
                           FadeSlideAnimation(
                             delay: AppAnimations.staggerSmall * 3,
-                            child: _buildExpirySelection(),
+                            child: _buildExpirySelection(themeData),
                           ),
                           const SizedBox(height: AppTheme.spacingXl),
 
                           // Generate Button
                           FadeSlideAnimation(
                             delay: AppAnimations.staggerSmall * 4,
-                            child: _buildGenerateButton(inviteState),
+                            child: _buildGenerateButton(inviteState, themeData),
                           ),
                         ] else ...[
                           // Invite Generated Success
                           FadeSlideAnimation(
                             delay: Duration.zero,
-                            child: _buildInviteCodeCard(),
+                            child: _buildInviteCodeCard(themeData),
                           ),
                           const SizedBox(height: AppTheme.spacingMd),
 
                           // Action Buttons
                           FadeSlideAnimation(
                             delay: AppAnimations.staggerSmall,
-                            child: _buildActionButtons(),
+                            child: _buildActionButtons(themeData),
                           ),
                         ],
 
@@ -274,13 +276,13 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(dynamic themeData) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
+        gradient: themeData.primaryGradient,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: AppTheme.shadowTeal,
+        boxShadow: themeData.primaryShadow,
       ),
       child: Column(
         children: [
@@ -320,7 +322,7 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(dynamic themeData) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -332,7 +334,7 @@ Let's make it an adventure! 🎉
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: 'Email Address',
-          prefixIcon: const Icon(Icons.email, color: AppTheme.primaryTeal),
+          prefixIcon: Icon(Icons.email, color: themeData.primaryColor),
           hintText: 'friend@example.com',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -381,7 +383,7 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildExpirySelection() {
+  Widget _buildExpirySelection(dynamic themeData) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -421,11 +423,11 @@ Let's make it an adventure! 🎉
             spacing: AppTheme.spacingMd,
             runSpacing: AppTheme.spacingMd,
             children: [
-              _buildExpiryChip(1, '1 day'),
-              _buildExpiryChip(3, '3 days'),
-              _buildExpiryChip(7, '7 days'),
-              _buildExpiryChip(14, '14 days'),
-              _buildExpiryChip(30, '30 days'),
+              _buildExpiryChip(1, '1 day', themeData),
+              _buildExpiryChip(3, '3 days', themeData),
+              _buildExpiryChip(7, '7 days', themeData),
+              _buildExpiryChip(14, '14 days', themeData),
+              _buildExpiryChip(30, '30 days', themeData),
             ],
           ),
         ],
@@ -433,7 +435,7 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildExpiryChip(int days, String label) {
+  Widget _buildExpiryChip(int days, String label, dynamic themeData) {
     final isSelected = _expiryDays == days;
     return AnimatedScaleButton(
       onTap: () => setState(() => _expiryDays = days),
@@ -443,10 +445,10 @@ Let's make it an adventure! 🎉
           vertical: AppTheme.spacingMd,
         ),
         decoration: BoxDecoration(
-          gradient: isSelected ? AppTheme.primaryGradient : null,
+          gradient: isSelected ? themeData.primaryGradient : null,
           color: isSelected ? null : AppTheme.neutral100,
           borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-          boxShadow: isSelected ? AppTheme.shadowTeal : null,
+          boxShadow: isSelected ? themeData.primaryShadow : null,
         ),
         child: Text(
           label,
@@ -459,14 +461,14 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildGenerateButton(InviteState inviteState) {
+  Widget _buildGenerateButton(InviteState inviteState, dynamic themeData) {
     return AnimatedScaleButton(
       onTap: inviteState.isLoading ? null : _generateInvite,
       child: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: themeData.primaryGradient,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: AppTheme.shadowTeal,
+          boxShadow: themeData.primaryShadow,
         ),
         child: ElevatedButton(
           onPressed: null, // Handled by AnimatedScaleButton
@@ -508,7 +510,7 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildInviteCodeCard() {
+  Widget _buildInviteCodeCard(dynamic themeData) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -546,7 +548,7 @@ Let's make it an adventure! 🎉
               _generatedInviteCode ?? '',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryTeal,
+                    color: themeData.primaryColor,
                     letterSpacing: 4,
                   ),
             ),
@@ -563,7 +565,7 @@ Let's make it an adventure! 🎉
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(dynamic themeData) {
     return Column(
       children: [
         AnimatedScaleButton(
@@ -602,7 +604,7 @@ Let's make it an adventure! 🎉
           onTap: _copyToClipboard,
           child: Container(
             decoration: BoxDecoration(
-              border: Border.all(color: AppTheme.primaryTeal, width: 2),
+              border: Border.all(color: themeData.primaryColor, width: 2),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: ElevatedButton.icon(
@@ -617,11 +619,11 @@ Let's make it an adventure! 🎉
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
               ),
-              icon: const Icon(Icons.copy, color: AppTheme.primaryTeal),
-              label: const Text(
+              icon: Icon(Icons.copy, color: themeData.primaryColor),
+              label: Text(
                 'Copy Code',
                 style: TextStyle(
-                  color: AppTheme.primaryTeal,
+                  color: themeData.primaryColor,
                   fontWeight: FontWeight.w600,
                 ),
               ),

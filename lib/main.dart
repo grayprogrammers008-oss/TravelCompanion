@@ -10,6 +10,7 @@ import 'core/database/database_helper.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/theme/theme_access.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,21 +59,24 @@ class TravelCrewApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     final themeData = ref.watch(currentThemeDataProvider);
 
-    return MaterialApp.router(
-      title: AppConstants.appName,
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
-      theme: themeData.toThemeData(),
-      // Premium scrolling physics
-      builder: (context, child) {
-        return ScrollConfiguration(
-          behavior: const MaterialScrollBehavior().copyWith(
-            physics: const BouncingScrollPhysics(),
-            scrollbars: false,
-          ),
-          child: child!,
-        );
-      },
+    return AppThemeProvider(
+      themeData: themeData,
+      child: MaterialApp.router(
+        title: AppConstants.appName,
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: themeData.toThemeData(),
+        // Premium scrolling physics
+        builder: (context, child) {
+          return ScrollConfiguration(
+            behavior: const MaterialScrollBehavior().copyWith(
+              physics: const BouncingScrollPhysics(),
+              scrollbars: false,
+            ),
+            child: child!,
+          );
+        },
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_access.dart';
 
 /// Premium glassmorphic card with frosted glass effect
 ///
@@ -119,6 +120,7 @@ class _GlossyCardState extends State<GlossyCard>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -130,7 +132,7 @@ class _GlossyCardState extends State<GlossyCard>
             ..scale(_isHovered ? 1.02 : 1.0),
           child: Container(
             decoration: BoxDecoration(
-              gradient: widget.gradient ?? AppTheme.primaryGradient,
+              gradient: widget.gradient ?? themeData.primaryGradient,
               borderRadius: widget.borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
               boxShadow: _isHovered ? AppTheme.shadowXl : AppTheme.shadowLg,
             ),
@@ -237,6 +239,7 @@ class _FloatingCardState extends State<FloatingCard>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return AnimatedBuilder(
       animation: _floatAnimation,
       builder: (context, child) {
@@ -252,7 +255,7 @@ class _FloatingCardState extends State<FloatingCard>
                     BorderRadius.circular(AppTheme.radiusXl),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryTeal.withOpacity(0.1 + (_floatAnimation.value / 80)),
+                    color: themeData.primaryColor.withOpacity(0.1 + (_floatAnimation.value / 80)),
                     blurRadius: widget.elevation + _floatAnimation.value,
                     offset: Offset(0, widget.elevation / 2 + _floatAnimation.value / 2),
                   ),
@@ -348,11 +351,12 @@ class GradientBorderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return Container(
       decoration: BoxDecoration(
-        gradient: borderGradient ?? AppTheme.primaryGradient,
+        gradient: borderGradient ?? themeData.primaryGradient,
         borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: AppTheme.shadowTeal,
+        boxShadow: themeData.primaryShadow,
       ),
       child: Container(
         margin: EdgeInsets.all(borderWidth),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_access.dart';
 
 /// Premium animated text field with glassmorphic design
 class PremiumTextField extends StatefulWidget {
@@ -98,6 +99,7 @@ class _PremiumTextFieldState extends State<PremiumTextField>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -108,7 +110,7 @@ class _PremiumTextFieldState extends State<PremiumTextField>
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryTeal.withValues(
+                  color: themeData.primaryColor.withValues(
                     alpha: 0.2 * _glowAnimation.value,
                   ),
                   blurRadius: 12 * _glowAnimation.value,
@@ -139,7 +141,7 @@ class _PremiumTextFieldState extends State<PremiumTextField>
                     ? Icon(
                         widget.prefixIcon,
                         color: _isFocused
-                            ? AppTheme.primaryTeal
+                            ? themeData.primaryColor
                             : AppTheme.neutral400,
                       )
                     : null,
@@ -162,8 +164,8 @@ class _PremiumTextFieldState extends State<PremiumTextField>
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppTheme.primaryTeal,
+                  borderSide: BorderSide(
+                    color: themeData.primaryColor,
                     width: 2.0,
                   ),
                 ),
@@ -247,6 +249,7 @@ class _PremiumDropdownState<T> extends State<PremiumDropdown<T>>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -263,7 +266,7 @@ class _PremiumDropdownState<T> extends State<PremiumDropdown<T>>
               prefixIcon: widget.prefixIcon != null
                   ? Icon(
                       widget.prefixIcon,
-                      color: AppTheme.primaryTeal,
+                      color: themeData.primaryColor,
                     )
                   : null,
               filled: true,
@@ -284,8 +287,8 @@ class _PremiumDropdownState<T> extends State<PremiumDropdown<T>>
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: const BorderSide(
-                  color: AppTheme.primaryTeal,
+                borderSide: BorderSide(
+                  color: themeData.primaryColor,
                   width: 2.0,
                 ),
               ),
@@ -296,7 +299,7 @@ class _PremiumDropdownState<T> extends State<PremiumDropdown<T>>
             ),
             dropdownColor: Colors.white,
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.primaryTeal),
+            icon: Icon(Icons.keyboard_arrow_down, color: themeData.primaryColor),
           ),
         );
       },
@@ -350,6 +353,7 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
   }
 
   Future<void> _selectDate() async {
+    final themeData = context.appThemeData;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: widget.selectedDate ?? DateTime.now(),
@@ -358,8 +362,8 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryTeal,
+            colorScheme: ColorScheme.light(
+              primary: themeData.primaryColor,
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: AppTheme.neutral900,
@@ -380,14 +384,15 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
   }
 
   Future<void> _selectTime() async {
+    final themeData = context.appThemeData;
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: widget.selectedTime ?? TimeOfDay.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryTeal,
+            colorScheme: ColorScheme.light(
+              primary: themeData.primaryColor,
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: AppTheme.neutral900,
@@ -405,6 +410,7 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return InkWell(
       onTap: widget.pickDate ? _selectDate : _selectTime,
       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -412,9 +418,9 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
         decoration: InputDecoration(
           labelText: widget.labelText,
           prefixIcon: widget.prefixIcon != null
-              ? Icon(widget.prefixIcon, color: AppTheme.primaryTeal)
+              ? Icon(widget.prefixIcon, color: themeData.primaryColor)
               : null,
-          suffixIcon: const Icon(Icons.calendar_today, color: AppTheme.primaryTeal),
+          suffixIcon: Icon(Icons.calendar_today, color: themeData.primaryColor),
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(
@@ -511,6 +517,7 @@ class _PremiumCheckboxState extends State<PremiumCheckbox>
 
   @override
   Widget build(BuildContext context) {
+    final themeData = context.appThemeData;
     return InkWell(
       onTap: () => widget.onChanged(!widget.value),
       borderRadius: BorderRadius.circular(AppTheme.radiusXs),
@@ -527,7 +534,7 @@ class _PremiumCheckboxState extends State<PremiumCheckbox>
                   child: Checkbox(
                     value: widget.value,
                     onChanged: widget.onChanged,
-                    activeColor: widget.activeColor ?? AppTheme.primaryTeal,
+                    activeColor: widget.activeColor ?? themeData.primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                     ),

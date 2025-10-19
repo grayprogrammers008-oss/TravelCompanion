@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/premium_header.dart';
+import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../providers/auth_providers.dart';
 import 'signup_page.dart';
 
@@ -91,46 +94,42 @@ class _LoginPageState extends ConsumerState<LoginPage>
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final themeData = context.appThemeData;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Gradient
-          Container(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-            ),
-          ),
-
-          // Decorative Circles
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.1),
+      body: MeshGradientBackground(
+        intensity: 0.8,
+        child: Stack(
+          children: [
+            // Decorative Circles
+            Positioned(
+              top: -100,
+              right: -100,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.1),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: -150,
-            left: -150,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.05),
+            Positioned(
+              bottom: -150,
+              left: -150,
+              child: Container(
+                width: 400,
+                height: 400,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
               ),
             ),
-          ),
 
-          // Content
-          SafeArea(
-            child: Center(
+            // Content
+            SafeArea(
+              child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppTheme.spacingLg),
                 child: FadeTransition(
@@ -162,10 +161,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.airplanemode_active,
                                   size: 48,
-                                  color: AppTheme.primaryTeal,
+                                  color: themeData.primaryColor,
                                 ),
                               ),
                               const SizedBox(height: AppTheme.spacingLg),
@@ -177,7 +176,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                     .textTheme
                                     .displaySmall
                                     ?.copyWith(
-                                      color: Colors.white,
+                                      color: themeData.primaryColor,
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: -0.5,
                                     ),
@@ -192,7 +191,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                     .textTheme
                                     .bodyLarge
                                     ?.copyWith(
-                                      color: Colors.white.withValues(alpha: 0.9),
+                                      color: AppTheme.neutral700,
                                       letterSpacing: 0.5,
                                     ),
                                 textAlign: TextAlign.center,
@@ -263,13 +262,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                         padding: const EdgeInsets.all(
                                             AppTheme.spacingXs),
                                         decoration: BoxDecoration(
-                                          color: AppTheme.primaryPale,
+                                          color: themeData.primaryColor.withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(
                                               AppTheme.radiusSm),
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.email_outlined,
-                                          color: AppTheme.primaryTeal,
+                                          color: themeData.primaryColor,
                                           size: 20,
                                         ),
                                       ),
@@ -292,13 +291,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                         padding: const EdgeInsets.all(
                                             AppTheme.spacingXs),
                                         decoration: BoxDecoration(
-                                          color: AppTheme.primaryPale,
+                                          color: themeData.primaryColor.withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(
                                               AppTheme.radiusSm),
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.lock_outlined,
-                                          color: AppTheme.primaryTeal,
+                                          color: themeData.primaryColor,
                                           size: 20,
                                         ),
                                       ),
@@ -332,7 +331,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                               _showForgotPasswordDialog(context);
                                             },
                                       style: TextButton.styleFrom(
-                                        foregroundColor: AppTheme.primaryTeal,
+                                        foregroundColor: themeData.primaryColor,
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: AppTheme.spacingSm,
                                           vertical: AppTheme.spacingXs,
@@ -344,7 +343,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                             .textTheme
                                             .labelLarge
                                             ?.copyWith(
-                                              color: AppTheme.primaryTeal,
+                                              color: themeData.primaryColor,
                                             ),
                                       ),
                                     ),
@@ -352,46 +351,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   const SizedBox(height: AppTheme.spacingLg),
 
                                   // Login Button with Gradient
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: AppTheme.primaryGradient,
-                                      borderRadius: BorderRadius.circular(
-                                          AppTheme.radiusMd),
-                                      boxShadow: AppTheme.shadowTeal,
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed:
-                                          authState.isLoading ? null : _handleLogin,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: AppTheme.spacingMd),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              AppTheme.radiusMd),
-                                        ),
-                                      ),
-                                      child: authState.isLoading
-                                          ? const SizedBox(
-                                              height: 20,
-                                              width: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : Text(
-                                              'Sign In',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelLarge
-                                                  ?.copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                  ),
-                                            ),
-                                    ),
+                                  GlossyButton(
+                                    label: 'Sign In',
+                                    onPressed: authState.isLoading ? null : _handleLogin,
+                                    isLoading: authState.isLoading,
                                   ),
                                 ],
                               ),
@@ -411,7 +374,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   .textTheme
                                   .bodyMedium
                                   ?.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.9),
+                                    color: AppTheme.neutral600,
                                   ),
                             ),
                             TextButton(
@@ -425,7 +388,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                       );
                                     },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
+                                foregroundColor: themeData.primaryColor,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppTheme.spacingSm,
                                 ),
@@ -436,7 +399,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                     .textTheme
                                     .labelLarge
                                     ?.copyWith(
-                                      color: Colors.white,
+                                      color: themeData.primaryColor,
                                       fontWeight: FontWeight.w700,
                                     ),
                               ),
@@ -449,8 +412,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                 ),
               ),
             ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -461,13 +425,15 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingXl),
-          child: Form(
+      builder: (dialogContext) {
+        final themeData = dialogContext.appThemeData;
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingXl),
+            child: Form(
             key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -477,13 +443,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
                 Container(
                   padding: const EdgeInsets.all(AppTheme.spacingMd),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryPale,
+                    color: themeData.primaryColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.lock_reset,
                     size: 32,
-                    color: AppTheme.primaryTeal,
+                    color: themeData.primaryColor,
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingLg),
@@ -520,12 +486,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       margin: const EdgeInsets.all(AppTheme.spacingSm),
                       padding: const EdgeInsets.all(AppTheme.spacingXs),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryPale,
+                        color: themeData.primaryColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.email_outlined,
-                        color: AppTheme.primaryTeal,
+                        color: themeData.primaryColor,
                         size: 20,
                       ),
                     ),
@@ -539,7 +505,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               vertical: AppTheme.spacingMd),
@@ -552,10 +518,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       flex: 2,
                       child: Container(
                         decoration: BoxDecoration(
-                          gradient: AppTheme.primaryGradient,
+                          gradient: themeData.primaryGradient,
                           borderRadius:
                               BorderRadius.circular(AppTheme.radiusMd),
-                          boxShadow: AppTheme.shadowTeal,
+                          boxShadow: themeData.primaryShadow,
                         ),
                         child: ElevatedButton(
                           onPressed: () async {
@@ -564,9 +530,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                 await ref
                                     .read(authControllerProvider.notifier)
                                     .resetPassword(emailController.text.trim());
-                                if (context.mounted) {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                if (dialogContext.mounted) {
+                                  Navigator.of(dialogContext).pop();
+                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
                                     SnackBar(
                                       content: const Text(
                                           'Password reset email sent! 📧'),
@@ -580,8 +546,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   );
                                 }
                               } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                if (dialogContext.mounted) {
+                                  ScaffoldMessenger.of(dialogContext).showSnackBar(
                                     SnackBar(
                                       content: Text(e.toString()),
                                       backgroundColor: AppTheme.error,
@@ -614,8 +580,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
               ],
             ),
           ),
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

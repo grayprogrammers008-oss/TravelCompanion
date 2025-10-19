@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
+import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../providers/itinerary_providers.dart';
@@ -17,6 +20,7 @@ class ItineraryListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final themeData = context.appThemeData;
     final itineraryAsync = ref.watch(itineraryByDaysProvider(tripId));
 
     // Listen for success/error messages
@@ -94,12 +98,46 @@ class ItineraryListPage extends ConsumerWidget {
           );
         },
       ),
-      floatingActionButton: FadeInAnimation(
-        delay: const Duration(milliseconds: 300),
-        child: FloatingActionButton.extended(
-          onPressed: () => _navigateToAddItem(context),
-          icon: const Icon(Icons.add),
-          label: const Text('Add Activity'),
+      floatingActionButton: ScaleAnimation(
+        duration: AppAnimations.slow,
+        curve: AppAnimations.spring,
+        child: AnimatedScaleButton(
+          onTap: () => _navigateToAddItem(context),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: themeData.glossyGradient,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              boxShadow: themeData.glossyShadow,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.2),
+                    Colors.white.withValues(alpha: 0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: null, // Handled by AnimatedScaleButton
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                icon: const Icon(Icons.add, color: Colors.white, size: 24),
+                label: const Text(
+                  'Add Activity',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
