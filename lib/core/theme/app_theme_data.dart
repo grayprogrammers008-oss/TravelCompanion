@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
-/// App theme variations with different color schemes
+/// App theme variations - Modern, glossy themes from global leaders
 enum AppThemeType {
-  tropicalTeal, // Original - Tropical paradise (Teal)
-  sunsetOrange, // Warm sunset vibes (Orange/Coral)
-  oceanBlue, // Deep ocean (Blue)
-  forestGreen, // Nature/Adventure (Green)
-  royalPurple, // Luxury (Purple)
-  cherryRed, // Passionate travel (Red/Pink)
+  midnight,     // Dark elegant (Apple-inspired)
+  ocean,        // Modern blue (Google-inspired)
+  sunset,       // Warm gradient (Instagram-inspired)
+  forest,       // Natural green (Spotify-inspired)
+  lavender,     // Soft purple (Notion-inspired)
+  rose,         // Elegant pink (Airbnb-inspired)
 }
 
 /// Theme data for each theme type
@@ -22,6 +22,7 @@ class AppThemeData {
   final LinearGradient primaryGradient;
   final List<BoxShadow> primaryShadow;
   final IconData icon;
+  final Color accentColor;
 
   const AppThemeData({
     required this.name,
@@ -33,171 +34,178 @@ class AppThemeData {
     required this.primaryGradient,
     required this.primaryShadow,
     required this.icon,
+    required this.accentColor,
   });
 
   /// Get theme data for a specific theme type
   static AppThemeData getThemeData(AppThemeType type) {
     switch (type) {
-      case AppThemeType.tropicalTeal:
-        return _tropicalTeal;
-      case AppThemeType.sunsetOrange:
-        return _sunsetOrange;
-      case AppThemeType.oceanBlue:
-        return _oceanBlue;
-      case AppThemeType.forestGreen:
-        return _forestGreen;
-      case AppThemeType.royalPurple:
-        return _royalPurple;
-      case AppThemeType.cherryRed:
-        return _cherryRed;
+      case AppThemeType.midnight:
+        return _midnight;
+      case AppThemeType.ocean:
+        return _ocean;
+      case AppThemeType.sunset:
+        return _sunset;
+      case AppThemeType.forest:
+        return _forest;
+      case AppThemeType.lavender:
+        return _lavender;
+      case AppThemeType.rose:
+        return _rose;
     }
   }
 
-  // Theme 1: Tropical Teal (Original)
-  static const AppThemeData _tropicalTeal = AppThemeData(
-    name: 'Tropical Teal',
-    description: 'Vibrant tropical waters and paradise beaches',
-    primaryColor: Color(0xFF00B8A9),
-    primaryDeep: Color(0xFF008C7D),
-    primaryLight: Color(0xFF4DD4C6),
-    primaryPale: Color(0xFFE0F7F5),
+  // Theme 1: Midnight - Dark Elegant (Apple-inspired)
+  static const AppThemeData _midnight = AppThemeData(
+    name: 'Midnight',
+    description: 'Elegant dark slate with premium feel',
+    primaryColor: Color(0xFF1E293B),
+    primaryDeep: Color(0xFF0F172A),
+    primaryLight: Color(0xFF475569),
+    primaryPale: Color(0xFFE2E8F0),
     primaryGradient: LinearGradient(
-      colors: [Color(0xFF00B8A9), Color(0xFF008C7D)],
+      colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x4D00B8A9), // 30% opacity
+        color: Color(0x401E293B),
         blurRadius: 24,
         spreadRadius: 0,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.waves,
+    icon: Icons.nightlight_round,
+    accentColor: Color(0xFF3B82F6),
   );
 
-  // Theme 2: Sunset Orange
-  static const AppThemeData _sunsetOrange = AppThemeData(
-    name: 'Sunset Orange',
-    description: 'Warm golden hour and tropical sunsets',
-    primaryColor: Color(0xFFFF8A65),
-    primaryDeep: Color(0xFFE64A19),
-    primaryLight: Color(0xFFFFAB91),
-    primaryPale: Color(0xFFFFE5DD),
+  // Theme 2: Ocean - Modern Blue (Google Material-inspired)
+  static const AppThemeData _ocean = AppThemeData(
+    name: 'Ocean',
+    description: 'Modern blue with clean aesthetics',
+    primaryColor: Color(0xFF0EA5E9),
+    primaryDeep: Color(0xFF0284C7),
+    primaryLight: Color(0xFF38BDF8),
+    primaryPale: Color(0xFFE0F2FE),
     primaryGradient: LinearGradient(
-      colors: [Color(0xFFFF8A65), Color(0xFFE64A19)],
+      colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x4DFF8A65),
+        color: Color(0x400EA5E9),
         blurRadius: 24,
         spreadRadius: 0,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.wb_sunny,
+    icon: Icons.water_drop,
+    accentColor: Color(0xFF06B6D4),
   );
 
-  // Theme 3: Ocean Blue
-  static const AppThemeData _oceanBlue = AppThemeData(
-    name: 'Ocean Blue',
-    description: 'Deep ocean depths and clear skies',
-    primaryColor: Color(0xFF1E88E5),
-    primaryDeep: Color(0xFF0D47A1),
-    primaryLight: Color(0xFF64B5F6),
-    primaryPale: Color(0xFFE3F2FD),
+  // Theme 3: Sunset - Warm Gradient (Instagram-inspired)
+  static const AppThemeData _sunset = AppThemeData(
+    name: 'Sunset',
+    description: 'Vibrant warm tones with energy',
+    primaryColor: Color(0xFFF97316),
+    primaryDeep: Color(0xFFEA580C),
+    primaryLight: Color(0xFFFB923C),
+    primaryPale: Color(0xFFFFEDD5),
     primaryGradient: LinearGradient(
-      colors: [Color(0xFF1E88E5), Color(0xFF0D47A1)],
+      colors: [Color(0xFFF97316), Color(0xFFEA580C)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x4D1E88E5),
+        color: Color(0x40F97316),
         blurRadius: 24,
         spreadRadius: 0,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.water,
+    icon: Icons.wb_twilight,
+    accentColor: Color(0xFFFBBF24),
   );
 
-  // Theme 4: Forest Green
-  static const AppThemeData _forestGreen = AppThemeData(
-    name: 'Forest Green',
-    description: 'Nature adventures and mountain escapes',
-    primaryColor: Color(0xFF43A047),
-    primaryDeep: Color(0xFF1B5E20),
-    primaryLight: Color(0xFF76D275),
-    primaryPale: Color(0xFFE8F5E9),
+  // Theme 4: Forest - Natural Green (Spotify-inspired)
+  static const AppThemeData _forest = AppThemeData(
+    name: 'Forest',
+    description: 'Fresh green with natural harmony',
+    primaryColor: Color(0xFF10B981),
+    primaryDeep: Color(0xFF059669),
+    primaryLight: Color(0xFF34D399),
+    primaryPale: Color(0xFFD1FAE5),
     primaryGradient: LinearGradient(
-      colors: [Color(0xFF43A047), Color(0xFF1B5E20)],
+      colors: [Color(0xFF10B981), Color(0xFF059669)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x4D43A047),
+        color: Color(0x4010B981),
         blurRadius: 24,
         spreadRadius: 0,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.forest,
+    icon: Icons.eco,
+    accentColor: Color(0xFF14B8A6),
   );
 
-  // Theme 5: Royal Purple
-  static const AppThemeData _royalPurple = AppThemeData(
-    name: 'Royal Purple',
-    description: 'Luxury travel and premium experiences',
-    primaryColor: Color(0xFF7E57C2),
-    primaryDeep: Color(0xFF4A148C),
-    primaryLight: Color(0xFF9575CD),
-    primaryPale: Color(0xFFF3E5F5),
+  // Theme 5: Lavender - Soft Purple (Notion-inspired)
+  static const AppThemeData _lavender = AppThemeData(
+    name: 'Lavender',
+    description: 'Calm purple with sophistication',
+    primaryColor: Color(0xFF8B5CF6),
+    primaryDeep: Color(0xFF7C3AED),
+    primaryLight: Color(0xFFA78BFA),
+    primaryPale: Color(0xFFEDE9FE),
     primaryGradient: LinearGradient(
-      colors: [Color(0xFF7E57C2), Color(0xFF4A148C)],
+      colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x4D7E57C2),
+        color: Color(0x408B5CF6),
         blurRadius: 24,
         spreadRadius: 0,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.diamond,
+    icon: Icons.auto_awesome,
+    accentColor: Color(0xFFC084FC),
   );
 
-  // Theme 6: Cherry Red
-  static const AppThemeData _cherryRed = AppThemeData(
-    name: 'Cherry Red',
-    description: 'Passionate wanderlust and vibrant journeys',
-    primaryColor: Color(0xFFE91E63),
-    primaryDeep: Color(0xFFC2185B),
-    primaryLight: Color(0xFFF06292),
-    primaryPale: Color(0xFFFCE4EC),
+  // Theme 6: Rose - Elegant Pink (Airbnb-inspired)
+  static const AppThemeData _rose = AppThemeData(
+    name: 'Rose',
+    description: 'Elegant rose with warmth',
+    primaryColor: Color(0xFFEC4899),
+    primaryDeep: Color(0xFFDB2777),
+    primaryLight: Color(0xFFF472B6),
+    primaryPale: Color(0xFFFCE7F3),
     primaryGradient: LinearGradient(
-      colors: [Color(0xFFE91E63), Color(0xFFC2185B)],
+      colors: [Color(0xFFEC4899), Color(0xFFDB2777)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x4DE91E63),
+        color: Color(0x40EC4899),
         blurRadius: 24,
         spreadRadius: 0,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.favorite,
+    icon: Icons.favorite_rounded,
+    accentColor: Color(0xFFF9A8D4),
   );
 
-  /// Generate Flutter ThemeData from AppThemeData
+  /// Generate Flutter ThemeData from AppThemeData with glassmorphism
   ThemeData toThemeData() {
     return ThemeData(
       useMaterial3: true,
@@ -207,11 +215,12 @@ class AppThemeData {
         primary: primaryColor,
         primaryContainer: primaryLight,
         onPrimary: Colors.white,
-        secondary: primaryDeep,
+        secondary: accentColor,
         secondaryContainer: primaryPale,
         surface: Colors.white,
         onSurface: AppTheme.neutral900,
         error: AppTheme.error,
+        tertiary: primaryDeep,
       ),
 
       // App Bar Theme
@@ -223,6 +232,10 @@ class AppThemeData {
         titleTextStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
+          color: Colors.white,
+          letterSpacing: -0.5,
+        ),
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
@@ -243,6 +256,7 @@ class AppThemeData {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
+            letterSpacing: -0.3,
           ),
         ),
       ),
@@ -324,6 +338,37 @@ class AppThemeData {
         ),
         type: BottomNavigationBarType.fixed,
         elevation: 8,
+      ),
+
+      // Chip Theme
+      chipTheme: ChipThemeData(
+        backgroundColor: primaryPale,
+        selectedColor: primaryColor,
+        disabledColor: AppTheme.neutral100,
+        labelStyle: TextStyle(
+          color: primaryDeep,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+        secondaryLabelStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingSm,
+          vertical: AppTheme.spacingXs,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        ),
+      ),
+
+      // Progress Indicator Theme
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: primaryColor,
+        linearTrackColor: primaryPale,
+        circularTrackColor: primaryPale,
       ),
 
       // Scaffold Background

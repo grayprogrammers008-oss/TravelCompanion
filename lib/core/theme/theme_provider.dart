@@ -13,7 +13,7 @@ class Theme extends _$Theme {
   AppThemeType build() {
     // Load saved theme asynchronously
     _loadTheme();
-    return AppThemeType.tropicalTeal; // Default theme
+    return AppThemeType.ocean; // Default theme - Ocean (Google-inspired)
   }
 
   /// Load saved theme from SharedPreferences
@@ -25,13 +25,13 @@ class Theme extends _$Theme {
       if (themeName != null) {
         final themeType = AppThemeType.values.firstWhere(
           (t) => t.name == themeName,
-          orElse: () => AppThemeType.tropicalTeal,
+          orElse: () => AppThemeType.ocean,
         );
         state = themeType;
       }
     } catch (e) {
       // If error loading theme, keep default
-      state = AppThemeType.tropicalTeal;
+      state = AppThemeType.ocean;
     }
   }
 

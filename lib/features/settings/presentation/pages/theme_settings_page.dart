@@ -13,13 +13,12 @@ class ThemeSettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(theme_provider.themeProvider);
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
         title: const Text('Theme Settings'),
-        backgroundColor: AppTheme.primaryTeal,
-        foregroundColor: Colors.white,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -33,13 +32,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingLg),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppTheme.primaryTeal, AppTheme.primaryDeep],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    gradient: themeData.primaryGradient,
                     borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                    boxShadow: AppTheme.shadowTeal,
+                    boxShadow: themeData.primaryShadow,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
