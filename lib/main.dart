@@ -9,6 +9,7 @@ import 'core/constants/app_constants.dart';
 import 'core/database/database_helper.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,12 +56,13 @@ class TravelCrewApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final themeData = ref.watch(currentThemeDataProvider);
 
     return MaterialApp.router(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      theme: AppTheme.lightTheme,
+      theme: themeData.toThemeData(),
       // Premium scrolling physics
       builder: (context, child) {
         return ScrollConfiguration(

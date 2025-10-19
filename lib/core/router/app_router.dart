@@ -11,6 +11,7 @@ import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
 import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
+import '../../features/settings/presentation/pages/theme_settings_page.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../presentation/main_scaffold.dart';
 
@@ -31,6 +32,7 @@ class AppRoutes {
   static const String itinerary = '/trips/:tripId/itinerary';
   static const String addItineraryItem = '/trips/:tripId/itinerary/add';
   static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
+  static const String themeSettings = '/settings/theme';
 }
 
 // Router provider with auth redirect
@@ -163,6 +165,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           final itemId = state.pathParameters['itemId']!;
           return AddEditItineraryItemPageNew(tripId: tripId, itemId: itemId);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.themeSettings,
+        name: 'themeSettings',
+        builder: (context, state) => const ThemeSettingsPage(),
       ),
     ],
     errorBuilder: (context, state) =>

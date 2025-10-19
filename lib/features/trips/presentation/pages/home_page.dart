@@ -465,6 +465,26 @@ class _HomePageState extends ConsumerState<HomePage>
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.palette_outlined,
+                    color: AppTheme.accentPurple,
+                  ),
+                ),
+                title: const Text('Theme'),
+                subtitle: const Text('Customize app colors'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/settings/theme');
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                  decoration: BoxDecoration(
                     color: AppTheme.neutral100,
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
