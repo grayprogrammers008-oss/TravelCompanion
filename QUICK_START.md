@@ -2,19 +2,12 @@
 
 ## ✅ What's Been Done
 
-### 1. Pre-filled Login Credentials
-The login page now comes with your credentials pre-filled:
-- **Email**: `vinothvsbe@gmail.com`
-- **Password**: `12345678`
-
-Just tap "Login" - no typing needed!
-
-### 2. Expense Testing Page Created
+### 1. Expense Testing Page Created
 A complete interactive testing page for expense CRUD operations:
 - **Route**: `/expenses/test`
 - **Location**: [lib/features/expenses/presentation/pages/expense_test_page.dart](lib/features/expenses/presentation/pages/expense_test_page.dart)
 
-### 3. App is Running
+### 2. App is Running
 The app is currently running on iPhone 17 Pro Max simulator.
 
 ---
@@ -62,7 +55,7 @@ ElevatedButton.icon(
 ## 📋 Test Workflow
 
 1. **Launch App** ✅ (Already running)
-2. **Login** - Credentials are pre-filled, just tap "Login"
+2. **Login** - Enter your credentials and tap "Login"
 3. **Navigate** to test page using one of the options above
 4. **Click "Run All Tests"**
 5. **Watch the console** for results
