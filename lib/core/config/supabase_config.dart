@@ -29,7 +29,7 @@ class SupabaseConfig {
   /// Mailgun API Configuration for Email Invites
   static const String mailgunApiKey = String.fromEnvironment(
     'MAILGUN_API_KEY',
-    defaultValue: 'a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0',
+    defaultValue: 'f6beec82ebcca0b6836ed84eb209c4c8-5e1ffd43-9d8d601f',
   );
 
   static const String mailgunDomain = String.fromEnvironment(
