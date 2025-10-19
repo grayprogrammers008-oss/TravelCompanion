@@ -26,6 +26,22 @@ class SupabaseConfig {
         'YOUR_CLAUDE_API_KEY_HERE', // Replace with your Claude API key
   );
 
+  /// Mailgun API Configuration for Email Invites
+  static const String mailgunApiKey = String.fromEnvironment(
+    'MAILGUN_API_KEY',
+    defaultValue: 'a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0',
+  );
+
+  static const String mailgunDomain = String.fromEnvironment(
+    'MAILGUN_DOMAIN',
+    defaultValue: 'YOUR_MAILGUN_DOMAIN_HERE', // e.g., mg.yourdomain.com
+  );
+
+  static const String mailgunFromEmail = String.fromEnvironment(
+    'MAILGUN_FROM_EMAIL',
+    defaultValue: 'Travel Crew <noreply@mg.yourdomain.com>',
+  );
+
   /// Validate configuration
   static void validateConfig() {
     if (supabaseUrl.contains('YOUR_SUPABASE') ||
@@ -33,6 +49,13 @@ class SupabaseConfig {
       if (kDebugMode) {
         print('⚠️ Warning: Supabase credentials not configured!');
         print('Please update lib/core/config/supabase_config.dart');
+      }
+    }
+
+    if (mailgunDomain.contains('YOUR_MAILGUN')) {
+      if (kDebugMode) {
+        print('⚠️ Warning: Mailgun domain not configured!');
+        print('Email invites will not work until Mailgun is configured.');
       }
     }
   }
