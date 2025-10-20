@@ -96,7 +96,7 @@ After running the script, verify the data was created:
 ```sql
 SELECT id, name, destination, start_date, end_date, status
 FROM trips
-WHERE created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com')
+WHERE created_by = (SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com')
 ORDER BY start_date;
 ```
 
@@ -109,7 +109,7 @@ ORDER BY start_date;
 SELECT e.id, e.title, e.amount, e.category, t.name as trip_name
 FROM expenses e
 LEFT JOIN trips t ON e.trip_id = t.id
-WHERE e.paid_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com')
+WHERE e.paid_by = (SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com')
 ORDER BY e.transaction_date DESC;
 ```
 
@@ -123,7 +123,7 @@ SELECT c.title, COUNT(ci.id) as items_count,
        SUM(CASE WHEN ci.is_completed THEN 1 ELSE 0 END) as completed_count
 FROM checklists c
 LEFT JOIN checklist_items ci ON c.id = ci.checklist_id
-WHERE c.created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com')
+WHERE c.created_by = (SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com')
 GROUP BY c.id, c.title;
 ```
 
@@ -135,7 +135,7 @@ GROUP BY c.id, c.title;
 
 After running the SQL script:
 
-1. **Login** as `NithyaGanesan53@gmail.com`
+1. **Login** as `nithyaganesan53@gmail.com`
 2. **Home Page** - Should show 3 trips
 3. **Expenses Tab** - Should show 6 expenses
 4. **Goa Trip Details** - Should show:
@@ -226,7 +226,7 @@ If you prefer SQL commands directly:
 DO $$
 DECLARE nithya_id UUID;
 BEGIN
-    SELECT id INTO nithya_id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com';
+    SELECT id INTO nithya_id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com';
 
     DELETE FROM checklist_items WHERE created_by = nithya_id;
     DELETE FROM checklists WHERE created_by = nithya_id;
@@ -246,7 +246,7 @@ Then run the dummy data script again.
 
 ## 🆘 Troubleshooting
 
-### Error: "User NithyaGanesan53@gmail.com not found"
+### Error: "User nithyaganesan53@gmail.com not found"
 **Solution**: Make sure Nithya's account exists. Sign up in the app first.
 
 ### Error: "violates foreign key constraint"
@@ -283,4 +283,4 @@ Then run the dummy data script again.
 ---
 
 _Last Updated: October 20, 2025_
-_Created for: NithyaGanesan53@gmail.com testing_
+_Created for: nithyaganesan53@gmail.com testing_

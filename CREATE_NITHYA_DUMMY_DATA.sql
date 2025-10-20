@@ -1,12 +1,12 @@
 -- ============================================================================
--- DUMMY DATA FOR NITHYA GANESAN (NithyaGanesan53@gmail.com)
+-- DUMMY DATA FOR NITHYA GANESAN (nithyaganesan53@gmail.com)
 -- ============================================================================
 -- This script creates sample trips, expenses, itinerary items, and checklists
 -- for testing the Travel Companion app
 -- ============================================================================
 
 -- Get Nithya's user ID (replace with actual ID from your database)
--- You'll need to run: SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com';
+-- You'll need to run: SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com';
 -- Then replace 'NITHYA_USER_ID' below with the actual UUID
 
 -- For now, let's use a variable approach
@@ -24,12 +24,12 @@ DECLARE
     checklist2_id UUID;
 BEGIN
     -- Get user IDs
-    SELECT id INTO nithya_user_id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com';
+    SELECT id INTO nithya_user_id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com';
     SELECT id INTO vinoth_user_id FROM auth.users WHERE email = 'vinothvsbe@gmail.com';
 
     -- Check if Nithya's account exists
     IF nithya_user_id IS NULL THEN
-        RAISE NOTICE 'User NithyaGanesan53@gmail.com not found. Please create the account first.';
+        RAISE NOTICE 'User nithyaganesan53@gmail.com not found. Please create the account first.';
         RETURN;
     END IF;
 
@@ -244,16 +244,16 @@ END $$;
 -- Run these to verify the data was created:
 
 -- Check trips
--- SELECT id, name, destination, start_date, end_date, status
+-- SELECT id, name, destination, start_date, end_date
 -- FROM trips
--- WHERE created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com')
+-- WHERE created_by = (SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com')
 -- ORDER BY start_date;
 
 -- Check expenses
 -- SELECT e.id, e.title, e.amount, e.category, t.name as trip_name
 -- FROM expenses e
 -- LEFT JOIN trips t ON e.trip_id = t.id
--- WHERE e.paid_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com')
+-- WHERE e.paid_by = (SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com')
 -- ORDER BY e.transaction_date DESC;
 
 -- Check checklists
@@ -261,5 +261,5 @@ END $$;
 --        SUM(CASE WHEN ci.is_completed THEN 1 ELSE 0 END) as completed_count
 -- FROM checklists c
 -- LEFT JOIN checklist_items ci ON c.id = ci.checklist_id
--- WHERE c.created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com')
+-- WHERE c.created_by = (SELECT id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com')
 -- GROUP BY c.id, c.title;

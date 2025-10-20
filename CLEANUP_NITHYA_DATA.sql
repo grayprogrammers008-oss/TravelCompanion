@@ -1,7 +1,7 @@
 -- ============================================================================
 -- CLEANUP SCRIPT FOR NITHYA'S DUMMY DATA
 -- ============================================================================
--- This script removes all dummy data for NithyaGanesan53@gmail.com
+-- This script removes all dummy data for nithyaganesan53@gmail.com
 -- Run this BEFORE running CREATE_NITHYA_DUMMY_DATA.sql if you need to reset
 -- ============================================================================
 
@@ -11,11 +11,11 @@ DECLARE
     deleted_count INTEGER;
 BEGIN
     -- Get Nithya's user ID
-    SELECT id INTO nithya_user_id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com';
+    SELECT id INTO nithya_user_id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com';
 
     -- Check if Nithya's account exists
     IF nithya_user_id IS NULL THEN
-        RAISE NOTICE 'User NithyaGanesan53@gmail.com not found. Nothing to cleanup.';
+        RAISE NOTICE 'User nithyaganesan53@gmail.com not found. Nothing to cleanup.';
         RETURN;
     END IF;
 
@@ -67,7 +67,7 @@ BEGIN
 
     RAISE NOTICE '';
     RAISE NOTICE '✅ Cleanup completed successfully!';
-    RAISE NOTICE '   All dummy data for NithyaGanesan53@gmail.com has been removed.';
+    RAISE NOTICE '   All dummy data for nithyaganesan53@gmail.com has been removed.';
     RAISE NOTICE '   You can now run CREATE_NITHYA_DUMMY_DATA.sql to add fresh data.';
 
 END $$;

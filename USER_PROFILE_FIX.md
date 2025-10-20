@@ -8,7 +8,7 @@
 
 ## 🐛 Problem
 
-When logging in as `NithyaGanesan53@gmail.com` with username "Nithya", the app was still showing the previous user's name ("vinothvsbe") instead of the correct current user.
+When logging in as `nithyaganesan53@gmail.com` with username "Nithya", the app was still showing the previous user's name ("vinothvsbe") instead of the correct current user.
 
 ### Root Cause
 
@@ -138,19 +138,19 @@ By calling `ref.invalidate(currentUserProvider)`:
 ```
 1. Login as vinothvsbe@gmail.com → Shows "Vinoth"
 2. Logout
-3. Login as NithyaGanesan53@gmail.com → Shows "Vinoth" ❌ (WRONG!)
+3. Login as nithyaganesan53@gmail.com → Shows "Vinoth" ❌ (WRONG!)
 ```
 
 ### After Fix:
 ```
 1. Login as vinothvsbe@gmail.com → Shows "Vinoth" ✅
 2. Logout
-3. Login as NithyaGanesan53@gmail.com → Shows "Nithya" ✅ (CORRECT!)
+3. Login as nithyaganesan53@gmail.com → Shows "Nithya" ✅ (CORRECT!)
 ```
 
 ### Hot Reload Test:
 ```
-1. Login as NithyaGanesan53@gmail.com
+1. Login as nithyaganesan53@gmail.com
 2. Hot reload (r) in terminal
 3. Should still show "Nithya" ✅
 ```
