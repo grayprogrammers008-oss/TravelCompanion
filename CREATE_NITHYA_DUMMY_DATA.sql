@@ -33,9 +33,12 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Check if dummy data already exists
-    IF EXISTS (SELECT 1 FROM trips WHERE created_by = nithya_user_id LIMIT 1) THEN
-        RAISE NOTICE '⚠️  WARNING: Nithya already has trip data in the database!';
+    -- Check if dummy data already exists (check multiple tables)
+    IF EXISTS (SELECT 1 FROM trips WHERE created_by = nithya_user_id LIMIT 1)
+       OR EXISTS (SELECT 1 FROM trip_members WHERE user_id = nithya_user_id LIMIT 1)
+       OR EXISTS (SELECT 1 FROM expenses WHERE paid_by = nithya_user_id LIMIT 1)
+       OR EXISTS (SELECT 1 FROM checklists WHERE created_by = nithya_user_id LIMIT 1) THEN
+        RAISE NOTICE '⚠️  WARNING: Nithya already has data in the database!';
         RAISE NOTICE '   To avoid duplicates, please run CLEANUP_NITHYA_DATA.sql first.';
         RAISE NOTICE '   Then run this script again.';
         RETURN;
