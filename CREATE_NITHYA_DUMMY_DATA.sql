@@ -82,47 +82,47 @@ BEGIN
     END IF;
 
     -- Itinerary for Goa Trip
-    INSERT INTO itinerary_items (id, trip_id, title, description, location, start_time, end_time, category, created_by)
+    INSERT INTO itinerary_items (id, trip_id, title, description, location, start_time, end_time, day_number, order_index, created_by)
     VALUES
         (gen_random_uuid(), trip1_id, 'Arrive at Goa Airport', 'Pick up rental car', 'Goa Airport',
          CURRENT_DATE + INTERVAL '15 days' + TIME '10:00', CURRENT_DATE + INTERVAL '15 days' + TIME '11:00',
-         'transport', nithya_user_id),
+         1, 1, nithya_user_id),
 
         (gen_random_uuid(), trip1_id, 'Check-in at Beach Resort', 'Sea-facing room booked', 'Calangute Beach Resort',
          CURRENT_DATE + INTERVAL '15 days' + TIME '12:00', CURRENT_DATE + INTERVAL '15 days' + TIME '13:00',
-         'accommodation', nithya_user_id),
+         1, 2, nithya_user_id),
 
         (gen_random_uuid(), trip1_id, 'Lunch at Beach Shack', 'Try fresh seafood', 'Curlies Beach Shack',
          CURRENT_DATE + INTERVAL '15 days' + TIME '14:00', CURRENT_DATE + INTERVAL '15 days' + TIME '15:30',
-         'food', nithya_user_id),
+         1, 3, nithya_user_id),
 
         (gen_random_uuid(), trip1_id, 'Beach Time & Sunset', 'Relax and enjoy sunset', 'Anjuna Beach',
          CURRENT_DATE + INTERVAL '15 days' + TIME '16:00', CURRENT_DATE + INTERVAL '15 days' + TIME '19:00',
-         'activity', nithya_user_id),
+         1, 4, nithya_user_id),
 
         (gen_random_uuid(), trip1_id, 'Water Sports', 'Parasailing and jet skiing', 'Baga Beach',
          CURRENT_DATE + INTERVAL '16 days' + TIME '09:00', CURRENT_DATE + INTERVAL '16 days' + TIME '12:00',
-         'activity', nithya_user_id),
+         2, 1, nithya_user_id),
 
         (gen_random_uuid(), trip1_id, 'Visit Fort Aguada', 'Historical fort with great views', 'Fort Aguada',
          CURRENT_DATE + INTERVAL '16 days' + TIME '15:00', CURRENT_DATE + INTERVAL '16 days' + TIME '17:00',
-         'sightseeing', nithya_user_id);
+         2, 2, nithya_user_id);
 
     -- Checklist for Goa Trip
     checklist1_id := gen_random_uuid();
     INSERT INTO checklists (id, trip_id, title, created_by)
     VALUES (checklist1_id, trip1_id, 'Packing List', nithya_user_id);
 
-    INSERT INTO checklist_items (id, checklist_id, title, is_completed, assigned_to, created_by)
+    INSERT INTO checklist_items (id, checklist_id, title, is_completed, assigned_to)
     VALUES
-        (gen_random_uuid(), checklist1_id, 'Swimwear', true, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'Sunscreen SPF 50+', true, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'Beach towels', false, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'Flip flops & sandals', true, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'Camera & charger', false, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'Light cotton clothes', false, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'Mosquito repellent', false, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist1_id, 'First aid kit', false, nithya_user_id, nithya_user_id);
+        (gen_random_uuid(), checklist1_id, 'Swimwear', true, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'Sunscreen SPF 50+', true, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'Beach towels', false, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'Flip flops & sandals', true, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'Camera & charger', false, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'Light cotton clothes', false, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'Mosquito repellent', false, nithya_user_id),
+        (gen_random_uuid(), checklist1_id, 'First aid kit', false, nithya_user_id);
 
     -- Expenses for Goa Trip
     expense1_id := gen_random_uuid();
@@ -228,12 +228,12 @@ BEGIN
     INSERT INTO checklists (id, trip_id, title, created_by)
     VALUES (checklist2_id, trip3_id, 'Pre-Trip To-Do', nithya_user_id);
 
-    INSERT INTO checklist_items (id, checklist_id, title, is_completed, assigned_to, created_by)
+    INSERT INTO checklist_items (id, checklist_id, title, is_completed, assigned_to)
     VALUES
-        (gen_random_uuid(), checklist2_id, 'Book houseboat', false, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist2_id, 'Research Ayurvedic spas', false, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist2_id, 'Check visa requirements', true, nithya_user_id, nithya_user_id),
-        (gen_random_uuid(), checklist2_id, 'Book flight tickets', false, nithya_user_id, nithya_user_id);
+        (gen_random_uuid(), checklist2_id, 'Book houseboat', false, nithya_user_id),
+        (gen_random_uuid(), checklist2_id, 'Research Ayurvedic spas', false, nithya_user_id),
+        (gen_random_uuid(), checklist2_id, 'Check visa requirements', true, nithya_user_id),
+        (gen_random_uuid(), checklist2_id, 'Book flight tickets', false, nithya_user_id);
 
     -- ========================================================================
     -- STANDALONE EXPENSES (No trip association)
