@@ -36,7 +36,7 @@ This guide explains how to add sample trips, expenses, and checklists for testin
 
 ## 🚀 How to Run the SQL Script
 
-### Option 1: Using Supabase Dashboard (Recommended)
+### Using Supabase Dashboard (Recommended)
 
 1. **Open Supabase Dashboard**
    - Go to https://app.supabase.com
@@ -58,6 +58,8 @@ This guide explains how to add sample trips, expenses, and checklists for testin
 5. **Verify Success**
    - You should see: "✅ Dummy data created successfully!"
    - Along with counts of created items
+
+**Note**: The script automatically cleans up any existing data before creating new data, so you can run it multiple times safely without any duplicate errors!
 
 ---
 
@@ -188,59 +190,24 @@ VALUES (gen_random_uuid(), checklist1_id, 'Your Item', false, nithya_user_id, ni
 
 ## 🔄 Re-running the Script
 
-**IMPORTANT**: If you get an error like `duplicate key value violates unique constraint`, it means the data already exists. You need to clean up first!
+**Good News**: The script now handles cleanup automatically! 🎉
 
-### Option 1: Use the Cleanup Script (Recommended)
+You can run `CREATE_NITHYA_DUMMY_DATA.sql` **multiple times** without any errors. The script automatically:
+- Detects existing data for Nithya
+- Safely deletes it (respecting foreign key constraints)
+- Creates fresh new data
 
-We've created a cleanup script to remove all existing data safely:
+**No manual cleanup needed!**
 
-**File**: `CLEANUP_NITHYA_DATA.sql`
+### Optional: Manual Cleanup Script
+
+If you prefer to clean up data separately, you can still use `CLEANUP_NITHYA_DATA.sql`:
 
 **Steps**:
 1. Go to Supabase Dashboard → SQL Editor → New Query
 2. Copy entire content from `CLEANUP_NITHYA_DATA.sql`
 3. Paste and click **Run**
 4. You'll see a summary of deleted items
-5. Now run `CREATE_NITHYA_DUMMY_DATA.sql` again
-
-**Expected Output**:
-```
-Cleaning up dummy data for Nithya (User ID: ...)
-   ✓ Deleted 12 checklist items
-   ✓ Deleted 2 checklists
-   ✓ Deleted 6 expense splits
-   ✓ Deleted 6 expenses
-   ✓ Deleted 6 itinerary items
-   ✓ Deleted 4 trip memberships
-   ✓ Deleted 3 trips
-
-✅ Cleanup completed successfully!
-```
-
-### Option 2: Manual Cleanup (Quick)
-
-If you prefer SQL commands directly:
-
-```sql
--- Delete all Nithya's data (run these in order)
-DO $$
-DECLARE nithya_id UUID;
-BEGIN
-    SELECT id INTO nithya_id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com';
-
-    DELETE FROM checklist_items WHERE checklist_id IN (SELECT id FROM checklists WHERE created_by = nithya_id);
-    DELETE FROM checklists WHERE created_by = nithya_id;
-    DELETE FROM expense_splits WHERE user_id = nithya_id;
-    DELETE FROM expenses WHERE paid_by = nithya_id;
-    DELETE FROM itinerary_items WHERE created_by = nithya_id;
-    DELETE FROM trip_members WHERE user_id = nithya_id;
-    DELETE FROM trips WHERE created_by = nithya_id;
-
-    RAISE NOTICE 'Cleanup complete!';
-END $$;
-```
-
-Then run the dummy data script again.
 
 ---
 
@@ -249,8 +216,8 @@ Then run the dummy data script again.
 ### Error: "User nithyaganesan53@gmail.com not found"
 **Solution**: Make sure Nithya's account exists. Sign up in the app first.
 
-### Error: "violates foreign key constraint"
-**Solution**: Run the delete queries above first, then re-run the script.
+### Error: "violates foreign key constraint" or "duplicate key"
+**Solution**: This should not happen anymore! The script auto-cleans before inserting. If you still see this, please report it as a bug.
 
 ### Error: "permission denied"
 **Solution**: Make sure you're running the script with proper database permissions.
@@ -278,7 +245,7 @@ Then run the dummy data script again.
 
 **Safe to use**: Yes, uses proper UUID generation and foreign keys
 
-**Idempotent**: No, creates new data each run (use delete script first if needed)
+**Idempotent**: Yes! Auto-cleans existing data before creating new data - run it as many times as you want!
 
 ---
 
