@@ -1,13 +1,8 @@
-// SUPABASE DISABLED - Using SQLite for local development
-// This entire file is commented out during SQLite mode
-// Uncomment when ready to migrate back to Supabase
-
-/*
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../models/user_model.dart';
 
-/// Remote data source for authentication
+/// Remote data source for authentication using Supabase
 class AuthRemoteDataSource {
   final SupabaseClient _client = SupabaseClientWrapper.client;
 
@@ -32,6 +27,9 @@ class AuthRemoteDataSource {
       if (response.user == null) {
         throw Exception('Sign up failed: No user returned');
       }
+
+      // Wait a moment for the trigger to create profile
+      await Future.delayed(const Duration(milliseconds: 500));
 
       // Fetch user profile from profiles table
       final profileData = await _client
@@ -153,4 +151,3 @@ class AuthRemoteDataSource {
   /// Check if user is authenticated
   bool get isAuthenticated => _client.auth.currentUser != null;
 }
-*/

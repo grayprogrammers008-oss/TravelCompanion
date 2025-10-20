@@ -22,7 +22,7 @@ void main() {
   final testUser = UserEntity(
     id: '123',
     email: testEmail,
-    displayName: 'Test User',
+    fullName: 'Test User',
     createdAt: DateTime.now(),
   );
 
@@ -56,8 +56,8 @@ void main() {
         throwsA(isA<Exception>()),
       );
       verifyNever(mockAuthRepository.signIn(
-        email: any,
-        password: any,
+        email: anyNamed('email'),
+        password: anyNamed('password'),
       ));
     });
 
@@ -68,8 +68,8 @@ void main() {
         throwsA(isA<Exception>()),
       );
       verifyNever(mockAuthRepository.signIn(
-        email: any,
-        password: any,
+        email: anyNamed('email'),
+        password: anyNamed('password'),
       ));
     });
 

@@ -34,7 +34,6 @@ void main() {
     amount: testAmount,
     category: testCategory,
     paidBy: testPaidBy,
-    splitWith: testSplitMembers,
     splitType: 'equal',
     transactionDate: DateTime.now(),
     createdAt: DateTime.now(),
@@ -53,7 +52,7 @@ void main() {
         paidBy: testPaidBy,
         splitWith: testSplitMembers,
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => testExpense);
 
       // Act
@@ -78,7 +77,7 @@ void main() {
         paidBy: testPaidBy,
         splitWith: testSplitMembers,
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).called(1);
     });
 

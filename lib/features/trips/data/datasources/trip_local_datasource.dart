@@ -208,8 +208,9 @@ class TripLocalDataSource {
       if (name != null) updates['name'] = name;
       if (description != null) updates['description'] = description;
       if (destination != null) updates['destination'] = destination;
-      if (startDate != null)
+      if (startDate != null) {
         updates['start_date'] = startDate.toIso8601String();
+      }
       if (endDate != null) updates['end_date'] = endDate.toIso8601String();
       if (coverImageUrl != null) updates['cover_image_url'] = coverImageUrl;
 

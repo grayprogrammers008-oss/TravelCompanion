@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// SUPABASE DISABLED - Using SQLite for local development
-// import 'package:supabase_flutter/supabase_flutter.dart';
-// import '../../data/datasources/auth_remote_datasource.dart';
+import '../../data/datasources/auth_remote_datasource.dart';
 import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user_entity.dart';
@@ -10,21 +8,21 @@ import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
 
-// Data Source Provider - Using Local SQLite DataSource
+// Remote Data Source Provider - Supabase (Primary)
+final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
+  return AuthRemoteDataSource();
+});
+
+// Local Data Source Provider - SQLite (Fallback/Offline)
 final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
   return AuthLocalDataSource();
 });
 
-// SUPABASE DATASOURCE - DISABLED FOR LOCAL DEVELOPMENT
-// Uncomment when ready to migrate to Supabase:
-// final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
-//   return AuthRemoteDataSource();
-// });
-
-// Repository Provider - Using Local DataSource
+// Repository Provider - Hybrid Supabase + SQLite
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final dataSource = ref.watch(authLocalDataSourceProvider);
-  return AuthRepositoryImpl(dataSource);
+  final remoteDataSource = ref.watch(authRemoteDataSourceProvider);
+  final localDataSource = ref.watch(authLocalDataSourceProvider);
+  return AuthRepositoryImpl(remoteDataSource, localDataSource);
 });
 
 // Use Cases Providers
@@ -43,10 +41,10 @@ final signOutUseCaseProvider = Provider<SignOutUseCase>((ref) {
   return SignOutUseCase(repository);
 });
 
-// Auth State Provider - listens to auth changes (SQLite version)
+// Auth State Provider - listens to auth changes from repository
 final authStateProvider = StreamProvider<String?>((ref) {
-  final dataSource = ref.watch(authLocalDataSourceProvider);
-  return dataSource.authStateChanges;
+  final repository = ref.watch(authRepositoryProvider);
+  return repository.authStateChanges;
 });
 
 // Current User Provider

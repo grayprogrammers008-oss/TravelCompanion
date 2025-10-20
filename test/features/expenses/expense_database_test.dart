@@ -199,7 +199,7 @@ void main() {
       print('✅ Test database setup complete');
     });
 
-    tearDown() async {
+    tearDown(() async {
       await testDb.close();
     });
 

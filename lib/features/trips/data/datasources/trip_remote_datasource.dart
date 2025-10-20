@@ -1,5 +1,248 @@
-// SUPABASE DISABLED - Using SQLite for local development
-// This entire file is commented out during SQLite mode
-// Uncomment when ready to migrate back to Supabase
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/network/supabase_client.dart';
+import '../../../../shared/models/trip_model.dart';
 
-/* File contents commented out for SQLite mode */
+/// Trip Remote Data Source - Supabase Implementation
+///
+/// Handles all trip-related operations with Supabase backend.
+/// Provides CRUD operations, member management, and real-time subscriptions.
+abstract class TripRemoteDataSource {
+  /// Create a new trip
+  Future<TripModel> createTrip(TripModel trip);
+
+  /// Get all trips for the current user
+  Future<List<TripWithMembers>> getUserTrips();
+
+  /// Get a single trip by ID (with members)
+  Future<TripWithMembers?> getTripById(String tripId);
+
+  /// Update a trip
+  Future<void> updateTrip(String tripId, Map<String, dynamic> updates);
+
+  /// Delete a trip
+  Future<void> deleteTrip(String tripId);
+
+  /// Add a member to a trip
+  Future<void> addMember(String tripId, String userId, {String role = 'member'});
+
+  /// Remove a member from a trip
+  Future<void> removeMember(String tripId, String userId);
+
+  /// Watch trips for real-time updates
+  Stream<List<TripWithMembers>> watchUserTrips();
+}
+
+class TripRemoteDataSourceImpl implements TripRemoteDataSource {
+  final SupabaseClient _client;
+
+  TripRemoteDataSourceImpl() : _client = SupabaseClientWrapper.client;
+
+  @override
+  Future<TripModel> createTrip(TripModel trip) async {
+    try {
+      // Create trip in Supabase
+      final response = await _client
+          .from('trips')
+          .insert({
+            'name': trip.name,
+            'description': trip.description,
+            'destination': trip.destination,
+            'start_date': trip.startDate?.toIso8601String(),
+            'end_date': trip.endDate?.toIso8601String(),
+            'cover_image_url': trip.coverImageUrl,
+            'created_by': SupabaseClientWrapper.currentUserId,
+          })
+          .select()
+          .single();
+
+      return TripModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to create trip: $e');
+    }
+  }
+
+  @override
+  Future<List<TripWithMembers>> getUserTrips() async {
+    try {
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Get trips where user is a member
+      final response = await _client
+          .from('trips')
+          .select('''
+            *,
+            trip_members!inner(
+              id,
+              user_id,
+              role,
+              joined_at,
+              profiles!inner(
+                id,
+                email,
+                full_name,
+                avatar_url
+              )
+            )
+          ''')
+          .eq('trip_members.user_id', userId)
+          .order('created_at', ascending: false);
+
+      final trips = (response as List)
+          .map((tripData) => _parseTripWithMembers(tripData))
+          .toList();
+
+      return trips;
+    } catch (e) {
+      throw Exception('Failed to get user trips: $e');
+    }
+  }
+
+  @override
+  Future<TripWithMembers?> getTripById(String tripId) async {
+    try {
+      final response = await _client
+          .from('trips')
+          .select('''
+            *,
+            trip_members(
+              id,
+              user_id,
+              role,
+              joined_at,
+              profiles(
+                id,
+                email,
+                full_name,
+                avatar_url
+              )
+            )
+          ''')
+          .eq('id', tripId)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return _parseTripWithMembers(response);
+    } catch (e) {
+      throw Exception('Failed to get trip: $e');
+    }
+  }
+
+  @override
+  Future<void> updateTrip(String tripId, Map<String, dynamic> updates) async {
+    try {
+      // Filter out null values and format dates
+      final filteredUpdates = <String, dynamic>{};
+
+      updates.forEach((key, value) {
+        if (value != null) {
+          if (key == 'startDate' || key == 'endDate') {
+            filteredUpdates[_toSnakeCase(key)] =
+                (value as DateTime).toIso8601String();
+          } else {
+            filteredUpdates[_toSnakeCase(key)] = value;
+          }
+        }
+      });
+
+      await _client
+          .from('trips')
+          .update(filteredUpdates)
+          .eq('id', tripId);
+    } catch (e) {
+      throw Exception('Failed to update trip: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteTrip(String tripId) async {
+    try {
+      await _client
+          .from('trips')
+          .delete()
+          .eq('id', tripId);
+    } catch (e) {
+      throw Exception('Failed to delete trip: $e');
+    }
+  }
+
+  @override
+  Future<void> addMember(String tripId, String userId, {String role = 'member'}) async {
+    try {
+      await _client
+          .from('trip_members')
+          .insert({
+            'trip_id': tripId,
+            'user_id': userId,
+            'role': role,
+          });
+    } catch (e) {
+      throw Exception('Failed to add member: $e');
+    }
+  }
+
+  @override
+  Future<void> removeMember(String tripId, String userId) async {
+    try {
+      await _client
+          .from('trip_members')
+          .delete()
+          .eq('trip_id', tripId)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Failed to remove member: $e');
+    }
+  }
+
+  @override
+  Stream<List<TripWithMembers>> watchUserTrips() {
+    final userId = SupabaseClientWrapper.currentUserId;
+    if (userId == null) {
+      return Stream.error(Exception('User not authenticated'));
+    }
+
+    // Subscribe to trips table changes
+    return _client
+        .from('trips')
+        .stream(primaryKey: ['id'])
+        .eq('trip_members.user_id', userId)
+        .map((data) => (data as List)
+            .map((tripData) => _parseTripWithMembers(tripData))
+            .toList());
+  }
+
+  /// Parse trip data with members from Supabase response
+  TripWithMembers _parseTripWithMembers(Map<String, dynamic> data) {
+    // Parse base trip
+    final trip = TripModel.fromJson(data);
+
+    // Parse members
+    final membersData = data['trip_members'] as List?;
+    final members = membersData?.map((memberData) {
+      final profileData = memberData['profiles'];
+      return TripMemberModel(
+        id: memberData['id'],
+        tripId: trip.id,
+        userId: memberData['user_id'],
+        role: memberData['role'],
+        joinedAt: DateTime.parse(memberData['joined_at']),
+        email: profileData?['email'],
+        fullName: profileData?['full_name'],
+        avatarUrl: profileData?['avatar_url'],
+      );
+    }).toList() ?? [];
+
+    return TripWithMembers(trip: trip, members: members);
+  }
+
+  /// Convert camelCase to snake_case
+  String _toSnakeCase(String camelCase) {
+    return camelCase.replaceAllMapped(
+      RegExp(r'[A-Z]'),
+      (match) => '_${match.group(0)!.toLowerCase()}',
+    );
+  }
+}

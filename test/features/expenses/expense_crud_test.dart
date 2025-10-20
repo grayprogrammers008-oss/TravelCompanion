@@ -64,7 +64,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId, 'user-2'],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => testExpense);
 
       // Act
@@ -92,7 +92,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId, 'user-2'],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).called(1);
     });
 
@@ -108,7 +108,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => standaloneExpense);
 
       // Act
@@ -136,7 +136,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenThrow(Exception('Amount must be greater than zero'));
 
       // Act & Assert
@@ -161,7 +161,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenThrow(Exception('Split must include at least one user'));
 
       // Act & Assert
@@ -186,7 +186,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenThrow(Exception('Title cannot be empty'));
 
       // Act & Assert
@@ -544,7 +544,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => largeExpense);
 
       // Act
@@ -570,7 +570,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId, 'user-2', 'user-3'], // Split by 3
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => decimalExpense);
 
       // Act
@@ -598,7 +598,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => longTitleExpense);
 
       // Act
@@ -657,7 +657,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => expense1);
 
       when(mockDataSource.createExpense(
@@ -667,7 +667,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => expense2);
 
       when(mockDataSource.createExpense(
@@ -677,7 +677,7 @@ void main() {
         paidBy: testUserId,
         splitWith: [testUserId],
         splitType: 'equal',
-        transactionDate: any(named: 'transactionDate'),
+        transactionDate: anyNamed('transactionDate'),
       )).thenAnswer((_) async => expense3);
 
       // Act - Create multiple expenses concurrently

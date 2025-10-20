@@ -1,8 +1,3 @@
-// SUPABASE DISABLED - Using SQLite for local development
-// This entire file is commented out during SQLite mode
-// Uncomment when ready to migrate back to Supabase
-
-/*
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
@@ -61,7 +56,14 @@ class SupabaseClientWrapper {
   static User? get currentUser => client.auth.currentUser;
 
   /// Get current user ID
-  static String? get currentUserId => currentUser?.id;
+  static String? get currentUserId {
+    final userId = currentUser?.id;
+    if (kDebugMode && userId == null) {
+      print('⚠️  WARNING: currentUserId is null! User might not be authenticated.');
+      print('   Current session: ${client.auth.currentSession}');
+    }
+    return userId;
+  }
 
   /// Check if user is authenticated
   static bool get isAuthenticated => currentUser != null;
@@ -80,12 +82,4 @@ class SupabaseClientWrapper {
 
   /// Realtime
   static RealtimeClient get realtime => client.realtime;
-}
-*/
-
-// Placeholder class for SQLite mode
-class SupabaseClientWrapper {
-  static Future<void> initialize() async {
-    // No-op in SQLite mode
-  }
 }

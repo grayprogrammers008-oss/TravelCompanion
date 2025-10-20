@@ -10,6 +10,7 @@ import '../../../../core/widgets/premium_form_fields.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/confetti_animation.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
@@ -57,8 +58,8 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
     setState(() => _isLoading = true);
 
     try {
-      final authDataSource = ref.read(authLocalDataSourceProvider);
-      final currentUserId = authDataSource.currentUserId;
+      // Get current user ID from Supabase (online-only mode)
+      final currentUserId = SupabaseClientWrapper.currentUserId;
       final scaffoldContext = context; // Store context before async
 
       if (currentUserId == null || currentUserId.isEmpty) {

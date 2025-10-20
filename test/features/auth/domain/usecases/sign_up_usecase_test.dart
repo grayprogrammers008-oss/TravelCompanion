@@ -19,11 +19,11 @@ void main() {
 
   const testEmail = 'test@example.com';
   const testPassword = 'password123';
-  const testDisplayName = 'Test User';
+  const testFullName = 'Test User';
   final testUser = UserEntity(
     id: '123',
     email: testEmail,
-    displayName: testDisplayName,
+    fullName: testFullName,
     createdAt: DateTime.now(),
   );
 
@@ -33,14 +33,14 @@ void main() {
       when(mockAuthRepository.signUp(
         email: testEmail,
         password: testPassword,
-        displayName: testDisplayName,
+        fullName: testFullName,
       )).thenAnswer((_) async => testUser);
 
       // Act
       final result = await useCase(
         email: testEmail,
         password: testPassword,
-        displayName: testDisplayName,
+        fullName: testFullName,
       );
 
       // Assert
@@ -48,7 +48,7 @@ void main() {
       verify(mockAuthRepository.signUp(
         email: testEmail,
         password: testPassword,
-        displayName: testDisplayName,
+        fullName: testFullName,
       )).called(1);
       verifyNoMoreInteractions(mockAuthRepository);
     });
@@ -59,7 +59,7 @@ void main() {
         () => useCase(
           email: '',
           password: testPassword,
-          displayName: testDisplayName,
+          fullName: testFullName,
         ),
         throwsA(isA<Exception>()),
       );
@@ -71,19 +71,19 @@ void main() {
         () => useCase(
           email: testEmail,
           password: '123',
-          displayName: testDisplayName,
+          fullName: testFullName,
         ),
         throwsA(isA<Exception>()),
       );
     });
 
-    test('should throw exception when display name is empty', () async {
+    test('should throw exception when full name is empty', () async {
       // Arrange & Act & Assert
       expect(
         () => useCase(
           email: testEmail,
           password: testPassword,
-          displayName: '',
+          fullName: '',
         ),
         throwsA(isA<Exception>()),
       );
@@ -94,7 +94,7 @@ void main() {
       when(mockAuthRepository.signUp(
         email: testEmail,
         password: testPassword,
-        displayName: testDisplayName,
+        fullName: testFullName,
       )).thenThrow(Exception('Email already in use'));
 
       // Act & Assert
@@ -102,7 +102,7 @@ void main() {
         () => useCase(
           email: testEmail,
           password: testPassword,
-          displayName: testDisplayName,
+          fullName: testFullName,
         ),
         throwsA(isA<Exception>()),
       );

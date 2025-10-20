@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/trip_model.dart';
-// SUPABASE DISABLED - Using SQLite for local development
-// import '../../data/datasources/trip_remote_datasource.dart';
+import '../../data/datasources/trip_remote_datasource.dart';
 import '../../data/datasources/trip_local_datasource.dart';
 import '../../data/repositories/trip_repository_impl.dart';
 import '../../domain/repositories/trip_repository.dart';
@@ -11,7 +10,12 @@ import '../../domain/usecases/get_trip_usecase.dart';
 import '../../domain/usecases/get_user_trips_usecase.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
-// Data Source Provider - Using Local SQLite DataSource
+// Remote Data Source Provider - Supabase (Primary)
+final tripRemoteDataSourceProvider = Provider<TripRemoteDataSource>((ref) {
+  return TripRemoteDataSourceImpl();
+});
+
+// Local Data Source Provider - SQLite (Fallback/Offline)
 final tripLocalDataSourceProvider = Provider<TripLocalDataSource>((ref) {
   final dataSource = TripLocalDataSource();
   // Set current user ID from auth
@@ -20,16 +24,11 @@ final tripLocalDataSourceProvider = Provider<TripLocalDataSource>((ref) {
   return dataSource;
 });
 
-// SUPABASE DATASOURCE - DISABLED FOR LOCAL DEVELOPMENT
-// Uncomment when ready to migrate to Supabase:
-// final tripRemoteDataSourceProvider = Provider<TripRemoteDataSource>((ref) {
-//   return TripRemoteDataSource();
-// });
-
-// Repository Provider - Using Local DataSource
+// Repository Provider - Hybrid Supabase + SQLite
 final tripRepositoryProvider = Provider<TripRepository>((ref) {
-  final dataSource = ref.watch(tripLocalDataSourceProvider);
-  return TripRepositoryImpl(dataSource);
+  final remoteDataSource = ref.watch(tripRemoteDataSourceProvider);
+  final localDataSource = ref.watch(tripLocalDataSourceProvider);
+  return TripRepositoryImpl(remoteDataSource, localDataSource);
 });
 
 // Use Cases Providers

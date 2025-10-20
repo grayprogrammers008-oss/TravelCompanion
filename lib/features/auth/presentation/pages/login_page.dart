@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/router/app_router.dart';
 import '../providers/auth_providers.dart';
 import 'signup_page.dart';
 
@@ -64,6 +66,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
           );
 
       if (mounted) {
+        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Welcome back! 🎉'),
@@ -72,8 +75,16 @@ class _LoginPageState extends ConsumerState<LoginPage>
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
+            duration: const Duration(seconds: 1),
           ),
         );
+
+        // Navigate to home page
+        // Small delay to show the success message
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          context.go(AppRoutes.home);
+        }
       }
     } catch (e) {
       if (mounted) {
