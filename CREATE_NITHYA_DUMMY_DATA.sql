@@ -33,6 +33,14 @@ BEGIN
         RETURN;
     END IF;
 
+    -- Check if dummy data already exists
+    IF EXISTS (SELECT 1 FROM trips WHERE created_by = nithya_user_id LIMIT 1) THEN
+        RAISE NOTICE '⚠️  WARNING: Nithya already has trip data in the database!';
+        RAISE NOTICE '   To avoid duplicates, please run CLEANUP_NITHYA_DATA.sql first.';
+        RAISE NOTICE '   Then run this script again.';
+        RETURN;
+    END IF;
+
     RAISE NOTICE 'Creating dummy data for Nithya (User ID: %)', nithya_user_id;
 
     -- ========================================================================

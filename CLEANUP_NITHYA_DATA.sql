@@ -23,9 +23,9 @@ BEGIN
 
     -- Delete in order to respect foreign key constraints
 
-    -- 1. Delete checklist items
+    -- 1. Delete checklist items (via their parent checklists created by Nithya)
     DELETE FROM checklist_items
-    WHERE created_by = nithya_user_id;
+    WHERE checklist_id IN (SELECT id FROM checklists WHERE created_by = nithya_user_id);
     GET DIAGNOSTICS deleted_count = ROW_COUNT;
     RAISE NOTICE '   ✓ Deleted % checklist items', deleted_count;
 
