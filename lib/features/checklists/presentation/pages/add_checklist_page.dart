@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../providers/checklist_providers.dart';
 
 class AddChecklistPage extends ConsumerStatefulWidget {
@@ -34,8 +34,8 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
     setState(() => _isLoading = true);
 
     try {
-      final authDataSource = ref.read(authLocalDataSourceProvider);
-      final userId = authDataSource.currentUserId;
+      // Get current user ID from Supabase (online-only mode)
+      final userId = SupabaseClientWrapper.currentUserId;
 
       if (userId == null) {
         if (mounted) {

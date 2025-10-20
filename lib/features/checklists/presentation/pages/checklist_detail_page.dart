@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../providers/checklist_providers.dart';
 import '../widgets/checklist_item_tile.dart';
 import '../widgets/add_item_bottom_sheet.dart';
@@ -134,8 +134,8 @@ class ChecklistDetailPage extends ConsumerWidget {
                           child: ChecklistItemTile(
                             item: item,
                             onToggle: () async {
-                              final authDataSource = ref.read(authLocalDataSourceProvider);
-                              final userId = authDataSource.currentUserId;
+                              // Get current user ID from Supabase (online-only mode)
+                              final userId = SupabaseClientWrapper.currentUserId;
                               if (userId == null) return;
 
                               final controller = ref.read(checklistControllerProvider.notifier);

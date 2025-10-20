@@ -5,19 +5,18 @@ import '../../domain/usecases/get_trip_checklists_usecase.dart';
 import '../../domain/usecases/get_checklist_with_items_usecase.dart';
 import '../../domain/usecases/create_checklist_usecase.dart';
 import '../../domain/usecases/manage_checklist_items_usecase.dart';
-import '../../data/datasources/checklist_local_datasource.dart';
+import '../../data/datasources/checklist_remote_datasource.dart';
 import '../../data/repositories/checklist_repository_impl.dart';
-import '../../../../core/database/database_helper.dart';
 
 // Data Sources
-final checklistLocalDataSourceProvider = Provider<ChecklistLocalDataSource>((ref) {
-  return ChecklistLocalDataSource(DatabaseHelper.instance);
+final checklistRemoteDataSourceProvider = Provider<ChecklistRemoteDataSource>((ref) {
+  return ChecklistRemoteDataSource();
 });
 
-// Repository
+// Repository - Online-only mode (Supabase)
 final checklistRepositoryProvider = Provider<ChecklistRepository>((ref) {
-  final localDataSource = ref.watch(checklistLocalDataSourceProvider);
-  return ChecklistRepositoryImpl(localDataSource: localDataSource);
+  final remoteDataSource = ref.watch(checklistRemoteDataSourceProvider);
+  return ChecklistRepositoryImpl(remoteDataSource: remoteDataSource);
 });
 
 // Use Cases
