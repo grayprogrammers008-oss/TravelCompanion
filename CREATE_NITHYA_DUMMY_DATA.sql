@@ -71,12 +71,14 @@ BEGIN
 
     -- Add Nithya as trip admin
     INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-    VALUES (gen_random_uuid(), trip1_id, nithya_user_id, 'admin', NOW());
+    VALUES (gen_random_uuid(), trip1_id, nithya_user_id, 'admin', NOW())
+    ON CONFLICT (trip_id, user_id) DO NOTHING;
 
     -- Add Vinoth as a member (if exists)
     IF vinoth_user_id IS NOT NULL THEN
         INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-        VALUES (gen_random_uuid(), trip1_id, vinoth_user_id, 'member', NOW());
+        VALUES (gen_random_uuid(), trip1_id, vinoth_user_id, 'member', NOW())
+        ON CONFLICT (trip_id, user_id) DO NOTHING;
     END IF;
 
     -- Itinerary for Goa Trip
@@ -178,7 +180,8 @@ BEGIN
     );
 
     INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-    VALUES (gen_random_uuid(), trip2_id, nithya_user_id, 'admin', CURRENT_DATE - INTERVAL '35 days');
+    VALUES (gen_random_uuid(), trip2_id, nithya_user_id, 'admin', CURRENT_DATE - INTERVAL '35 days')
+    ON CONFLICT (trip_id, user_id) DO NOTHING;
 
     -- Some expenses from past trip
     expense3_id := gen_random_uuid();
@@ -217,7 +220,8 @@ BEGIN
     );
 
     INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-    VALUES (gen_random_uuid(), trip3_id, nithya_user_id, 'admin', NOW());
+    VALUES (gen_random_uuid(), trip3_id, nithya_user_id, 'admin', NOW())
+    ON CONFLICT (trip_id, user_id) DO NOTHING;
 
     -- Checklist for Kerala Trip
     checklist2_id := gen_random_uuid();
