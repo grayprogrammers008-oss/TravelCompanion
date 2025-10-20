@@ -108,6 +108,10 @@ class AuthController extends Notifier<AuthState> {
         fullName: fullName,
         phoneNumber: phoneNumber,
       );
+
+      // Invalidate current user provider to refresh with new user data
+      ref.invalidate(currentUserProvider);
+
       state = state.copyWith(
         isLoading: false,
         user: user,
@@ -124,6 +128,10 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final user = await _signInUseCase(email: email, password: password);
+
+      // Invalidate current user provider to refresh with new user data
+      ref.invalidate(currentUserProvider);
+
       state = state.copyWith(
         isLoading: false,
         user: user,
@@ -140,6 +148,10 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _signOutUseCase();
+
+      // Invalidate current user provider to clear user data
+      ref.invalidate(currentUserProvider);
+
       state = AuthState(); // Reset to initial state
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
