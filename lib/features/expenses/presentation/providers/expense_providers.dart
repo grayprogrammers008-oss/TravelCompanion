@@ -73,8 +73,7 @@ final tripBalancesProvider =
 // User Balances Provider (standalone expenses)
 final userBalancesProvider = FutureProvider<List<BalanceSummary>>((ref) async {
   final repository = ref.watch(expenseRepositoryProvider);
-  final supabaseClient = ref.watch(supabaseClientProvider);
-  final currentUserId = supabaseClient.currentUserId;
+  final currentUserId = SupabaseClientWrapper.currentUserId;
   return await repository.getBalances(userId: currentUserId);
 });
 

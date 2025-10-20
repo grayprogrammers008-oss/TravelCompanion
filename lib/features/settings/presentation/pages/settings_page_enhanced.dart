@@ -58,7 +58,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
 
   @override
   Widget build(BuildContext context) {
-    final authDataSource = ref.watch(authLocalDataSourceProvider);
+    // Get current user from Supabase (online-only mode)
     final userAsync = ref.watch(currentUserProvider);
     final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
@@ -391,7 +391,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                   ),
                 ),
                 trailing: const Icon(Icons.chevron_right, color: AppTheme.error),
-                onTap: () => _showLogoutDialog(context, authDataSource),
+                onTap: () => _showLogoutDialog(context),
               ),
             ),
 
@@ -623,7 +623,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
     );
   }
 
-  void _showLogoutDialog(BuildContext context, authDataSource) {
+  void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -638,7 +638,8 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                await authDataSource.signOut();
+                // Sign out using auth controller
+                await ref.read(authControllerProvider.notifier).signOut();
                 if (context.mounted) {
                   context.go('/login');
                 }

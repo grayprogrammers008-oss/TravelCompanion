@@ -1,3 +1,4 @@
+import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/expense_model.dart';
 import '../../domain/repositories/expense_repository.dart';
 import '../datasources/expense_remote_datasource.dart';
@@ -11,7 +12,9 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<List<ExpenseWithSplits>> getUserExpenses() async {
     try {
-      return await _remoteDataSource.getUserExpenses();
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) throw Exception('User not authenticated');
+      return await _remoteDataSource.getUserExpenses(userId);
     } catch (e) {
       throw Exception('Failed to get user expenses: $e');
     }
@@ -29,7 +32,9 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<List<ExpenseWithSplits>> getStandaloneExpenses() async {
     try {
-      return await _remoteDataSource.getStandaloneExpenses();
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) throw Exception('User not authenticated');
+      return await _remoteDataSource.getStandaloneExpenses(userId);
     } catch (e) {
       throw Exception('Failed to get standalone expenses: $e');
     }

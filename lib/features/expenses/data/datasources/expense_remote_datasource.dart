@@ -1,16 +1,16 @@
-import '../../../../core/network/supabase_client.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/models/expense_model.dart';
 
 /// Remote datasource for expenses using Supabase
 class ExpenseRemoteDataSource {
-  final SupabaseClientWrapper _client;
+  final SupabaseClient _client;
 
   ExpenseRemoteDataSource(this._client);
 
   /// Get all expenses for a user (both trip and standalone)
   Future<List<ExpenseWithSplits>> getUserExpenses(String userId) async {
     try {
-      final response = await _client.client
+      final response = await _client
           .from('expenses')
           .select('''
             *,
@@ -34,7 +34,7 @@ class ExpenseRemoteDataSource {
   /// Get all expenses for a trip
   Future<List<ExpenseWithSplits>> getTripExpenses(String tripId) async {
     try {
-      final response = await _client.client
+      final response = await _client
           .from('expenses')
           .select('''
             *,
@@ -58,7 +58,7 @@ class ExpenseRemoteDataSource {
   /// Get standalone expenses (no trip)
   Future<List<ExpenseWithSplits>> getStandaloneExpenses(String userId) async {
     try {
-      final response = await _client.client
+      final response = await _client
           .from('expenses')
           .select('''
             *,
@@ -68,7 +68,7 @@ class ExpenseRemoteDataSource {
             ),
             payer:profiles!expenses_paid_by_fkey(full_name)
           ''')
-          .is_('trip_id', null)
+          .isFilter('trip_id', null)
           .or('paid_by.eq.$userId,expense_splits.user_id.eq.$userId')
           .order('transaction_date', ascending: false);
 
@@ -83,7 +83,7 @@ class ExpenseRemoteDataSource {
   /// Get a single expense by ID
   Future<ExpenseWithSplits> getExpenseById(String expenseId) async {
     try {
-      final response = await _client.client
+      final response = await _client
           .from('expenses')
           .select('''
             *,
@@ -127,7 +127,7 @@ class ExpenseRemoteDataSource {
         'transaction_date': transactionDate?.toIso8601String(),
       };
 
-      final expenseResponse = await _client.client
+      final expenseResponse = await _client
           .from('expenses')
           .insert(expenseData)
           .select()
@@ -149,7 +149,7 @@ class ExpenseRemoteDataSource {
           )
           .toList();
 
-      await _client.client.from('expense_splits').insert(splitsData);
+      await _client.from('expense_splits').insert(splitsData);
 
       return expense;
     } catch (e) {
@@ -176,7 +176,7 @@ class ExpenseRemoteDataSource {
         updateData['transaction_date'] = transactionDate.toIso8601String();
       }
 
-      final response = await _client.client
+      final response = await _client
           .from('expenses')
           .update(updateData)
           .eq('id', expenseId)
@@ -193,7 +193,7 @@ class ExpenseRemoteDataSource {
   Future<void> deleteExpense(String expenseId) async {
     try {
       // Splits will be deleted automatically due to cascade delete
-      await _client.client.from('expenses').delete().eq('id', expenseId);
+      await _client.from('expenses').delete().eq('id', expenseId);
     } catch (e) {
       throw Exception('Failed to delete expense: $e');
     }
@@ -206,7 +206,7 @@ class ExpenseRemoteDataSource {
   }) async {
     try {
       // Build query
-      var query = _client.client.from('expenses').select('''
+      var query = _client.from('expenses').select('''
             *,
             expense_splits(
               *,
@@ -309,7 +309,7 @@ class ExpenseRemoteDataSource {
         'status': 'pending',
       };
 
-      final response = await _client.client
+      final response = await _client
           .from('settlements')
           .insert(settlementData)
           .select()
@@ -327,7 +327,7 @@ class ExpenseRemoteDataSource {
     String? userId,
   }) async {
     try {
-      var query = _client.client.from('settlements').select('''
+      var query = _client.from('settlements').select('''
             *,
             from:profiles!settlements_from_user_fkey(full_name),
             to:profiles!settlements_to_user_fkey(full_name)
@@ -365,7 +365,7 @@ class ExpenseRemoteDataSource {
         if (paymentProofUrl != null) 'payment_proof_url': paymentProofUrl,
       };
 
-      final response = await _client.client
+      final response = await _client
           .from('settlements')
           .update(updateData)
           .eq('id', settlementId)
