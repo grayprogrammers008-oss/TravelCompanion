@@ -1,17 +1,17 @@
 import '../../../../shared/models/expense_model.dart';
 import '../../domain/repositories/expense_repository.dart';
-import '../datasources/expense_local_datasource.dart';
+import '../datasources/expense_remote_datasource.dart';
 
-/// Implementation of ExpenseRepository using local datasource
+/// Implementation of ExpenseRepository using remote datasource (Supabase)
 class ExpenseRepositoryImpl implements ExpenseRepository {
-  final ExpenseLocalDataSource _dataSource;
+  final ExpenseRemoteDataSource _remoteDataSource;
 
-  ExpenseRepositoryImpl(this._dataSource);
+  ExpenseRepositoryImpl(this._remoteDataSource);
 
   @override
   Future<List<ExpenseWithSplits>> getUserExpenses() async {
     try {
-      return await _dataSource.getUserExpenses();
+      return await _remoteDataSource.getUserExpenses();
     } catch (e) {
       throw Exception('Failed to get user expenses: $e');
     }
@@ -20,7 +20,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<List<ExpenseWithSplits>> getTripExpenses(String tripId) async {
     try {
-      return await _dataSource.getTripExpenses(tripId);
+      return await _remoteDataSource.getTripExpenses(tripId);
     } catch (e) {
       throw Exception('Failed to get trip expenses: $e');
     }
@@ -29,7 +29,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<List<ExpenseWithSplits>> getStandaloneExpenses() async {
     try {
-      return await _dataSource.getStandaloneExpenses();
+      return await _remoteDataSource.getStandaloneExpenses();
     } catch (e) {
       throw Exception('Failed to get standalone expenses: $e');
     }
@@ -38,7 +38,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<ExpenseWithSplits> getExpenseById(String expenseId) async {
     try {
-      return await _dataSource.getExpenseById(expenseId);
+      return await _remoteDataSource.getExpenseById(expenseId);
     } catch (e) {
       throw Exception('Failed to get expense: $e');
     }
@@ -57,7 +57,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     DateTime? transactionDate,
   }) async {
     try {
-      return await _dataSource.createExpense(
+      return await _remoteDataSource.createExpense(
         tripId: tripId,
         title: title,
         description: description,
@@ -83,7 +83,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     DateTime? transactionDate,
   }) async {
     try {
-      return await _dataSource.updateExpense(
+      return await _remoteDataSource.updateExpense(
         expenseId: expenseId,
         title: title,
         description: description,
@@ -99,7 +99,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   @override
   Future<void> deleteExpense(String expenseId) async {
     try {
-      await _dataSource.deleteExpense(expenseId);
+      await _remoteDataSource.deleteExpense(expenseId);
     } catch (e) {
       throw Exception('Failed to delete expense: $e');
     }
@@ -111,7 +111,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     String? userId,
   }) async {
     try {
-      return await _dataSource.getBalances(tripId: tripId, userId: userId);
+      return await _remoteDataSource.getBalances(tripId: tripId, userId: userId);
     } catch (e) {
       throw Exception('Failed to get balances: $e');
     }
@@ -126,7 +126,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     String? paymentMethod,
   }) async {
     try {
-      return await _dataSource.createSettlement(
+      return await _remoteDataSource.createSettlement(
         tripId: tripId,
         fromUser: fromUser,
         toUser: toUser,
@@ -144,7 +144,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     String? userId,
   }) async {
     try {
-      return await _dataSource.getSettlements(tripId: tripId, userId: userId);
+      return await _remoteDataSource.getSettlements(tripId: tripId, userId: userId);
     } catch (e) {
       throw Exception('Failed to get settlements: $e');
     }
@@ -157,7 +157,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     String? paymentProofUrl,
   }) async {
     try {
-      return await _dataSource.updateSettlementStatus(
+      return await _remoteDataSource.updateSettlementStatus(
         settlementId: settlementId,
         status: status,
         paymentProofUrl: paymentProofUrl,

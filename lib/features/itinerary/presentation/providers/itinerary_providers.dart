@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/itinerary_model.dart';
-import '../../data/datasources/itinerary_local_datasource.dart';
+import '../../data/datasources/itinerary_remote_datasource.dart';
 import '../../data/repositories/itinerary_repository_impl.dart';
 import '../../domain/repositories/itinerary_repository.dart';
 import '../../domain/usecases/create_itinerary_item_usecase.dart';
@@ -9,21 +9,16 @@ import '../../domain/usecases/delete_itinerary_item_usecase.dart';
 import '../../domain/usecases/get_trip_itinerary_usecase.dart';
 import '../../domain/usecases/get_itinerary_by_days_usecase.dart';
 import '../../domain/usecases/reorder_items_usecase.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
 
-// Data Source Provider - Using Local SQLite DataSource
-final itineraryLocalDataSourceProvider = Provider<ItineraryLocalDataSource>((ref) {
-  final dataSource = ItineraryLocalDataSource();
-  // Set current user ID from auth
-  final authDataSource = ref.watch(authLocalDataSourceProvider);
-  dataSource.setCurrentUserId(authDataSource.currentUserId);
-  return dataSource;
+// Data Source Provider - Using Remote Supabase DataSource
+final itineraryRemoteDataSourceProvider = Provider<ItineraryRemoteDataSource>((ref) {
+  return ItineraryRemoteDataSource();
 });
 
-// Repository Provider - Using Local DataSource
+// Repository Provider - Using Remote DataSource
 final itineraryRepositoryProvider = Provider<ItineraryRepository>((ref) {
-  final dataSource = ref.watch(itineraryLocalDataSourceProvider);
-  return ItineraryRepositoryImpl(dataSource);
+  final remoteDataSource = ref.watch(itineraryRemoteDataSourceProvider);
+  return ItineraryRepositoryImpl(remoteDataSource);
 });
 
 // Use Cases Providers

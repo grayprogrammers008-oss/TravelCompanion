@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/datasources/invite_local_datasource.dart';
+import '../../data/datasources/invite_remote_datasource.dart';
 import '../../data/repositories/invite_repository_impl.dart';
 import '../../domain/repositories/invite_repository.dart';
 import '../../domain/usecases/generate_invite_usecase.dart';
@@ -7,20 +7,15 @@ import '../../domain/usecases/accept_invite_usecase.dart';
 import '../../domain/usecases/revoke_invite_usecase.dart';
 import '../../domain/usecases/get_trip_invites_usecase.dart';
 import '../../domain/entities/invite_entity.dart';
-import '../../../trips/data/datasources/trip_local_datasource.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../../core/network/supabase_client.dart';
 
 // ============================================================================
 // DATA SOURCES
 // ============================================================================
 
-/// Provider for invite local data source
-final inviteLocalDataSourceProvider = Provider<InviteLocalDataSource>((ref) {
-  final dataSource = InviteLocalDataSource();
-  // Set current user ID from auth
-  final authDataSource = ref.watch(authLocalDataSourceProvider);
-  dataSource.setCurrentUserId(authDataSource.currentUserId);
-  return dataSource;
+/// Provider for invite remote data source
+final inviteRemoteDataSourceProvider = Provider<InviteRemoteDataSource>((ref) {
+  return InviteRemoteDataSource(SupabaseClientWrapper.client);
 });
 
 // ============================================================================
@@ -29,9 +24,8 @@ final inviteLocalDataSourceProvider = Provider<InviteLocalDataSource>((ref) {
 
 /// Provider for invite repository
 final inviteRepositoryProvider = Provider<InviteRepository>((ref) {
-  final localDataSource = ref.watch(inviteLocalDataSourceProvider);
-  final tripDataSource = TripLocalDataSource();
-  return InviteRepositoryImpl(localDataSource, tripDataSource);
+  final remoteDataSource = ref.watch(inviteRemoteDataSourceProvider);
+  return InviteRepositoryImpl(remoteDataSource);
 });
 
 // ============================================================================

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../providers/expense_providers.dart';
 
 /// Manual test page for expense CRUD operations
@@ -55,8 +55,8 @@ class _ExpenseTestPageState extends ConsumerState<ExpenseTestPage> {
     _log('\n📝 TEST 1: CREATE Expense');
 
     try {
-      final authDataSource = ref.read(authLocalDataSourceProvider);
-      final currentUserId = authDataSource.currentUserId;
+      // Get current user ID from Supabase (online-only mode)
+      final currentUserId = SupabaseClientWrapper.currentUserId;
 
       if (currentUserId == null || currentUserId.isEmpty) {
         throw Exception('User not logged in');

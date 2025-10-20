@@ -1,8 +1,6 @@
 import 'package:uuid/uuid.dart';
-import 'package:flutter/foundation.dart';
 import '../../domain/entities/checklist_entity.dart';
 import '../../domain/repositories/checklist_repository.dart';
-import '../datasources/checklist_local_datasource.dart';
 import '../datasources/checklist_remote_datasource.dart';
 import '../mappers/checklist_mapper.dart';
 import '../../../../shared/models/checklist_model.dart';
@@ -10,12 +8,10 @@ import '../../../../shared/models/checklist_model.dart';
 /// Implementation of ChecklistRepository using Supabase (online-only mode)
 class ChecklistRepositoryImpl implements ChecklistRepository {
   final ChecklistRemoteDataSource remoteDataSource;
-  final ChecklistLocalDataSource? localDataSource;
   final Uuid _uuid = const Uuid();
 
   ChecklistRepositoryImpl({
     required this.remoteDataSource,
-    this.localDataSource,
   });
 
   @override

@@ -1,22 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/network/supabase_client.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../../../shared/models/expense_model.dart';
-import '../../data/datasources/expense_local_datasource.dart';
+import '../../data/datasources/expense_remote_datasource.dart';
 import '../../data/repositories/expense_repository_impl.dart';
 import '../../domain/repositories/expense_repository.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
 
-// Data Source Provider
-final expenseLocalDataSourceProvider = Provider<ExpenseLocalDataSource>((ref) {
-  final dataSource = ExpenseLocalDataSource();
-  final authDataSource = ref.watch(authLocalDataSourceProvider);
-  dataSource.setCurrentUserId(authDataSource.currentUserId);
-  return dataSource;
+// Remote Data Source Provider
+final expenseRemoteDataSourceProvider = Provider<ExpenseRemoteDataSource>((ref) {
+  final supabaseClient = ref.watch(supabaseClientProvider);
+  return ExpenseRemoteDataSource(supabaseClient);
 });
 
 // Repository Provider
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
-  final dataSource = ref.watch(expenseLocalDataSourceProvider);
-  return ExpenseRepositoryImpl(dataSource);
+  final remoteDataSource = ref.watch(expenseRemoteDataSourceProvider);
+  return ExpenseRepositoryImpl(remoteDataSource);
 });
 
 // User Expenses Provider (all expenses for current user)
@@ -74,8 +73,9 @@ final tripBalancesProvider =
 // User Balances Provider (standalone expenses)
 final userBalancesProvider = FutureProvider<List<BalanceSummary>>((ref) async {
   final repository = ref.watch(expenseRepositoryProvider);
-  final authDataSource = ref.watch(authLocalDataSourceProvider);
-  return await repository.getBalances(userId: authDataSource.currentUserId);
+  final supabaseClient = ref.watch(supabaseClientProvider);
+  final currentUserId = supabaseClient.currentUserId;
+  return await repository.getBalances(userId: currentUserId);
 });
 
 // Settlements Provider (trip or user)

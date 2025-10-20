@@ -1,12 +1,12 @@
 import '../../../../shared/models/itinerary_model.dart';
 import '../../domain/repositories/itinerary_repository.dart';
-import '../datasources/itinerary_local_datasource.dart';
+import '../datasources/itinerary_remote_datasource.dart';
 
-/// Implementation of itinerary repository using local datasource
+/// Implementation of itinerary repository using remote Supabase datasource
 class ItineraryRepositoryImpl implements ItineraryRepository {
-  final ItineraryLocalDataSource localDataSource;
+  final ItineraryRemoteDataSource _remoteDataSource;
 
-  ItineraryRepositoryImpl(this.localDataSource);
+  ItineraryRepositoryImpl(this._remoteDataSource);
 
   @override
   Future<ItineraryItemModel> createItineraryItem({
@@ -19,7 +19,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
     int? dayNumber,
     int orderIndex = 0,
   }) async {
-    return await localDataSource.createItem(
+    return await _remoteDataSource.createItem(
       tripId: tripId,
       title: title,
       description: description,
@@ -33,7 +33,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
 
   @override
   Future<List<ItineraryItemModel>> getTripItinerary(String tripId) async {
-    return await localDataSource.getTripItinerary(tripId);
+    return await _remoteDataSource.getTripItinerary(tripId);
   }
 
   @override
@@ -41,7 +41,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
     required String tripId,
     required int dayNumber,
   }) async {
-    return await localDataSource.getDayItinerary(
+    return await _remoteDataSource.getDayItinerary(
       tripId: tripId,
       dayNumber: dayNumber,
     );
@@ -49,12 +49,12 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
 
   @override
   Future<List<ItineraryDay>> getItineraryByDays(String tripId) async {
-    return await localDataSource.getItineraryByDays(tripId);
+    return await _remoteDataSource.getItineraryByDays(tripId);
   }
 
   @override
   Future<ItineraryItemModel> getItineraryItem(String itemId) async {
-    return await localDataSource.getItem(itemId);
+    return await _remoteDataSource.getItem(itemId);
   }
 
   @override
@@ -68,7 +68,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
     int? dayNumber,
     int? orderIndex,
   }) async {
-    return await localDataSource.updateItem(
+    return await _remoteDataSource.updateItem(
       itemId: itemId,
       title: title,
       description: description,
@@ -82,7 +82,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
 
   @override
   Future<void> deleteItineraryItem(String itemId) async {
-    return await localDataSource.deleteItem(itemId);
+    return await _remoteDataSource.deleteItem(itemId);
   }
 
   @override
@@ -91,7 +91,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
     required int dayNumber,
     required List<String> itemIds,
   }) async {
-    return await localDataSource.reorderItems(
+    return await _remoteDataSource.reorderItems(
       tripId: tripId,
       dayNumber: dayNumber,
       itemIds: itemIds,
@@ -103,7 +103,7 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
     required String itemId,
     required int newDayNumber,
   }) async {
-    return await localDataSource.moveItemToDay(
+    return await _remoteDataSource.moveItemToDay(
       itemId: itemId,
       newDayNumber: newDayNumber,
     );
