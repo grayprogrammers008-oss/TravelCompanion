@@ -228,7 +228,7 @@ DECLARE nithya_id UUID;
 BEGIN
     SELECT id INTO nithya_id FROM auth.users WHERE email = 'nithyaganesan53@gmail.com';
 
-    DELETE FROM checklist_items WHERE created_by = nithya_id;
+    DELETE FROM checklist_items WHERE checklist_id IN (SELECT id FROM checklists WHERE created_by = nithya_id);
     DELETE FROM checklists WHERE created_by = nithya_id;
     DELETE FROM expense_splits WHERE user_id = nithya_id;
     DELETE FROM expenses WHERE paid_by = nithya_id;
