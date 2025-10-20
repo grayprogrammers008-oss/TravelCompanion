@@ -14,6 +14,10 @@ import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page
 import '../../features/checklists/presentation/pages/checklist_list_page.dart';
 import '../../features/checklists/presentation/pages/checklist_detail_page.dart';
 import '../../features/settings/presentation/pages/theme_settings_page.dart';
+import '../../features/settings/presentation/pages/settings_page_enhanced.dart';
+import '../../features/settings/presentation/pages/profile_page.dart';
+import '../../features/onboarding/presentation/pages/onboarding_page.dart';
+import '../../features/onboarding/presentation/providers/onboarding_provider.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../presentation/main_scaffold.dart';
 
@@ -36,20 +40,26 @@ class AppRoutes {
   static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
   static const String checklistList = '/trips/:tripId/checklists';
   static const String checklistDetail = '/trips/:tripId/checklists/:checklistId';
+  static const String profile = '/profile';
+  static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
+  static const String onboarding = '/onboarding';
 }
 
-// Router provider with auth redirect
+// Router provider with auth and onboarding redirect
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
+  final onboardingState = ref.watch(onboardingStateProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.login,
     redirect: (context, state) {
       // Check if user is authenticated
       final isAuthenticated = authState.value != null;
+      final needsOnboarding = onboardingState.value == false;
       final isLoginRoute = state.matchedLocation == AppRoutes.login;
       final isSignupRoute = state.matchedLocation == AppRoutes.signup;
+      final isOnboardingRoute = state.matchedLocation == AppRoutes.onboarding;
       final isInviteRoute = state.matchedLocation.startsWith('/invite/');
 
       // Allow invite routes without authentication
@@ -60,6 +70,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If not authenticated and not on login/signup, redirect to login
       if (!isAuthenticated && !isLoginRoute && !isSignupRoute) {
         return AppRoutes.login;
+      }
+
+      // If authenticated but needs onboarding, show onboarding
+      if (isAuthenticated && needsOnboarding && !isOnboardingRoute) {
+        return AppRoutes.onboarding;
+      }
+
+      // If authenticated, completed onboarding, and on onboarding page, go to home
+      if (isAuthenticated && !needsOnboarding && isOnboardingRoute) {
+        return AppRoutes.home;
       }
 
       // If authenticated and on login/signup, redirect to home
@@ -188,9 +208,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: AppRoutes.profile,
+        name: 'profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        name: 'settings',
+        builder: (context, state) => const SettingsPageEnhanced(),
+      ),
+      GoRoute(
         path: AppRoutes.themeSettings,
         name: 'themeSettings',
         builder: (context, state) => const ThemeSettingsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingPage(),
       ),
     ],
     errorBuilder: (context, state) =>

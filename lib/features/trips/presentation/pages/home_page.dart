@@ -414,10 +414,13 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   void _showProfileMenu(BuildContext context, WidgetRef ref) {
+    // Capture the parent context that has router access
+    final parentContext = context;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
+      builder: (bottomSheetContext) => Container(
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -456,9 +459,13 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 title: const Text('Profile'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to profile
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/profile');
+                  }
                 },
               ),
               ListTile(
@@ -476,9 +483,13 @@ class _HomePageState extends ConsumerState<HomePage>
                 title: const Text('Theme'),
                 subtitle: const Text('Customize app colors'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push('/settings/theme');
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/settings/theme');
+                  }
                 },
               ),
               ListTile(
@@ -495,9 +506,13 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 title: const Text('Settings'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to settings
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/settings');
+                  }
                 },
               ),
               const Divider(height: 1),
@@ -518,10 +533,10 @@ class _HomePageState extends ConsumerState<HomePage>
                   style: TextStyle(color: AppTheme.error),
                 ),
                 onTap: () async {
-                  Navigator.pop(context);
+                  Navigator.pop(bottomSheetContext);
                   await ref.read(authControllerProvider.notifier).signOut();
-                  if (context.mounted) {
-                    context.go('/');
+                  if (parentContext.mounted) {
+                    parentContext.go('/');
                   }
                 },
               ),
