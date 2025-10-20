@@ -5,11 +5,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/network/supabase_client.dart';
 import 'core/constants/app_constants.dart';
-// import 'core/database/database_helper.dart'; // Disabled in online-only mode
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/theme/theme_access.dart';
-import 'core/config/data_source_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,29 +26,14 @@ void main() async {
   // Initialize Hive for local storage
   await Hive.initFlutter();
 
-  // Configure data source - ONLINE ONLY (Supabase, no SQLite)
-  DataSourceConfig.useOnlineOnly();
-  DataSourceConfig.printConfig();
-
-  // Initialize Supabase Backend (Primary)
+  // Initialize Supabase Backend (online-only mode)
   try {
     await SupabaseClientWrapper.initialize();
-    debugPrint('✅ Supabase initialized successfully');
+    debugPrint('✅ Supabase initialized successfully (online-only mode)');
   } catch (e) {
     debugPrint('❌ Failed to initialize Supabase: $e');
-    if (DataSourceConfig.enableFallback) {
-      debugPrint('⚠️  Will use SQLite as fallback');
-    }
+    debugPrint('⚠️  App requires internet connection to function');
   }
-
-  // SQLite Database - DISABLED (Online-only mode)
-  // Uncomment if you want to enable offline support:
-  // try {
-  //   await DatabaseHelper.instance.database;
-  //   debugPrint('✅ SQLite database initialized successfully');
-  // } catch (e) {
-  //   debugPrint('❌ Failed to initialize SQLite: $e');
-  // }
 
   runApp(
     // ProviderScope enables Riverpod state management
