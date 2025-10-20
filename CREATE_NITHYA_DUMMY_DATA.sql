@@ -33,17 +33,21 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Check if dummy data already exists (check multiple tables)
-    IF EXISTS (SELECT 1 FROM trips WHERE created_by = nithya_user_id LIMIT 1)
-       OR EXISTS (SELECT 1 FROM trip_members WHERE user_id = nithya_user_id LIMIT 1)
-       OR EXISTS (SELECT 1 FROM expenses WHERE paid_by = nithya_user_id LIMIT 1)
-       OR EXISTS (SELECT 1 FROM checklists WHERE created_by = nithya_user_id LIMIT 1) THEN
-        RAISE NOTICE '⚠️  WARNING: Nithya already has data in the database!';
-        RAISE NOTICE '   To avoid duplicates, please run CLEANUP_NITHYA_DATA.sql first.';
-        RAISE NOTICE '   Then run this script again.';
-        RETURN;
-    END IF;
+    -- Auto-cleanup: Delete any existing data for Nithya to avoid duplicates
+    RAISE NOTICE 'Checking for existing data...';
 
+    -- Delete in order to respect foreign key constraints
+    DELETE FROM checklist_items
+    WHERE checklist_id IN (SELECT id FROM checklists WHERE created_by = nithya_user_id);
+
+    DELETE FROM checklists WHERE created_by = nithya_user_id;
+    DELETE FROM expense_splits WHERE user_id = nithya_user_id;
+    DELETE FROM expenses WHERE paid_by = nithya_user_id;
+    DELETE FROM itinerary_items WHERE created_by = nithya_user_id;
+    DELETE FROM trip_members WHERE user_id = nithya_user_id;
+    DELETE FROM trips WHERE created_by = nithya_user_id;
+
+    RAISE NOTICE '✓ Cleaned up any existing data';
     RAISE NOTICE 'Creating dummy data for Nithya (User ID: %)', nithya_user_id;
 
     -- ========================================================================
