@@ -42,7 +42,7 @@ BEGIN
 
     INSERT INTO trips (
         id, created_by, name, destination, start_date, end_date,
-        description, cover_image_url, budget, status
+        description, cover_image_url
     ) VALUES (
         trip1_id,
         nithya_user_id,
@@ -51,14 +51,12 @@ BEGIN
         CURRENT_DATE + INTERVAL '15 days',
         CURRENT_DATE + INTERVAL '18 days',
         'Beach relaxation, water sports, and nightlife. Going to explore North Goa beaches!',
-        'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800',
-        25000.00,
-        'planning'
+        'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800'
     );
 
-    -- Add Nithya as trip creator/admin
+    -- Add Nithya as trip admin
     INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-    VALUES (gen_random_uuid(), trip1_id, nithya_user_id, 'creator', NOW());
+    VALUES (gen_random_uuid(), trip1_id, nithya_user_id, 'admin', NOW());
 
     -- Add Vinoth as a member (if exists)
     IF vinoth_user_id IS NOT NULL THEN
@@ -152,7 +150,7 @@ BEGIN
 
     INSERT INTO trips (
         id, created_by, name, destination, start_date, end_date,
-        description, cover_image_url, budget, status
+        description, cover_image_url
     ) VALUES (
         trip2_id,
         nithya_user_id,
@@ -161,13 +159,11 @@ BEGIN
         CURRENT_DATE - INTERVAL '30 days',
         CURRENT_DATE - INTERVAL '27 days',
         'Peaceful hill station escape with tea gardens and botanical gardens',
-        'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800',
-        15000.00,
-        'completed'
+        'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800'
     );
 
     INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-    VALUES (gen_random_uuid(), trip2_id, nithya_user_id, 'creator', CURRENT_DATE - INTERVAL '35 days');
+    VALUES (gen_random_uuid(), trip2_id, nithya_user_id, 'admin', CURRENT_DATE - INTERVAL '35 days');
 
     -- Some expenses from past trip
     expense3_id := gen_random_uuid();
@@ -193,7 +189,7 @@ BEGIN
 
     INSERT INTO trips (
         id, created_by, name, destination, start_date, end_date,
-        description, cover_image_url, budget, status
+        description, cover_image_url
     ) VALUES (
         trip3_id,
         nithya_user_id,
@@ -202,13 +198,11 @@ BEGIN
         CURRENT_DATE + INTERVAL '60 days',
         CURRENT_DATE + INTERVAL '65 days',
         'Houseboat cruise through serene backwaters with authentic Kerala cuisine',
-        'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800',
-        35000.00,
-        'planning'
+        'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800'
     );
 
     INSERT INTO trip_members (id, trip_id, user_id, role, joined_at)
-    VALUES (gen_random_uuid(), trip3_id, nithya_user_id, 'creator', NOW());
+    VALUES (gen_random_uuid(), trip3_id, nithya_user_id, 'admin', NOW());
 
     -- Checklist for Kerala Trip
     checklist2_id := gen_random_uuid();
