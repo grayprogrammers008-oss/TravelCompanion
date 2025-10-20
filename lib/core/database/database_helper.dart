@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       dbPath,
-      version: 4, // Bumped from 3 to 4 for itinerary_items schema fix
+      version: 5, // Bumped from 4 to 5 for checklists schema update
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -134,6 +134,87 @@ class DatabaseHelper {
         print('Migration error (itinerary_items): $e');
       }
     }
+
+    if (oldVersion < 5) {
+      // Update checklists schema for collaborative features
+      try {
+        // Rename old tables
+        await db.execute('ALTER TABLE checklists RENAME TO checklists_old');
+        await db.execute('ALTER TABLE checklist_items RENAME TO checklist_items_old');
+
+        // Create new checklists table with updated schema
+        await db.execute('''
+          CREATE TABLE checklists (
+            id TEXT PRIMARY KEY,
+            trip_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            created_by TEXT,
+            created_at TEXT,
+            updated_at TEXT,
+            creator_name TEXT,
+            FOREIGN KEY (trip_id) REFERENCES trips (id) ON DELETE CASCADE
+          )
+        ''');
+
+        // Create new checklist_items table with updated schema
+        await db.execute('''
+          CREATE TABLE checklist_items (
+            id TEXT PRIMARY KEY,
+            checklist_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            is_completed INTEGER NOT NULL DEFAULT 0,
+            assigned_to TEXT,
+            completed_by TEXT,
+            completed_at TEXT,
+            order_index INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT,
+            assigned_to_name TEXT,
+            completed_by_name TEXT,
+            FOREIGN KEY (checklist_id) REFERENCES checklists (id) ON DELETE CASCADE
+          )
+        ''');
+
+        // Migrate existing data if any
+        await db.execute('''
+          INSERT INTO checklists (
+            id, trip_id, name, created_by, created_at, updated_at, creator_name
+          )
+          SELECT
+            id, trip_id, title as name, created_by, created_at, updated_at, NULL as creator_name
+          FROM checklists_old
+        ''');
+
+        await db.execute('''
+          INSERT INTO checklist_items (
+            id, checklist_id, title, is_completed, assigned_to,
+            completed_by, completed_at, order_index, created_at, updated_at,
+            assigned_to_name, completed_by_name
+          )
+          SELECT
+            id, checklist_id, title, is_completed, assigned_to,
+            NULL as completed_by, completed_at, 0 as order_index, created_at, updated_at,
+            NULL as assigned_to_name, NULL as completed_by_name
+          FROM checklist_items_old
+        ''');
+
+        // Drop old tables
+        await db.execute('DROP TABLE checklist_items_old');
+        await db.execute('DROP TABLE checklists_old');
+
+        // Create indexes for performance
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_checklists_trip_id ON checklists(trip_id)',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_checklist_items_checklist_id ON checklist_items(checklist_id)',
+        );
+
+        print('✅ Checklists tables migrated to new schema');
+      } catch (e) {
+        print('Migration error (checklists): $e');
+      }
+    }
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -220,23 +301,21 @@ class DatabaseHelper {
       'CREATE INDEX idx_itinerary_items_day_number ON itinerary_items(day_number)',
     );
 
-    // Create Checklists table
+    // Create Checklists table with collaborative features
     await db.execute('''
       CREATE TABLE checklists (
         id TEXT PRIMARY KEY,
         trip_id TEXT NOT NULL,
-        title TEXT NOT NULL,
-        description TEXT,
-        category TEXT,
-        created_by TEXT NOT NULL,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL,
-        FOREIGN KEY (trip_id) REFERENCES trips (id) ON DELETE CASCADE,
-        FOREIGN KEY (created_by) REFERENCES profiles (id) ON DELETE CASCADE
+        name TEXT NOT NULL,
+        created_by TEXT,
+        created_at TEXT,
+        updated_at TEXT,
+        creator_name TEXT,
+        FOREIGN KEY (trip_id) REFERENCES trips (id) ON DELETE CASCADE
       )
     ''');
 
-    // Create Checklist Items table
+    // Create Checklist Items table with assignment and completion tracking
     await db.execute('''
       CREATE TABLE checklist_items (
         id TEXT PRIMARY KEY,
@@ -244,11 +323,14 @@ class DatabaseHelper {
         title TEXT NOT NULL,
         is_completed INTEGER NOT NULL DEFAULT 0,
         assigned_to TEXT,
+        completed_by TEXT,
         completed_at TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL,
-        FOREIGN KEY (checklist_id) REFERENCES checklists (id) ON DELETE CASCADE,
-        FOREIGN KEY (assigned_to) REFERENCES profiles (id) ON DELETE SET NULL
+        order_index INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT,
+        updated_at TEXT,
+        assigned_to_name TEXT,
+        completed_by_name TEXT,
+        FOREIGN KEY (checklist_id) REFERENCES checklists (id) ON DELETE CASCADE
       )
     ''');
 
@@ -335,6 +417,12 @@ class DatabaseHelper {
     );
     await db.execute(
       'CREATE INDEX idx_itinerary_trip_id ON itinerary_items(trip_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_checklists_trip_id ON checklists(trip_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_checklist_items_checklist_id ON checklist_items(checklist_id)',
     );
     await db.execute('CREATE INDEX idx_expenses_trip_id ON expenses(trip_id)');
     await db.execute(

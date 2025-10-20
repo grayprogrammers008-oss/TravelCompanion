@@ -11,6 +11,8 @@ import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
 import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
+import '../../features/checklists/presentation/pages/checklist_list_page.dart';
+import '../../features/checklists/presentation/pages/checklist_detail_page.dart';
 import '../../features/settings/presentation/pages/theme_settings_page.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../presentation/main_scaffold.dart';
@@ -32,6 +34,8 @@ class AppRoutes {
   static const String itinerary = '/trips/:tripId/itinerary';
   static const String addItineraryItem = '/trips/:tripId/itinerary/add';
   static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
+  static const String checklistList = '/trips/:tripId/checklists';
+  static const String checklistDetail = '/trips/:tripId/checklists/:checklistId';
   static const String themeSettings = '/settings/theme';
 }
 
@@ -164,6 +168,23 @@ final routerProvider = Provider<GoRouter>((ref) {
           final tripId = state.pathParameters['tripId']!;
           final itemId = state.pathParameters['itemId']!;
           return AddEditItineraryItemPageNew(tripId: tripId, itemId: itemId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checklistList,
+        name: 'checklistList',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return ChecklistListPage(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checklistDetail,
+        name: 'checklistDetail',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final checklistId = state.pathParameters['checklistId']!;
+          return ChecklistDetailPage(tripId: tripId, checklistId: checklistId);
         },
       ),
       GoRoute(

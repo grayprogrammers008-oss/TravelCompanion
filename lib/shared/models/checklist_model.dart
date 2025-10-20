@@ -178,11 +178,17 @@ class ChecklistItemModel {
   }
 
   factory ChecklistItemModel.fromJson(Map<String, dynamic> json) {
+    // Convert SQLite int (0 or 1) to bool
+    final isCompletedValue = json['is_completed'];
+    final isCompleted = isCompletedValue is int
+        ? isCompletedValue == 1
+        : (isCompletedValue as bool? ?? false);
+
     return ChecklistItemModel(
       id: json['id'] as String,
       checklistId: json['checklist_id'] as String,
       title: json['title'] as String,
-      isCompleted: json['is_completed'] as bool? ?? false,
+      isCompleted: isCompleted,
       assignedTo: json['assigned_to'] as String?,
       completedBy: json['completed_by'] as String?,
       completedAt: json['completed_at'] != null
