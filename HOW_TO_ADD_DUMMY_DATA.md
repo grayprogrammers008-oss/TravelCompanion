@@ -188,22 +188,56 @@ VALUES (gen_random_uuid(), checklist1_id, 'Your Item', false, nithya_user_id, ni
 
 ## 🔄 Re-running the Script
 
-The script is **safe to run multiple times** because:
-- It uses `gen_random_uuid()` for IDs
-- Each run creates new records
+**IMPORTANT**: If you get an error like `duplicate key value violates unique constraint`, it means the data already exists. You need to clean up first!
 
-**Note**: This means you'll get duplicate data if you run it twice. To avoid duplicates:
+### Option 1: Use the Cleanup Script (Recommended)
 
-### Delete All Nithya's Data First
+We've created a cleanup script to remove all existing data safely:
+
+**File**: `CLEANUP_NITHYA_DATA.sql`
+
+**Steps**:
+1. Go to Supabase Dashboard → SQL Editor → New Query
+2. Copy entire content from `CLEANUP_NITHYA_DATA.sql`
+3. Paste and click **Run**
+4. You'll see a summary of deleted items
+5. Now run `CREATE_NITHYA_DUMMY_DATA.sql` again
+
+**Expected Output**:
+```
+Cleaning up dummy data for Nithya (User ID: ...)
+   ✓ Deleted 12 checklist items
+   ✓ Deleted 2 checklists
+   ✓ Deleted 6 expense splits
+   ✓ Deleted 6 expenses
+   ✓ Deleted 6 itinerary items
+   ✓ Deleted 4 trip memberships
+   ✓ Deleted 3 trips
+
+✅ Cleanup completed successfully!
+```
+
+### Option 2: Manual Cleanup (Quick)
+
+If you prefer SQL commands directly:
+
 ```sql
--- Delete in this order (to respect foreign keys)
-DELETE FROM checklist_items WHERE created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
-DELETE FROM checklists WHERE created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
-DELETE FROM expense_splits WHERE user_id = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
-DELETE FROM expenses WHERE paid_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
-DELETE FROM itinerary_items WHERE created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
-DELETE FROM trip_members WHERE user_id = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
-DELETE FROM trips WHERE created_by = (SELECT id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com');
+-- Delete all Nithya's data (run these in order)
+DO $$
+DECLARE nithya_id UUID;
+BEGIN
+    SELECT id INTO nithya_id FROM auth.users WHERE email = 'NithyaGanesan53@gmail.com';
+
+    DELETE FROM checklist_items WHERE created_by = nithya_id;
+    DELETE FROM checklists WHERE created_by = nithya_id;
+    DELETE FROM expense_splits WHERE user_id = nithya_id;
+    DELETE FROM expenses WHERE paid_by = nithya_id;
+    DELETE FROM itinerary_items WHERE created_by = nithya_id;
+    DELETE FROM trip_members WHERE user_id = nithya_id;
+    DELETE FROM trips WHERE created_by = nithya_id;
+
+    RAISE NOTICE 'Cleanup complete!';
+END $$;
 ```
 
 Then run the dummy data script again.
