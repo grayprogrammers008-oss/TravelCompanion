@@ -90,7 +90,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                 ? null
                 : _descriptionController.text.trim(),
             amount: double.parse(_amountController.text.trim()),
-            category: _selectedCategory,
+            category: _selectedCategory?.toLowerCase(),
             paidBy: currentUserId,
             splitWith: memberIds,
             transactionDate: _transactionDate ?? DateTime.now(),
