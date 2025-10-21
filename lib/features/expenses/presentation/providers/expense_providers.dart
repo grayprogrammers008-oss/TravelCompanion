@@ -24,11 +24,18 @@ final userExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
 ) async {
   try {
     final repository = ref.watch(expenseRepositoryProvider);
-    return await repository.getUserExpenses().timeout(
+    final expenses = await repository.getUserExpenses().timeout(
       const Duration(seconds: 10),
-      onTimeout: () => <ExpenseWithSplits>[],
+      onTimeout: () {
+        print('⏱️ userExpensesProvider timeout - returning empty list');
+        return <ExpenseWithSplits>[];
+      },
     );
+    print('✅ userExpensesProvider fetched ${expenses.length} expenses');
+    return expenses;
   } catch (e) {
+    // Log the error for debugging
+    print('❌ userExpensesProvider error: $e');
     // Return empty list instead of throwing to show empty state
     // This allows the UI to show the empty state instead of hanging
     return <ExpenseWithSplits>[];
@@ -41,11 +48,17 @@ final standaloneExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
 ) async {
   try {
     final repository = ref.watch(expenseRepositoryProvider);
-    return await repository.getStandaloneExpenses().timeout(
+    final expenses = await repository.getStandaloneExpenses().timeout(
       const Duration(seconds: 10),
-      onTimeout: () => <ExpenseWithSplits>[],
+      onTimeout: () {
+        print('⏱️ standaloneExpensesProvider timeout - returning empty list');
+        return <ExpenseWithSplits>[];
+      },
     );
+    print('✅ standaloneExpensesProvider fetched ${expenses.length} expenses');
+    return expenses;
   } catch (e) {
+    print('❌ standaloneExpensesProvider error: $e');
     // Return empty list instead of throwing to show empty state
     return <ExpenseWithSplits>[];
   }

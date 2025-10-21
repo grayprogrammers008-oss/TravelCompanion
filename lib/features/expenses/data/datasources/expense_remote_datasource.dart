@@ -10,6 +10,7 @@ class ExpenseRemoteDataSource {
   /// Get all expenses for a user (both trip and standalone)
   Future<List<ExpenseWithSplits>> getUserExpenses(String userId) async {
     try {
+      print('🔍 Fetching user expenses for userId: $userId');
       final response = await _client
           .from('expenses')
           .select('''
@@ -23,10 +24,12 @@ class ExpenseRemoteDataSource {
           .or('paid_by.eq.$userId,expense_splits.user_id.eq.$userId')
           .order('transaction_date', ascending: false);
 
+      print('📊 Database returned ${(response as List).length} expenses');
       return (response as List)
           .map((json) => _parseExpenseWithSplits(json))
           .toList();
     } catch (e) {
+      print('❌ Error fetching user expenses: $e');
       throw Exception('Failed to get user expenses: $e');
     }
   }
@@ -115,6 +118,8 @@ class ExpenseRemoteDataSource {
     DateTime? transactionDate,
   }) async {
     try {
+      print('💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId');
+
       // Create expense
       final expenseData = {
         'trip_id': tripId,
@@ -134,6 +139,7 @@ class ExpenseRemoteDataSource {
           .single();
 
       final expense = ExpenseModel.fromJson(expenseResponse);
+      print('✅ Expense created with ID: ${expense.id}');
 
       // Calculate split amounts
       final splitAmount = amount / splitWith.length;
@@ -150,9 +156,11 @@ class ExpenseRemoteDataSource {
           .toList();
 
       await _client.from('expense_splits').insert(splitsData);
+      print('✅ Created ${splitsData.length} expense splits');
 
       return expense;
     } catch (e) {
+      print('❌ Error creating expense: $e');
       throw Exception('Failed to create expense: $e');
     }
   }
