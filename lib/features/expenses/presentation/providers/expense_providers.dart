@@ -22,16 +22,33 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 final userExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
   ref,
 ) async {
-  final repository = ref.watch(expenseRepositoryProvider);
-  return await repository.getUserExpenses();
+  try {
+    final repository = ref.watch(expenseRepositoryProvider);
+    return await repository.getUserExpenses().timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => <ExpenseWithSplits>[],
+    );
+  } catch (e) {
+    // Return empty list instead of throwing to show empty state
+    // This allows the UI to show the empty state instead of hanging
+    return <ExpenseWithSplits>[];
+  }
 });
 
 // Standalone Expenses Provider
 final standaloneExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
   ref,
 ) async {
-  final repository = ref.watch(expenseRepositoryProvider);
-  return await repository.getStandaloneExpenses();
+  try {
+    final repository = ref.watch(expenseRepositoryProvider);
+    return await repository.getStandaloneExpenses().timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => <ExpenseWithSplits>[],
+    );
+  } catch (e) {
+    // Return empty list instead of throwing to show empty state
+    return <ExpenseWithSplits>[];
+  }
 });
 
 // Trip Expenses Provider
