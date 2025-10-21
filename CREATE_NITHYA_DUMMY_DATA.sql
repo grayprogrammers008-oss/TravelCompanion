@@ -134,13 +134,13 @@ BEGIN
 
     -- Split equally between Nithya and Vinoth (if exists)
     IF vinoth_user_id IS NOT NULL THEN
-        INSERT INTO expense_splits (id, expense_id, user_id, amount, split_type)
+        INSERT INTO expense_splits (id, expense_id, user_id, amount)
         VALUES
-            (gen_random_uuid(), expense1_id, nithya_user_id, 4250.00, 'equal'),
-            (gen_random_uuid(), expense1_id, vinoth_user_id, 4250.00, 'equal');
+            (gen_random_uuid(), expense1_id, nithya_user_id, 4250.00),
+            (gen_random_uuid(), expense1_id, vinoth_user_id, 4250.00);
     ELSE
-        INSERT INTO expense_splits (id, expense_id, user_id, amount, split_type)
-        VALUES (gen_random_uuid(), expense1_id, nithya_user_id, 8500.00, 'equal');
+        INSERT INTO expense_splits (id, expense_id, user_id, amount)
+        VALUES (gen_random_uuid(), expense1_id, nithya_user_id, 8500.00);
     END IF;
 
     expense2_id := gen_random_uuid();
@@ -151,13 +151,13 @@ BEGIN
     );
 
     IF vinoth_user_id IS NOT NULL THEN
-        INSERT INTO expense_splits (id, expense_id, user_id, amount, split_type)
+        INSERT INTO expense_splits (id, expense_id, user_id, amount)
         VALUES
-            (gen_random_uuid(), expense2_id, nithya_user_id, 6000.00, 'equal'),
-            (gen_random_uuid(), expense2_id, vinoth_user_id, 6000.00, 'equal');
+            (gen_random_uuid(), expense2_id, nithya_user_id, 6000.00),
+            (gen_random_uuid(), expense2_id, vinoth_user_id, 6000.00);
     ELSE
-        INSERT INTO expense_splits (id, expense_id, user_id, amount, split_type)
-        VALUES (gen_random_uuid(), expense2_id, nithya_user_id, 12000.00, 'equal');
+        INSERT INTO expense_splits (id, expense_id, user_id, amount)
+        VALUES (gen_random_uuid(), expense2_id, nithya_user_id, 12000.00);
     END IF;
 
     -- ========================================================================
@@ -191,8 +191,8 @@ BEGIN
         'activities', nithya_user_id, CURRENT_DATE - INTERVAL '29 days'
     );
 
-    INSERT INTO expense_splits (id, expense_id, user_id, amount, split_type)
-    VALUES (gen_random_uuid(), expense3_id, nithya_user_id, 2500.00, 'equal');
+    INSERT INTO expense_splits (id, expense_id, user_id, amount)
+    VALUES (gen_random_uuid(), expense3_id, nithya_user_id, 2500.00);
 
     INSERT INTO expenses (id, trip_id, title, description, amount, category, paid_by, transaction_date)
     VALUES (
