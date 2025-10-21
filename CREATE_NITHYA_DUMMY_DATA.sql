@@ -110,7 +110,7 @@ BEGIN
 
     -- Checklist for Goa Trip
     checklist1_id := gen_random_uuid();
-    INSERT INTO checklists (id, trip_id, title, created_by)
+    INSERT INTO checklists (id, trip_id, name, created_by)
     VALUES (checklist1_id, trip1_id, 'Packing List', nithya_user_id);
 
     INSERT INTO checklist_items (id, checklist_id, title, is_completed, assigned_to)
@@ -188,7 +188,7 @@ BEGIN
     INSERT INTO expenses (id, trip_id, title, description, amount, category, paid_by, transaction_date)
     VALUES (
         expense3_id, trip2_id, 'Toy Train Ride', 'Nilgiri Mountain Railway', 2500.00,
-        'activity', nithya_user_id, CURRENT_DATE - INTERVAL '29 days'
+        'activities', nithya_user_id, CURRENT_DATE - INTERVAL '29 days'
     );
 
     INSERT INTO expense_splits (id, expense_id, user_id, amount, split_type)
@@ -197,7 +197,7 @@ BEGIN
     INSERT INTO expenses (id, trip_id, title, description, amount, category, paid_by, transaction_date)
     VALUES (
         gen_random_uuid(), trip2_id, 'Tea Garden Tour', 'Guided tour with tea tasting', 1200.00,
-        'activity', nithya_user_id, CURRENT_DATE - INTERVAL '28 days'
+        'activities', nithya_user_id, CURRENT_DATE - INTERVAL '28 days'
     );
 
     -- ========================================================================
@@ -225,7 +225,7 @@ BEGIN
 
     -- Checklist for Kerala Trip
     checklist2_id := gen_random_uuid();
-    INSERT INTO checklists (id, trip_id, title, created_by)
+    INSERT INTO checklists (id, trip_id, name, created_by)
     VALUES (checklist2_id, trip3_id, 'Pre-Trip To-Do', nithya_user_id);
 
     INSERT INTO checklist_items (id, checklist_id, title, is_completed, assigned_to)
