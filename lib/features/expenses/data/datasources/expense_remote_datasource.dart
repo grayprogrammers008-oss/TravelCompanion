@@ -11,7 +11,9 @@ class ExpenseRemoteDataSource {
   Future<List<ExpenseWithSplits>> getUserExpenses(String userId) async {
     try {
       print('🔍 Fetching user expenses for userId: $userId');
-      final response = await _client
+
+      // First, get all expenses where user is the payer
+      final paidByResponse = await _client
           .from('expenses')
           .select('''
             *,
@@ -21,11 +23,43 @@ class ExpenseRemoteDataSource {
             ),
             payer:profiles!expenses_paid_by_fkey(full_name)
           ''')
-          .or('paid_by.eq.$userId,expense_splits.user_id.eq.$userId')
+          .eq('paid_by', userId)
           .order('transaction_date', ascending: false);
 
-      print('📊 Database returned ${(response as List).length} expenses');
-      return (response as List)
+      // Then, get all expense_splits where user is a participant
+      final splitsResponse = await _client
+          .from('expense_splits')
+          .select('expense_id')
+          .eq('user_id', userId);
+
+      // Get unique expense IDs from splits
+      final expenseIdsFromSplits = (splitsResponse as List)
+          .map((split) => split['expense_id'] as String)
+          .toSet();
+
+      // Fetch expenses for those IDs (excluding ones already fetched)
+      List<dynamic> splitExpenses = [];
+      if (expenseIdsFromSplits.isNotEmpty) {
+        final splitExpensesResponse = await _client
+            .from('expenses')
+            .select('''
+              *,
+              expense_splits(
+                *,
+                user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
+              ),
+              payer:profiles!expenses_paid_by_fkey(full_name)
+            ''')
+            .inFilter('id', expenseIdsFromSplits.toList())
+            .neq('paid_by', userId);
+        splitExpenses = splitExpensesResponse as List;
+      }
+
+      // Combine and parse
+      final allExpenses = [...(paidByResponse as List), ...splitExpenses];
+      print('📊 Database returned ${allExpenses.length} expenses (${(paidByResponse as List).length} paid by user, ${splitExpenses.length} split with user)');
+
+      return allExpenses
           .map((json) => _parseExpenseWithSplits(json))
           .toList();
     } catch (e) {
@@ -61,7 +95,10 @@ class ExpenseRemoteDataSource {
   /// Get standalone expenses (no trip)
   Future<List<ExpenseWithSplits>> getStandaloneExpenses(String userId) async {
     try {
-      final response = await _client
+      print('🔍 Fetching standalone expenses for userId: $userId');
+
+      // Get standalone expenses where user is the payer
+      final paidByResponse = await _client
           .from('expenses')
           .select('''
             *,
@@ -72,13 +109,46 @@ class ExpenseRemoteDataSource {
             payer:profiles!expenses_paid_by_fkey(full_name)
           ''')
           .isFilter('trip_id', null)
-          .or('paid_by.eq.$userId,expense_splits.user_id.eq.$userId')
+          .eq('paid_by', userId)
           .order('transaction_date', ascending: false);
 
-      return (response as List)
+      // Get all expense_splits where user is a participant (for standalone only)
+      final splitsResponse = await _client
+          .from('expense_splits')
+          .select('expense_id')
+          .eq('user_id', userId);
+
+      final expenseIdsFromSplits = (splitsResponse as List)
+          .map((split) => split['expense_id'] as String)
+          .toSet();
+
+      // Fetch standalone expenses for those IDs (excluding ones already fetched)
+      List<dynamic> splitExpenses = [];
+      if (expenseIdsFromSplits.isNotEmpty) {
+        final splitExpensesResponse = await _client
+            .from('expenses')
+            .select('''
+              *,
+              expense_splits(
+                *,
+                user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
+              ),
+              payer:profiles!expenses_paid_by_fkey(full_name)
+            ''')
+            .isFilter('trip_id', null)
+            .inFilter('id', expenseIdsFromSplits.toList())
+            .neq('paid_by', userId);
+        splitExpenses = splitExpensesResponse as List;
+      }
+
+      final allExpenses = [...(paidByResponse as List), ...splitExpenses];
+      print('📊 Standalone expenses: ${allExpenses.length} total (${(paidByResponse as List).length} paid, ${splitExpenses.length} split)');
+
+      return allExpenses
           .map((json) => _parseExpenseWithSplits(json))
           .toList();
     } catch (e) {
+      print('❌ Error fetching standalone expenses: $e');
       throw Exception('Failed to get standalone expenses: $e');
     }
   }
