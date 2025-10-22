@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
+import '../../data/datasources/profile_photo_service.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/change_password_usecase.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
+import '../../domain/usecases/update_profile_usecase.dart';
 
 // Remote Data Source Provider - Supabase Only
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
@@ -32,6 +35,21 @@ final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
 final signOutUseCaseProvider = Provider<SignOutUseCase>((ref) {
   final repository = ref.watch(authRepositoryProvider);
   return SignOutUseCase(repository);
+});
+
+final updateProfileUseCaseProvider = Provider<UpdateProfileUseCase>((ref) {
+  final repository = ref.watch(authRepositoryProvider);
+  return UpdateProfileUseCase(repository);
+});
+
+final changePasswordUseCaseProvider = Provider<ChangePasswordUseCase>((ref) {
+  final repository = ref.watch(authRepositoryProvider);
+  return ChangePasswordUseCase(repository);
+});
+
+// Profile Photo Service Provider
+final profilePhotoServiceProvider = Provider<ProfilePhotoService>((ref) {
+  return ProfilePhotoService();
 });
 
 // Auth State Provider - listens to auth changes from repository
@@ -80,6 +98,8 @@ class AuthController extends Notifier<AuthState> {
   late final SignUpUseCase _signUpUseCase;
   late final SignInUseCase _signInUseCase;
   late final SignOutUseCase _signOutUseCase;
+  late final UpdateProfileUseCase _updateProfileUseCase;
+  late final ChangePasswordUseCase _changePasswordUseCase;
   late final AuthRepository _repository;
 
   @override
@@ -88,6 +108,8 @@ class AuthController extends Notifier<AuthState> {
     _signUpUseCase = ref.read(signUpUseCaseProvider);
     _signInUseCase = ref.read(signInUseCaseProvider);
     _signOutUseCase = ref.read(signOutUseCaseProvider);
+    _updateProfileUseCase = ref.read(updateProfileUseCaseProvider);
+    _changePasswordUseCase = ref.read(changePasswordUseCaseProvider);
     _repository = ref.read(authRepositoryProvider);
 
     return AuthState();
@@ -164,6 +186,50 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _repository.resetPassword(email);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Update profile
+  Future<void> updateProfile({
+    String? fullName,
+    String? phoneNumber,
+    String? avatarUrl,
+    String? bio,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final user = await _updateProfileUseCase(
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        avatarUrl: avatarUrl,
+        bio: bio,
+      );
+
+      // Invalidate current user provider to refresh with new user data
+      ref.invalidate(currentUserProvider);
+
+      state = state.copyWith(isLoading: false, user: user);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Change password
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _changePasswordUseCase(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

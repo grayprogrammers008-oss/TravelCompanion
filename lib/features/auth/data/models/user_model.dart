@@ -7,6 +7,7 @@ class UserModel {
   final String? fullName;
   final String? avatarUrl;
   final String? phoneNumber;
+  final String? bio;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -16,6 +17,7 @@ class UserModel {
     this.fullName,
     this.avatarUrl,
     this.phoneNumber,
+    this.bio,
     this.createdAt,
     this.updatedAt,
   });
@@ -26,6 +28,7 @@ class UserModel {
     String? fullName,
     String? avatarUrl,
     String? phoneNumber,
+    String? bio,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -35,6 +38,7 @@ class UserModel {
       fullName: fullName ?? this.fullName,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      bio: bio ?? this.bio,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -47,6 +51,7 @@ class UserModel {
       'full_name': fullName,
       'avatar_url': avatarUrl,
       'phone_number': phoneNumber,
+      'bio': bio,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -59,6 +64,7 @@ class UserModel {
       fullName: json['full_name'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       phoneNumber: json['phone_number'] as String?,
+      bio: json['bio'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
@@ -76,6 +82,7 @@ class UserModel {
       fullName: fullName,
       avatarUrl: avatarUrl,
       phoneNumber: phoneNumber,
+      bio: bio,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -89,6 +96,7 @@ class UserModel {
       fullName: entity.fullName,
       avatarUrl: entity.avatarUrl,
       phoneNumber: entity.phoneNumber,
+      bio: entity.bio,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     );
@@ -103,6 +111,7 @@ class UserModel {
         other.fullName == fullName &&
         other.avatarUrl == avatarUrl &&
         other.phoneNumber == phoneNumber &&
+        other.bio == bio &&
         other.createdAt == createdAt &&
         other.updatedAt == updatedAt;
   }
@@ -115,6 +124,7 @@ class UserModel {
       fullName,
       avatarUrl,
       phoneNumber,
+      bio,
       createdAt,
       updatedAt,
     );
@@ -122,6 +132,6 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, email: $email, fullName: $fullName, avatarUrl: $avatarUrl, phoneNumber: $phoneNumber, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserModel(id: $id, email: $email, fullName: $fullName, avatarUrl: $avatarUrl, phoneNumber: $phoneNumber, bio: $bio, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }

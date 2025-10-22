@@ -5,6 +5,7 @@ class UserEntity {
   final String? fullName;
   final String? avatarUrl;
   final String? phoneNumber;
+  final String? bio;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -14,6 +15,7 @@ class UserEntity {
     this.fullName,
     this.avatarUrl,
     this.phoneNumber,
+    this.bio,
     this.createdAt,
     this.updatedAt,
   });
@@ -24,6 +26,7 @@ class UserEntity {
     String? fullName,
     String? avatarUrl,
     String? phoneNumber,
+    String? bio,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -33,6 +36,7 @@ class UserEntity {
       fullName: fullName ?? this.fullName,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      bio: bio ?? this.bio,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -45,6 +49,7 @@ class UserEntity {
       'full_name': fullName,
       'avatar_url': avatarUrl,
       'phone_number': phoneNumber,
+      'bio': bio,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -57,6 +62,7 @@ class UserEntity {
       fullName: json['full_name'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       phoneNumber: json['phone_number'] as String?,
+      bio: json['bio'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
@@ -75,6 +81,7 @@ class UserEntity {
         other.fullName == fullName &&
         other.avatarUrl == avatarUrl &&
         other.phoneNumber == phoneNumber &&
+        other.bio == bio &&
         other.createdAt == createdAt &&
         other.updatedAt == updatedAt;
   }
@@ -87,6 +94,7 @@ class UserEntity {
       fullName,
       avatarUrl,
       phoneNumber,
+      bio,
       createdAt,
       updatedAt,
     );
@@ -94,6 +102,6 @@ class UserEntity {
 
   @override
   String toString() {
-    return 'UserEntity(id: $id, email: $email, fullName: $fullName, avatarUrl: $avatarUrl, phoneNumber: $phoneNumber, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserEntity(id: $id, email: $email, fullName: $fullName, avatarUrl: $avatarUrl, phoneNumber: $phoneNumber, bio: $bio, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }

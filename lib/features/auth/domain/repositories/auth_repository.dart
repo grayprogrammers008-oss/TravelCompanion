@@ -31,10 +31,17 @@ abstract class AuthRepository {
     String? fullName,
     String? phoneNumber,
     String? avatarUrl,
+    String? bio,
   });
 
   /// Reset password via email
   Future<void> resetPassword(String email);
+
+  /// Change password for current user
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 
   /// Check if user is authenticated
   bool get isAuthenticated;

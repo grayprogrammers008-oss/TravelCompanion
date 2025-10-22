@@ -123,6 +123,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String? fullName,
     String? phoneNumber,
     String? avatarUrl,
+    String? bio,
   }) async {
     final currentUser = await getCurrentUser();
     if (currentUser == null) {
@@ -140,6 +141,7 @@ class AuthRepositoryImpl implements AuthRepository {
         fullName: fullName,
         phoneNumber: phoneNumber,
         avatarUrl: avatarUrl,
+        bio: bio,
       );
 
       if (kDebugMode) {
@@ -173,6 +175,32 @@ class AuthRepositoryImpl implements AuthRepository {
         print('❌ Password reset failed: $e');
       }
       throw Exception('Failed to reset password: $e');
+    }
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('🔐 Changing password');
+      }
+
+      await _remoteDataSource.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+
+      if (kDebugMode) {
+        print('✅ Password changed successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Password change failed: $e');
+      }
+      rethrow; // Re-throw to preserve the original error message
     }
   }
 

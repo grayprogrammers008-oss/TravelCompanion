@@ -114,6 +114,7 @@ class AuthRemoteDataSource {
     String? fullName,
     String? phoneNumber,
     String? avatarUrl,
+    String? bio,
   }) async {
     try {
       final updates = <String, dynamic>{
@@ -123,6 +124,7 @@ class AuthRemoteDataSource {
       if (fullName != null) updates['full_name'] = fullName;
       if (phoneNumber != null) updates['phone_number'] = phoneNumber;
       if (avatarUrl != null) updates['avatar_url'] = avatarUrl;
+      if (bio != null) updates['bio'] = bio;
 
       final profileData = await _client
           .from('profiles')
@@ -145,6 +147,98 @@ class AuthRemoteDataSource {
       throw Exception('Password reset failed: ${e.message}');
     } catch (e) {
       throw Exception('Password reset failed: $e');
+    }
+  }
+
+  /// Change password for current user
+  ///
+  /// This method properly verifies the current password by re-authenticating
+  /// the user before updating their password. This ensures security.
+  ///
+  /// Throws [Exception] if:
+  /// - No user is logged in
+  /// - Current password is incorrect
+  /// - Password update fails
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    print('🔐 [ChangePassword] Starting password change process...');
+
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) {
+        print('❌ [ChangePassword] Error: No user logged in');
+        throw Exception('No user logged in');
+      }
+
+      // Get user's email for re-authentication
+      final email = user.email;
+      if (email == null) {
+        print('❌ [ChangePassword] Error: User email not found');
+        throw Exception('User email not found');
+      }
+
+      print('🔐 [ChangePassword] User: $email');
+      print('🔐 [ChangePassword] Step 1: Verifying current password via re-authentication...');
+
+      // Step 1: Verify current password by attempting to re-authenticate
+      try {
+        final verificationResponse = await _client.auth.signInWithPassword(
+          email: email,
+          password: currentPassword,
+        );
+
+        if (verificationResponse.user == null) {
+          print('❌ [ChangePassword] Re-authentication returned null user');
+          throw Exception('Current password is incorrect');
+        }
+
+        print('✅ [ChangePassword] Step 1 SUCCESS: Current password verified');
+      } on AuthException catch (e) {
+        print('❌ [ChangePassword] Re-authentication failed: ${e.message}');
+
+        // Re-authentication failed - current password is incorrect
+        if (e.message.toLowerCase().contains('invalid') ||
+            e.message.toLowerCase().contains('credentials') ||
+            e.message.toLowerCase().contains('password')) {
+          print('❌ [ChangePassword] Current password is INCORRECT');
+          throw Exception('Current password is incorrect');
+        }
+        throw Exception('Password verification failed: ${e.message}');
+      } catch (e) {
+        // For any other error during verification, treat as incorrect password
+        print('❌ [ChangePassword] Unexpected error during verification: $e');
+        throw Exception('Current password is incorrect');
+      }
+
+      print('🔐 [ChangePassword] Step 2: Updating to new password...');
+
+      // Step 2: Current password verified, now update to new password
+      final response = await _client.auth.updateUser(
+        UserAttributes(
+          password: newPassword,
+        ),
+      );
+
+      if (response.user == null) {
+        print('❌ [ChangePassword] Password update returned null user');
+        throw Exception('Password update failed');
+      }
+
+      print('✅ [ChangePassword] Step 2 SUCCESS: Password updated successfully');
+      print('✅ [ChangePassword] Password change complete!');
+    } on AuthException catch (e) {
+      print('❌ [ChangePassword] AuthException: ${e.message}');
+      throw Exception('Password change failed: ${e.message}');
+    } catch (e) {
+      // Re-throw our custom exceptions as-is
+      if (e.toString().contains('Current password is incorrect')) {
+        print('❌ [ChangePassword] Final error: Current password incorrect');
+        rethrow;
+      }
+      print('❌ [ChangePassword] Unexpected error: $e');
+      throw Exception('Password change failed: $e');
     }
   }
 
