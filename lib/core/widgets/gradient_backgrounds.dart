@@ -85,13 +85,13 @@ class _AnimatedGradientBackgroundState
   }
 }
 
-/// Mesh gradient background (multiple gradients overlayed)
-class MeshGradientBackground extends StatelessWidget {
+/// Mesh gradient background (multiple gradients overlayed) - Simple Stateless Version
+class MeshGradientBackgroundSimple extends StatelessWidget {
   final Widget child;
   final List<List<Color>>? gradients;
   final double opacity;
 
-  const MeshGradientBackground({
+  const MeshGradientBackgroundSimple({
     super.key,
     required this.child,
     this.gradients,

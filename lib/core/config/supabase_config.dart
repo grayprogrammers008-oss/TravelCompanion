@@ -47,15 +47,15 @@ class SupabaseConfig {
     if (supabaseUrl.contains('YOUR_SUPABASE') ||
         supabaseAnonKey.contains('YOUR_SUPABASE')) {
       if (kDebugMode) {
-        print('⚠️ Warning: Supabase credentials not configured!');
-        print('Please update lib/core/config/supabase_config.dart');
+        debugPrint('⚠️ Warning: Supabase credentials not configured!');
+        debugPrint('Please update lib/core/config/supabase_config.dart');
       }
     }
 
     if (mailgunDomain.contains('YOUR_MAILGUN')) {
       if (kDebugMode) {
-        print('⚠️ Warning: Mailgun domain not configured!');
-        print('Email invites will not work until Mailgun is configured.');
+        debugPrint('⚠️ Warning: Mailgun domain not configured!');
+        debugPrint('Email invites will not work until Mailgun is configured.');
       }
     }
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../core/providers/supabase_provider.dart';
@@ -27,15 +28,21 @@ final userExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
     final expenses = await repository.getUserExpenses().timeout(
       const Duration(seconds: 10),
       onTimeout: () {
-        print('⏱️ userExpensesProvider timeout - returning empty list');
+        if (kDebugMode) {
+          debugPrint('⏱️ userExpensesProvider timeout - returning empty list');
+        }
         return <ExpenseWithSplits>[];
       },
     );
-    print('✅ userExpensesProvider fetched ${expenses.length} expenses');
+    if (kDebugMode) {
+      debugPrint('✅ userExpensesProvider fetched ${expenses.length} expenses');
+    }
     return expenses;
   } catch (e) {
     // Log the error for debugging
-    print('❌ userExpensesProvider error: $e');
+    if (kDebugMode) {
+      debugPrint('❌ userExpensesProvider error: $e');
+    }
     // Return empty list instead of throwing to show empty state
     // This allows the UI to show the empty state instead of hanging
     return <ExpenseWithSplits>[];
@@ -51,14 +58,20 @@ final standaloneExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
     final expenses = await repository.getStandaloneExpenses().timeout(
       const Duration(seconds: 10),
       onTimeout: () {
-        print('⏱️ standaloneExpensesProvider timeout - returning empty list');
+        if (kDebugMode) {
+          debugPrint('⏱️ standaloneExpensesProvider timeout - returning empty list');
+        }
         return <ExpenseWithSplits>[];
       },
     );
-    print('✅ standaloneExpensesProvider fetched ${expenses.length} expenses');
+    if (kDebugMode) {
+      debugPrint('✅ standaloneExpensesProvider fetched ${expenses.length} expenses');
+    }
     return expenses;
   } catch (e) {
-    print('❌ standaloneExpensesProvider error: $e');
+    if (kDebugMode) {
+      debugPrint('❌ standaloneExpensesProvider error: $e');
+    }
     // Return empty list instead of throwing to show empty state
     return <ExpenseWithSplits>[];
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
@@ -55,7 +56,9 @@ class ImageService {
 
       // If no API key configured, return null (use gradient fallback)
       if (_accessKey == 'YOUR_UNSPLASH_ACCESS_KEY_HERE' || _accessKey.isEmpty) {
-        print('⚠️  Unsplash API key not configured. Using gradient fallback.');
+        if (kDebugMode) {
+          debugPrint('⚠️  Unsplash API key not configured. Using gradient fallback.');
+        }
         return null;
       }
 
@@ -72,7 +75,9 @@ class ImageService {
 
       return url;
     } catch (e) {
-      print('❌ Error fetching image for $destination: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching image for $destination: $e');
+      }
       return null; // Fallback to gradient
     }
   }
@@ -82,7 +87,9 @@ class ImageService {
     try {
       // Create search query with travel-related keywords
       final query = _buildSearchQuery(destination);
-      print('🔍 Searching Unsplash for: $query');
+      if (kDebugMode) {
+        debugPrint('🔍 Searching Unsplash for: $query');
+      }
 
       final uri = Uri.parse('$_baseUrl/photos/random').replace(
         queryParameters: {
@@ -92,7 +99,9 @@ class ImageService {
         },
       );
 
-      print('📡 Calling Unsplash API: $uri');
+      if (kDebugMode) {
+        debugPrint('📡 Calling Unsplash API: $uri');
+      }
 
       final response = await http
           .get(
@@ -104,7 +113,9 @@ class ImageService {
           )
           .timeout(const Duration(seconds: 10));
 
-      print('📥 Response status: ${response.statusCode}');
+      if (kDebugMode) {
+        debugPrint('📥 Response status: ${response.statusCode}');
+      }
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -114,21 +125,29 @@ class ImageService {
 
         // Log attribution (Unsplash requires attribution)
         final photographerName = data['user']['name'] as String?;
-        print('📸 Image by $photographerName on Unsplash');
+        if (kDebugMode) {
+          debugPrint('📸 Image by $photographerName on Unsplash');
+        }
 
         return imageUrl;
       } else if (response.statusCode == 403) {
-        print(
-          '⚠️  Unsplash API rate limit reached. Using cached/gradient images.',
-        );
+        if (kDebugMode) {
+          debugPrint(
+            '⚠️  Unsplash API rate limit reached. Using cached/gradient images.',
+          );
+        }
         return null;
       } else {
-        print('⚠️  Unsplash API error: ${response.statusCode}');
-        print('   Response: ${response.body}');
+        if (kDebugMode) {
+          debugPrint('⚠️  Unsplash API error: ${response.statusCode}');
+          debugPrint('   Response: ${response.body}');
+        }
         return null;
       }
     } catch (e) {
-      print('❌ Unsplash API call failed: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Unsplash API call failed: $e');
+      }
       return null;
     }
   }
@@ -186,7 +205,9 @@ class ImageService {
 
       await prefs.setString(cacheKey, cacheData);
     } catch (e) {
-      print('⚠️  Failed to cache image URL: $e');
+      if (kDebugMode) {
+        debugPrint('⚠️  Failed to cache image URL: $e');
+      }
     }
   }
 
@@ -211,7 +232,9 @@ class ImageService {
         return null;
       }
     } catch (e) {
-      print('⚠️  Failed to read cached image URL: $e');
+      if (kDebugMode) {
+        debugPrint('⚠️  Failed to read cached image URL: $e');
+      }
       return null;
     }
   }
@@ -240,9 +263,13 @@ class ImageService {
       // Clear memory cache
       _memoryCache.clear();
 
-      print('✅ Image cache cleared');
+      if (kDebugMode) {
+        debugPrint('✅ Image cache cleared');
+      }
     } catch (e) {
-      print('❌ Failed to clear cache: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Failed to clear cache: $e');
+      }
     }
   }
 

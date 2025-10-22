@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/models/expense_model.dart';
 
@@ -10,7 +11,9 @@ class ExpenseRemoteDataSource {
   /// Get all expenses for a user (both trip and standalone)
   Future<List<ExpenseWithSplits>> getUserExpenses(String userId) async {
     try {
-      print('🔍 Fetching user expenses for userId: $userId');
+      if (kDebugMode) {
+        debugPrint('🔍 Fetching user expenses for userId: $userId');
+      }
 
       // First, get all expenses where user is the payer
       final paidByResponse = await _client
@@ -57,13 +60,17 @@ class ExpenseRemoteDataSource {
 
       // Combine and parse
       final allExpenses = [...(paidByResponse as List), ...splitExpenses];
-      print('📊 Database returned ${allExpenses.length} expenses (${(paidByResponse as List).length} paid by user, ${splitExpenses.length} split with user)');
+      if (kDebugMode) {
+        debugPrint('📊 Database returned ${allExpenses.length} expenses (${(paidByResponse as List).length} paid by user, ${splitExpenses.length} split with user)');
+      }
 
       return allExpenses
           .map((json) => _parseExpenseWithSplits(json))
           .toList();
     } catch (e) {
-      print('❌ Error fetching user expenses: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching user expenses: $e');
+      }
       throw Exception('Failed to get user expenses: $e');
     }
   }
@@ -95,7 +102,9 @@ class ExpenseRemoteDataSource {
   /// Get standalone expenses (no trip)
   Future<List<ExpenseWithSplits>> getStandaloneExpenses(String userId) async {
     try {
-      print('🔍 Fetching standalone expenses for userId: $userId');
+      if (kDebugMode) {
+        debugPrint('🔍 Fetching standalone expenses for userId: $userId');
+      }
 
       // Get standalone expenses where user is the payer
       final paidByResponse = await _client
@@ -142,13 +151,17 @@ class ExpenseRemoteDataSource {
       }
 
       final allExpenses = [...(paidByResponse as List), ...splitExpenses];
-      print('📊 Standalone expenses: ${allExpenses.length} total (${(paidByResponse as List).length} paid, ${splitExpenses.length} split)');
+      if (kDebugMode) {
+        debugPrint('📊 Standalone expenses: ${allExpenses.length} total (${(paidByResponse as List).length} paid, ${splitExpenses.length} split)');
+      }
 
       return allExpenses
           .map((json) => _parseExpenseWithSplits(json))
           .toList();
     } catch (e) {
-      print('❌ Error fetching standalone expenses: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching standalone expenses: $e');
+      }
       throw Exception('Failed to get standalone expenses: $e');
     }
   }
@@ -188,7 +201,9 @@ class ExpenseRemoteDataSource {
     DateTime? transactionDate,
   }) async {
     try {
-      print('💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId');
+      if (kDebugMode) {
+        debugPrint('💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId');
+      }
 
       // Create expense
       final expenseData = {
@@ -209,7 +224,9 @@ class ExpenseRemoteDataSource {
           .single();
 
       final expense = ExpenseModel.fromJson(expenseResponse);
-      print('✅ Expense created with ID: ${expense.id}');
+      if (kDebugMode) {
+        debugPrint('✅ Expense created with ID: ${expense.id}');
+      }
 
       // Calculate split amounts
       final splitAmount = amount / splitWith.length;
@@ -226,11 +243,15 @@ class ExpenseRemoteDataSource {
           .toList();
 
       await _client.from('expense_splits').insert(splitsData);
-      print('✅ Created ${splitsData.length} expense splits');
+      if (kDebugMode) {
+        debugPrint('✅ Created ${splitsData.length} expense splits');
+      }
 
       return expense;
     } catch (e) {
-      print('❌ Error creating expense: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Error creating expense: $e');
+      }
       throw Exception('Failed to create expense: $e');
     }
   }

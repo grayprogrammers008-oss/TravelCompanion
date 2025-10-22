@@ -16,7 +16,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authDataSource = ref.watch(authLocalDataSourceProvider);
     final userAsync = ref.watch(currentUserProvider);
 
     return Scaffold(
@@ -52,8 +51,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       radius: 50,
                       backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
                       child: Text(
-                        user?.email != null && user!.email!.isNotEmpty
-                            ? user.email![0].toUpperCase()
+                        user?.email.isNotEmpty == true
+                            ? user!.email[0].toUpperCase()
                             : '?',
                         style: const TextStyle(
                           fontSize: 36,
@@ -65,7 +64,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     const SizedBox(height: AppTheme.spacingMd),
                     // Username from email
                     Text(
-                      user?.email != null ? user!.email!.split('@')[0] : 'User',
+                      user?.email != null ? user!.email.split('@')[0] : 'User',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppTheme.neutral900,
@@ -274,7 +273,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                   if (confirmed == true && context.mounted) {
                     try {
-                      await authDataSource.signOut();
+                      await ref.read(authControllerProvider.notifier).signOut();
                       if (context.mounted) {
                         context.go('/login');
                       }

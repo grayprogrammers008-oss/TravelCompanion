@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -118,7 +119,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
       if (isEditMode) {
         // Update existing trip
-        print('DEBUG: Updating trip with ID: ${widget.tripId}');
+        if (kDebugMode) {
+          debugPrint('DEBUG: Updating trip with ID: ${widget.tripId}');
+        }
 
         await ref.read(tripControllerProvider.notifier).updateTrip(
               tripId: widget.tripId!,
@@ -133,10 +136,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               endDate: _endDate,
             );
 
-        print('DEBUG: Trip updated successfully');
+        if (kDebugMode) {
+          debugPrint('DEBUG: Trip updated successfully');
+        }
       } else {
         // Create new trip
-        print('DEBUG: Creating trip with name: ${_nameController.text.trim()}');
+        if (kDebugMode) {
+          debugPrint('DEBUG: Creating trip with name: ${_nameController.text.trim()}');
+        }
 
         final trip = await ref
             .read(tripControllerProvider.notifier)
@@ -152,15 +159,21 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               endDate: _endDate,
             );
 
-        print('DEBUG: Trip created with ID: ${trip.id}');
+        if (kDebugMode) {
+          debugPrint('DEBUG: Trip created with ID: ${trip.id}');
+        }
       }
 
       if (mounted) {
         // Refresh the trips list
-        print('DEBUG: Invalidating userTripsProvider');
+        if (kDebugMode) {
+          debugPrint('DEBUG: Invalidating userTripsProvider');
+        }
         ref.invalidate(userTripsProvider);
 
-        print('DEBUG: Navigating back to home');
+        if (kDebugMode) {
+          debugPrint('DEBUG: Navigating back to home');
+        }
         context.pop(); // Go back to trips list
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -172,7 +185,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         );
       }
     } catch (e) {
-      print('DEBUG: Error saving trip: $e');
+      if (kDebugMode) {
+        debugPrint('DEBUG: Error saving trip: $e');
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

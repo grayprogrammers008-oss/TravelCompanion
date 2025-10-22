@@ -43,14 +43,14 @@ class GlassmorphicCard extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(opacity),
-                    Colors.white.withOpacity(opacity * 0.5),
+                    Colors.white.withValues(alpha: opacity),
+                    Colors.white.withValues(alpha: opacity * 0.5),
                   ],
                 ),
             borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
             border: border ??
                 Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 1.5,
                 ),
             boxShadow: boxShadow ?? AppTheme.shadowLg,
@@ -165,7 +165,7 @@ class _GlossyCardState extends State<GlossyCard>
                                 ],
                                 colors: [
                                   Colors.transparent,
-                                  Colors.white.withOpacity(0.3),
+                                  Colors.white.withValues(alpha: 0.3),
                                   Colors.transparent,
                                 ],
                               ),
@@ -255,7 +255,7 @@ class _FloatingCardState extends State<FloatingCard>
                     BorderRadius.circular(AppTheme.radiusXl),
                 boxShadow: [
                   BoxShadow(
-                    color: themeData.primaryColor.withOpacity(0.1 + (_floatAnimation.value / 80)),
+                    color: themeData.primaryColor.withValues(alpha: 0.1 + (_floatAnimation.value / 80)),
                     blurRadius: widget.elevation + _floatAnimation.value,
                     offset: Offset(0, widget.elevation / 2 + _floatAnimation.value / 2),
                   ),
@@ -305,7 +305,7 @@ class NeumorphicCard extends StatelessWidget {
               ? [
                   // Inner shadows when pressed
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(2, 2),
                   ),
@@ -313,12 +313,12 @@ class NeumorphicCard extends StatelessWidget {
               : [
                   // Outer shadows (raised)
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     blurRadius: 10,
                     offset: const Offset(-4, -4),
                   ),
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(4, 4),
                   ),

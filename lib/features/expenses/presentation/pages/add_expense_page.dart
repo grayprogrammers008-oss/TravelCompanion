@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
 
@@ -60,8 +60,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
     setState(() => _isLoading = true);
 
     try {
-      final authDataSource = ref.read(authLocalDataSourceProvider);
-      final currentUserId = authDataSource.currentUserId;
+      final currentUserId = SupabaseClientWrapper.currentUserId;
 
       if (currentUserId == null || currentUserId.isEmpty) {
         throw Exception('User not logged in');
@@ -196,7 +195,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
 
             // Category
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 prefixIcon: Icon(Icons.category),

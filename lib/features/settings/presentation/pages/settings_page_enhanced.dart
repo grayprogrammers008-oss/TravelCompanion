@@ -98,8 +98,8 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                           radius: 30,
                           backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
                           child: Text(
-                            user != null && user.email != null && user.email!.isNotEmpty
-                                ? user.email![0].toUpperCase()
+                            user?.email.isNotEmpty == true
+                                ? user!.email[0].toUpperCase()
                                 : '?',
                             style: const TextStyle(
                               fontSize: 24,
@@ -114,8 +114,8 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                user != null && user.email != null
-                                    ? user.email!.split('@')[0]
+                                user?.email != null
+                                    ? user!.email.split('@')[0]
                                     : 'User',
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.w600,

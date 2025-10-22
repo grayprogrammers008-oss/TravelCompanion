@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,20 +29,30 @@ class HomePage extends ConsumerWidget {
       ),
       body: userTripsAsync.when(
         data: (trips) {
-          print('DEBUG HomePage: Received ${trips.length} trips');
+          if (kDebugMode) {
+            debugPrint('DEBUG HomePage: Received ${trips.length} trips');
+          }
           if (trips.isEmpty) {
-            print('DEBUG HomePage: Showing empty state');
+            if (kDebugMode) {
+              debugPrint('DEBUG HomePage: Showing empty state');
+            }
             return _buildEmptyState(context);
           }
-          print('DEBUG HomePage: Showing trips list');
+          if (kDebugMode) {
+            debugPrint('DEBUG HomePage: Showing trips list');
+          }
           return _buildTripsList(context, trips);
         },
         loading: () {
-          print('DEBUG HomePage: Loading trips...');
+          if (kDebugMode) {
+            debugPrint('DEBUG HomePage: Loading trips...');
+          }
           return const Center(child: CircularProgressIndicator());
         },
         error: (error, stack) {
-          print('DEBUG HomePage: Error loading trips: $error');
+          if (kDebugMode) {
+            debugPrint('DEBUG HomePage: Error loading trips: $error');
+          }
           return _buildErrorState(context, error.toString(), ref);
         },
       ),

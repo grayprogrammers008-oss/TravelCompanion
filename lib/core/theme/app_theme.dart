@@ -175,7 +175,7 @@ class AppTheme {
   // Colored shadows for premium effect
   static final List<BoxShadow> shadowTeal = [
     BoxShadow(
-      color: primaryTeal.withOpacity(0.3),
+      color: primaryTeal.withValues(alpha: 0.3),
       offset: const Offset(0, 8),
       blurRadius: 24,
       spreadRadius: -4,
@@ -184,7 +184,7 @@ class AppTheme {
 
   static final List<BoxShadow> shadowCoral = [
     BoxShadow(
-      color: accentCoral.withOpacity(0.3),
+      color: accentCoral.withValues(alpha: 0.3),
       offset: const Offset(0, 8),
       blurRadius: 24,
       spreadRadius: -4,
