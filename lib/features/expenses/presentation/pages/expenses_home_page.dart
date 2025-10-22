@@ -253,7 +253,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).primaryColor.withOpacity(0.8),
+                Theme.of(context).primaryColor.withValues(alpha: 0.8),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -306,7 +306,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                               decoration: BoxDecoration(
                                 color: _getCategoryColor(
                                   expense.category,
-                                ).withOpacity(0.1),
+                                ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
@@ -491,7 +491,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                   label: const Text('Trip Expense'),
                   backgroundColor: Theme.of(
                     context,
-                  ).primaryColor.withOpacity(0.1),
+                  ).primaryColor.withValues(alpha: 0.1),
                 ),
               const SizedBox(height: 16),
 
@@ -500,7 +500,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(

@@ -31,17 +31,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     setState(() => _isLoading = true);
 
     try {
-      // Get current user from Supabase (online-only mode)
-      final currentUser = await ref.read(currentUserProvider.future);
-
-      if (currentUser == null) throw Exception('User not found');
-
-      // TODO: Implement profile update via auth repository
-      // Currently profile updates need to be implemented in auth repository
-      throw UnimplementedError('Profile update not yet implemented for Supabase-only mode');
+      // Update profile via auth repository
+      final repository = ref.read(authRepositoryProvider);
+      await repository.updateProfile(
+        fullName: _fullNameController.text.trim().isEmpty ? null : _fullNameController.text.trim(),
+        phoneNumber: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
+      );
 
       // Refresh user data
-      // ref.invalidate(currentUserProvider);
+      ref.invalidate(currentUserProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

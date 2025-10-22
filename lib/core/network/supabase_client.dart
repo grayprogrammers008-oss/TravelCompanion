@@ -10,7 +10,7 @@ class SupabaseClientWrapper {
   static Future<void> initialize() async {
     if (_initialized) {
       if (kDebugMode) {
-        print('⚠️ Supabase already initialized');
+        debugPrint('⚠️ Supabase already initialized');
       }
       return;
     }
@@ -31,12 +31,12 @@ class SupabaseClientWrapper {
 
       _initialized = true;
       if (kDebugMode) {
-        print('✅ Supabase initialized successfully');
+        debugPrint('✅ Supabase initialized successfully');
       }
     } catch (e, stackTrace) {
       if (kDebugMode) {
-        print('❌ Supabase initialization failed: $e');
-        print('Stack trace: $stackTrace');
+        debugPrint('❌ Supabase initialization failed: $e');
+        debugPrint('Stack trace: $stackTrace');
       }
       rethrow;
     }
@@ -59,8 +59,8 @@ class SupabaseClientWrapper {
   static String? get currentUserId {
     final userId = currentUser?.id;
     if (kDebugMode && userId == null) {
-      print('⚠️  WARNING: currentUserId is null! User might not be authenticated.');
-      print('   Current session: ${client.auth.currentSession}');
+      debugPrint('⚠️  WARNING: currentUserId is null! User might not be authenticated.');
+      debugPrint('   Current session: ${client.auth.currentSession}');
     }
     return userId;
   }

@@ -70,7 +70,38 @@ class AuthRemoteDataSource {
 
       return UserModel.fromJson(profileData);
     } on AuthException catch (e) {
-      throw Exception('Sign in failed: ${e.message}');
+      // Provide detailed error messages for common issues
+      String errorMessage = e.message;
+
+      if (e.message.contains('Invalid login credentials')) {
+        errorMessage = '''
+Invalid email or password. Possible reasons:
+• Email not confirmed (check your inbox)
+• Wrong password
+• Account doesn't exist (try Sign Up)
+• Account disabled
+
+Original error: ${e.message}''';
+      } else if (e.message.contains('Email not confirmed')) {
+        errorMessage = '''
+Email not confirmed!
+• Check your email inbox for confirmation link
+• Check spam folder
+• Contact admin to manually confirm your account
+
+Original error: ${e.message}''';
+      } else if (e.statusCode == 'NETWORK_ERROR') {
+        errorMessage = '''
+Network connection failed!
+• Check your internet connection
+• Try using mobile hotspot
+• VPN might be blocking Supabase
+• Firewall might be blocking access
+
+Original error: ${e.message}''';
+      }
+
+      throw Exception(errorMessage);
     } catch (e) {
       throw Exception('Sign in failed: $e');
     }

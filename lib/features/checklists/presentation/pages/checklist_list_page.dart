@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/checklist_providers.dart';
 import '../widgets/checklist_card.dart';
 import '../widgets/edit_checklist_dialog.dart';

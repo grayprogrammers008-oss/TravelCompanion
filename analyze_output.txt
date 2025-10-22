@@ -1,0 +1,550 @@
+Analyzing TravelCompanion...                                    
+
+   info • Don't invoke 'print' in production code • check_user_data.dart:11:3 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:12:3 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:13:3 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:14:3 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:18:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:23:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:28:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:29:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:33:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:34:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:35:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:36:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:37:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:38:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:39:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:44:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:45:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:46:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:49:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:50:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:59:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:60:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:61:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:62:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:63:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:64:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:65:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:66:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:67:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:69:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:70:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:71:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:72:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:73:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:74:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:76:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:79:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:80:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:88:11 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:89:11 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:91:11 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:93:13 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:97:9 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:99:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:102:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:103:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:104:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:108:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:109:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:110:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:116:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:117:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:118:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:119:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:120:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:121:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:122:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:123:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:124:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:125:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:127:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:128:7 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:131:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:132:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:135:5 • avoid_print
+   info • Don't invoke 'print' in production code • check_user_data.dart:136:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:15:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:16:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:22:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:23:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:24:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:25:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:26:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:27:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:28:3 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:32:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:38:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:41:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:42:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:43:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:47:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:48:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:49:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:50:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:51:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:52:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:55:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:56:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:57:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:58:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:59:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:62:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:64:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:67:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:68:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:69:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:78:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:79:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:81:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:83:11 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:84:11 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:85:11 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:86:11 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:87:11 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:91:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:92:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:94:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:97:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:98:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:99:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:100:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:101:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:102:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:106:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:107:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:108:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:109:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:110:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:111:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:112:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:114:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:118:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:119:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:120:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:122:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:123:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:124:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:127:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:129:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:132:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:133:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:134:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:135:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:136:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:137:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:145:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:146:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:147:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:148:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:149:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:154:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:155:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:156:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:157:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:160:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:161:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:162:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:163:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:165:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:166:9 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:169:7 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:171:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:174:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:175:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:176:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:177:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:178:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:179:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:180:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:181:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:182:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:183:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:184:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:185:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:186:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:187:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:188:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:189:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:190:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:191:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:192:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:193:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:194:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:195:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:196:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:197:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:198:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:199:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:200:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:201:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:202:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:203:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:204:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:205:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:206:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:207:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:208:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:209:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:210:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:211:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:212:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:213:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:214:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:215:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:216:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:217:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:218:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:219:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:220:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:221:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:222:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:223:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:224:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:225:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:226:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:227:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:228:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:229:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:230:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:231:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:232:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:233:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:234:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:235:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:236:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:237:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:238:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:239:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:240:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:241:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:242:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:243:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:244:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:245:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:246:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:247:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:248:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:249:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:250:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:251:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:252:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:253:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:254:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:255:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:256:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:257:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:258:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:259:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:260:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:261:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:262:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:263:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:264:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:265:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:266:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:267:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:268:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:269:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:272:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:273:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:274:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:275:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:276:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:277:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:278:5 • avoid_print
+   info • Don't invoke 'print' in production code • diagnose_email_issue.dart:279:5 • avoid_print
+   info • Unnecessary use of multiple underscores • lib/core/providers/supabase_provider.dart:21:16 • unnecessary_underscores
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/core/widgets/glassmorphic_card.dart:132:15 • deprecated_member_use
+   info • Unnecessary use of multiple underscores • lib/features/checklists/presentation/pages/checklist_list_page.dart:44:37 • unnecessary_underscores
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/expenses/presentation/pages/add_expense_page_new.dart:100:30 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/expenses/presentation/pages/add_expense_page_new.dart:112:9 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/expenses/presentation/pages/add_expense_page_new.dart:114:30 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart:142:32 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart:163:9 • use_build_context_synchronously
+  error • The body might complete normally, causing 'null' to be returned, but the return type, 'FutureOr<Map<String, dynamic>>', is a potentially non-nullable type • lib/test_supabase_connectivity.dart:14:30 • body_might_complete_normally
+  error • A try block must be followed by an 'on', 'catch', or 'finally' clause • lib/test_supabase_connectivity.dart:47:3 • missing_catch_or_finally
+  error • A try block must be followed by an 'on', 'catch', or 'finally' clause • lib/test_supabase_connectivity.dart:107:5 • missing_catch_or_finally
+  error • Undefined class 'on' • lib/test_supabase_connectivity.dart:119:7 • undefined_class
+   info • The variable name 'Exception' isn't a lowerCamelCase identifier • lib/test_supabase_connectivity.dart:119:10 • non_constant_identifier_names
+warning • The value of the local variable 'Exception' isn't used • lib/test_supabase_connectivity.dart:119:10 • unused_local_variable
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:119:10 • expected_token
+  error • 'catch' can't be used as an identifier because it's a keyword • lib/test_supabase_connectivity.dart:119:20 • expected_identifier_but_got_keyword
+  error • The function 'catch' isn't defined • lib/test_supabase_connectivity.dart:119:20 • undefined_function
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:119:27 • undefined_identifier
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:119:28 • expected_token
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:120:54 • undefined_identifier
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:124:32 • undefined_identifier
+  error • A try block must be followed by an 'on', 'catch', or 'finally' clause • lib/test_supabase_connectivity.dart:155:5 • missing_catch_or_finally
+  error • 'catch' can't be used as an identifier because it's a keyword • lib/test_supabase_connectivity.dart:167:7 • expected_identifier_but_got_keyword
+  error • The function 'catch' isn't defined • lib/test_supabase_connectivity.dart:167:7 • undefined_function
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:167:14 • undefined_identifier
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:167:15 • expected_token
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:168:60 • undefined_identifier
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:172:32 • undefined_identifier
+  error • A try block must be followed by an 'on', 'catch', or 'finally' clause • lib/test_supabase_connectivity.dart:204:5 • missing_catch_or_finally
+  error • 'catch' can't be used as an identifier because it's a keyword • lib/test_supabase_connectivity.dart:253:7 • expected_identifier_but_got_keyword
+  error • The function 'catch' isn't defined • lib/test_supabase_connectivity.dart:253:7 • undefined_function
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:253:14 • undefined_identifier
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:253:15 • expected_token
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:254:57 • undefined_identifier
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:258:32 • undefined_identifier
+  error • A try block must be followed by an 'on', 'catch', or 'finally' clause • lib/test_supabase_connectivity.dart:276:5 • missing_catch_or_finally
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:294:7 • expected_token
+  error • Expected an identifier • lib/test_supabase_connectivity.dart:294:9 • missing_identifier
+  error • Unexpected text 'else' • lib/test_supabase_connectivity.dart:294:9 • unexpected_token
+  error • 'catch' can't be used as an identifier because it's a keyword • lib/test_supabase_connectivity.dart:304:7 • expected_identifier_but_got_keyword
+  error • The function 'catch' isn't defined • lib/test_supabase_connectivity.dart:304:7 • undefined_function
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:304:14 • undefined_identifier
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:304:15 • expected_token
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:305:56 • undefined_identifier
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:309:32 • undefined_identifier
+  error • A try block must be followed by an 'on', 'catch', or 'finally' clause • lib/test_supabase_connectivity.dart:345:5 • missing_catch_or_finally
+  error • Expected to find '}' • lib/test_supabase_connectivity.dart:353:8 • expected_token
+  error • 'catch' can't be used as an identifier because it's a keyword • lib/test_supabase_connectivity.dart:368:7 • expected_identifier_but_got_keyword
+  error • The function 'catch' isn't defined • lib/test_supabase_connectivity.dart:368:7 • undefined_function
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:368:14 • undefined_identifier
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:368:15 • expected_token
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:369:56 • undefined_identifier
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:373:32 • undefined_identifier
+  error • 'catch' can't be used as an identifier because it's a keyword • lib/test_supabase_connectivity.dart:505:5 • expected_identifier_but_got_keyword
+  error • The function 'catch' isn't defined • lib/test_supabase_connectivity.dart:505:5 • undefined_function
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:505:12 • undefined_identifier
+  error • Undefined name 'stackTrace' • lib/test_supabase_connectivity.dart:505:15 • undefined_identifier
+  error • Expected to find ';' • lib/test_supabase_connectivity.dart:505:25 • expected_token
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:506:47 • undefined_identifier
+  error • Undefined name 'e' • lib/test_supabase_connectivity.dart:516:27 • undefined_identifier
+  error • Undefined name 'stackTrace' • lib/test_supabase_connectivity.dart:523:20 • undefined_identifier
+warning • The declaration 'isSupabaseConnected' isn't referenced • lib/test_supabase_connectivity.dart:537:14 • unused_element
+  error • The body might complete normally, causing 'null' to be returned, but the return type, 'FutureOr<bool>', is a potentially non-nullable type • lib/test_supabase_connectivity.dart:537:14 • body_might_complete_normally
+warning • The declaration 'getSupabaseAuthState' isn't referenced • lib/test_supabase_connectivity.dart:552:22 • unused_element
+  error • Expected to find '}' • lib/test_supabase_connectivity.dart:574:1 • expected_token
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:15:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:16:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:17:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:18:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:19:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:20:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:21:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:22:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:30:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:31:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:35:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:36:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:37:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:38:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:39:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:40:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:41:3 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:45:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:51:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:54:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:55:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:59:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:60:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:61:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:62:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:63:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:64:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:65:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:66:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:67:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:68:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:69:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:70:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:71:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:72:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:73:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:74:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:75:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:76:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:77:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:78:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:79:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:80:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:81:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:82:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:83:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:84:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:85:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:86:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:87:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:88:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:89:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:90:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:91:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:92:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:93:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:94:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:95:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:96:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:97:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:98:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:99:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:100:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:101:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:102:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:103:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:104:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:105:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:106:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:107:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:108:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:109:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:112:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:113:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:114:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:115:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:116:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:117:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:118:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:122:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:123:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:124:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:125:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:126:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:127:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:128:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:129:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:130:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:133:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:134:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:135:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:136:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:137:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:138:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:139:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:140:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:141:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:143:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:144:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:145:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:146:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:147:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:148:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:149:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:150:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:151:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:153:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:154:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:155:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:156:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:157:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:158:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:159:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:160:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:161:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:162:7 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:165:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:166:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:169:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:170:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:171:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:172:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:173:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:174:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:175:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:176:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:177:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:178:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:179:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:180:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:181:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:182:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:183:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:184:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:185:5 • avoid_print
+   info • Don't invoke 'print' in production code • reset_password_helper.dart:186:5 • avoid_print
+  error • Target of URI doesn't exist: 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/e2e/settings_navigation_e2e_test.dart:5:8 • uri_does_not_exist
+  error • Undefined class 'AuthLocalDataSource' • test/features/settings/e2e/settings_navigation_e2e_test.dart:15:10 • undefined_class
+  error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/e2e/settings_navigation_e2e_test.dart:19:28 • undefined_function
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:35:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:139:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:237:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:302:13 • undefined_identifier
+  error • Target of URI doesn't exist: 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:5:8 • uri_does_not_exist
+  error • Undefined class 'AuthLocalDataSource' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:12:10 • undefined_class
+  error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:19:28 • undefined_function
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:34:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:56:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:83:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:124:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:145:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:166:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:191:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:211:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:231:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:257:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:283:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:314:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:352:13 • undefined_identifier
+  error • Undefined class 'AuthLocalDataSource' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:378:10 • undefined_class
+  error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:383:28 • undefined_function
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:400:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:426:13 • undefined_identifier
+  error • Target of URI doesn't exist: 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/presentation/pages/settings_page_test.dart:4:8 • uri_does_not_exist
+  error • Undefined class 'AuthLocalDataSource' • test/features/settings/presentation/pages/settings_page_test.dart:11:10 • undefined_class
+  error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_test.dart:14:28 • undefined_function
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:22:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:53:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:84:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:130:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:159:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:191:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:223:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:271:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:312:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:341:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:361:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:390:13 • undefined_identifier
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:428:13 • undefined_identifier
+  error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_test.dart:428:59 • undefined_function
+  error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:460:13 • undefined_identifier
+  error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_test.dart:460:59 • undefined_function
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:8:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:10:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:11:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:12:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:15:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:18:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:20:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:22:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:23:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:25:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:26:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:28:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:29:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:30:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:31:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:34:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:35:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:39:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:40:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:41:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_supabase_connection.dart:42:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:5:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:17:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:18:3 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:29:5 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:33:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:34:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:35:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:36:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:37:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:38:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:40:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:41:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:42:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:43:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:44:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:45:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:47:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:48:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:49:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:51:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:52:7 • avoid_print
+   info • Don't invoke 'print' in production code • test_unsplash.dart:55:5 • avoid_print
+
+546 issues found. (ran in 2.2s)

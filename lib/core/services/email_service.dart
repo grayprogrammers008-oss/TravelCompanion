@@ -40,8 +40,8 @@ class EmailService {
       // Check if Mailgun is configured
       if (_domain.contains('YOUR_MAILGUN')) {
         if (kDebugMode) {
-          print('⚠️ Mailgun not configured. Email not sent.');
-          print('Configure MAILGUN_DOMAIN in lib/core/config/supabase_config.dart');
+          debugPrint('⚠️ Mailgun not configured. Email not sent.');
+          debugPrint('Configure MAILGUN_DOMAIN in lib/core/config/supabase_config.dart');
         }
         return false;
       }
@@ -84,19 +84,19 @@ class EmailService {
 
       if (response.statusCode == 200) {
         if (kDebugMode) {
-          print('✅ Trip invitation email sent to $toEmail');
+          debugPrint('✅ Trip invitation email sent to $toEmail');
         }
         return true;
       } else {
         if (kDebugMode) {
-          print('❌ Failed to send email. Status: ${response.statusCode}');
-          print('Response: ${response.body}');
+          debugPrint('❌ Failed to send email. Status: ${response.statusCode}');
+          debugPrint('Response: ${response.body}');
         }
         return false;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error sending email: $e');
+        debugPrint('❌ Error sending email: $e');
       }
       return false;
     }
@@ -247,7 +247,7 @@ This invitation was sent by $inviterName via Travel Crew
     try {
       if (_domain.contains('YOUR_MAILGUN')) {
         if (kDebugMode) {
-          print('⚠️ Mailgun not configured. Email not sent.');
+          debugPrint('⚠️ Mailgun not configured. Email not sent.');
         }
         return false;
       }
@@ -271,7 +271,7 @@ This invitation was sent by $inviterName via Travel Crew
       return response.statusCode == 200;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error sending email: $e');
+        debugPrint('❌ Error sending email: $e');
       }
       return false;
     }

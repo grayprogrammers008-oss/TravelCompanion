@@ -337,15 +337,15 @@ class _PulseFABState extends State<PulseFAB>
   }
 }
 
-/// Glossy button with shine effect
-class GlossyButton extends StatefulWidget {
+/// Glossy button with animated shine effect
+class GlossyButtonAnimated extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPressed;
   final Gradient? gradient;
   final BorderRadius? borderRadius;
   final EdgeInsetsGeometry? padding;
 
-  const GlossyButton({
+  const GlossyButtonAnimated({
     super.key,
     required this.child,
     this.onPressed,
@@ -355,10 +355,10 @@ class GlossyButton extends StatefulWidget {
   });
 
   @override
-  State<GlossyButton> createState() => _GlossyButtonState();
+  State<GlossyButtonAnimated> createState() => _GlossyButtonAnimatedState();
 }
 
-class _GlossyButtonState extends State<GlossyButton>
+class _GlossyButtonAnimatedState extends State<GlossyButtonAnimated>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _shineAnimation;

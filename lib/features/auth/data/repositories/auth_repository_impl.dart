@@ -21,8 +21,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       if (kDebugMode) {
-        print('🚀 Signing up with Supabase (online-only mode)');
-        print('   Email: $email');
+        debugPrint('🚀 Signing up with Supabase (online-only mode)');
+        debugPrint('   Email: $email');
       }
 
       final userModel = await _remoteDataSource.signUp(
@@ -33,14 +33,14 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       if (kDebugMode) {
-        print('✅ Signup successful!');
-        print('   User ID: ${userModel.id}');
+        debugPrint('✅ Signup successful!');
+        debugPrint('   User ID: ${userModel.id}');
       }
 
       return userModel.toEntity();
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Signup failed: $e');
+        debugPrint('❌ Signup failed: $e');
       }
       throw Exception('Failed to sign up: $e');
     }
@@ -53,8 +53,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       if (kDebugMode) {
-        print('🔐 Signing in with Supabase');
-        print('   Email: $email');
+        debugPrint('🔐 Signing in with Supabase');
+        debugPrint('   Email: $email');
       }
 
       final userModel = await _remoteDataSource.signIn(
@@ -63,13 +63,13 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       if (kDebugMode) {
-        print('✅ Sign in successful!');
+        debugPrint('✅ Sign in successful!');
       }
 
       return userModel.toEntity();
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Sign in failed: $e');
+        debugPrint('❌ Sign in failed: $e');
       }
       throw Exception('Failed to sign in: $e');
     }
@@ -79,17 +79,17 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> signOut() async {
     try {
       if (kDebugMode) {
-        print('👋 Signing out from Supabase');
+        debugPrint('👋 Signing out from Supabase');
       }
 
       await _remoteDataSource.signOut();
 
       if (kDebugMode) {
-        print('✅ Sign out successful');
+        debugPrint('✅ Sign out successful');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Sign out failed: $e');
+        debugPrint('❌ Sign out failed: $e');
       }
       throw Exception('Failed to sign out: $e');
     }
@@ -101,13 +101,13 @@ class AuthRepositoryImpl implements AuthRepository {
       final userModel = await _remoteDataSource.getCurrentUser();
 
       if (userModel != null && kDebugMode) {
-        print('👤 Current user: ${userModel.email}');
+        debugPrint('👤 Current user: ${userModel.email}');
       }
 
       return userModel?.toEntity();
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Get current user failed: $e');
+        debugPrint('❌ Get current user failed: $e');
       }
       return null;
     }
@@ -131,8 +131,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
     try {
       if (kDebugMode) {
-        print('📝 Updating profile in Supabase');
-        print('   User ID: ${currentUser.id}');
+        debugPrint('📝 Updating profile in Supabase');
+        debugPrint('   User ID: ${currentUser.id}');
       }
 
       final userModel = await _remoteDataSource.updateProfile(
@@ -143,13 +143,13 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       if (kDebugMode) {
-        print('✅ Profile update successful');
+        debugPrint('✅ Profile update successful');
       }
 
       return userModel.toEntity();
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Profile update failed: $e');
+        debugPrint('❌ Profile update failed: $e');
       }
       throw Exception('Failed to update profile: $e');
     }
@@ -159,18 +159,18 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> resetPassword(String email) async {
     try {
       if (kDebugMode) {
-        print('📧 Sending password reset email');
-        print('   Email: $email');
+        debugPrint('📧 Sending password reset email');
+        debugPrint('   Email: $email');
       }
 
       await _remoteDataSource.resetPassword(email);
 
       if (kDebugMode) {
-        print('✅ Password reset email sent');
+        debugPrint('✅ Password reset email sent');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Password reset failed: $e');
+        debugPrint('❌ Password reset failed: $e');
       }
       throw Exception('Failed to reset password: $e');
     }
