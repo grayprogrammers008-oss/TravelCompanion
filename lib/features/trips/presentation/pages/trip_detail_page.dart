@@ -65,10 +65,16 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 title: Text(
                   trip.trip.name,
                   style: const TextStyle(
+                    color: Colors.white,
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(
-                        color: Colors.black38,
+                        color: Colors.black87,
+                        offset: Offset(0, 2),
+                        blurRadius: 8,
+                      ),
+                      Shadow(
+                        color: Colors.black54,
                         offset: Offset(0, 1),
                         blurRadius: 4,
                       ),

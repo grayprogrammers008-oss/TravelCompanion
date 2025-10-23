@@ -126,12 +126,14 @@ class MockAuthRepository extends _i1.Mock implements _i3.AuthRepository {
     String? fullName,
     String? phoneNumber,
     String? avatarUrl,
+    String? bio,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#updateProfile, [], {
               #fullName: fullName,
               #phoneNumber: phoneNumber,
               #avatarUrl: avatarUrl,
+              #bio: bio,
             }),
             returnValue: _i4.Future<_i2.UserEntity>.value(
               _FakeUserEntity_0(
@@ -140,6 +142,7 @@ class MockAuthRepository extends _i1.Mock implements _i3.AuthRepository {
                   #fullName: fullName,
                   #phoneNumber: phoneNumber,
                   #avatarUrl: avatarUrl,
+                  #bio: bio,
                 }),
               ),
             ),

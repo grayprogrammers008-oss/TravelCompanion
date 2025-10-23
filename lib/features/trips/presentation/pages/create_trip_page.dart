@@ -171,16 +171,28 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         }
         ref.invalidate(userTripsProvider);
 
+        // If editing, also invalidate the specific trip provider
+        if (isEditMode && widget.tripId != null) {
+          if (kDebugMode) {
+            debugPrint('DEBUG: Invalidating tripProvider for ${widget.tripId}');
+          }
+          ref.invalidate(tripProvider(widget.tripId!));
+        }
+
         if (kDebugMode) {
           debugPrint('DEBUG: Navigating back to home');
         }
-        context.pop(); // Go back to trips list
+        context.pop(); // Go back to trips list or detail
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
                 isEditMode ? 'Trip updated successfully!' : 'Trip created successfully!'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppTheme.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
           ),
         );
       }

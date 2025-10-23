@@ -128,6 +128,7 @@ class MockAuthRemoteDataSource extends _i1.Mock
     String? fullName,
     String? phoneNumber,
     String? avatarUrl,
+    String? bio,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#updateProfile, [], {
@@ -135,6 +136,7 @@ class MockAuthRemoteDataSource extends _i1.Mock
               #fullName: fullName,
               #phoneNumber: phoneNumber,
               #avatarUrl: avatarUrl,
+              #bio: bio,
             }),
             returnValue: _i4.Future<_i2.UserModel>.value(
               _FakeUserModel_0(
@@ -144,6 +146,7 @@ class MockAuthRemoteDataSource extends _i1.Mock
                   #fullName: fullName,
                   #phoneNumber: phoneNumber,
                   #avatarUrl: avatarUrl,
+                  #bio: bio,
                 }),
               ),
             ),
