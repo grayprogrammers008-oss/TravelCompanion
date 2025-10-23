@@ -51,7 +51,20 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     setState(() => _isLoading = true);
 
     try {
+      if (kDebugMode) {
+        debugPrint('DEBUG: ========== LOADING TRIP DATA ==========');
+        debugPrint('DEBUG: Trip ID: ${widget.tripId}');
+      }
+
       final trip = await ref.read(tripProvider(widget.tripId!).future);
+
+      if (kDebugMode) {
+        debugPrint('DEBUG: Loaded Trip Name: ${trip.trip.name}');
+        debugPrint('DEBUG: Loaded Trip Description: ${trip.trip.description ?? "NULL"}');
+        debugPrint('DEBUG: Loaded Trip Destination: ${trip.trip.destination ?? "NULL"}');
+        debugPrint('DEBUG: Loaded Trip Start Date: ${trip.trip.startDate}');
+        debugPrint('DEBUG: Loaded Trip End Date: ${trip.trip.endDate}');
+      }
 
       if (mounted) {
         setState(() {
@@ -62,8 +75,19 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           _endDate = trip.trip.endDate;
           _isLoading = false;
         });
+
+        if (kDebugMode) {
+          debugPrint('DEBUG: Form fields populated');
+          debugPrint('DEBUG: Name Controller: "${_nameController.text}"');
+          debugPrint('DEBUG: Description Controller: "${_descriptionController.text}"');
+          debugPrint('DEBUG: Destination Controller: "${_destinationController.text}"');
+        }
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('DEBUG: ========== ERROR LOADING TRIP ==========');
+        debugPrint('DEBUG: Error: $e');
+      }
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -120,10 +144,18 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       if (isEditMode) {
         // Update existing trip
         if (kDebugMode) {
-          debugPrint('DEBUG: Updating trip with ID: ${widget.tripId}');
+          debugPrint('DEBUG: ========== EDIT MODE ==========');
+          debugPrint('DEBUG: Trip ID: ${widget.tripId}');
+          debugPrint('DEBUG: Name: "${_nameController.text.trim()}"');
+          debugPrint('DEBUG: Description: "${_descriptionController.text.trim()}"');
+          debugPrint('DEBUG: Description (null if empty): ${_descriptionController.text.trim().isEmpty ? 'NULL' : '"${_descriptionController.text.trim()}"'}');
+          debugPrint('DEBUG: Destination: "${_destinationController.text.trim()}"');
+          debugPrint('DEBUG: Destination (null if empty): ${_destinationController.text.trim().isEmpty ? 'NULL' : '"${_destinationController.text.trim()}"'}');
+          debugPrint('DEBUG: Start Date: $_startDate');
+          debugPrint('DEBUG: End Date: $_endDate');
         }
 
-        await ref.read(tripControllerProvider.notifier).updateTrip(
+        final updatedTrip = await ref.read(tripControllerProvider.notifier).updateTrip(
               tripId: widget.tripId!,
               name: _nameController.text.trim(),
               description: _descriptionController.text.trim().isEmpty
@@ -137,7 +169,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
             );
 
         if (kDebugMode) {
-          debugPrint('DEBUG: Trip updated successfully');
+          debugPrint('DEBUG: ========== UPDATE SUCCESSFUL ==========');
+          debugPrint('DEBUG: Updated Trip Name: ${updatedTrip.name}');
+          debugPrint('DEBUG: Updated Trip Description: ${updatedTrip.description ?? "NULL"}');
+          debugPrint('DEBUG: Updated Trip Destination: ${updatedTrip.destination ?? "NULL"}');
         }
       } else {
         // Create new trip

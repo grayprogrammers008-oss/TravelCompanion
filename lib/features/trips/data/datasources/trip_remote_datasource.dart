@@ -146,6 +146,12 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<void> updateTrip(String tripId, Map<String, dynamic> updates) async {
     try {
+      if (kDebugMode) {
+        debugPrint('DEBUG: ========== DATASOURCE UPDATE ==========');
+        debugPrint('DEBUG: Trip ID: $tripId');
+        debugPrint('DEBUG: Raw Updates Map: $updates');
+      }
+
       // Filter out null values and format dates
       final filteredUpdates = <String, dynamic>{};
 
@@ -160,11 +166,24 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         }
       });
 
-      await _client
+      if (kDebugMode) {
+        debugPrint('DEBUG: Filtered Updates (after removing nulls): $filteredUpdates');
+      }
+
+      final response = await _client
           .from('trips')
           .update(filteredUpdates)
-          .eq('id', tripId);
+          .eq('id', tripId)
+          .select();
+
+      if (kDebugMode) {
+        debugPrint('DEBUG: Supabase Update Response: $response');
+      }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('DEBUG: ========== DATASOURCE UPDATE ERROR ==========');
+        debugPrint('DEBUG: Error: $e');
+      }
       throw Exception('Failed to update trip: $e');
     }
   }
