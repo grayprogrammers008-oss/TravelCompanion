@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
+import '../../../../core/services/realtime_service.dart';
 import '../../../../shared/models/trip_model.dart';
 
 /// Trip Remote Data Source - Supabase Implementation
@@ -30,12 +33,21 @@ abstract class TripRemoteDataSource {
 
   /// Watch trips for real-time updates
   Stream<List<TripWithMembers>> watchUserTrips();
+
+  /// Watch a specific trip for real-time updates
+  Stream<TripWithMembers> watchTrip(String tripId);
+
+  /// Watch trip member changes
+  Stream<List<TripMemberModel>> watchTripMembers(String tripId);
 }
 
 class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   final SupabaseClient _client;
+  final RealtimeService _realtimeService;
 
-  TripRemoteDataSourceImpl() : _client = SupabaseClientWrapper.client;
+  TripRemoteDataSourceImpl()
+      : _client = SupabaseClientWrapper.client,
+        _realtimeService = RealtimeService();
 
   @override
   Future<TripModel> createTrip(TripModel trip) async {
@@ -204,14 +216,163 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       return Stream.error(Exception('User not authenticated'));
     }
 
-    // Subscribe to trips table changes
-    return _client
-        .from('trips')
-        .stream(primaryKey: ['id'])
-        .eq('trip_members.user_id', userId)
-        .map((data) => (data as List)
-            .map((tripData) => _parseTripWithMembers(tripData))
-            .toList());
+    // Use enhanced realtime service to watch trip changes
+    final controller = StreamController<List<TripWithMembers>>.broadcast();
+
+    // Subscribe to user's trip membership changes
+    final subscription = _realtimeService.subscribeUserTrips(userId).listen(
+      (payload) async {
+        if (kDebugMode) {
+          debugPrint('🔄 User trips changed: ${payload.eventType}');
+        }
+        // Refetch trips when changes occur
+        try {
+          final trips = await getUserTrips();
+          controller.add(trips);
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('❌ Error fetching trips after realtime update: $e');
+          }
+          controller.addError(e);
+        }
+      },
+      onError: (error) {
+        if (kDebugMode) {
+          debugPrint('❌ Realtime subscription error: $error');
+        }
+        controller.addError(error);
+      },
+    );
+
+    // Initial load
+    getUserTrips().then((trips) {
+      if (!controller.isClosed) {
+        controller.add(trips);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup on close
+    controller.onCancel = () {
+      subscription.cancel();
+    };
+
+    return controller.stream;
+  }
+
+  @override
+  Stream<TripWithMembers> watchTrip(String tripId) {
+    final controller = StreamController<TripWithMembers>.broadcast();
+
+    // Subscribe to trip changes
+    final subscription = _realtimeService.subscribeTripChanges(tripId).listen(
+      (payload) async {
+        if (kDebugMode) {
+          debugPrint('🔄 Trip $tripId changed: ${payload.eventType}');
+        }
+
+        // Refetch trip when changes occur
+        try {
+          final trip = await getTripById(tripId);
+          if (trip != null && !controller.isClosed) {
+            controller.add(trip);
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('❌ Error fetching trip after realtime update: $e');
+          }
+          if (!controller.isClosed) {
+            controller.addError(e);
+          }
+        }
+      },
+      onError: (error) {
+        if (kDebugMode) {
+          debugPrint('❌ Realtime subscription error for trip $tripId: $error');
+        }
+        if (!controller.isClosed) {
+          controller.addError(error);
+        }
+      },
+    );
+
+    // Initial load
+    getTripById(tripId).then((trip) {
+      if (trip != null && !controller.isClosed) {
+        controller.add(trip);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup on close
+    controller.onCancel = () {
+      subscription.cancel();
+      _realtimeService.unsubscribe('trip:$tripId');
+    };
+
+    return controller.stream;
+  }
+
+  @override
+  Stream<List<TripMemberModel>> watchTripMembers(String tripId) {
+    final controller = StreamController<List<TripMemberModel>>.broadcast();
+
+    // Subscribe to trip member changes
+    final subscription = _realtimeService.subscribeTripMemberChanges(tripId).listen(
+      (payload) async {
+        if (kDebugMode) {
+          debugPrint('🔄 Trip $tripId members changed: ${payload.eventType}');
+        }
+
+        // Refetch trip to get updated members
+        try {
+          final trip = await getTripById(tripId);
+          if (trip != null && !controller.isClosed) {
+            controller.add(trip.members);
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('❌ Error fetching members after realtime update: $e');
+          }
+          if (!controller.isClosed) {
+            controller.addError(e);
+          }
+        }
+      },
+      onError: (error) {
+        if (kDebugMode) {
+          debugPrint('❌ Realtime subscription error for trip members: $error');
+        }
+        if (!controller.isClosed) {
+          controller.addError(error);
+        }
+      },
+    );
+
+    // Initial load
+    getTripById(tripId).then((trip) {
+      if (trip != null && !controller.isClosed) {
+        controller.add(trip.members);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup on close
+    controller.onCancel = () {
+      subscription.cancel();
+      _realtimeService.unsubscribe('trip_members:$tripId');
+    };
+
+    return controller.stream;
   }
 
   /// Parse trip data with members from Supabase response
