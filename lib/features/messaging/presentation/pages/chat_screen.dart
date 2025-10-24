@@ -9,12 +9,14 @@ import '../../domain/entities/message_entity.dart';
 import '../../domain/usecases/send_message_usecase.dart';
 import '../providers/messaging_providers.dart';
 import '../providers/ble_providers.dart';
+import '../providers/p2p_providers.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
 import '../widgets/sync_fab.dart';
 import '../widgets/reaction_picker.dart';
 import '../widgets/who_reacted_sheet.dart';
 import '../widgets/nearby_peers_sheet.dart';
+import '../widgets/p2p_peers_sheet.dart';
 
 /// Chat Screen
 /// Main messaging interface with realtime updates
@@ -419,10 +421,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ],
         ),
         actions: [
+          // WiFi Direct/Multipeer High-Speed P2P button
+          IconButton(
+            icon: const Icon(Icons.wifi),
+            tooltip: 'High-Speed P2P (WiFi/Multipeer)',
+            onPressed: () {
+              P2PPeersSheet.show(
+                context,
+                userId: widget.currentUserId,
+                userName: widget.tripName,
+              );
+            },
+          ),
           // BLE P2P Nearby Peers button
           IconButton(
             icon: const Icon(Icons.bluetooth_searching),
-            tooltip: 'Nearby Peers (P2P)',
+            tooltip: 'Nearby Peers (BLE)',
             onPressed: () {
               NearbyPeersSheet.show(
                 context,

@@ -30,6 +30,19 @@
     <!-- Bluetooth LE feature -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
 
+    <!-- WiFi Direct P2P Messaging Permissions -->
+    <!-- WiFi state permissions -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <!-- Android 13+ Nearby WiFi Devices -->
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"
+                     android:usesPermissionFlags="neverForLocation" />
+
+    <!-- WiFi Direct feature -->
+    <uses-feature android:name="android.hardware.wifi.direct" android:required="false" />
+
     <application
         android:label="travel_crew"
         android:name="${applicationName}"
