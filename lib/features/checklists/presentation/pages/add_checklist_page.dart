@@ -41,13 +41,20 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('User not logged in'),
+              content: Text('User not logged in. Please sign in and try again.'),
               backgroundColor: AppTheme.error,
+              duration: Duration(seconds: 4),
             ),
           );
         }
+        setState(() => _isLoading = false);
         return;
       }
+
+      // Debug logging
+      debugPrint('Creating checklist: ${_nameController.text.trim()}');
+      debugPrint('Trip ID: ${widget.tripId}');
+      debugPrint('User ID: $userId');
 
       final controller = ref.read(checklistControllerProvider.notifier);
       final checklist = await controller.createChecklist(
@@ -58,6 +65,7 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
 
       if (mounted) {
         if (checklist != null) {
+          debugPrint('Checklist created successfully: ${checklist.id}');
           Navigator.of(context).pop(true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -67,20 +75,27 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
             ),
           );
         } else {
+          // Check controller state for error
+          final error = ref.read(checklistControllerProvider).error;
+          debugPrint('Failed to create checklist. Error: $error');
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to create checklist'),
+            SnackBar(
+              content: Text('Failed to create checklist${error != null ? ': $error' : ''}'),
               backgroundColor: AppTheme.error,
+              duration: const Duration(seconds: 4),
             ),
           );
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Exception creating checklist: $e');
+      debugPrint('Stack trace: $stackTrace');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text('Error: ${e.toString()}'),
             backgroundColor: AppTheme.error,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -98,9 +113,21 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
-        title: const Text('New Checklist'),
-        backgroundColor: Colors.transparent,
+        title: const Text(
+          'New Checklist',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        backgroundColor: themeData.primaryColor,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeData.primaryGradient,
+          ),
+        ),
       ),
       body: Form(
         key: _formKey,

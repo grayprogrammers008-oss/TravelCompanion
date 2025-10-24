@@ -33,6 +33,10 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
     setState(() => _isLoading = true);
 
     try {
+      // Debug logging
+      debugPrint('Adding item: ${_titleController.text.trim()}');
+      debugPrint('Checklist ID: ${widget.checklistId}');
+
       final controller = ref.read(checklistControllerProvider.notifier);
       final item = await controller.addItem(
         checklistId: widget.checklistId,
@@ -41,6 +45,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
 
       if (mounted) {
         if (item != null) {
+          debugPrint('Item added successfully: ${item.id}');
           Navigator.of(context).pop(true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -50,20 +55,27 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
             ),
           );
         } else {
+          // Check controller state for error
+          final error = ref.read(checklistControllerProvider).error;
+          debugPrint('Failed to add item. Error: $error');
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to add item'),
+            SnackBar(
+              content: Text('Failed to add item${error != null ? ': $error' : ''}'),
               backgroundColor: AppTheme.error,
+              duration: const Duration(seconds: 4),
             ),
           );
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Exception adding item: $e');
+      debugPrint('Stack trace: $stackTrace');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text('Error: ${e.toString()}'),
             backgroundColor: AppTheme.error,
+            duration: const Duration(seconds: 4),
           ),
         );
       }

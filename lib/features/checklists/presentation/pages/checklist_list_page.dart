@@ -24,9 +24,21 @@ class ChecklistListPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
-        title: const Text('Checklists'),
-        backgroundColor: Colors.transparent,
+        title: const Text(
+          'Checklists',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        backgroundColor: themeData.primaryColor,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeData.primaryGradient,
+          ),
+        ),
       ),
       body: checklistsAsync.when(
         data: (checklists) {
