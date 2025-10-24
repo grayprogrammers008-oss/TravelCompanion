@@ -51,6 +51,19 @@ class ChecklistModel {
     };
   }
 
+  /// Convert to JSON for database operations (excludes joined fields)
+  Map<String, dynamic> toDatabaseJson() {
+    return {
+      'id': id,
+      'trip_id': tripId,
+      'name': name,
+      'created_by': createdBy,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+      // Exclude 'creator_name' - it's a joined field, not a table column
+    };
+  }
+
   factory ChecklistModel.fromJson(Map<String, dynamic> json) {
     return ChecklistModel(
       id: json['id'] as String,
@@ -174,6 +187,23 @@ class ChecklistItemModel {
       'updated_at': updatedAt?.toIso8601String(),
       'assigned_to_name': assignedToName,
       'completed_by_name': completedByName,
+    };
+  }
+
+  /// Convert to JSON for database operations (excludes joined fields)
+  Map<String, dynamic> toDatabaseJson() {
+    return {
+      'id': id,
+      'checklist_id': checklistId,
+      'title': title,
+      'is_completed': isCompleted,
+      'assigned_to': assignedTo,
+      'completed_by': completedBy,
+      'completed_at': completedAt?.toIso8601String(),
+      'order_index': orderIndex,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+      // Exclude 'assigned_to_name' and 'completed_by_name' - they're joined fields
     };
   }
 

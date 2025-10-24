@@ -64,8 +64,9 @@ class ChecklistRemoteDataSource {
       print('   Trip ID: ${checklist.tripId}');
       print('   Created By: ${checklist.createdBy}');
 
-      final json = checklist.toJson();
-      print('   JSON to send: $json');
+      // Use toDatabaseJson() to exclude joined fields (creator_name)
+      final json = checklist.toDatabaseJson();
+      print('   Database JSON to send: $json');
 
       print('   Calling Supabase.from("checklists").upsert()...');
       final response = await SupabaseClientWrapper.client
@@ -95,14 +96,35 @@ class ChecklistRemoteDataSource {
   /// Create or update a checklist item
   Future<ChecklistItemModel> upsertChecklistItem(ChecklistItemModel item) async {
     try {
+      print('🔵 [RemoteDataSource] upsertChecklistItem START');
+      print('   Item ID: ${item.id}');
+      print('   Item Title: ${item.title}');
+      print('   Checklist ID: ${item.checklistId}');
+
+      // Use toDatabaseJson() to exclude joined fields (assigned_to_name, completed_by_name)
+      final json = item.toDatabaseJson();
+      print('   Database JSON to send: $json');
+
+      print('   Calling Supabase.from("checklist_items").upsert()...');
       final response = await SupabaseClientWrapper.client
           .from('checklist_items')
-          .upsert(item.toJson())
+          .upsert(json)
           .select()
           .single();
 
-      return ChecklistItemModel.fromJson(response);
-    } catch (e) {
+      print('   ✅ Supabase response received');
+      print('   Response data: $response');
+
+      final result = ChecklistItemModel.fromJson(response);
+      print('   ✅ Successfully converted to ChecklistItemModel');
+      print('🔵 [RemoteDataSource] upsertChecklistItem SUCCESS');
+
+      return result;
+    } catch (e, stackTrace) {
+      print('❌ [RemoteDataSource] upsertChecklistItem FAILED');
+      print('   Exception: $e');
+      print('   Exception Type: ${e.runtimeType}');
+      print('   Stack Trace: $stackTrace');
       throw Exception('Failed to upsert checklist item in Supabase: $e');
     }
   }
