@@ -8,6 +8,7 @@ library messaging_exports;
 
 // Entities
 export 'domain/entities/message_entity.dart';
+export 'domain/entities/notification_payload.dart';
 
 // Repositories
 export 'domain/repositories/message_repository.dart';
@@ -33,6 +34,9 @@ export '../../shared/models/message_model.dart';
 export 'data/datasources/message_local_datasource.dart';
 export 'data/datasources/message_remote_datasource.dart';
 
+// Services
+export 'data/services/fcm_service.dart';
+
 // Repositories Implementation
 export 'data/repositories/message_repository_impl.dart';
 
@@ -45,6 +49,7 @@ export 'data/initialization/messaging_initialization.dart';
 
 // Providers
 export 'presentation/providers/messaging_providers.dart';
+export 'presentation/providers/notification_provider.dart';
 
 // Pages
 export 'presentation/pages/chat_screen.dart';
@@ -55,6 +60,7 @@ export 'presentation/widgets/message_bubble.dart';
 export 'presentation/widgets/message_input.dart';
 export 'presentation/widgets/sync_status_banner.dart';
 export 'presentation/widgets/sync_fab.dart';
+export 'presentation/widgets/in_app_notification.dart';
 
 // ============================================================================
 // USAGE EXAMPLES
