@@ -17,6 +17,8 @@ import '../widgets/reaction_picker.dart';
 import '../widgets/who_reacted_sheet.dart';
 import '../widgets/nearby_peers_sheet.dart';
 import '../widgets/p2p_peers_sheet.dart';
+import '../widgets/sync_status_sheet.dart';
+import '../providers/sync_providers.dart';
 
 /// Chat Screen
 /// Main messaging interface with realtime updates
@@ -421,6 +423,52 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ],
         ),
         actions: [
+          // Sync Status button
+          Consumer(
+            builder: (context, ref, child) {
+              final isSyncing = ref.watch(isSyncingProvider);
+              final queueSize = ref.watch(queueSizeProvider);
+
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      isSyncing ? Icons.sync : Icons.sync_alt,
+                      color: isSyncing ? Colors.blue : null,
+                    ),
+                    tooltip: 'Sync Status',
+                    onPressed: () => SyncStatusSheet.show(context),
+                  ),
+                  if (queueSize > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          queueSize > 99 ? '99+' : queueSize.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           // WiFi Direct/Multipeer High-Speed P2P button
           IconButton(
             icon: const Icon(Icons.wifi),

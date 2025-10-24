@@ -49,6 +49,12 @@ export 'data/services/wifi_direct_service.dart';
 export 'data/services/multipeer_service.dart';
 export 'data/services/p2p_connection_manager.dart';
 
+// Hybrid Sync Services (Message Deduplication, Priority Queue, Conflict Resolution)
+export 'data/services/message_deduplication_service.dart';
+export 'data/services/priority_sync_queue.dart';
+export 'data/services/conflict_resolution_engine.dart';
+export 'data/services/sync_coordinator.dart';
+
 // Repositories Implementation
 export 'data/repositories/message_repository_impl.dart';
 
@@ -68,6 +74,9 @@ export 'presentation/providers/ble_providers.dart';
 
 // WiFi Direct/Multipeer P2P Providers (High-Bandwidth)
 export 'presentation/providers/p2p_providers.dart';
+
+// Hybrid Sync Providers (Deduplication, Priority Queue, Conflict Resolution)
+export 'presentation/providers/sync_providers.dart';
 
 // Pages
 export 'presentation/pages/chat_screen.dart';
@@ -89,6 +98,9 @@ export 'presentation/widgets/nearby_peers_sheet.dart';
 
 // WiFi Direct/Multipeer P2P Widgets (High-Bandwidth)
 export 'presentation/widgets/p2p_peers_sheet.dart';
+
+// Hybrid Sync Widgets (Sync Status Dashboard)
+export 'presentation/widgets/sync_status_sheet.dart';
 
 // ============================================================================
 // USAGE EXAMPLES
