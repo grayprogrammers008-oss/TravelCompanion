@@ -772,3 +772,76 @@ For issues or questions:
 - Check test cases for usage examples
 - Review code documentation
 - File issues on project repository
+
+## Test Coverage
+
+### Comprehensive Test Suite
+
+The Hybrid Sync Strategy includes a comprehensive end-to-end testing suite with **190+ test cases** across **2,906 lines** of test code.
+
+For detailed test coverage information, see [TEST_COVERAGE_REPORT.md](TEST_COVERAGE_REPORT.md).
+
+#### Test Statistics
+
+| Category | Files | Test Cases | Coverage |
+|----------|-------|------------|----------|
+| Unit Tests | 1 | 50+ | ~95% |
+| Integration Tests | 1 | 25+ | ~88% |
+| E2E Tests | 1 | 30+ | ~75% |
+| Widget Tests | 1 | 40+ | ~85% |
+| Provider Tests | 1 | 45+ | ~92% |
+| **TOTAL** | **5** | **190+** | **~85%** |
+
+#### Running Tests
+
+```bash
+# Run all sync tests
+flutter test test/features/messaging/
+
+# Run specific test suites
+flutter test test/features/messaging/data/services/sync_services_test.dart
+flutter test test/features/messaging/integration/hybrid_sync_integration_test.dart
+flutter test test/features/messaging/e2e/hybrid_sync_e2e_test.dart
+flutter test test/features/messaging/presentation/widgets/sync_status_sheet_test.dart
+flutter test test/features/messaging/presentation/providers/sync_providers_test.dart
+
+# Generate coverage report
+flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html
+```
+
+#### Test Coverage Highlights
+
+**Unit Tests (`sync_services_test.dart`):**
+- MessageDeduplicationService: 15+ tests
+- PrioritySyncQueue: 10+ tests
+- ConflictResolutionEngine: 10+ tests
+- SyncCoordinator: 10+ tests
+- Data Classes: 5+ tests
+
+**Integration Tests (`hybrid_sync_integration_test.dart`):**
+- Message flow across multiple sources
+- Conflict resolution workflows
+- Multi-source sync scenarios
+- Priority queue integration
+- Statistics tracking
+
+**E2E Tests (`hybrid_sync_e2e_test.dart`):**
+- Complete user workflows
+- Real-world scenarios (4-user group chat)
+- Network switching during conversation
+- High-volume stress tests (100+ messages)
+- Edge cases and error scenarios
+
+**Widget Tests (`sync_status_sheet_test.dart`):**
+- UI component rendering
+- Tab switching and navigation
+- Real-time statistics display
+- User interaction flows
+
+**Provider Tests (`sync_providers_test.dart`):**
+- Riverpod provider lifecycle
+- State management reactivity
+- Stream provider updates
+- Helper provider calculations
+

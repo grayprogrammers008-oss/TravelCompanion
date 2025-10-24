@@ -60,7 +60,7 @@ dependencies:
   share_plus: ^10.1.2
 
   # Permissions
-  permission_handler: ^12.0.1
+  permission_handler: ^11.3.1
 
   # Image Picker
   image_picker: ^1.0.7
@@ -74,8 +74,8 @@ dependencies:
   # WiFi Direct P2P Messaging (Android)
   flutter_p2p_connection: ^3.0.3
 
-  # Multipeer Connectivity P2P Messaging (iOS)
-  nearby_service: ^0.3.2
+  # Multipeer Connectivity P2P Messaging (iOS) - TODO: Find alternative package
+  # nearby_service: ^0.3.2  # Package not available on pub.dev
 
   # Encryption for E2E messaging
   encrypt: ^5.0.3

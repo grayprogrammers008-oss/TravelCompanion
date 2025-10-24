@@ -1,7 +1,47 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:nearby_service/nearby_service.dart';
+// import 'package:nearby_service/nearby_service.dart';  // Package not available on pub.dev
+
+// Stub classes for iOS Multipeer Connectivity
+// TODO: Replace with actual implementation when package is available
+class NearbyService {
+  Future<void> initialize({
+    required String userName,
+    required Strategy strategy,
+    required String serviceType,
+    required Callbacks callback,
+  }) async {
+    // Stub implementation
+  }
+
+  Future<void> startAdvertising() async {}
+  Future<void> stopAdvertising() async {}
+  Future<void> startBrowsing() async {}
+  Future<void> stopBrowsing() async {}
+  Future<void> sendMessage(String peerId, String message) async {}
+  Future<void> sendFile(String peerId, String filePath) async {}
+  Future<void> disconnect(String peerId) async {}
+  Future<void> dispose() async {}
+}
+
+enum Strategy { P2P_CLUSTER, P2P_STAR, P2P_POINT_TO_POINT }
+
+class Callbacks {
+  final Function(String peerId, int status)? onConnected;
+  final Function(String peerId)? onDisconnected;
+  final Function(String peerId, String message)? onMessageReceived;
+  final Function(String peerId, String filePath)? onFileReceived;
+  final Function(String peerId, String peerName)? onConnectionRequest;
+
+  Callbacks({
+    this.onConnected,
+    this.onDisconnected,
+    this.onMessageReceived,
+    this.onFileReceived,
+    this.onConnectionRequest,
+  });
+}
 
 /// Multipeer Connectivity P2P Service for iOS/macOS
 /// Provides high-bandwidth peer-to-peer communication using Apple's Multipeer Connectivity
