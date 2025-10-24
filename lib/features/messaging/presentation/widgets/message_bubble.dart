@@ -1,0 +1,396 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../domain/entities/message_entity.dart';
+
+/// Message Bubble Widget
+/// Displays a single message with sender/receiver styling
+class MessageBubble extends StatelessWidget {
+  final MessageEntity message;
+  final String currentUserId;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onReactionTap;
+  final VoidCallback? onReplyTap;
+
+  const MessageBubble({
+    super.key,
+    required this.message,
+    required this.currentUserId,
+    this.onLongPress,
+    this.onReactionTap,
+    this.onReplyTap,
+  });
+
+  bool get _isOwnMessage => message.senderId == currentUserId;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: onLongPress,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacing2xs,
+        ),
+        child: Row(
+          mainAxisAlignment:
+              _isOwnMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // Avatar for received messages
+            if (!_isOwnMessage) ...[
+              _buildAvatar(),
+              const SizedBox(width: AppTheme.spacingXs),
+            ],
+
+            // Message content
+            Flexible(
+              child: Column(
+                crossAxisAlignment: _isOwnMessage
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: [
+                  // Sender name (for received messages)
+                  if (!_isOwnMessage && message.senderName != null)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: AppTheme.spacingXs,
+                        bottom: 2,
+                      ),
+                      child: Text(
+                        message.senderName!,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: AppTheme.neutral600,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+
+                  // Message bubble
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.75,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _isOwnMessage
+                          ? AppTheme.primaryTeal
+                          : Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(AppTheme.radiusLg),
+                        topRight: const Radius.circular(AppTheme.radiusLg),
+                        bottomLeft: Radius.circular(
+                          _isOwnMessage ? AppTheme.radiusLg : AppTheme.radiusSm,
+                        ),
+                        bottomRight: Radius.circular(
+                          _isOwnMessage ? AppTheme.radiusSm : AppTheme.radiusLg,
+                        ),
+                      ),
+                      boxShadow: _isOwnMessage
+                          ? AppTheme.shadowTeal
+                          : AppTheme.shadowSm,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Message content
+                        _buildMessageContent(context),
+
+                        // Reactions
+                        if (message.reactions.isNotEmpty)
+                          _buildReactions(context),
+                      ],
+                    ),
+                  ),
+
+                  // Timestamp and read status
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: AppTheme.spacingXs,
+                      right: AppTheme.spacingXs,
+                      top: 2,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _formatTimestamp(message.createdAt),
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: AppTheme.neutral400,
+                                    fontSize: 10,
+                                  ),
+                        ),
+                        if (_isOwnMessage) ...[
+                          const SizedBox(width: 4),
+                          _buildReadStatus(context),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Spacing for sent messages
+            if (_isOwnMessage) const SizedBox(width: AppTheme.spacingXs),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build avatar for received messages
+  Widget _buildAvatar() {
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: AppTheme.neutral200,
+      backgroundImage: message.senderAvatarUrl != null
+          ? NetworkImage(message.senderAvatarUrl!)
+          : null,
+      child: message.senderAvatarUrl == null
+          ? Text(
+              message.senderName?.substring(0, 1).toUpperCase() ?? '?',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.neutral600,
+              ),
+            )
+          : null,
+    );
+  }
+
+  /// Build message content based on message type
+  Widget _buildMessageContent(BuildContext context) {
+    switch (message.messageType) {
+      case MessageType.text:
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
+          ),
+          child: Text(
+            message.message ?? '',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: _isOwnMessage ? Colors.white : AppTheme.neutral900,
+                  height: 1.4,
+                ),
+          ),
+        );
+
+      case MessageType.image:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (message.attachmentUrl != null)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppTheme.radiusLg),
+                ),
+                child: Image.network(
+                  message.attachmentUrl!,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      height: 200,
+                      color: AppTheme.neutral100,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      color: AppTheme.neutral100,
+                      child: const Center(
+                        child: Icon(Icons.broken_image, size: 48),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            if (message.message != null && message.message!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                child: Text(
+                  message.message!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color:
+                            _isOwnMessage ? Colors.white : AppTheme.neutral900,
+                      ),
+                ),
+              ),
+          ],
+        );
+
+      case MessageType.location:
+        return Padding(
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          child: Row(
+            children: [
+              Icon(
+                Icons.location_on,
+                color: _isOwnMessage ? Colors.white : AppTheme.primaryTeal,
+                size: 20,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: Text(
+                  message.message ?? 'Location shared',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color:
+                            _isOwnMessage ? Colors.white : AppTheme.neutral900,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case MessageType.expenseLink:
+        return Padding(
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          child: Row(
+            children: [
+              Icon(
+                Icons.attach_money,
+                color: _isOwnMessage ? Colors.white : AppTheme.accentGold,
+                size: 20,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: Text(
+                  message.message ?? 'Expense shared',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color:
+                            _isOwnMessage ? Colors.white : AppTheme.neutral900,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
+  /// Build reactions display
+  Widget _buildReactions(BuildContext context) {
+    // Group reactions by emoji
+    final reactionMap = <String, int>{};
+    for (final reaction in message.reactions) {
+      final emoji = reaction['emoji'] as String;
+      reactionMap[emoji] = (reactionMap[emoji] ?? 0) + 1;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: AppTheme.spacingMd,
+        right: AppTheme.spacingMd,
+        bottom: AppTheme.spacingXs,
+      ),
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 4,
+        children: reactionMap.entries.map((entry) {
+          final hasReacted =
+              message.hasReaction(currentUserId, entry.key);
+
+          return GestureDetector(
+            onTap: onReactionTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 6,
+                vertical: 2,
+              ),
+              decoration: BoxDecoration(
+                color: hasReacted
+                    ? (_isOwnMessage
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppTheme.primaryPale)
+                    : (_isOwnMessage
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : AppTheme.neutral100),
+                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                border: hasReacted
+                    ? Border.all(
+                        color: _isOwnMessage
+                            ? Colors.white.withValues(alpha: 0.5)
+                            : AppTheme.primaryTeal,
+                        width: 1,
+                      )
+                    : null,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    entry.key,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  if (entry.value > 1) ...[
+                    const SizedBox(width: 2),
+                    Text(
+                      '${entry.value}',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: _isOwnMessage
+                            ? Colors.white
+                            : AppTheme.neutral700,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// Build read status indicator
+  Widget _buildReadStatus(BuildContext context) {
+    final readByCount = message.readBy.length;
+
+    if (readByCount <= 1) {
+      // Only sender has read (sent but not delivered)
+      return const Icon(
+        Icons.check,
+        size: 14,
+        color: AppTheme.neutral400,
+      );
+    } else {
+      // Read by others
+      return const Icon(
+        Icons.done_all,
+        size: 14,
+        color: AppTheme.primaryTeal,
+      );
+    }
+  }
+
+  /// Format timestamp
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final messageDate =
+        DateTime(timestamp.year, timestamp.month, timestamp.day);
+
+    if (messageDate == today) {
+      // Today: show time only
+      return DateFormat.jm().format(timestamp);
+    } else if (messageDate == today.subtract(const Duration(days: 1))) {
+      // Yesterday
+      return 'Yesterday ${DateFormat.jm().format(timestamp)}';
+    } else if (now.difference(timestamp).inDays < 7) {
+      // This week: show day name
+      return DateFormat('EEE, h:mm a').format(timestamp);
+    } else {
+      // Older: show date
+      return DateFormat('MMM d, h:mm a').format(timestamp);
+    }
+  }
+}

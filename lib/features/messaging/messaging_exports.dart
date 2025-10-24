@@ -46,6 +46,14 @@ export 'data/initialization/messaging_initialization.dart';
 // Providers
 export 'presentation/providers/messaging_providers.dart';
 
+// Pages
+export 'presentation/pages/chat_screen.dart';
+
+// Widgets
+export 'presentation/widgets/message_bubble.dart';
+export 'presentation/widgets/message_input.dart';
+export 'presentation/widgets/sync_status_banner.dart';
+
 // ============================================================================
 // USAGE EXAMPLES
 // ============================================================================
