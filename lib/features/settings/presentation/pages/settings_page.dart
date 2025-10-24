@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_access.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -17,13 +18,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
+    final themeData = context.appThemeData;
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: Colors.transparent,
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        backgroundColor: themeData.primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeData.primaryGradient,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
