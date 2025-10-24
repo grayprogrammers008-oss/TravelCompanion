@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/message_entity.dart';
+import 'image_viewer.dart';
 
 /// Message Bubble Widget
 /// Displays a single message with sender/receiver styling
@@ -183,32 +185,40 @@ class MessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (message.attachmentUrl != null)
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(AppTheme.radiusLg),
-                ),
-                child: Image.network(
-                  message.attachmentUrl!,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      height: 200,
-                      color: AppTheme.neutral100,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
+              GestureDetector(
+                onTap: () {
+                  ImageViewer.show(
+                    context,
+                    imageUrl: message.attachmentUrl!,
+                    heroTag: 'message_image_${message.id}',
+                  );
+                },
+                child: Hero(
+                  tag: 'message_image_${message.id}',
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(AppTheme.radiusLg),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: message.attachmentUrl!,
+                      fit: BoxFit.cover,
+                      maxHeightDiskCache: 800,
+                      placeholder: (context, url) => Container(
+                        height: 200,
+                        color: AppTheme.neutral100,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 200,
-                      color: AppTheme.neutral100,
-                      child: const Center(
-                        child: Icon(Icons.broken_image, size: 48),
+                      errorWidget: (context, url, error) => Container(
+                        height: 200,
+                        color: AppTheme.neutral100,
+                        child: const Center(
+                          child: Icon(Icons.broken_image, size: 48),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             if (message.message != null && message.message!.isNotEmpty)

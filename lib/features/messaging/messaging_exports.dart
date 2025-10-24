@@ -36,6 +36,8 @@ export 'data/datasources/message_remote_datasource.dart';
 
 // Services
 export 'data/services/fcm_service.dart';
+export 'data/services/image_picker_service.dart';
+export 'data/services/storage_service.dart';
 
 // Repositories Implementation
 export 'data/repositories/message_repository_impl.dart';
@@ -61,6 +63,8 @@ export 'presentation/widgets/message_input.dart';
 export 'presentation/widgets/sync_status_banner.dart';
 export 'presentation/widgets/sync_fab.dart';
 export 'presentation/widgets/in_app_notification.dart';
+export 'presentation/widgets/attachment_picker.dart';
+export 'presentation/widgets/image_viewer.dart';
 
 // ============================================================================
 // USAGE EXAMPLES
