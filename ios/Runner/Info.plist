@@ -53,5 +53,12 @@
 	<!-- Camera Permissions -->
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take profile pictures.</string>
+	<!-- Bluetooth LE P2P Messaging Permissions (Phase 1B) -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>We need access to Bluetooth to enable peer-to-peer messaging with nearby users when offline.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We need access to Bluetooth to enable peer-to-peer messaging with nearby users when offline.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location permission is required for Bluetooth scanning to discover nearby peers.</string>
 </dict>
 </plist>

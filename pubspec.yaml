@@ -68,6 +68,13 @@ dependencies:
   # Connectivity
   connectivity_plus: ^6.0.0
 
+  # Bluetooth LE for P2P Messaging
+  flutter_blue_plus: ^1.32.12
+
+  # Encryption for E2E messaging
+  encrypt: ^5.0.3
+  pointycastle: ^3.9.1
+
   # Local Notifications
   flutter_local_notifications: ^18.0.1
 

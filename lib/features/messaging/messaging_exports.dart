@@ -39,6 +39,11 @@ export 'data/services/fcm_service.dart';
 export 'data/services/image_picker_service.dart';
 export 'data/services/storage_service.dart';
 
+// BLE P2P Services (Phase 1B)
+export 'data/services/ble_service.dart';
+export 'data/services/encryption_service.dart';
+export 'data/services/mesh_coordinator.dart';
+
 // Repositories Implementation
 export 'data/repositories/message_repository_impl.dart';
 
@@ -52,6 +57,9 @@ export 'data/initialization/messaging_initialization.dart';
 // Providers
 export 'presentation/providers/messaging_providers.dart';
 export 'presentation/providers/notification_provider.dart';
+
+// BLE P2P Providers (Phase 1B)
+export 'presentation/providers/ble_providers.dart';
 
 // Pages
 export 'presentation/pages/chat_screen.dart';
@@ -67,6 +75,9 @@ export 'presentation/widgets/attachment_picker.dart';
 export 'presentation/widgets/image_viewer.dart';
 export 'presentation/widgets/reaction_picker.dart';
 export 'presentation/widgets/who_reacted_sheet.dart';
+
+// BLE P2P Widgets (Phase 1B)
+export 'presentation/widgets/nearby_peers_sheet.dart';
 
 // ============================================================================
 // USAGE EXAMPLES

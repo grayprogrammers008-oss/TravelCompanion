@@ -8,11 +8,13 @@ import '../../data/services/storage_service.dart';
 import '../../domain/entities/message_entity.dart';
 import '../../domain/usecases/send_message_usecase.dart';
 import '../providers/messaging_providers.dart';
+import '../providers/ble_providers.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
 import '../widgets/sync_fab.dart';
 import '../widgets/reaction_picker.dart';
 import '../widgets/who_reacted_sheet.dart';
+import '../widgets/nearby_peers_sheet.dart';
 
 /// Chat Screen
 /// Main messaging interface with realtime updates
@@ -42,7 +44,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // Mark all messages as read when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _markAllAsRead();
+      _initializeBLE();
     });
+  }
+
+  /// Initialize BLE services for P2P messaging
+  Future<void> _initializeBLE() async {
+    try {
+      final bleNotifier = ref.read(bleServiceNotifierProvider.notifier);
+      await bleNotifier.initialize(
+        userId: widget.currentUserId,
+        userName: widget.tripName, // Using trip name as user display name
+      );
+    } catch (e) {
+      debugPrint('BLE initialization failed: $e');
+      // Non-critical error - P2P messaging will be unavailable
+    }
   }
 
   @override
@@ -402,6 +419,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ],
         ),
         actions: [
+          // BLE P2P Nearby Peers button
+          IconButton(
+            icon: const Icon(Icons.bluetooth_searching),
+            tooltip: 'Nearby Peers (P2P)',
+            onPressed: () {
+              NearbyPeersSheet.show(
+                context,
+                userId: widget.currentUserId,
+                userName: widget.tripName,
+              );
+            },
+          ),
           // Pending messages indicator
           pendingAsync.whenOrNull(
             data: (count) {
