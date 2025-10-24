@@ -11,6 +11,8 @@ import '../providers/messaging_providers.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
 import '../widgets/sync_fab.dart';
+import '../widgets/reaction_picker.dart';
+import '../widgets/who_reacted_sheet.dart';
 
 /// Chat Screen
 /// Main messaging interface with realtime updates
@@ -279,11 +281,43 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Navigator.pop(context);
           _handleAddReaction(message.id, emoji);
         },
+        onReactMore: () {
+          Navigator.pop(context);
+          _showReactionPicker(message.id);
+        },
         onDelete: () {
           Navigator.pop(context);
           _handleDeleteMessage(message.id);
         },
       ),
+    );
+  }
+
+  /// Show enhanced reaction picker
+  void _showReactionPicker(String messageId) {
+    ReactionPicker.show(
+      context,
+      onEmojiSelected: (emoji) {
+        _handleAddReaction(messageId, emoji);
+      },
+    );
+  }
+
+  /// Show who reacted sheet
+  void _showWhoReacted(MessageEntity message, {String? selectedEmoji}) {
+    // Build user names map from reactions
+    final userNames = <String, String>{};
+    for (final reaction in message.reactions) {
+      // In a real app, you would fetch user names from a user service
+      // For now, use sender name as a placeholder
+      userNames[reaction.userId] = 'User ${reaction.userId.substring(0, 6)}';
+    }
+
+    WhoReactedSheet.show(
+      context,
+      reactions: message.reactions,
+      userNames: userNames,
+      selectedEmoji: selectedEmoji,
     );
   }
 
@@ -438,9 +472,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       message: message,
                       currentUserId: widget.currentUserId,
                       onLongPress: () => _showMessageActions(message),
-                      onReactionTap: () {
-                        // TODO: Show reaction picker
-                      },
+                      onReactionTap: () => _showReactionPicker(message.id),
+                      onReactionLongPress: (emoji) => _showWhoReacted(message, selectedEmoji: emoji),
                     );
                   },
                 );
@@ -537,6 +570,7 @@ class _MessageActionsSheet extends StatelessWidget {
   final String currentUserId;
   final VoidCallback onReply;
   final Function(String emoji) onReact;
+  final VoidCallback onReactMore;
   final VoidCallback onDelete;
 
   const _MessageActionsSheet({
@@ -544,6 +578,7 @@ class _MessageActionsSheet extends StatelessWidget {
     required this.currentUserId,
     required this.onReply,
     required this.onReact,
+    required this.onReactMore,
     required this.onDelete,
   });
 
@@ -579,6 +614,11 @@ class _MessageActionsSheet extends StatelessWidget {
                   _ReactionButton(emoji: '😂', onTap: () => onReact('😂')),
                   _ReactionButton(emoji: '😮', onTap: () => onReact('😮')),
                   _ReactionButton(emoji: '🎉', onTap: () => onReact('🎉')),
+                  _ReactionButton(
+                    emoji: '➕',
+                    onTap: onReactMore,
+                    isMore: true,
+                  ),
                 ],
               ),
             ),
@@ -613,10 +653,12 @@ class _MessageActionsSheet extends StatelessWidget {
 class _ReactionButton extends StatelessWidget {
   final String emoji;
   final VoidCallback onTap;
+  final bool isMore;
 
   const _ReactionButton({
     required this.emoji,
     required this.onTap,
+    this.isMore = false,
   });
 
   @override
@@ -627,17 +669,20 @@ class _ReactionButton extends StatelessWidget {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: AppTheme.neutral100,
+          color: isMore ? AppTheme.primaryPale : AppTheme.neutral100,
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppTheme.neutral200,
+            color: isMore ? AppTheme.primaryTeal : AppTheme.neutral200,
             width: 1.5,
           ),
         ),
         child: Center(
           child: Text(
             emoji,
-            style: const TextStyle(fontSize: 28),
+            style: TextStyle(
+              fontSize: 28,
+              color: isMore ? AppTheme.primaryTeal : null,
+            ),
           ),
         ),
       ),

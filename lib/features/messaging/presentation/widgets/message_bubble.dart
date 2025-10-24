@@ -12,6 +12,7 @@ class MessageBubble extends StatelessWidget {
   final String currentUserId;
   final VoidCallback? onLongPress;
   final VoidCallback? onReactionTap;
+  final Function(String emoji)? onReactionLongPress;
   final VoidCallback? onReplyTap;
 
   const MessageBubble({
@@ -20,6 +21,7 @@ class MessageBubble extends StatelessWidget {
     required this.currentUserId,
     this.onLongPress,
     this.onReactionTap,
+    this.onReactionLongPress,
     this.onReplyTap,
   });
 
@@ -290,7 +292,7 @@ class MessageBubble extends StatelessWidget {
     // Group reactions by emoji
     final reactionMap = <String, int>{};
     for (final reaction in message.reactions) {
-      final emoji = reaction['emoji'] as String;
+      final emoji = reaction.emoji;
       reactionMap[emoji] = (reactionMap[emoji] ?? 0) + 1;
     }
 
@@ -304,57 +306,15 @@ class MessageBubble extends StatelessWidget {
         spacing: 4,
         runSpacing: 4,
         children: reactionMap.entries.map((entry) {
-          final hasReacted =
-              message.hasReaction(currentUserId, entry.key);
+          final hasReacted = message.hasReaction(currentUserId, entry.key);
 
-          return GestureDetector(
-            onTap: onReactionTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
-              ),
-              decoration: BoxDecoration(
-                color: hasReacted
-                    ? (_isOwnMessage
-                        ? Colors.white.withValues(alpha: 0.3)
-                        : AppTheme.primaryPale)
-                    : (_isOwnMessage
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : AppTheme.neutral100),
-                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                border: hasReacted
-                    ? Border.all(
-                        color: _isOwnMessage
-                            ? Colors.white.withValues(alpha: 0.5)
-                            : AppTheme.primaryTeal,
-                        width: 1,
-                      )
-                    : null,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    entry.key,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  if (entry.value > 1) ...[
-                    const SizedBox(width: 2),
-                    Text(
-                      '${entry.value}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: _isOwnMessage
-                            ? Colors.white
-                            : AppTheme.neutral700,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+          return _AnimatedReactionBubble(
+            emoji: entry.key,
+            count: entry.value,
+            hasReacted: hasReacted,
+            isOwnMessage: _isOwnMessage,
+            onTap: () => onReactionTap?.call(),
+            onLongPress: () => onReactionLongPress?.call(entry.key),
           );
         }).toList(),
       ),
@@ -402,5 +362,148 @@ class MessageBubble extends StatelessWidget {
       // Older: show date
       return DateFormat('MMM d, h:mm a').format(timestamp);
     }
+  }
+}
+
+/// Animated Reaction Bubble Widget
+/// Shows reaction emoji with count, animated on tap
+class _AnimatedReactionBubble extends StatefulWidget {
+  final String emoji;
+  final int count;
+  final bool hasReacted;
+  final bool isOwnMessage;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
+
+  const _AnimatedReactionBubble({
+    required this.emoji,
+    required this.count,
+    required this.hasReacted,
+    required this.isOwnMessage,
+    required this.onTap,
+    required this.onLongPress,
+  });
+
+  @override
+  State<_AnimatedReactionBubble> createState() =>
+      _AnimatedReactionBubbleState();
+}
+
+class _AnimatedReactionBubbleState extends State<_AnimatedReactionBubble>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _bounceAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.3)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.3, end: 1.0)
+            .chain(CurveTween(curve: Curves.elasticOut)),
+        weight: 50,
+      ),
+    ]).animate(_controller);
+
+    _bounceAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: -8.0)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 40,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: -8.0, end: 0.0)
+            .chain(CurveTween(curve: Curves.bounceOut)),
+        weight: 60,
+      ),
+    ]).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _controller.forward(from: 0.0);
+    widget.onTap();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _bounceAnimation.value),
+          child: Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          ),
+        );
+      },
+      child: GestureDetector(
+        onTap: _handleTap,
+        onLongPress: widget.onLongPress,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 6,
+            vertical: 2,
+          ),
+          decoration: BoxDecoration(
+            color: widget.hasReacted
+                ? (widget.isOwnMessage
+                    ? Colors.white.withValues(alpha: 0.3)
+                    : AppTheme.primaryPale)
+                : (widget.isOwnMessage
+                    ? Colors.white.withValues(alpha: 0.2)
+                    : AppTheme.neutral100),
+            borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+            border: widget.hasReacted
+                ? Border.all(
+                    color: widget.isOwnMessage
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : AppTheme.primaryTeal,
+                    width: 1,
+                  )
+                : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.emoji,
+                style: const TextStyle(fontSize: 12),
+              ),
+              if (widget.count > 1) ...[
+                const SizedBox(width: 2),
+                Text(
+                  '${widget.count}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: widget.isOwnMessage
+                        ? Colors.white
+                        : AppTheme.neutral700,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

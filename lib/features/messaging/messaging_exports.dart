@@ -65,6 +65,8 @@ export 'presentation/widgets/sync_fab.dart';
 export 'presentation/widgets/in_app_notification.dart';
 export 'presentation/widgets/attachment_picker.dart';
 export 'presentation/widgets/image_viewer.dart';
+export 'presentation/widgets/reaction_picker.dart';
+export 'presentation/widgets/who_reacted_sheet.dart';
 
 // ============================================================================
 // USAGE EXAMPLES
