@@ -6,6 +6,7 @@ import '../../domain/usecases/send_message_usecase.dart';
 import '../providers/messaging_providers.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
+import '../widgets/sync_fab.dart';
 
 /// Chat Screen
 /// Main messaging interface with realtime updates
@@ -352,6 +353,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ],
       ),
+      floatingActionButton: SyncFab(tripId: widget.tripId),
     );
   }
 

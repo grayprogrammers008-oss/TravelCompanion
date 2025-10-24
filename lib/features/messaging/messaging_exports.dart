@@ -48,11 +48,13 @@ export 'presentation/providers/messaging_providers.dart';
 
 // Pages
 export 'presentation/pages/chat_screen.dart';
+export 'presentation/pages/message_queue_screen.dart';
 
 // Widgets
 export 'presentation/widgets/message_bubble.dart';
 export 'presentation/widgets/message_input.dart';
 export 'presentation/widgets/sync_status_banner.dart';
+export 'presentation/widgets/sync_fab.dart';
 
 // ============================================================================
 // USAGE EXAMPLES
