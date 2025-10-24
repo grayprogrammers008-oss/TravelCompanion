@@ -43,7 +43,15 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
     // Load trip data if editing
     if (widget.tripId != null) {
-      _loadTripData();
+      // Use addPostFrameCallback to ensure the widget is fully built
+      // before refreshing the provider
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (kDebugMode) {
+          debugPrint('DEBUG: ========== EDIT PAGE OPENED ==========');
+          debugPrint('DEBUG: Trip ID: ${widget.tripId}');
+        }
+        _loadTripData();
+      });
     }
   }
 
@@ -52,11 +60,15 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
     try {
       if (kDebugMode) {
-        debugPrint('DEBUG: ========== LOADING TRIP DATA ==========');
+        debugPrint('DEBUG: ========== REFRESHING TRIP DATA ==========');
         debugPrint('DEBUG: Trip ID: ${widget.tripId}');
+        debugPrint('DEBUG: Using ref.refresh() to force fresh data from backend...');
       }
 
-      final trip = await ref.read(tripProvider(widget.tripId!).future);
+      // CRITICAL FIX: Use ref.refresh() instead of ref.invalidate()
+      // This forces an immediate re-fetch of data from the backend
+      // and returns the fresh data directly
+      final trip = await ref.refresh(tripProvider(widget.tripId!).future);
 
       if (kDebugMode) {
         debugPrint('DEBUG: Loaded Trip Name: ${trip.trip.name}');
@@ -200,24 +212,34 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       }
 
       if (mounted) {
-        // Refresh the trips list
         if (kDebugMode) {
-          debugPrint('DEBUG: Invalidating userTripsProvider');
+          debugPrint('DEBUG: ========== SAVE SUCCESSFUL ==========');
+          debugPrint('DEBUG: Invalidating providers to refresh all pages...');
         }
+
+        // Refresh the trips list - this will update the home page
         ref.invalidate(userTripsProvider);
+        if (kDebugMode) {
+          debugPrint('DEBUG: ✓ userTripsProvider invalidated');
+        }
 
         // If editing, also invalidate the specific trip provider
+        // This is CRITICAL - ensures the next time edit page opens, it will fetch fresh data
         if (isEditMode && widget.tripId != null) {
-          if (kDebugMode) {
-            debugPrint('DEBUG: Invalidating tripProvider for ${widget.tripId}');
-          }
           ref.invalidate(tripProvider(widget.tripId!));
+          if (kDebugMode) {
+            debugPrint('DEBUG: ✓ tripProvider(${widget.tripId}) invalidated');
+            debugPrint('DEBUG: Next time edit page opens, it will fetch fresh data');
+          }
         }
 
         if (kDebugMode) {
-          debugPrint('DEBUG: Navigating back to home');
+          debugPrint('DEBUG: Navigating back to previous screen...');
         }
-        context.pop(); // Go back to trips list or detail
+
+        // Pop back to previous screen
+        // The invalidation above will cause pages to rebuild with fresh data
+        context.pop();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

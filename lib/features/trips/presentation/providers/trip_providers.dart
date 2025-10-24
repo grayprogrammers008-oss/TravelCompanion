@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../data/datasources/trip_remote_datasource.dart';
@@ -41,16 +42,26 @@ final updateTripUseCaseProvider = Provider<UpdateTripUseCase>((ref) {
 });
 
 // User Trips Provider - fetches all trips for current user
-final userTripsProvider = FutureProvider<List<TripWithMembers>>((ref) async {
+// Using autoDispose to ensure the provider refreshes when invalidated
+final userTripsProvider = FutureProvider.autoDispose<List<TripWithMembers>>((ref) async {
   final useCase = ref.watch(getUserTripsUseCaseProvider);
   return await useCase();
 });
 
 // Single Trip Provider - fetches specific trip
-final tripProvider = FutureProvider.family<TripWithMembers, String>((
+// Using autoDispose.family for proper cleanup while allowing refresh
+final tripProvider = FutureProvider.autoDispose.family<TripWithMembers, String>((
   ref,
   tripId,
 ) async {
+  // Keep provider alive briefly to allow proper refresh
+  final link = ref.keepAlive();
+
+  // Dispose after 10 seconds of inactivity to free memory
+  Timer(const Duration(seconds: 10), () {
+    link.close();
+  });
+
   final useCase = ref.watch(getTripUseCaseProvider);
   return await useCase(tripId);
 });
