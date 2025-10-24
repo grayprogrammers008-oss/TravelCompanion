@@ -29,15 +29,23 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
   }
 
   Future<void> _createChecklist() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      debugPrint('Form validation failed');
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
       // Get current user ID from Supabase (online-only mode)
+      debugPrint('========== CREATE CHECKLIST START ==========');
+      debugPrint('Checking user authentication...');
+
       final userId = SupabaseClientWrapper.currentUserId;
+      debugPrint('User ID: ${userId ?? "NULL - USER NOT LOGGED IN"}');
 
       if (userId == null) {
+        debugPrint('ERROR: User not logged in');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -51,21 +59,38 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
         return;
       }
 
+      // Prepare data
+      final checklistName = _nameController.text.trim();
+      final tripId = widget.tripId;
+
       // Debug logging
-      debugPrint('Creating checklist: ${_nameController.text.trim()}');
-      debugPrint('Trip ID: ${widget.tripId}');
-      debugPrint('User ID: $userId');
+      debugPrint('Checklist Name: "$checklistName"');
+      debugPrint('Trip ID: "$tripId"');
+      debugPrint('User ID: "$userId"');
+      debugPrint('Calling controller.createChecklist...');
 
       final controller = ref.read(checklistControllerProvider.notifier);
       final checklist = await controller.createChecklist(
-        tripId: widget.tripId,
-        name: _nameController.text.trim(),
+        tripId: tripId,
+        name: checklistName,
         createdBy: userId,
       );
 
+      debugPrint('Controller returned: ${checklist != null ? "SUCCESS" : "NULL (FAILED)"}');
+
       if (mounted) {
         if (checklist != null) {
-          debugPrint('Checklist created successfully: ${checklist.id}');
+          debugPrint('✅ Checklist created successfully!');
+          debugPrint('   ID: ${checklist.id}');
+          debugPrint('   Name: ${checklist.name}');
+          debugPrint('   Trip ID: ${checklist.tripId}');
+          debugPrint('   Created By: ${checklist.createdBy}');
+          debugPrint('   Created At: ${checklist.createdAt}');
+          debugPrint('========== CREATE CHECKLIST SUCCESS ==========');
+
+          // Invalidate the trip checklists provider to refresh the list
+          ref.invalidate(tripChecklistsProvider(tripId));
+
           Navigator.of(context).pop(true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -77,25 +102,33 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
         } else {
           // Check controller state for error
           final error = ref.read(checklistControllerProvider).error;
-          debugPrint('Failed to create checklist. Error: $error');
+          debugPrint('❌ Failed to create checklist');
+          debugPrint('   Controller Error: ${error ?? "No error message"}');
+          debugPrint('========== CREATE CHECKLIST FAILED ==========');
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to create checklist${error != null ? ': $error' : ''}'),
+              content: Text('Failed to create checklist${error != null ? ':\n$error' : ''}'),
               backgroundColor: AppTheme.error,
-              duration: const Duration(seconds: 4),
+              duration: const Duration(seconds: 5),
             ),
           );
         }
       }
     } catch (e, stackTrace) {
-      debugPrint('Exception creating checklist: $e');
-      debugPrint('Stack trace: $stackTrace');
+      debugPrint('❌ EXCEPTION during checklist creation');
+      debugPrint('   Exception Type: ${e.runtimeType}');
+      debugPrint('   Exception Message: $e');
+      debugPrint('   Stack Trace:');
+      debugPrint('$stackTrace');
+      debugPrint('========== CREATE CHECKLIST EXCEPTION ==========');
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error creating checklist:\n${e.toString()}'),
             backgroundColor: AppTheme.error,
-            duration: const Duration(seconds: 4),
+            duration: const Duration(seconds: 5),
           ),
         );
       }

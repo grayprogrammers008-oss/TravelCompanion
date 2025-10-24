@@ -58,14 +58,36 @@ class ChecklistRemoteDataSource {
   /// Create or update a checklist
   Future<ChecklistModel> upsertChecklist(ChecklistModel checklist) async {
     try {
+      print('🔵 [RemoteDataSource] upsertChecklist START');
+      print('   Checklist ID: ${checklist.id}');
+      print('   Checklist Name: ${checklist.name}');
+      print('   Trip ID: ${checklist.tripId}');
+      print('   Created By: ${checklist.createdBy}');
+
+      final json = checklist.toJson();
+      print('   JSON to send: $json');
+
+      print('   Calling Supabase.from("checklists").upsert()...');
       final response = await SupabaseClientWrapper.client
           .from('checklists')
-          .upsert(checklist.toJson())
+          .upsert(json)
           .select()
           .single();
 
-      return ChecklistModel.fromJson(response);
-    } catch (e) {
+      print('   ✅ Supabase response received');
+      print('   Response type: ${response.runtimeType}');
+      print('   Response data: $response');
+
+      final result = ChecklistModel.fromJson(response);
+      print('   ✅ Successfully converted to ChecklistModel');
+      print('🔵 [RemoteDataSource] upsertChecklist SUCCESS');
+
+      return result;
+    } catch (e, stackTrace) {
+      print('❌ [RemoteDataSource] upsertChecklist FAILED');
+      print('   Exception: $e');
+      print('   Exception Type: ${e.runtimeType}');
+      print('   Stack Trace: $stackTrace');
       throw Exception('Failed to upsert checklist in Supabase: $e');
     }
   }

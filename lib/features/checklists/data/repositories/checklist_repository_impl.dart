@@ -52,9 +52,17 @@ class ChecklistRepositoryImpl implements ChecklistRepository {
     required String createdBy,
   }) async {
     try {
+      print('🟢 [Repository] createChecklist START');
+      print('   Trip ID: $tripId');
+      print('   Name: $name');
+      print('   Created By: $createdBy');
+
       final now = DateTime.now();
+      final id = _uuid.v4();
+      print('   Generated UUID: $id');
+
       final model = ChecklistModel(
-        id: _uuid.v4(),
+        id: id,
         tripId: tripId,
         name: name,
         createdBy: createdBy,
@@ -62,9 +70,24 @@ class ChecklistRepositoryImpl implements ChecklistRepository {
         updatedAt: now,
       );
 
+      print('   Created ChecklistModel: $model');
+      print('   Calling remoteDataSource.upsertChecklist()...');
+
       final created = await remoteDataSource.upsertChecklist(model);
-      return created.toEntity();
-    } catch (e) {
+
+      print('   ✅ Remote datasource returned successfully');
+      print('   Converting to entity...');
+
+      final entity = created.toEntity();
+
+      print('   ✅ Converted to entity successfully');
+      print('🟢 [Repository] createChecklist SUCCESS');
+
+      return entity;
+    } catch (e, stackTrace) {
+      print('❌ [Repository] createChecklist FAILED');
+      print('   Exception: $e');
+      print('   Stack Trace: $stackTrace');
       throw Exception('Failed to create checklist: $e');
     }
   }
