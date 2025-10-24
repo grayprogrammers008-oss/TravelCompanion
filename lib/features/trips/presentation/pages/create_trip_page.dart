@@ -448,22 +448,28 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label above the input field
-        Row(
-          children: [
-            Icon(icon, size: 18, color: themeData.primaryColor),
-            const SizedBox(width: AppTheme.spacingXs),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.neutral900,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ],
+        // Label above the input field with padding
+        Padding(
+          padding: const EdgeInsets.only(
+            left: AppTheme.spacingXs,
+            bottom: AppTheme.spacingSm,
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: themeData.primaryColor),
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: AppTheme.neutral900,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: AppTheme.spacingXs),
-        // Input field
+        // Input field - NO LABEL INSIDE
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -473,14 +479,22 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
+              // NO labelText - only hint text inside the field
               hintText: hint,
+              hintStyle: TextStyle(
+                color: AppTheme.neutral400,
+                fontSize: 14,
+              ),
+              // Remove any label behavior
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              // Borders
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: BorderSide(color: AppTheme.neutral200, width: 1),
+                borderSide: BorderSide(color: AppTheme.neutral200, width: 1.5),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -488,7 +502,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: const BorderSide(color: AppTheme.error, width: 1),
+                borderSide: const BorderSide(color: AppTheme.error, width: 1.5),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -496,16 +510,18 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               ),
               filled: true,
               fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
+              contentPadding: EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingMd,
-                vertical: AppTheme.spacingMd,
+                vertical: maxLines > 1 ? AppTheme.spacingMd : AppTheme.spacingMd,
               ),
             ),
             validator: validator,
             enabled: !_isLoading,
             maxLines: maxLines,
+            minLines: maxLines > 1 ? 3 : 1,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppTheme.neutral900,
+                  fontSize: 16,
                 ),
           ),
         ),
