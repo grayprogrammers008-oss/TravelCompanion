@@ -445,30 +445,71 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     int maxLines = 1,
   }) {
     final themeData = context.appThemeData;
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: AppTheme.shadowSm,
-      ),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, color: themeData.primaryColor),
-          hintText: hint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.all(AppTheme.spacingMd),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label above the input field
+        Row(
+          children: [
+            Icon(icon, size: 18, color: themeData.primaryColor),
+            const SizedBox(width: AppTheme.spacingXs),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.neutral900,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
         ),
-        validator: validator,
-        enabled: !_isLoading,
-        maxLines: maxLines,
-      ),
+        const SizedBox(height: AppTheme.spacingXs),
+        // Input field
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            boxShadow: AppTheme.shadowSm,
+          ),
+          child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(color: AppTheme.neutral200, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(color: themeData.primaryColor, width: 2),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: const BorderSide(color: AppTheme.error, width: 1),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: const BorderSide(color: AppTheme.error, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd,
+                vertical: AppTheme.spacingMd,
+              ),
+            ),
+            validator: validator,
+            enabled: !_isLoading,
+            maxLines: maxLines,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppTheme.neutral900,
+                ),
+          ),
+        ),
+      ],
     );
   }
 
