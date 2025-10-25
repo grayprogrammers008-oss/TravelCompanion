@@ -8,6 +8,7 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../data/services/image_picker_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../domain/entities/message_entity.dart';
+import '../../domain/usecases/send_message_usecase.dart'; // Import Result
 import '../providers/messaging_providers.dart';
 import '../providers/ble_providers.dart';
 import '../widgets/message_bubble.dart';
@@ -60,9 +61,32 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         userId: widget.currentUserId,
         userName: widget.tripName, // Using trip name as user display name
       );
+
+      // Check if initialization succeeded
+      final state = ref.read(bleServiceNotifierProvider);
+      if (state.hasError && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.errorMessage ?? 'Bluetooth initialization failed'),
+            backgroundColor: AppTheme.error,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: _initializeBLE,
+            ),
+          ),
+        );
+      }
     } catch (e) {
       debugPrint('BLE initialization failed: $e');
-      // Non-critical error - P2P messaging will be unavailable
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Bluetooth error: ${e.toString()}'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
     }
   }
 
@@ -96,18 +120,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   /// Send a message
   Future<void> _handleSendMessage(String messageText) async {
     try {
+      debugPrint('Sending message: $messageText');
+
       final sendMessageUseCase = ref.read(sendMessageUseCaseProvider);
 
+      // Add timeout to prevent infinite loading
       final result = await sendMessageUseCase.execute(
         tripId: widget.tripId,
         senderId: widget.currentUserId,
         message: messageText,
         messageType: MessageType.text,
         replyToId: _replyToMessage?.id,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          debugPrint('❌ Send message timeout');
+          return Result.failure('Message send timed out. Please check your connection and try again.');
+        },
       );
 
       result.fold(
         onSuccess: (message) {
+          debugPrint('✅ Message sent successfully: ${message.id}');
           // Clear reply state
           if (_replyToMessage != null) {
             setState(() {
@@ -119,11 +153,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           _scrollToBottom();
         },
         onFailure: (error) {
+          debugPrint('❌ Message send failed: $error');
           _showError(error);
         },
       );
-    } catch (e) {
-      _showError('Failed to send message: $e');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Exception sending message: $e');
+      debugPrint('Stack trace: $stackTrace');
+      _showError('Failed to send message: ${e.toString()}');
     }
   }
 
@@ -345,6 +382,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   /// Handle add reaction
   Future<void> _handleAddReaction(String messageId, String emoji) async {
     try {
+      // Validate userId
+      if (widget.currentUserId.isEmpty) {
+        _showError('User not logged in. Cannot add reaction.');
+        return;
+      }
+
+      debugPrint('Adding reaction: messageId=$messageId, userId=${widget.currentUserId}, emoji=$emoji');
+
       final addReactionUseCase = ref.read(addReactionUseCaseProvider);
 
       final result = await addReactionUseCase.execute(
@@ -354,11 +399,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       );
 
       result.fold(
-        onSuccess: (_) {},
-        onFailure: (error) => _showError(error),
+        onSuccess: (_) {
+          debugPrint('✅ Reaction added successfully');
+        },
+        onFailure: (error) {
+          debugPrint('❌ Reaction failed: $error');
+          _showError('Failed to add reaction: $error');
+        },
       );
-    } catch (e) {
-      _showError('Failed to add reaction: $e');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Exception adding reaction: $e');
+      debugPrint('Stack trace: $stackTrace');
+      _showError('Failed to add reaction: ${e.toString()}');
     }
   }
 

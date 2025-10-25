@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -57,11 +58,51 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
   }
 
   Future<void> _initializeP2P() async {
-    final notifier = ref.read(p2pConnectionNotifierProvider.notifier);
-    await notifier.initialize(
-      userId: widget.userId,
-      userName: widget.userName,
-    );
+    try {
+      debugPrint('Initializing P2P...');
+
+      final notifier = ref.read(p2pConnectionNotifierProvider.notifier);
+      await notifier.initialize(
+        userId: widget.userId,
+        userName: widget.userName,
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('P2P initialization timed out');
+        },
+      );
+
+      // Check if initialization succeeded
+      final state = ref.read(p2pConnectionNotifierProvider);
+      if (state.hasError && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.errorMessage ?? 'Failed to initialize P2P'),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: _initializeP2P,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ P2P initialization failed: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('P2P initialization failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: _initializeP2P,
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -79,29 +120,104 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
           _buildHeader(state),
           const SizedBox(height: AppTheme.spacingMd),
 
-          // Connection Mode Selector
-          _buildModeSelector(state),
-          const SizedBox(height: AppTheme.spacingMd),
-
-          // Statistics
-          _buildStatistics(state),
-          const SizedBox(height: AppTheme.spacingMd),
-
-          // Peers List
-          Expanded(
-            child: peersAsync.when(
-              data: (peers) => _buildPeersList(peers, state),
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              error: (error, stack) => Center(
-                child: Text(
-                  'Error loading peers: $error',
-                  style: TextStyle(color: context.errorColor),
+          // Show error if initialization failed
+          if (state.hasError) ...[
+            Expanded(
+              child: Card(
+                color: Colors.red.shade50,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.red, size: 64),
+                      const SizedBox(height: AppTheme.spacingMd),
+                      Text(
+                        state.errorMessage ?? 'Initialization failed',
+                        style: TextStyle(color: Colors.red.shade900, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppTheme.spacingMd),
+                      ElevatedButton.icon(
+                        onPressed: _initializeP2P,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Retry Initialization'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingLg,
+                            vertical: AppTheme.spacingMd,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ] else if (!state.isInitialized) ...[
+            // Show loading during initialization
+            const Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: AppTheme.spacingMd),
+                    Text('Initializing P2P connection...'),
+                    SizedBox(height: AppTheme.spacingSm),
+                    Text(
+                      'This may take a few seconds',
+                      style: TextStyle(color: AppTheme.neutral400, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ] else ...[
+            // Normal UI when initialized
+            _buildModeSelector(state),
+            const SizedBox(height: AppTheme.spacingMd),
+
+            _buildStatistics(state),
+            const SizedBox(height: AppTheme.spacingMd),
+
+            Expanded(
+              child: peersAsync.when(
+                data: (peers) => _buildPeersList(peers, state),
+                loading: () => const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: AppTheme.spacingMd),
+                      Text('Loading peers...'),
+                    ],
+                  ),
+                ),
+                error: (error, stack) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red, size: 48),
+                      const SizedBox(height: AppTheme.spacingMd),
+                      const Text(
+                        'Error loading peers',
+                        style: TextStyle(color: Colors.red, fontSize: 16),
+                      ),
+                      const SizedBox(height: AppTheme.spacingSm),
+                      Text(
+                        error.toString(),
+                        style: const TextStyle(color: AppTheme.neutral400, fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
