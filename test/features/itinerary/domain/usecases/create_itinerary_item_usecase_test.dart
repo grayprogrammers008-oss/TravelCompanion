@@ -122,6 +122,16 @@ class MockItineraryRepository implements ItineraryRepository {
   }) {
     throw UnimplementedError();
   }
+
+  @override
+  Stream<List<ItineraryItemModel>> watchTripItinerary(String tripId) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<List<ItineraryDay>> watchItineraryByDays(String tripId) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

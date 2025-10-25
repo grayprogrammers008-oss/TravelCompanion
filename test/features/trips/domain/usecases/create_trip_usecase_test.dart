@@ -108,6 +108,11 @@ class MockTripRepository implements TripRepository {
   Stream<TripWithMembers> watchTrip(String tripId) {
     throw UnimplementedError();
   }
+
+  @override
+  Stream<List<TripWithMembers>> watchUserTrips() {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

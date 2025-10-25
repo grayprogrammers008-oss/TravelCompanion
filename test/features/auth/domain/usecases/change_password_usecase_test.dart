@@ -216,7 +216,7 @@ void main() {
       when(mockRepository.changePassword(
         currentPassword: anyNamed('currentPassword'),
         newPassword: anyNamed('newPassword'),
-      )).throwError(Exception('Current password is incorrect'));
+      )).thenThrow(Exception('Current password is incorrect'));
 
       // act & assert
       expect(

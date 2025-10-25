@@ -88,7 +88,7 @@ void main() {
           contains('Full name cannot be empty'),
         )),
       );
-      verifyNeverCalled(mockRepository.updateProfile(
+      verifyNever(mockRepository.updateProfile(
         fullName: anyNamed('fullName'),
         phoneNumber: anyNamed('phoneNumber'),
         avatarUrl: anyNamed('avatarUrl'),
@@ -115,7 +115,7 @@ void main() {
         )),
       );
 
-      verifyNeverCalled(mockRepository.updateProfile(
+      verifyNever(mockRepository.updateProfile(
         fullName: anyNamed('fullName'),
         phoneNumber: anyNamed('phoneNumber'),
         avatarUrl: anyNamed('avatarUrl'),
@@ -178,7 +178,7 @@ void main() {
         fullName: anyNamed('fullName'),
         phoneNumber: anyNamed('phoneNumber'),
         avatarUrl: anyNamed('avatarUrl'),
-      )).throwError(Exception('Repository error'));
+      )).thenThrow(Exception('Repository error'));
 
       // act & assert
       expect(
