@@ -8,6 +8,7 @@ import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/theme/theme_access.dart';
+import 'features/messaging/data/initialization/messaging_initialization.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,9 @@ void main() async {
 
   // Initialize Hive for local storage
   await Hive.initFlutter();
+
+  // Initialize messaging module (opens Hive boxes for messages)
+  await MessagingInitialization.initialize();
 
   // Initialize Supabase Backend (online-only mode)
   try {
