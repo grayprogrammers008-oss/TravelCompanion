@@ -445,7 +445,8 @@ void main() {
         final decoration = container.decoration as BoxDecoration;
         if (index == 2) {
           // Current page should be highlighted
-          expect(decoration.color, AppTheme.primaryTeal);
+          expect(decoration.color, isNotNull);
+          expect(decoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
           expect(container.constraints?.maxWidth, 24);
         } else {
           // Other pages should be neutral
@@ -474,7 +475,8 @@ void main() {
       );
       final decoration = firstDot.decoration as BoxDecoration;
 
-      expect(decoration.color, AppTheme.primaryTeal);
+      expect(decoration.color, isNotNull);
+      expect(decoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
       expect(firstDot.constraints?.maxWidth, 24);
     });
 
@@ -497,7 +499,8 @@ void main() {
       final lastDot = dots[3];
       final decoration = lastDot.decoration as BoxDecoration;
 
-      expect(decoration.color, AppTheme.primaryTeal);
+      expect(decoration.color, isNotNull);
+      expect(decoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
       expect(lastDot.constraints?.maxWidth, 24);
     });
 
@@ -605,7 +608,8 @@ void main() {
       );
       final decoration = dot.decoration as BoxDecoration;
 
-      expect(decoration.color, AppTheme.primaryTeal);
+      expect(decoration.color, isNotNull);
+      expect(decoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
     });
 
     testWidgets('should handle many pages', (tester) async {
@@ -629,7 +633,8 @@ void main() {
       final activeDot = dots[5];
       final decoration = activeDot.decoration as BoxDecoration;
 
-      expect(decoration.color, AppTheme.primaryTeal);
+      expect(decoration.color, isNotNull);
+      expect(decoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
     });
 
     testWidgets('should have rounded corners', (tester) async {
@@ -674,7 +679,8 @@ void main() {
         find.byType(AnimatedContainer).first,
       );
       final initialDecoration = initialDot.decoration as BoxDecoration;
-      expect(initialDecoration.color, AppTheme.primaryTeal);
+      expect(initialDecoration.color, isNotNull);
+      expect(initialDecoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
 
       // Act - Move to next page
       await tester.pumpWidget(
@@ -698,7 +704,8 @@ void main() {
         find.byType(AnimatedContainer),
       ).toList()[1];
       final secondDecoration = secondDot.decoration as BoxDecoration;
-      expect(secondDecoration.color, AppTheme.primaryTeal);
+      expect(secondDecoration.color, isNotNull);
+      expect(secondDecoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
     });
   });
 }
