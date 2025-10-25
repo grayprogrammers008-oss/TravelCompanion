@@ -9,6 +9,7 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../shared/models/expense_model.dart';
 import '../providers/expense_providers.dart';
+import '../widgets/payment_options_sheet.dart';
 
 enum ExpenseFilter { all, trip, standalone }
 
@@ -786,6 +787,70 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
+                                  const SizedBox(height: 12),
+                                  // Payment action buttons
+                                  Row(
+                                    children: [
+                                      // Pay Now button (shown when user owes money)
+                                      if (!isPositive)
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () async {
+                                              // Prompt for UPI ID
+                                              final upiId = await _showUPIInputDialog(
+                                                context,
+                                                balance.userName,
+                                              );
+
+                                              if (upiId != null && upiId.isNotEmpty && mounted) {
+                                                PaymentOptionsSheet.show(
+                                                  context,
+                                                  recipientUPIId: upiId,
+                                                  recipientName: balance.userName,
+                                                  amount: balance.balance.abs(),
+                                                  note: 'Settlement for shared expenses',
+                                                );
+                                              }
+                                            },
+                                            icon: const Icon(Icons.payment, size: 18),
+                                            label: const Text('Pay Now'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: context.successColor,
+                                              foregroundColor: Colors.white,
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 10,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      // Request Payment button (shown when user gets money back)
+                                      if (isPositive)
+                                        Expanded(
+                                          child: OutlinedButton.icon(
+                                            onPressed: () {
+                                              // TODO: Implement request payment notification
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('Payment request sent to ${balance.userName}'),
+                                                  backgroundColor: context.successColor,
+                                                ),
+                                              );
+                                            },
+                                            icon: const Icon(Icons.request_page, size: 18),
+                                            label: const Text('Request Payment'),
+                                            style: OutlinedButton.styleFrom(
+                                              foregroundColor: context.primaryColor,
+                                              side: BorderSide(color: context.primaryColor),
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 10,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ],
                             ),
@@ -803,6 +868,61 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Future<String?> _showUPIInputDialog(BuildContext context, String userName) async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Enter UPI ID for $userName'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Please enter the UPI ID to send payment',
+              style: context.bodySmall,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'UPI ID',
+                hintText: 'name@upi',
+                prefixIcon: Icon(Icons.account_balance),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Example: username@paytm, username@ybl',
+              style: context.bodySmall.copyWith(
+                color: context.textColor.withValues(alpha: 0.6),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final upiId = controller.text.trim();
+              if (upiId.isNotEmpty) {
+                Navigator.pop(context, upiId);
+              }
+            },
+            child: const Text('Continue'),
+          ),
+        ],
       ),
     );
   }
