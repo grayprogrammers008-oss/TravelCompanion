@@ -42,8 +42,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Hello World', // Same content
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       expect(result2, 'msg-1'); // Returns canonical message ID
@@ -57,8 +56,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Hello',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       final result2 = await service.checkDuplicate(
@@ -66,8 +64,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'World', // Different content
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       expect(result1, isNull);
@@ -83,8 +80,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -92,8 +88,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1', // Duplicate
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       final stats = service.getStatistics();
@@ -111,8 +106,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Hello',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       expect(service.isMessageKnown('msg-1'), true);
@@ -133,8 +127,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -142,8 +135,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 2',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -151,8 +143,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 3',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -160,8 +151,7 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1', // Duplicate of msg-1
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        timestamp: DateTime.now(),
       );
 
       final finalStats = service.getStatistics();
@@ -326,6 +316,7 @@ void main() {
         message: 'Hello',
         messageType: MessageType.text,
         createdAt: DateTime.now(),
+
         updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
@@ -351,7 +342,9 @@ void main() {
         senderId: 'user-1',
         message: 'Old version',
         messageType: MessageType.text,
-        timestamp: earlier,
+        createdAt: earlier,
+
+        updatedAt: earlier,
         reactions: [],
         readBy: [],
       );
@@ -362,7 +355,9 @@ void main() {
         senderId: 'user-1',
         message: 'New version',
         messageType: MessageType.text,
-        timestamp: now,
+        createdAt: now,
+
+        updatedAt: now,
         reactions: [],
         readBy: [],
       );
@@ -387,7 +382,8 @@ void main() {
         senderId: 'user-1',
         message: 'Local version',
         messageType: MessageType.text,
-        timestamp: timestamp,
+        createdAt: timestamp,
+        updatedAt: timestamp,
         reactions: [],
         readBy: [],
       );
@@ -398,7 +394,8 @@ void main() {
         senderId: 'user-1',
         message: 'Server version',
         messageType: MessageType.text,
-        timestamp: timestamp,
+        createdAt: timestamp,
+        updatedAt: timestamp,
         reactions: [],
         readBy: [],
       );
@@ -480,7 +477,9 @@ void main() {
         senderId: 'user-1',
         message: 'Old version',
         messageType: MessageType.text,
-        timestamp: earlier,
+        createdAt: earlier,
+
+        updatedAt: earlier,
         reactions: [],
         readBy: [],
       );
@@ -491,7 +490,9 @@ void main() {
         senderId: 'user-1',
         message: 'New version',
         messageType: MessageType.text,
-        timestamp: now,
+        createdAt: now,
+
+        updatedAt: now,
         reactions: [],
         readBy: [],
       );
@@ -533,6 +534,7 @@ void main() {
         message: 'Hello',
         messageType: MessageType.text,
         createdAt: DateTime.now(),
+
         updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
@@ -562,7 +564,8 @@ void main() {
           message: 'Message 1',
           messageType: MessageType.text,
           createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         ),
@@ -573,7 +576,8 @@ void main() {
           message: 'Message 2',
           messageType: MessageType.text,
           createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         ),
@@ -598,6 +602,7 @@ void main() {
         message: 'Hello',
         messageType: MessageType.text,
         createdAt: DateTime.now(),
+
         updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
@@ -629,6 +634,7 @@ void main() {
         message: 'Hello',
         messageType: MessageType.text,
         createdAt: DateTime.now(),
+
         updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
@@ -651,6 +657,7 @@ void main() {
         message: 'Hello',
         messageType: MessageType.text,
         createdAt: DateTime.now(),
+
         updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],

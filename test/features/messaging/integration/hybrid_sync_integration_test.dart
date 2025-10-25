@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_companion/features/messaging/data/services/message_deduplication_service.dart';
-import 'package:travel_companion/features/messaging/data/services/priority_sync_queue.dart';
-import 'package:travel_companion/features/messaging/data/services/conflict_resolution_engine.dart';
-import 'package:travel_companion/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_companion/features/messaging/domain/entities/message_entity.dart';
+import 'package:travel_crew/features/messaging/data/services/message_deduplication_service.dart';
+import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:travel_crew/features/messaging/data/services/conflict_resolution_engine.dart';
+import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
+import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
 
 /// Integration tests for Hybrid Sync Strategy
 /// Tests the interaction between all sync components
@@ -21,7 +21,7 @@ void main() {
       coordinator = SyncCoordinator();
 
       await deduplicationService.initialize();
-      await conflictEngine.initialize();
+      conflictEngine.initialize();
       await coordinator.initialize();
     });
 
@@ -41,7 +41,9 @@ void main() {
           senderId: 'user-1',
           message: 'Hello from server',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -80,7 +82,9 @@ void main() {
             senderId: 'user-1',
             message: 'Message 1',
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+
+            updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           ),
@@ -90,7 +94,9 @@ void main() {
             senderId: 'user-1',
             message: 'Message 2',
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+
+            updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           ),
@@ -100,7 +106,9 @@ void main() {
             senderId: 'user-1',
             message: 'Message 1', // Duplicate content
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+
+            updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           ),
@@ -132,7 +140,9 @@ void main() {
           senderId: 'user-1',
           message: 'Old version',
           messageType: MessageType.text,
-          timestamp: earlier,
+          createdAt: earlier,
+
+          updatedAt: earlier,
           reactions: [],
           readBy: ['user-1'],
         );
@@ -144,7 +154,9 @@ void main() {
           senderId: 'user-1',
           message: 'New version',
           messageType: MessageType.text,
-          timestamp: now,
+          createdAt: now,
+
+          updatedAt: now,
           reactions: [
             MessageReaction(
               userId: 'user-2',
@@ -163,7 +175,7 @@ void main() {
 
         // Should pick remote version (newer)
         expect(resolved.message, 'New version');
-        expect(resolved.timestamp, now);
+        expect(resolved.createdAt, now);
 
         // But should merge reactions and readBy
         expect(resolved.reactions.length, 1);
@@ -180,7 +192,9 @@ void main() {
           senderId: 'user-1',
           message: 'BLE version',
           messageType: MessageType.text,
-          timestamp: timestamp,
+          createdAt: timestamp,
+
+          updatedAt: timestamp,
           reactions: [],
           readBy: [],
         );
@@ -192,7 +206,9 @@ void main() {
           senderId: 'user-1',
           message: 'Server version',
           messageType: MessageType.text,
-          timestamp: timestamp,
+          createdAt: timestamp,
+
+          updatedAt: timestamp,
           reactions: [],
           readBy: [],
         );
@@ -216,7 +232,9 @@ void main() {
           senderId: 'user-1',
           message: 'Hello',
           messageType: MessageType.text,
-          timestamp: timestamp,
+          createdAt: timestamp,
+
+          updatedAt: timestamp,
           reactions: [
             MessageReaction(
               userId: 'user-1',
@@ -238,7 +256,9 @@ void main() {
           senderId: 'user-1',
           message: 'Hello',
           messageType: MessageType.text,
-          timestamp: timestamp,
+          createdAt: timestamp,
+
+          updatedAt: timestamp,
           reactions: [
             MessageReaction(
               userId: 'user-2',
@@ -305,7 +325,9 @@ void main() {
             senderId: 'user-1',
             message: 'From server',
             messageType: MessageType.text,
-            timestamp: timestamp,
+            createdAt: timestamp,
+
+            updatedAt: timestamp,
             reactions: [],
             readBy: [],
           ),
@@ -315,7 +337,9 @@ void main() {
             senderId: 'user-2',
             message: 'From BLE',
             messageType: MessageType.text,
-            timestamp: timestamp,
+            createdAt: timestamp,
+
+            updatedAt: timestamp,
             reactions: [],
             readBy: [],
           ),
@@ -325,7 +349,9 @@ void main() {
             senderId: 'user-3',
             message: 'From WiFi Direct',
             messageType: MessageType.text,
-            timestamp: timestamp,
+            createdAt: timestamp,
+
+            updatedAt: timestamp,
             reactions: [],
             readBy: [],
           ),
@@ -335,7 +361,9 @@ void main() {
             senderId: 'user-4',
             message: 'From Multipeer',
             messageType: MessageType.text,
-            timestamp: timestamp,
+            createdAt: timestamp,
+
+            updatedAt: timestamp,
             reactions: [],
             readBy: [],
           ),
@@ -363,7 +391,9 @@ void main() {
           senderId: 'user-1',
           message: 'Broadcasted message',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -407,7 +437,9 @@ void main() {
           senderId: 'user-1',
           message: 'Low priority',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -418,7 +450,9 @@ void main() {
           senderId: 'user-1',
           message: 'High priority',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -450,7 +484,9 @@ void main() {
           senderId: 'user-1',
           message: 'Test message',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -481,7 +517,9 @@ void main() {
           senderId: 'user-1',
           message: 'Message 1',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -492,7 +530,9 @@ void main() {
           senderId: 'user-1',
           message: 'Message 1', // Duplicate
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -512,7 +552,9 @@ void main() {
           senderId: 'user-1',
           message: 'Old',
           messageType: MessageType.text,
-          timestamp: earlier,
+          createdAt: earlier,
+
+          updatedAt: earlier,
           reactions: [],
           readBy: [],
         );
@@ -523,7 +565,9 @@ void main() {
           senderId: 'user-1',
           message: 'New',
           messageType: MessageType.text,
-          timestamp: now,
+          createdAt: now,
+
+          updatedAt: now,
           reactions: [],
           readBy: [],
         );
@@ -559,7 +603,9 @@ void main() {
             senderId: 'user-1',
             message: 'Message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+
+            updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           ),
@@ -588,7 +634,9 @@ void main() {
           senderId: 'user-1',
           message: 'Test',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -621,7 +669,9 @@ void main() {
           senderId: 'user-1',
           message: 'Trip 1 message',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -632,7 +682,9 @@ void main() {
           senderId: 'user-1',
           message: 'Trip 2 message',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -662,7 +714,9 @@ void main() {
           senderId: 'user-1',
           message: 'Test',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );

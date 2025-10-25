@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_companion/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_companion/features/messaging/domain/entities/message_entity.dart';
+import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
+import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
 
 /// End-to-End tests for Hybrid Sync Strategy
 /// Tests complete workflows from start to finish
@@ -28,7 +29,9 @@ void main() {
           senderId: 'user-1',
           message: 'Hello everyone!',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: ['user-1'],
         );
@@ -109,7 +112,9 @@ void main() {
             senderId: 'user-1',
             message: 'Offline message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now().add(Duration(seconds: i)),
+            createdAt: DateTime.now().add(Duration(seconds: i)),
+
+            updatedAt: DateTime.now().add(Duration(seconds: i)),
             reactions: [],
             readBy: ['user-1'],
           ),
@@ -145,7 +150,9 @@ void main() {
           senderId: 'user-1',
           message: 'Original message',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -220,7 +227,9 @@ void main() {
           senderId: 'user-1',
           message: 'Hello from server',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: ['user-1'],
         );
@@ -238,7 +247,9 @@ void main() {
           senderId: 'user-2',
           message: 'Hello from BLE',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: ['user-2'],
         );
@@ -256,7 +267,9 @@ void main() {
           senderId: 'user-3',
           message: 'Hello from WiFi',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: ['user-3'],
         );
@@ -274,7 +287,9 @@ void main() {
           senderId: 'user-4',
           message: 'Hello from Multipeer',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: ['user-4'],
         );
@@ -303,7 +318,9 @@ void main() {
           senderId: 'user-1',
           message: 'Message via WiFi',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -322,7 +339,9 @@ void main() {
           senderId: 'user-1',
           message: 'Message via Cellular',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -349,7 +368,9 @@ void main() {
             senderId: 'user-${i % 4 + 1}', // 4 different users
             message: 'Message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now().add(Duration(milliseconds: i)),
+            createdAt: DateTime.now().add(Duration(milliseconds: i)),
+
+            updatedAt: DateTime.now().add(Duration(milliseconds: i)),
             reactions: [],
             readBy: [],
           ));
@@ -398,7 +419,9 @@ void main() {
           senderId: 'user-1',
           message: 'Check out this photo!',
           messageType: MessageType.image,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
           attachmentUrl: 'https://example.com/photo.jpg',
@@ -429,7 +452,9 @@ void main() {
           senderId: 'user-1',
           message: 'To be deleted',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -444,7 +469,6 @@ void main() {
         // Message gets deleted
         final deletedMessage = message.copyWith(
           isDeleted: true,
-          deletedAt: DateTime.now(),
         );
 
         final resolved = await coordinator.handleIncomingMessage(
@@ -455,7 +479,6 @@ void main() {
 
         // Deletion should propagate
         expect(resolved.isDeleted, true);
-        expect(resolved.deletedAt, isNotNull);
       });
 
       testWidgets('E2E: Trip cleanup after deletion', (tester) async {
@@ -468,7 +491,9 @@ void main() {
             senderId: 'user-1',
             message: 'Message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+
+            updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           ),
@@ -493,7 +518,9 @@ void main() {
           senderId: 'user-1',
           message: 'Message 0', // Same content
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -528,7 +555,9 @@ void main() {
           senderId: 'user-2',
           message: 'New message from another user',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: ['user-2'],
         );
@@ -557,7 +586,9 @@ void main() {
             senderId: 'user-1',
             message: 'Rapid message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now().add(Duration(milliseconds: i)),
+            createdAt: DateTime.now().add(Duration(milliseconds: i)),
+
+            updatedAt: DateTime.now().add(Duration(milliseconds: i)),
             reactions: [],
             readBy: [],
           );
@@ -591,7 +622,9 @@ void main() {
             senderId: 'user-${i % 4 + 1}',
             message: 'Concurrent message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+
+            updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           );
@@ -629,7 +662,9 @@ void main() {
           senderId: 'user-1',
           message: 'Test message',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+
+          updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -651,8 +686,8 @@ void main() {
         final now = DateTime.now();
         final earlier = now.subtract(const Duration(hours: 1));
 
-        final localMsg = message.copyWith(timestamp: earlier);
-        final remoteMsg = message.copyWith(timestamp: now);
+        final localMsg = message.copyWith(createdAt: earlier, updatedAt: earlier);
+        final remoteMsg = message.copyWith(createdAt: now, updatedAt: now);
 
         await coordinator.handleIncomingMessage(
           remoteMessage: remoteMsg,
