@@ -75,7 +75,6 @@ class PaymentService {
 
       case UPIApp.genericUPI:
       case null:
-      default:
         // Generic UPI format (works with most UPI apps)
         upiUri = 'upi://pay?pa=$upiId&pn=$encodedName&am=$formattedAmount&cu=INR&tn=$encodedNote';
         break;
