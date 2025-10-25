@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/features/settings/presentation/pages/settings_page_enhanced.dart';
+import 'package:travel_crew/core/theme/app_theme_data.dart';
+import 'package:travel_crew/core/theme/theme_access.dart';
 
 void main() {
   group('SettingsPageEnhanced Widget Tests', () {
@@ -31,9 +33,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -52,9 +57,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -78,9 +86,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -118,9 +129,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -138,9 +152,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -158,9 +175,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -182,9 +202,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -201,9 +224,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -220,9 +246,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -245,9 +274,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -270,9 +302,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -300,9 +335,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -337,9 +375,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -382,9 +423,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
@@ -407,9 +451,12 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
-          child: const MaterialApp(
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(
             home: SettingsPageEnhanced(),
           ),
+          )
         ),
       );
 
