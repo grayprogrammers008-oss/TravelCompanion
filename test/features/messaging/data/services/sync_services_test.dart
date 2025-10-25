@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_companion/features/messaging/data/services/message_deduplication_service.dart';
-import 'package:travel_companion/features/messaging/data/services/priority_sync_queue.dart';
-import 'package:travel_companion/features/messaging/data/services/conflict_resolution_engine.dart';
-import 'package:travel_companion/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_companion/features/messaging/domain/entities/message_entity.dart';
+import 'package:travel_crew/features/messaging/data/services/message_deduplication_service.dart';
+import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:travel_crew/features/messaging/data/services/conflict_resolution_engine.dart';
+import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
+import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('MessageDeduplicationService Tests', () {
@@ -42,7 +42,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Hello World', // Same content
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       expect(result2, 'msg-1'); // Returns canonical message ID
@@ -56,7 +57,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Hello',
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       final result2 = await service.checkDuplicate(
@@ -64,7 +66,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'World', // Different content
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       expect(result1, isNull);
@@ -80,7 +83,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1',
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -88,7 +92,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1', // Duplicate
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       final stats = service.getStatistics();
@@ -106,7 +111,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Hello',
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       expect(service.isMessageKnown('msg-1'), true);
@@ -127,7 +133,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1',
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -135,7 +142,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 2',
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -143,7 +151,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 3',
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       await service.checkDuplicate(
@@ -151,7 +160,8 @@ void main() {
         tripId: 'trip-1',
         senderId: 'user-1',
         content: 'Message 1', // Duplicate of msg-1
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       final finalStats = service.getStatistics();
@@ -315,7 +325,8 @@ void main() {
         senderId: 'user-1',
         message: 'Hello',
         messageType: MessageType.text,
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
       );
@@ -521,7 +532,8 @@ void main() {
         senderId: 'user-1',
         message: 'Hello',
         messageType: MessageType.text,
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
       );
@@ -549,7 +561,8 @@ void main() {
           senderId: 'user-1',
           message: 'Message 1',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         ),
@@ -559,7 +572,8 @@ void main() {
           senderId: 'user-1',
           message: 'Message 2',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         ),
@@ -583,7 +597,8 @@ void main() {
         senderId: 'user-1',
         message: 'Hello',
         messageType: MessageType.text,
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
       );
@@ -613,7 +628,8 @@ void main() {
         senderId: 'user-1',
         message: 'Hello',
         messageType: MessageType.text,
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
       );
@@ -634,7 +650,8 @@ void main() {
         senderId: 'user-1',
         message: 'Hello',
         messageType: MessageType.text,
-        timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         reactions: [],
         readBy: [],
       );
