@@ -203,6 +203,14 @@ class MockTripRepository extends _i1.Mock implements _i3.TripRepository {
           as _i4.Future<void>);
 
   @override
+  _i4.Stream<List<_i2.TripWithMembers>> watchUserTrips() =>
+      (super.noSuchMethod(
+            Invocation.method(#watchUserTrips, []),
+            returnValue: _i4.Stream<List<_i2.TripWithMembers>>.empty(),
+          )
+          as _i4.Stream<List<_i2.TripWithMembers>>);
+
+  @override
   _i4.Stream<_i2.TripWithMembers> watchTrip(String? tripId) =>
       (super.noSuchMethod(
             Invocation.method(#watchTrip, [tripId]),

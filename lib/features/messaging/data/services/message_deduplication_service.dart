@@ -264,7 +264,6 @@ class MessageDeduplicationService {
   }
 
   void _cleanupExpiredEntries() {
-    final now = DateTime.now();
     final toRemove = <String>[];
 
     _messageCache.forEach((messageId, entry) {

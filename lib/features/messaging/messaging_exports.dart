@@ -45,15 +45,17 @@ export 'data/services/encryption_service.dart';
 export 'data/services/mesh_coordinator.dart';
 
 // WiFi Direct/Multipeer P2P Services (High-Bandwidth)
-export 'data/services/wifi_direct_service.dart';
+// Note: Multiple classes have conflicts, so we hide them appropriately
+export 'data/services/wifi_direct_service.dart' hide FileTransferProgress;
 export 'data/services/multipeer_service.dart';
-export 'data/services/p2p_connection_manager.dart';
+export 'data/services/p2p_connection_manager.dart' hide P2PConnectionState;
 
 // Hybrid Sync Services (Message Deduplication, Priority Queue, Conflict Resolution)
+// Note: SyncResult and SyncStatus conflicts with other files, so we hide them here
 export 'data/services/message_deduplication_service.dart';
 export 'data/services/priority_sync_queue.dart';
 export 'data/services/conflict_resolution_engine.dart';
-export 'data/services/sync_coordinator.dart';
+export 'data/services/sync_coordinator.dart' hide SyncResult, SyncStatus;
 
 // Repositories Implementation
 export 'data/repositories/message_repository_impl.dart';
@@ -73,7 +75,8 @@ export 'presentation/providers/notification_provider.dart';
 export 'presentation/providers/ble_providers.dart';
 
 // WiFi Direct/Multipeer P2P Providers (High-Bandwidth)
-export 'presentation/providers/p2p_providers.dart';
+// Note: P2PConnectionState is also defined in p2p_connection_manager.dart, so we hide it here
+export 'presentation/providers/p2p_providers.dart' hide P2PConnectionState;
 
 // Hybrid Sync Providers (Deduplication, Priority Queue, Conflict Resolution)
 export 'presentation/providers/sync_providers.dart';

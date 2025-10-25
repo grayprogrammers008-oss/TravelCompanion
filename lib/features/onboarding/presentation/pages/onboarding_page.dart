@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../widgets/onboarding_screen.dart';
 import '../../domain/models/onboarding_page_model.dart';
 import '../providers/onboarding_provider.dart';
@@ -81,18 +81,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingLg,
-                    vertical: AppTheme.spacingSm,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.spacingLg,
+                    vertical: context.spacingSm,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                    borderRadius: BorderRadius.circular(context.radiusFull),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Skip',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: context.labelLarge.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -106,10 +106,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             right: 0,
             child: Container(
               padding: EdgeInsets.only(
-                left: AppTheme.spacingXl,
-                right: AppTheme.spacingXl,
-                bottom: MediaQuery.of(context).padding.bottom + AppTheme.spacingXl,
-                top: AppTheme.spacingLg,
+                left: context.spacingXl,
+                right: context.spacingXl,
+                bottom: MediaQuery.of(context).padding.bottom + context.spacingXl,
+                top: context.spacingLg,
               ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -130,7 +130,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     pageCount: _pages.length,
                   ),
 
-                  const SizedBox(height: AppTheme.spacingXl),
+                  SizedBox(height: context.spacingXl),
 
                   // Get Started or Next button
                   SizedBox(
@@ -140,10 +140,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                       onPressed: _nextPage,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: AppTheme.primaryTeal,
+                        foregroundColor: context.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(AppTheme.radiusMd),
+                              BorderRadius.circular(context.radiusMd),
                         ),
                         elevation: 4,
                         shadowColor: Colors.black.withValues(alpha: 0.3),
@@ -153,12 +153,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                         children: [
                           Text(
                             isLastPage ? 'Get Started' : 'Next',
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: context.titleMedium.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: AppTheme.spacingSm),
+                          SizedBox(width: context.spacingSm),
                           Icon(
                             isLastPage ? Icons.check : Icons.arrow_forward,
                             size: 20,

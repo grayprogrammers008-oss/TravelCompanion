@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../providers/expense_providers.dart';
 
@@ -244,15 +245,15 @@ class _ExpenseTestPageState extends ConsumerState<ExpenseTestPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense CRUD Tests'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: context.primaryColor,
+        foregroundColor: context.surfaceColor,
       ),
       body: Column(
         children: [
           // Test Controls
           Container(
             padding: const EdgeInsets.all(16),
-            color: Colors.grey[100],
+            color: context.backgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -262,8 +263,8 @@ class _ExpenseTestPageState extends ConsumerState<ExpenseTestPage> {
                   label: Text(_isRunning ? 'Running Tests...' : 'Run All Tests'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.all(16),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: context.primaryColor,
+                    foregroundColor: context.surfaceColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -321,14 +322,14 @@ class _ExpenseTestPageState extends ConsumerState<ExpenseTestPage> {
           // Test Results
           Expanded(
             child: Container(
-              color: Colors.black87,
+              color: context.textColor.withValues(alpha: 0.9),
               padding: const EdgeInsets.all(16),
               child: _testResults.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         'No tests run yet.\nTap "Run All Tests" to start.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white54),
+                        style: TextStyle(color: context.surfaceColor.withValues(alpha: 0.5)),
                       ),
                     )
                   : ListView.builder(
@@ -343,12 +344,12 @@ class _ExpenseTestPageState extends ConsumerState<ExpenseTestPage> {
                               fontFamily: 'monospace',
                               fontSize: 12,
                               color: result.contains('❌')
-                                  ? Colors.red[300]
+                                  ? context.errorColor.withValues(alpha: 0.8)
                                   : result.contains('✅')
-                                      ? Colors.green[300]
+                                      ? context.successColor.withValues(alpha: 0.8)
                                       : result.contains('⚠️')
-                                          ? Colors.orange[300]
-                                          : Colors.white,
+                                          ? context.textColor.withValues(alpha: 0.7)
+                                          : context.surfaceColor,
                             ),
                           ),
                         );

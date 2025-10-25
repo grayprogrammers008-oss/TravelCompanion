@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../providers/itinerary_providers.dart';
 
 class AddEditItineraryItemPage extends ConsumerStatefulWidget {
@@ -59,7 +60,7 @@ class _AddEditItineraryItemPageState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading activity: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.errorColor,
           ),
         );
       }
@@ -128,9 +129,9 @@ class _AddEditItineraryItemPageState
       if (_endTime!.isBefore(_startTime!) ||
           _endTime!.isAtSameMomentAs(_startTime!)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('End time must be after start time'),
-            backgroundColor: Colors.red,
+          SnackBar(
+            content: const Text('End time must be after start time'),
+            backgroundColor: context.errorColor,
           ),
         );
         return;
@@ -184,7 +185,7 @@ class _AddEditItineraryItemPageState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving activity: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.errorColor,
           ),
         );
       }
@@ -199,7 +200,6 @@ class _AddEditItineraryItemPageState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isEdit = widget.itemId != null;
 
     // Show loading while fetching existing item
@@ -322,10 +322,10 @@ class _AddEditItineraryItemPageState
                       _startTime != null
                           ? DateFormat.Hm().format(_startTime!)
                           : 'Select time',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: _startTime != null
-                            ? theme.colorScheme.onSurface
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            ? context.textColor
+                            : context.textColor.withValues(alpha: 0.6),
                       ),
                     ),
                     if (_startTime != null)
@@ -362,10 +362,10 @@ class _AddEditItineraryItemPageState
                       _endTime != null
                           ? DateFormat.Hm().format(_endTime!)
                           : 'Select time',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: context.bodyLarge.copyWith(
                         color: _endTime != null
-                            ? theme.colorScheme.onSurface
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            ? context.textColor
+                            : context.textColor.withValues(alpha: 0.6),
                       ),
                     ),
                     if (_endTime != null)
@@ -427,8 +427,8 @@ class _AddEditItineraryItemPageState
             // Help Text
             Text(
               '* Required fields',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              style: context.bodySmall.copyWith(
+                color: context.textColor.withValues(alpha: 0.6),
               ),
             ),
           ],

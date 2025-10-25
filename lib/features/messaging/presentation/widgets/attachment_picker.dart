@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 
 /// Attachment Picker Bottom Sheet
 /// Shows options to pick image from camera or gallery
@@ -15,9 +16,9 @@ class AttachmentPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppTheme.radiusLg),
         ),
       ),
@@ -63,8 +64,8 @@ class AttachmentPicker extends StatelessWidget {
             // Options
             _AttachmentOption(
               icon: Icons.camera_alt,
-              iconColor: AppTheme.primaryTeal,
-              backgroundColor: AppTheme.primaryPale,
+              iconColor: context.primaryColor,
+              backgroundColor: context.primaryLight,
               title: 'Camera',
               subtitle: 'Take a photo',
               onTap: () {
@@ -75,8 +76,8 @@ class AttachmentPicker extends StatelessWidget {
 
             _AttachmentOption(
               icon: Icons.photo_library,
-              iconColor: AppTheme.accentCoral,
-              backgroundColor: const Color(0xFFFFE8EE),
+              iconColor: context.accentColor,
+              backgroundColor: context.accentColor.withValues(alpha: 0.1),
               title: 'Gallery',
               subtitle: 'Choose from gallery',
               onTap: () {

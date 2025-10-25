@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
@@ -277,7 +277,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     final isEditMode = widget.tripId != null;
 
     return Scaffold(
-      backgroundColor: AppTheme.neutral50,
+      backgroundColor: context.backgroundColor,
       body: WaveGradientBackground(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -291,7 +291,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: AppTheme.neutral700),
+                      icon: Icon(Icons.arrow_back, color: context.textColor.withValues(alpha: 0.87)),
                       onPressed: () => context.pop(),
                       tooltip: 'Back',
                     ),
@@ -321,10 +321,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                         const SizedBox(height: AppTheme.spacingMd),
                         Text(
                           'Plan Your Adventure',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
+                          style: context.headlineStyle.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -332,8 +329,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                         const SizedBox(height: AppTheme.spacingXs),
                         Text(
                           'Tell us about your upcoming trip',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: context.bodyStyle.copyWith(
                                     color: Colors.white.withValues(alpha: 0.9),
                                   ),
                         ),
@@ -444,7 +440,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     String? Function(String?)? validator,
     int maxLines = 1,
   }) {
-    final themeData = context.appThemeData;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -456,12 +451,12 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           ),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: themeData.primaryColor),
+              Icon(icon, size: 20, color: context.primaryColor),
               const SizedBox(width: AppTheme.spacingSm),
               Text(
                 label,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: AppTheme.neutral900,
+                style: context.titleStyle.copyWith(
+                      color: context.textColor,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
                     ),
@@ -498,7 +493,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: BorderSide(color: themeData.primaryColor, width: 2),
+                borderSide: BorderSide(color: context.primaryColor, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -519,8 +514,8 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
             enabled: !_isLoading,
             maxLines: maxLines,
             minLines: maxLines > 1 ? 3 : 1,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppTheme.neutral900,
+            style: context.bodyStyle.copyWith(
+                  color: context.textColor,
                   fontSize: 16,
                 ),
           ),
@@ -535,7 +530,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     required DateTime? date,
     required VoidCallback onTap,
   }) {
-    final themeData = context.appThemeData;
     return AnimatedScaleButton(
       onTap: _isLoading ? null : onTap,
       child: Container(
@@ -550,12 +544,12 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           children: [
             Row(
               children: [
-                Icon(icon, size: 16, color: themeData.primaryColor),
+                Icon(icon, size: 16, color: context.primaryColor),
                 const SizedBox(width: AppTheme.spacingXs),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.neutral600,
+                  style: context.bodyStyle.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
                         fontWeight: FontWeight.w500,
                       ),
                 ),
@@ -564,9 +558,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
             const SizedBox(height: AppTheme.spacingXs),
             Text(
               date != null ? date.toFormattedDate() : 'Select date',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: context.bodyStyle.copyWith(
                     color: date != null
-                        ? AppTheme.neutral900
+                        ? context.textColor
                         : AppTheme.neutral400,
                     fontWeight: FontWeight.w600,
                   ),

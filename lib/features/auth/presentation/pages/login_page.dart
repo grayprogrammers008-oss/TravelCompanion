@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
@@ -198,11 +199,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                               // Tagline
                               Text(
                                 'Your Journey, Together',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: AppTheme.neutral700,
+                                style: context.bodyLarge.copyWith(
+                                      color: context.textColor.withValues(alpha: 0.7),
                                       letterSpacing: 0.5,
                                     ),
                                 textAlign: TextAlign.center,
@@ -238,11 +236,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   // Welcome Text
                                   Text(
                                     'Welcome Back!',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.copyWith(
-                                          color: AppTheme.neutral900,
+                                    style: context.headlineMedium.copyWith(
+                                          color: context.textColor,
                                           fontWeight: FontWeight.w700,
                                         ),
                                     textAlign: TextAlign.center,
@@ -250,11 +245,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   const SizedBox(height: AppTheme.spacingXs),
                                   Text(
                                     'Sign in to continue your adventure',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: AppTheme.neutral600,
+                                    style: context.bodyMedium.copyWith(
+                                          color: context.textColor.withValues(alpha: 0.6),
                                         ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -317,7 +309,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                           _obscurePassword
                                               ? Icons.visibility_outlined
                                               : Icons.visibility_off_outlined,
-                                          color: AppTheme.neutral400,
+                                          color: context.textColor.withValues(alpha: 0.4),
                                           size: 20,
                                         ),
                                         onPressed: () {
@@ -350,10 +342,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                       ),
                                       child: Text(
                                         'Forgot Password?',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelLarge
-                                            ?.copyWith(
+                                        style: context.labelLarge.copyWith(
                                               color: themeData.primaryColor,
                                             ),
                                       ),
@@ -381,11 +370,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           children: [
                             Text(
                               "Don't have an account? ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: AppTheme.neutral600,
+                              style: context.bodyMedium.copyWith(
+                                    color: context.textColor.withValues(alpha: 0.6),
                                   ),
                             ),
                             TextButton(
@@ -406,10 +392,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                               ),
                               child: Text(
                                 'Sign Up',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(
+                                style: context.labelLarge.copyWith(
                                       color: themeData.primaryColor,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -468,8 +451,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                 // Title
                 Text(
                   'Reset Password',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppTheme.neutral900,
+                  style: context.headlineSmall.copyWith(
+                        color: context.textColor,
                         fontWeight: FontWeight.w700,
                       ),
                   textAlign: TextAlign.center,
@@ -479,8 +462,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                 // Description
                 Text(
                   'Enter your email address and we\'ll send you a link to reset your password.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.neutral600,
+                  style: context.bodyMedium.copyWith(
+                        color: context.textColor.withValues(alpha: 0.6),
                       ),
                   textAlign: TextAlign.center,
                 ),

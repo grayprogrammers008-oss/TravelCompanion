@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/checklist_entity.dart';
 
 class ChecklistItemTile extends StatelessWidget {
@@ -61,7 +62,7 @@ class ChecklistItemTile extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           side: BorderSide(
-            color: item.isCompleted ? AppTheme.success.withValues(alpha: 0.3) : AppTheme.neutral200,
+            color: item.isCompleted ? AppTheme.success.withValues(alpha: 0.3) : context.textColor.withValues(alpha: 0.12),
             width: item.isCompleted ? 2 : 1,
           ),
         ),
@@ -94,9 +95,9 @@ class ChecklistItemTile extends StatelessWidget {
                     children: [
                       Text(
                         item.title,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        style: context.bodyLarge.copyWith(
                               decoration: item.isCompleted ? TextDecoration.lineThrough : null,
-                              color: item.isCompleted ? AppTheme.neutral500 : AppTheme.neutral900,
+                              color: item.isCompleted ? context.textColor.withValues(alpha: 0.5) : context.textColor,
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -125,7 +126,7 @@ class ChecklistItemTile extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       item.assignedToName!,
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      style: context.bodySmall.copyWith(
                                             color: AppTheme.info,
                                             fontSize: 11,
                                             fontWeight: FontWeight.w500,
@@ -156,7 +157,7 @@ class ChecklistItemTile extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       'by ${item.completedByName}',
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      style: context.bodySmall.copyWith(
                                             color: AppTheme.success,
                                             fontSize: 11,
                                             fontWeight: FontWeight.w500,

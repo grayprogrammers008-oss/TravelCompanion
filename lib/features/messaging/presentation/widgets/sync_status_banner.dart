@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -19,8 +20,8 @@ class SyncStatusBanner extends ConsumerWidget {
     final pendingAsync = ref.watch(pendingMessagesCountProvider);
 
     return connectivityAsync.when(
-      data: (connectivity) {
-        final isOffline = connectivity.name == 'none';
+      data: (connectivityList) {
+        final isOffline = connectivityList.contains(ConnectivityResult.none) || connectivityList.isEmpty;
 
         if (!isOffline) {
           // Online - show pending count if any

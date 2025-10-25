@@ -23,12 +23,14 @@ final notificationSettingsProvider =
 });
 
 /// Notification State Notifier
-class NotificationStateNotifier extends StateNotifier<NotificationState> {
-  final FCMService _fcmService;
+class NotificationStateNotifier extends Notifier<NotificationState> {
+  late final FCMService _fcmService;
 
-  NotificationStateNotifier(this._fcmService)
-      : super(const NotificationState()) {
+  @override
+  NotificationState build() {
+    _fcmService = ref.read(fcmServiceProvider);
     _initialize();
+    return const NotificationState();
   }
 
   /// Initialize FCM and set up listeners
@@ -224,8 +226,6 @@ class NotificationState {
 }
 
 /// Notification State Provider
-final notificationStateProvider =
-    StateNotifierProvider<NotificationStateNotifier, NotificationState>((ref) {
-  final fcmService = ref.read(fcmServiceProvider);
-  return NotificationStateNotifier(fcmService);
-});
+final notificationStateProvider = NotifierProvider<NotificationStateNotifier, NotificationState>(
+  NotificationStateNotifier.new,
+);

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
@@ -60,7 +61,7 @@ class _HomePageState extends ConsumerState<HomePage>
           slivers: [
           // Premium App Bar with gradient
           SliverAppBar(
-            expandedHeight: 160,
+            expandedHeight: 120,
             floating: false,
             pinned: true,
             backgroundColor: themeData.primaryColor,
@@ -449,12 +450,12 @@ class _HomePageState extends ConsumerState<HomePage>
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryPale,
+                    color: context.primaryLight,
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.person_outline,
-                    color: AppTheme.primaryTeal,
+                    color: context.primaryColor,
                   ),
                 ),
                 title: const Text('Profile'),
@@ -472,12 +473,12 @@ class _HomePageState extends ConsumerState<HomePage>
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
-                    color: AppTheme.accentPurple.withValues(alpha: 0.1),
+                    color: context.accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.palette_outlined,
-                    color: AppTheme.accentPurple,
+                    color: context.accentColor,
                   ),
                 ),
                 title: const Text('Theme'),
@@ -638,7 +639,7 @@ class TripCard extends StatelessWidget {
                                       vertical: AppTheme.spacingXs,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppTheme.accentCoral,
+                                      color: context.accentColor,
                                       borderRadius: BorderRadius.circular(
                                           AppTheme.radiusFull),
                                     ),
@@ -707,14 +708,14 @@ class TripCard extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryPale,
+                              color: context.primaryLight,
                               borderRadius:
                                   BorderRadius.circular(AppTheme.radiusXs),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.location_on,
                               size: 14,
-                              color: AppTheme.primaryTeal,
+                              color: context.primaryColor,
                             ),
                           ),
                           const SizedBox(width: AppTheme.spacingXs),

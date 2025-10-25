@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../providers/checklist_providers.dart';
 
@@ -144,7 +145,7 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
     final themeData = context.appThemeData;
 
     return Scaffold(
-      backgroundColor: AppTheme.neutral50,
+      backgroundColor: context.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'New Checklist',
@@ -194,8 +195,8 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
             // Name field
             Text(
               'Checklist Name',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AppTheme.neutral900,
+              style: context.titleSmall.copyWith(
+                    color: context.textColor,
                     fontWeight: FontWeight.w600,
                   ),
             ),
@@ -260,8 +261,8 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
                   Expanded(
                     child: Text(
                       'You can add items to this checklist after creating it',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.neutral700,
+                      style: context.bodySmall.copyWith(
+                            color: context.textColor.withValues(alpha: 0.87),
                           ),
                     ),
                   ),

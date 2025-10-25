@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/message_entity.dart';
 import '../providers/messaging_providers.dart';
 
@@ -196,7 +198,7 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
     final connectivityAsync = ref.watch(connectivityStatusProvider);
 
     final isOffline = connectivityAsync.whenOrNull(
-          data: (connectivity) => connectivity.name == 'none',
+          data: (connectivityList) => connectivityList.contains(ConnectivityResult.none) || connectivityList.isEmpty,
         ) ??
         false;
 
@@ -270,10 +272,11 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
             )
           : pendingAsync.when(
               data: (messages) {
-                if (messages.isEmpty) {
+                final messageList = messages as List<QueuedMessageEntity>;
+                if (messageList.isEmpty) {
                   return _buildEmptyState();
                 }
-                return _buildMessageList(messages, isOffline);
+                return _buildMessageList(messageList, isOffline);
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => _buildErrorState(error.toString()),
@@ -281,7 +284,7 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
       bottomNavigationBar: pendingAsync is AsyncData
           ? FutureBuilder<List<QueuedMessageEntity>>(
               future: pendingAsync.value as Future<List<QueuedMessageEntity>>,
-              builder: (context, snapshot) {
+              builder: (builderContext, snapshot) {
                 final messages = snapshot.data ?? [];
                 if (messages.isEmpty) return const SizedBox.shrink();
                 return _buildSyncAllButton(messages.length, isOffline);
@@ -289,8 +292,9 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
             )
           : pendingAsync.whenOrNull(
                 data: (messages) {
-                  if (messages.isEmpty) return const SizedBox.shrink();
-                  return _buildSyncAllButton(messages.length, isOffline);
+                  final messageList = messages as List<QueuedMessageEntity>;
+                  if (messageList.isEmpty) return const SizedBox.shrink();
+                  return _buildSyncAllButton(messageList.length, isOffline);
                 },
               ) ??
               const SizedBox.shrink(),
@@ -579,7 +583,7 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
                   icon: const Icon(Icons.refresh, size: 18),
                   label: const Text('Retry'),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.primaryTeal,
+                    foregroundColor: context.primaryColor,
                   ),
                 ),
               ],
@@ -595,12 +599,12 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.surfaceColor,
           boxShadow: [
             BoxShadow(
-              color: Color(0x0A000000),
-              offset: Offset(0, -2),
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.04),
+              offset: const Offset(0, -2),
               blurRadius: 8,
             ),
           ],

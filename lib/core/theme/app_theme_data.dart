@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
-/// App theme variations - Modern, glossy themes from global leaders
+/// App theme variations - Clean, professional themes inspired by world-class apps
+/// Philosophy: SOLID COLORS ONLY. No gradients on buttons. Minimal shadows.
 enum AppThemeType {
-  midnight,     // Dark elegant (Apple-inspired)
-  ocean,        // Modern blue (Google-inspired)
-  sunset,       // Warm gradient (Instagram-inspired)
-  forest,       // Natural green (Spotify-inspired)
-  lavender,     // Soft purple (Notion-inspired)
-  rose,         // Elegant pink (Airbnb-inspired)
+  ocean,      // Professional blue (Booking.com inspired)
+  sunset,     // Warm coral (Airbnb inspired)
+  emerald,    // Trustworthy green (Grab inspired)
+  royal,      // Premium purple (Stripe inspired)
+  slate,      // Minimal dark (Apple inspired)
+  midnight,   // Deep black (Uber inspired)
 }
 
 /// Theme data for each theme type
@@ -20,13 +21,14 @@ class AppThemeData {
   final Color primaryLight;
   final Color primaryPale;
   final LinearGradient primaryGradient;
-  final LinearGradient glossyGradient;      // NEW: Multi-stop glossy gradient
-  final LinearGradient headerGradient;      // NEW: Rich header gradient
-  final LinearGradient backgroundGradient;  // NEW: Subtle background gradient
+  final LinearGradient glossyGradient;
+  final LinearGradient headerGradient;
+  final LinearGradient backgroundGradient;
   final List<BoxShadow> primaryShadow;
-  final List<BoxShadow> glossyShadow;       // NEW: Enhanced glossy shadow
+  final List<BoxShadow> glossyShadow;
   final IconData icon;
   final Color accentColor;
+  final bool isDark;  // NEW: Support for dark mode
 
   const AppThemeData({
     required this.name,
@@ -43,65 +45,292 @@ class AppThemeData {
     required this.glossyShadow,
     required this.icon,
     required this.accentColor,
+    this.isDark = false,
   });
 
   /// Get theme data for a specific theme type
   static AppThemeData getThemeData(AppThemeType type) {
     switch (type) {
-      case AppThemeType.midnight:
-        return _midnight;
       case AppThemeType.ocean:
         return _ocean;
       case AppThemeType.sunset:
         return _sunset;
-      case AppThemeType.forest:
-        return _forest;
-      case AppThemeType.lavender:
-        return _lavender;
-      case AppThemeType.rose:
-        return _rose;
+      case AppThemeType.emerald:
+        return _emerald;
+      case AppThemeType.royal:
+        return _royal;
+      case AppThemeType.slate:
+        return _slate;
+      case AppThemeType.midnight:
+        return _midnight;
     }
   }
 
-  // Theme 1: Midnight - Dark Elegant (Apple-inspired)
-  static const AppThemeData _midnight = AppThemeData(
-    name: 'Midnight',
-    description: 'Elegant dark slate with premium feel',
-    primaryColor: Color(0xFF1E293B),
-    primaryDeep: Color(0xFF0F172A),
-    primaryLight: Color(0xFF475569),
-    primaryPale: Color(0xFFE2E8F0),
+  // ==================== LIGHT THEMES ====================
+
+  /// Theme 1: Ocean Blue - Professional & Trustworthy (Booking.com inspired)
+  static const AppThemeData _ocean = AppThemeData(
+    name: 'Ocean Blue',
+    description: 'Professional blue - Trust & reliability',
+    primaryColor: Color(0xFF0066CC),      // Booking.com blue
+    primaryDeep: Color(0xFF0052A3),       // Darker blue
+    primaryLight: Color(0xFF3385D6),      // Lighter blue
+    primaryPale: Color(0xFFE6F2FF),       // Very pale blue
     primaryGradient: LinearGradient(
+      colors: [Color(0xFF0066CC), Color(0xFF0052A3)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFF0052A3),
+        Color(0xFF0066CC),
+        Color(0xFF3385D6),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFF0066CC), Color(0xFF0052A3)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFAFBFC),
+        Color(0xFFFFFFFF),
+        Color(0xFFF5F7FA),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x200066CC),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x300066CC),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.water_drop_rounded,
+    accentColor: Color(0xFF00C48C),      // Success green
+    isDark: false,
+  );
+
+  /// Theme 2: Sunset Coral - Warm & Inviting (Airbnb inspired)
+  static const AppThemeData _sunset = AppThemeData(
+    name: 'Sunset Coral',
+    description: 'Warm coral - Friendly & welcoming',
+    primaryColor: Color(0xFFFF385C),      // Airbnb pink/coral
+    primaryDeep: Color(0xFFE31C5F),       // Darker coral
+    primaryLight: Color(0xFFFF5A7C),      // Lighter coral
+    primaryPale: Color(0xFFFFE8ED),       // Very pale pink
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFFFF385C), Color(0xFFE31C5F)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFFE31C5F),
+        Color(0xFFFF385C),
+        Color(0xFFFF5A7C),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFFFF385C), Color(0xFFE31C5F)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFFFAFB),
+        Color(0xFFFFFFFF),
+        Color(0xFFFFF5F7),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x20FF385C),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x30FF385C),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.wb_twilight_rounded,
+    accentColor: Color(0xFFFFB400),       // Golden yellow accent
+    isDark: false,
+  );
+
+  /// Theme 3: Emerald Green - Trustworthy & Fresh (Grab inspired)
+  static const AppThemeData _emerald = AppThemeData(
+    name: 'Emerald Green',
+    description: 'Fresh green - Growth & harmony',
+    primaryColor: Color(0xFF00B14F),      // Grab green
+    primaryDeep: Color(0xFF009440),       // Darker green
+    primaryLight: Color(0xFF00D963),      // Lighter green
+    primaryPale: Color(0xFFE6F9EF),       // Very pale green
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFF00B14F), Color(0xFF009440)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFF009440),
+        Color(0xFF00B14F),
+        Color(0xFF00D963),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFF00B14F), Color(0xFF009440)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFAFDFB),
+        Color(0xFFFFFFFF),
+        Color(0xFFF5FAF7),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x2000B14F),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x3000B14F),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.eco_rounded,
+    accentColor: Color(0xFF0066CC),       // Blue accent for variety
+    isDark: false,
+  );
+
+  /// Theme 4: Royal Purple - Premium & Sophisticated (Stripe inspired)
+  static const AppThemeData _royal = AppThemeData(
+    name: 'Royal Purple',
+    description: 'Premium purple - Elegant & sophisticated',
+    primaryColor: Color(0xFF635BFF),      // Stripe purple
+    primaryDeep: Color(0xFF5145E5),       // Darker purple
+    primaryLight: Color(0xFF8B85FF),      // Lighter purple
+    primaryPale: Color(0xFFEEEDFF),       // Very pale purple
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFF635BFF), Color(0xFF5145E5)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFF5145E5),
+        Color(0xFF635BFF),
+        Color(0xFF8B85FF),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFF635BFF), Color(0xFF5145E5)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFBFBFF),
+        Color(0xFFFFFFFF),
+        Color(0xFFF7F7FF),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x20635BFF),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x30635BFF),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.auto_awesome_rounded,
+    accentColor: Color(0xFF00D4FF),       // Cyan accent
+    isDark: false,
+  );
+
+  // ==================== DARK THEMES ====================
+
+  /// Theme 5: Slate Dark - Minimal & Modern (Apple inspired)
+  static const AppThemeData _slate = AppThemeData(
+    name: 'Slate Dark',
+    description: 'Dark slate - Minimal & modern',
+    primaryColor: Color(0xFF0066CC),      // Blue accent on dark
+    primaryDeep: Color(0xFF0052A3),       // Darker blue
+    primaryLight: Color(0xFF3385D6),      // Lighter blue
+    primaryPale: Color(0xFF1E293B),       // Dark slate
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFF0066CC), Color(0xFF0052A3)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFF0052A3),
+        Color(0xFF0066CC),
+        Color(0xFF3385D6),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
       colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFF0F172A),  // Deep midnight
-        Color(0xFF475569),  // Light slate highlight
-        Color(0xFF1E293B),  // Medium slate
-        Color(0xFF0F172A),  // Back to deep
-      ],
-      stops: [0.0, 0.3, 0.7, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [
-        Color(0xFF1E293B),  // Slate
-        Color(0xFF3B82F6),  // Blue accent
-        Color(0xFF0F172A),  // Deep midnight
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
     backgroundGradient: LinearGradient(
       colors: [
-        Color(0xFFF8FAFC),  // Soft white
-        Color(0xFFFFFFFF),  // Pure white
-        Color(0xFFE2E8F0),  // Pale slate tint
+        Color(0xFF0F172A),  // Deep dark
+        Color(0xFF1E293B),  // Medium dark
+        Color(0xFF334155),  // Lighter dark
       ],
       stops: [0.0, 0.5, 1.0],
       begin: Alignment.topCenter,
@@ -109,384 +338,161 @@ class AppThemeData {
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x401E293B),
-        blurRadius: 24,
-        spreadRadius: 0,
-        offset: Offset(0, 8),
+        color: Color(0x40000000),
+        blurRadius: 16,
+        offset: Offset(0, 4),
       ),
     ],
     glossyShadow: [
       BoxShadow(
-        color: Color(0x661E293B),  // 40% opacity
-        blurRadius: 32,
-        spreadRadius: 4,
-        offset: Offset(0, 12),
+        color: Color(0x50000000),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.dark_mode_rounded,
+    accentColor: Color(0xFF00C48C),       // Green accent
+    isDark: true,
+  );
+
+  /// Theme 6: Midnight Black - Bold & Premium (Uber inspired)
+  static const AppThemeData _midnight = AppThemeData(
+    name: 'Midnight Black',
+    description: 'Deep black - Bold & premium',
+    primaryColor: Color(0xFFFFFFFF),      // White on black (Uber style)
+    primaryDeep: Color(0xFFE5E7EB),       // Light gray
+    primaryLight: Color(0xFFFFFFFF),      // Pure white
+    primaryPale: Color(0xFF1F2937),       // Dark gray
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFFFFFFFF), Color(0xFFE5E7EB)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFFE5E7EB),
+        Color(0xFFFFFFFF),
+        Color(0xFFF3F4F6),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFF000000), Color(0xFF111827)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFF000000),  // Pure black
+        Color(0xFF111827),  // Dark gray
+        Color(0xFF1F2937),  // Medium gray
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x60000000),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x80000000),
+        blurRadius: 24,
+        offset: Offset(0, 8),
       ),
     ],
     icon: Icons.nightlight_round,
-    accentColor: Color(0xFF3B82F6),
+    accentColor: Color(0xFF00C48C),       // Green accent (like Uber uses)
+    isDark: true,
   );
 
-  // Theme 2: Ocean - Modern Blue (Google Material-inspired)
-  static const AppThemeData _ocean = AppThemeData(
-    name: 'Ocean',
-    description: 'Modern blue with clean aesthetics',
-    primaryColor: Color(0xFF0EA5E9),
-    primaryDeep: Color(0xFF0284C7),
-    primaryLight: Color(0xFF38BDF8),
-    primaryPale: Color(0xFFE0F2FE),
-    primaryGradient: LinearGradient(
-      colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFF0284C7),  // Deep ocean
-        Color(0xFF38BDF8),  // Bright aqua highlight
-        Color(0xFF06B6D4),  // Cyan accent
-        Color(0xFF0EA5E9),  // Sky blue
-      ],
-      stops: [0.0, 0.35, 0.65, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [
-        Color(0xFF0EA5E9),  // Sky blue
-        Color(0xFF06B6D4),  // Cyan accent
-        Color(0xFF0284C7),  // Deep ocean
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    backgroundGradient: LinearGradient(
-      colors: [
-        Color(0xFFF0F9FF),  // Lightest blue
-        Color(0xFFFFFFFF),  // Pure white
-        Color(0xFFE0F2FE),  // Pale sky
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    primaryShadow: [
-      BoxShadow(
-        color: Color(0x400EA5E9),
-        blurRadius: 24,
-        spreadRadius: 0,
-        offset: Offset(0, 8),
-      ),
-    ],
-    glossyShadow: [
-      BoxShadow(
-        color: Color(0x700EA5E9),  // 44% opacity
-        blurRadius: 32,
-        spreadRadius: 4,
-        offset: Offset(0, 12),
-      ),
-    ],
-    icon: Icons.water_drop,
-    accentColor: Color(0xFF06B6D4),
-  );
-
-  // Theme 3: Sunset - Warm Gradient (Instagram-inspired)
-  static const AppThemeData _sunset = AppThemeData(
-    name: 'Sunset',
-    description: 'Vibrant warm tones with energy',
-    primaryColor: Color(0xFFF97316),
-    primaryDeep: Color(0xFFEA580C),
-    primaryLight: Color(0xFFFB923C),
-    primaryPale: Color(0xFFFFEDD5),
-    primaryGradient: LinearGradient(
-      colors: [Color(0xFFF97316), Color(0xFFEA580C)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFFEA580C),  // Deep orange
-        Color(0xFFFBBF24),  // Golden yellow highlight
-        Color(0xFFFB923C),  // Bright orange
-        Color(0xFFF97316),  // Sunset orange
-      ],
-      stops: [0.0, 0.3, 0.6, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [
-        Color(0xFFF97316),  // Sunset orange
-        Color(0xFFFBBF24),  // Golden accent
-        Color(0xFFEA580C),  // Deep orange
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    backgroundGradient: LinearGradient(
-      colors: [
-        Color(0xFFFFF7ED),  // Soft peach
-        Color(0xFFFFFFFF),  // Pure white
-        Color(0xFFFFEDD5),  // Pale sunset
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    primaryShadow: [
-      BoxShadow(
-        color: Color(0x40F97316),
-        blurRadius: 24,
-        spreadRadius: 0,
-        offset: Offset(0, 8),
-      ),
-    ],
-    glossyShadow: [
-      BoxShadow(
-        color: Color(0x70F97316),  // 44% opacity
-        blurRadius: 32,
-        spreadRadius: 4,
-        offset: Offset(0, 12),
-      ),
-    ],
-    icon: Icons.wb_twilight,
-    accentColor: Color(0xFFFBBF24),
-  );
-
-  // Theme 4: Forest - Natural Green (Spotify-inspired)
-  static const AppThemeData _forest = AppThemeData(
-    name: 'Forest',
-    description: 'Fresh green with natural harmony',
-    primaryColor: Color(0xFF10B981),
-    primaryDeep: Color(0xFF059669),
-    primaryLight: Color(0xFF34D399),
-    primaryPale: Color(0xFFD1FAE5),
-    primaryGradient: LinearGradient(
-      colors: [Color(0xFF10B981), Color(0xFF059669)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFF059669),  // Deep forest
-        Color(0xFF34D399),  // Bright mint highlight
-        Color(0xFF14B8A6),  // Teal accent
-        Color(0xFF10B981),  // Emerald green
-      ],
-      stops: [0.0, 0.35, 0.65, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [
-        Color(0xFF10B981),  // Emerald green
-        Color(0xFF14B8A6),  // Teal accent
-        Color(0xFF059669),  // Deep forest
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    backgroundGradient: LinearGradient(
-      colors: [
-        Color(0xFFECFDF5),  // Lightest mint
-        Color(0xFFFFFFFF),  // Pure white
-        Color(0xFFD1FAE5),  // Pale green
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    primaryShadow: [
-      BoxShadow(
-        color: Color(0x4010B981),
-        blurRadius: 24,
-        spreadRadius: 0,
-        offset: Offset(0, 8),
-      ),
-    ],
-    glossyShadow: [
-      BoxShadow(
-        color: Color(0x7010B981),  // 44% opacity
-        blurRadius: 32,
-        spreadRadius: 4,
-        offset: Offset(0, 12),
-      ),
-    ],
-    icon: Icons.eco,
-    accentColor: Color(0xFF14B8A6),
-  );
-
-  // Theme 5: Lavender - Soft Purple (Notion-inspired)
-  static const AppThemeData _lavender = AppThemeData(
-    name: 'Lavender',
-    description: 'Calm purple with sophistication',
-    primaryColor: Color(0xFF8B5CF6),
-    primaryDeep: Color(0xFF7C3AED),
-    primaryLight: Color(0xFFA78BFA),
-    primaryPale: Color(0xFFEDE9FE),
-    primaryGradient: LinearGradient(
-      colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFF7C3AED),  // Deep violet
-        Color(0xFFA78BFA),  // Light lavender highlight
-        Color(0xFFC084FC),  // Bright purple accent
-        Color(0xFF8B5CF6),  // Medium purple
-      ],
-      stops: [0.0, 0.3, 0.65, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [
-        Color(0xFF8B5CF6),  // Violet
-        Color(0xFFC084FC),  // Light purple accent
-        Color(0xFF7C3AED),  // Deep violet
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    backgroundGradient: LinearGradient(
-      colors: [
-        Color(0xFFF5F3FF),  // Lightest lavender
-        Color(0xFFFFFFFF),  // Pure white
-        Color(0xFFEDE9FE),  // Pale purple
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    primaryShadow: [
-      BoxShadow(
-        color: Color(0x408B5CF6),
-        blurRadius: 24,
-        spreadRadius: 0,
-        offset: Offset(0, 8),
-      ),
-    ],
-    glossyShadow: [
-      BoxShadow(
-        color: Color(0x708B5CF6),  // 44% opacity
-        blurRadius: 32,
-        spreadRadius: 4,
-        offset: Offset(0, 12),
-      ),
-    ],
-    icon: Icons.auto_awesome,
-    accentColor: Color(0xFFC084FC),
-  );
-
-  // Theme 6: Rose - Elegant Pink (Airbnb-inspired)
-  static const AppThemeData _rose = AppThemeData(
-    name: 'Rose',
-    description: 'Elegant rose with warmth',
-    primaryColor: Color(0xFFEC4899),
-    primaryDeep: Color(0xFFDB2777),
-    primaryLight: Color(0xFFF472B6),
-    primaryPale: Color(0xFFFCE7F3),
-    primaryGradient: LinearGradient(
-      colors: [Color(0xFFEC4899), Color(0xFFDB2777)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFFDB2777),  // Deep rose
-        Color(0xFFF472B6),  // Light pink highlight
-        Color(0xFFF9A8D4),  // Soft pink accent
-        Color(0xFFEC4899),  // Hot pink
-      ],
-      stops: [0.0, 0.3, 0.65, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [
-        Color(0xFFEC4899),  // Hot pink
-        Color(0xFFF9A8D4),  // Soft pink accent
-        Color(0xFFDB2777),  // Deep rose
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    backgroundGradient: LinearGradient(
-      colors: [
-        Color(0xFFFDF2F8),  // Lightest pink
-        Color(0xFFFFFFFF),  // Pure white
-        Color(0xFFFCE7F3),  // Pale rose
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    primaryShadow: [
-      BoxShadow(
-        color: Color(0x40EC4899),
-        blurRadius: 24,
-        spreadRadius: 0,
-        offset: Offset(0, 8),
-      ),
-    ],
-    glossyShadow: [
-      BoxShadow(
-        color: Color(0x70EC4899),  // 44% opacity
-        blurRadius: 32,
-        spreadRadius: 4,
-        offset: Offset(0, 12),
-      ),
-    ],
-    icon: Icons.favorite_rounded,
-    accentColor: Color(0xFFF9A8D4),
-  );
-
-  /// Generate Flutter ThemeData from AppThemeData with glassmorphism
+  /// Generate Flutter ThemeData from AppThemeData
   ThemeData toThemeData() {
+    // Choose light or dark base theme
+    final brightness = isDark ? Brightness.dark : Brightness.light;
+    final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final backgroundColor = isDark ? const Color(0xFF0F172A) : AppTheme.neutral50;
+    final textColor = isDark ? const Color(0xFFF1F5F9) : AppTheme.neutral900; // Light text on dark
+    final secondaryTextColor = isDark ? const Color(0xFFCBD5E1) : AppTheme.neutral600;
+
     return ThemeData(
       useMaterial3: true,
+      brightness: brightness,
 
       // Color Scheme
-      colorScheme: ColorScheme.light(
+      colorScheme: ColorScheme(
+        brightness: brightness,
         primary: primaryColor,
-        primaryContainer: primaryLight,
-        onPrimary: Colors.white,
+        primaryContainer: isDark ? primaryPale.withValues(alpha: 0.2) : primaryLight,
+        onPrimary: Colors.white, // Always white text on primary color
+        onPrimaryContainer: isDark ? Colors.white : AppTheme.neutral900,
         secondary: accentColor,
-        secondaryContainer: primaryPale,
-        surface: Colors.white,
-        onSurface: AppTheme.neutral900,
+        secondaryContainer: isDark ? accentColor.withValues(alpha: 0.2) : primaryPale,
+        onSecondary: Colors.white, // Always white text on accent color
+        onSecondaryContainer: isDark ? Colors.white : AppTheme.neutral900,
+        surface: surfaceColor,
+        onSurface: textColor, // Light text on dark surface
+        surfaceContainerHighest: isDark ? const Color(0xFF334155) : AppTheme.neutral100,
+        onSurfaceVariant: secondaryTextColor,
+        outline: isDark ? const Color(0xFF475569) : AppTheme.neutral300,
         error: AppTheme.error,
+        onError: Colors.white,
         tertiary: primaryDeep,
+        onTertiary: Colors.white,
+        inverseSurface: isDark ? Colors.white : AppTheme.neutral900,
+        onInverseSurface: isDark ? AppTheme.neutral900 : Colors.white,
+      ),
+
+      // Scaffold
+      scaffoldBackgroundColor: backgroundColor,
+
+      // Text Theme - Proper colors for light/dark
+      textTheme: TextTheme(
+        displayLarge: TextStyle(color: textColor),
+        displayMedium: TextStyle(color: textColor),
+        displaySmall: TextStyle(color: textColor),
+        headlineLarge: TextStyle(color: textColor),
+        headlineMedium: TextStyle(color: textColor),
+        headlineSmall: TextStyle(color: textColor),
+        titleLarge: TextStyle(color: textColor),
+        titleMedium: TextStyle(color: textColor),
+        titleSmall: TextStyle(color: textColor),
+        bodyLarge: TextStyle(color: secondaryTextColor),
+        bodyMedium: TextStyle(color: secondaryTextColor),
+        bodySmall: TextStyle(color: secondaryTextColor),
+        labelLarge: TextStyle(color: textColor),
+        labelMedium: TextStyle(color: textColor),
+        labelSmall: TextStyle(color: secondaryTextColor),
       ),
 
       // App Bar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF1E293B) : primaryColor,
+        foregroundColor: Colors.white, // Always white
         elevation: 0,
         centerTitle: false,
         titleTextStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Colors.white,
+          color: Colors.white, // Always white
           letterSpacing: -0.5,
         ),
         iconTheme: const IconThemeData(
-          color: Colors.white,
+          color: Colors.white, // Always white
         ),
       ),
 
-      // Elevated Button Theme
+      // Elevated Button Theme - SOLID COLOR ONLY (no gradients!)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.white, // Always white text on colored button
           elevation: 0,
           padding: const EdgeInsets.symmetric(
             horizontal: AppTheme.spacingLg,
@@ -503,11 +509,26 @@ class AppThemeData {
         ),
       ),
 
+      // Text Button Theme
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: primaryColor,
+        ),
+      ),
+
+      // Outlined Button Theme
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primaryColor,
+          side: BorderSide(color: primaryColor, width: 1.5),
+        ),
+      ),
+
       // Floating Action Button Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 8,
+        foregroundColor: Colors.white, // Always white
+        elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
@@ -516,18 +537,18 @@ class AppThemeData {
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(
-            color: AppTheme.neutral200,
+          borderSide: BorderSide(
+            color: isDark ? const Color(0xFF475569) : AppTheme.neutral200,
             width: 1.5,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(
-            color: AppTheme.neutral200,
+          borderSide: BorderSide(
+            color: isDark ? const Color(0xFF475569) : AppTheme.neutral200,
             width: 1.5,
           ),
         ),
@@ -550,9 +571,17 @@ class AppThemeData {
           vertical: AppTheme.spacingMd,
         ),
         labelStyle: TextStyle(
-          color: primaryColor,
+          color: isDark ? const Color(0xFF94A3B8) : primaryColor,
           fontSize: 14,
           fontWeight: FontWeight.w500,
+        ),
+        hintStyle: TextStyle(
+          color: isDark ? const Color(0xFF64748B) : AppTheme.neutral400,
+          fontSize: 14,
+        ),
+        // Ensure input text is visible in dark mode
+        floatingLabelStyle: TextStyle(
+          color: primaryColor,
         ),
       ),
 
@@ -562,14 +591,14 @@ class AppThemeData {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
-        color: Colors.white,
+        color: surfaceColor,
       ),
 
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: surfaceColor,
         selectedItemColor: primaryColor,
-        unselectedItemColor: AppTheme.neutral400,
+        unselectedItemColor: isDark ? const Color(0xFF64748B) : AppTheme.neutral400,
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -584,16 +613,16 @@ class AppThemeData {
 
       // Chip Theme
       chipTheme: ChipThemeData(
-        backgroundColor: primaryPale,
+        backgroundColor: isDark ? primaryPale.withValues(alpha: 0.3) : primaryPale,
         selectedColor: primaryColor,
-        disabledColor: AppTheme.neutral100,
+        disabledColor: isDark ? const Color(0xFF1E293B) : AppTheme.neutral100,
         labelStyle: TextStyle(
-          color: primaryDeep,
+          color: isDark ? Colors.white : primaryDeep,
           fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
-        secondaryLabelStyle: const TextStyle(
-          color: Colors.white,
+        secondaryLabelStyle: TextStyle(
+          color: isDark ? AppTheme.neutral900 : Colors.white,
           fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
@@ -609,12 +638,59 @@ class AppThemeData {
       // Progress Indicator Theme
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: primaryColor,
-        linearTrackColor: primaryPale,
-        circularTrackColor: primaryPale,
+        linearTrackColor: isDark ? primaryPale.withValues(alpha: 0.3) : primaryPale,
+        circularTrackColor: isDark ? primaryPale.withValues(alpha: 0.3) : primaryPale,
       ),
 
-      // Scaffold Background
-      scaffoldBackgroundColor: AppTheme.neutral50,
+      // Divider Theme
+      dividerTheme: DividerThemeData(
+        color: isDark ? const Color(0xFF334155) : AppTheme.neutral200,
+        thickness: 1,
+        space: 1,
+      ),
+
+      // Icon Theme
+      iconTheme: IconThemeData(
+        color: isDark ? const Color(0xFFCBD5E1) : AppTheme.neutral700,
+      ),
+
+      // List Tile Theme - Fix dark mode text
+      listTileTheme: ListTileThemeData(
+        textColor: textColor,
+        iconColor: isDark ? const Color(0xFFCBD5E1) : AppTheme.neutral700,
+        titleTextStyle: TextStyle(
+          color: textColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        subtitleTextStyle: TextStyle(
+          color: secondaryTextColor,
+          fontSize: 14,
+        ),
+      ),
+
+      // Dialog Theme
+      dialogTheme: DialogThemeData(
+        backgroundColor: surfaceColor,
+        titleTextStyle: TextStyle(
+          color: textColor,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+        contentTextStyle: TextStyle(
+          color: secondaryTextColor,
+          fontSize: 16,
+        ),
+      ),
+
+      // Snackbar Theme
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDark ? const Color(0xFF334155) : const Color(0xFF1E293B),
+        contentTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      ),
     );
   }
 }

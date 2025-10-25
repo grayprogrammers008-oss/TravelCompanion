@@ -25,8 +25,8 @@ class MessageRepositoryImpl implements MessageRepository {
   /// Check if device has internet connectivity
   Future<bool> _hasConnectivity() async {
     try {
-      final result = await connectivity.checkConnectivity();
-      return result != ConnectivityResult.none;
+      final results = await connectivity.checkConnectivity();
+      return !results.contains(ConnectivityResult.none) && results.isNotEmpty;
     } catch (e) {
       debugPrint('⚠️ [Repository] Connectivity check failed: $e');
       return false;
@@ -59,7 +59,7 @@ class MessageRepositoryImpl implements MessageRepository {
         tripId: tripId,
         senderId: senderId,
         message: message,
-        messageType: MessageModel._messageTypeToString(messageType),
+        messageType: _messageTypeToString(messageType),
         replyToId: replyToId,
         attachmentUrl: attachmentUrl,
         reactions: [],
@@ -759,6 +759,20 @@ class MessageRepositoryImpl implements MessageRepository {
     } catch (e) {
       debugPrint('   ⚠️ Background sync failed: $e');
       // Don't rethrow - background sync failure is not critical
+    }
+  }
+
+  /// Convert message type to string (helper method)
+  String _messageTypeToString(MessageType type) {
+    switch (type) {
+      case MessageType.text:
+        return 'text';
+      case MessageType.image:
+        return 'image';
+      case MessageType.location:
+        return 'location';
+      case MessageType.expenseLink:
+        return 'expense_link';
     }
   }
 }

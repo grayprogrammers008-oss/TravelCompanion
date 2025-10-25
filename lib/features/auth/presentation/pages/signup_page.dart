@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
@@ -202,10 +203,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                           ),
                                         ],
                                       ),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.person_add,
                                         size: 40,
-                                        color: AppTheme.accentPurple,
+                                        color: context.accentColor,
                                       ),
                                     ),
                                     const SizedBox(height: AppTheme.spacingMd),
@@ -213,10 +214,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                     // Title
                                     Text(
                                       'Join Travel Crew',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineLarge
-                                          ?.copyWith(
+                                      style: context.headlineLarge.copyWith(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w800,
                                             letterSpacing: -0.5,
@@ -228,10 +226,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                     // Subtitle
                                     Text(
                                       'Start planning amazing trips together',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.copyWith(
+                                      style: context.bodyLarge.copyWith(
                                             color: Colors.white
                                                 .withValues(alpha: 0.9),
                                             letterSpacing: 0.5,
@@ -279,15 +274,15 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                               padding: const EdgeInsets.all(
                                                   AppTheme.spacingXs),
                                               decoration: BoxDecoration(
-                                                color: AppTheme.accentPurple
+                                                color: context.accentColor
                                                     .withValues(alpha: 0.1),
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         AppTheme.radiusSm),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.person_outline,
-                                                color: AppTheme.accentPurple,
+                                                color: context.accentColor,
                                                 size: 20,
                                               ),
                                             ),
@@ -340,14 +335,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                               padding: const EdgeInsets.all(
                                                   AppTheme.spacingXs),
                                               decoration: BoxDecoration(
-                                                color: AppTheme.neutral100,
+                                                color: context.textColor.withValues(alpha: 0.05),
                                                 borderRadius:
                                                     BorderRadius.circular(
                                                         AppTheme.radiusSm),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.phone_outlined,
-                                                color: AppTheme.neutral600,
+                                                color: context.textColor.withValues(alpha: 0.6),
                                                 size: 20,
                                               ),
                                             ),
@@ -387,7 +382,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                                     ? Icons.visibility_outlined
                                                     : Icons
                                                         .visibility_off_outlined,
-                                                color: AppTheme.neutral400,
+                                                color: context.textColor.withValues(alpha: 0.4),
                                                 size: 20,
                                               ),
                                               onPressed: () {
@@ -433,7 +428,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                                     ? Icons.visibility_outlined
                                                     : Icons
                                                         .visibility_off_outlined,
-                                                color: AppTheme.neutral400,
+                                                color: context.textColor.withValues(alpha: 0.4),
                                                 size: 20,
                                               ),
                                               onPressed: () {
@@ -464,11 +459,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                         // Terms and Privacy
                                         Text(
                                           'By creating an account, you agree to our\nTerms of Service and Privacy Policy',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: AppTheme.neutral500,
+                                          style: context.bodySmall.copyWith(
+                                                color: context.textColor.withValues(alpha: 0.5),
                                               ),
                                           textAlign: TextAlign.center,
                                         ),

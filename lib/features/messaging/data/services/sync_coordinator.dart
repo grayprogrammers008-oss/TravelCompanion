@@ -78,10 +78,10 @@ class SyncCoordinator {
       // Step 1: Check for duplicates
       final duplicateId = await _deduplicationService.checkDuplicate(
         messageId: message.id,
-        tripId: message.tripId ?? '',
-        senderId: message.senderId ?? '',
+        tripId: message.tripId,
+        senderId: message.senderId,
         content: message.message ?? '',
-        timestamp: message.timestamp,
+        timestamp: message.createdAt,
         attachmentUrl: message.attachmentUrl,
       );
 
@@ -162,10 +162,10 @@ class SyncCoordinator {
     if (localMessage == null) {
       _deduplicationService.registerMessage(
         messageId: remoteMessage.id,
-        tripId: remoteMessage.tripId ?? '',
-        senderId: remoteMessage.senderId ?? '',
+        tripId: remoteMessage.tripId,
+        senderId: remoteMessage.senderId,
         content: remoteMessage.message ?? '',
-        timestamp: remoteMessage.timestamp,
+        timestamp: remoteMessage.createdAt,
         attachmentUrl: remoteMessage.attachmentUrl,
       );
       return remoteMessage;

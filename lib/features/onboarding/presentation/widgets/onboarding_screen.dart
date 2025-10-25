@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../domain/models/onboarding_page_model.dart';
 
@@ -24,15 +24,15 @@ class OnboardingScreen extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingXl,
-            vertical: AppTheme.spacing2xl,
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacingXl,
+            vertical: context.spacing2xl,
           ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: AppTheme.spacing3xl),
+                SizedBox(height: context.spacing3xl),
 
                 // Icon illustration
                 FadeSlideAnimation(
@@ -52,14 +52,14 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: AppTheme.spacing3xl),
+              SizedBox(height: context.spacing3xl),
 
               // Title
               FadeSlideAnimation(
                 delay: const Duration(milliseconds: 100),
                 child: Text(
                   page.title,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  style: context.displaySmall.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         height: 1.2,
@@ -68,14 +68,14 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: AppTheme.spacingLg),
+              SizedBox(height: context.spacingLg),
 
               // Subtitle
               FadeSlideAnimation(
                 delay: const Duration(milliseconds: 200),
                 child: Text(
                   page.subtitle,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: context.bodyLarge.copyWith(
                         color: Colors.white.withValues(alpha: 0.9),
                         height: 1.5,
                       ),
@@ -83,7 +83,7 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: AppTheme.spacing2xl),
+              SizedBox(height: context.spacing2xl),
 
               // Features list (if available)
               if (page.features != null && page.features!.isNotEmpty)
@@ -93,7 +93,7 @@ class OnboardingScreen extends StatelessWidget {
                     children: page.features!.map((feature) {
                       return Padding(
                         padding:
-                            const EdgeInsets.only(bottom: AppTheme.spacingSm),
+                            EdgeInsets.only(bottom: context.spacingSm),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -105,13 +105,10 @@ class OnboardingScreen extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                             ),
-                            const SizedBox(width: AppTheme.spacingSm),
+                            SizedBox(width: context.spacingSm),
                             Text(
                               feature,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
+                              style: context.bodyMedium.copyWith(
                                     color: Colors.white.withValues(alpha: 0.9),
                                   ),
                             ),
@@ -122,7 +119,7 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppTheme.spacing3xl),
+                SizedBox(height: context.spacing3xl),
               ],
             ),
           ),
@@ -156,9 +153,9 @@ class PageIndicator extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             color: currentPage == index
-                ? AppTheme.primaryTeal
-                : AppTheme.neutral300,
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ? context.primaryColor
+                : Colors.white.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(context.radiusSm),
           ),
         ),
       ),

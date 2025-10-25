@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/itinerary_model.dart';
@@ -19,7 +20,6 @@ class ItineraryListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final themeData = context.appThemeData;
     final itineraryAsync = ref.watch(itineraryByDaysProvider(tripId));
 
@@ -29,7 +29,7 @@ class ItineraryListPage extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.successMessage!),
-            backgroundColor: Colors.green,
+            backgroundColor: context.successColor,
           ),
         );
         ref.read(itineraryControllerProvider.notifier).clearSuccessMessage();
@@ -38,7 +38,7 @@ class ItineraryListPage extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error!),
-            backgroundColor: Colors.red,
+            backgroundColor: context.errorColor,
           ),
         );
         ref.read(itineraryControllerProvider.notifier).clearError();
@@ -58,16 +58,16 @@ class ItineraryListPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              Icon(Icons.error_outline, size: 64, color: context.errorColor),
               const SizedBox(height: 16),
               Text(
                 'Error loading itinerary',
-                style: theme.textTheme.titleLarge,
+                style: context.titleLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 error.toString(),
-                style: theme.textTheme.bodyMedium,
+                style: context.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -109,31 +109,18 @@ class ItineraryListPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               boxShadow: themeData.glossyShadow,
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withValues(alpha: 0.2),
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              ),
-              child: FloatingActionButton.extended(
-                onPressed: null, // Handled by AnimatedScaleButton
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                icon: const Icon(Icons.add, color: Colors.white, size: 24),
-                label: const Text(
-                  'Add Activity',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: 0.5,
-                  ),
+            child: FloatingActionButton.extended(
+              onPressed: null, // Handled by AnimatedScaleButton
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              icon: Icon(Icons.add, color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white, size: 24),
+              label: Text(
+                'Add Activity',
+                style: TextStyle(
+                  color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
@@ -144,7 +131,6 @@ class ItineraryListPage extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    final theme = Theme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -154,20 +140,20 @@ class ItineraryListPage extends ConsumerWidget {
             Icon(
               Icons.event_note_outlined,
               size: 120,
-              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+              color: context.primaryColor.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
               'No Activities Yet',
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: context.headlineSmall.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               'Start planning your trip by adding activities to your itinerary',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              style: context.bodyLarge.copyWith(
+                color: context.textColor.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -187,8 +173,6 @@ class ItineraryListPage extends ConsumerWidget {
   }
 
   Widget _buildDaySection(BuildContext context, WidgetRef ref, ItineraryDay day) {
-    final theme = Theme.of(context);
-
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -199,7 +183,7 @@ class ItineraryListPage extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: 0.1),
+              color: context.primaryColor.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -210,21 +194,21 @@ class ItineraryListPage extends ConsumerWidget {
                 Icon(
                   Icons.calendar_today,
                   size: 20,
-                  color: theme.colorScheme.primary,
+                  color: context.primaryColor,
                 ),
                 const SizedBox(width: 12),
                 Text(
                   'Day ${day.dayNumber}',
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  style: context.titleLarge.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: context.primaryColor,
                   ),
                 ),
                 const Spacer(),
                 Text(
                   '${day.items.length} ${day.items.length == 1 ? 'activity' : 'activities'}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.primary,
+                  style: context.bodyMedium.copyWith(
+                    color: context.primaryColor,
                   ),
                 ),
               ],
@@ -255,12 +239,10 @@ class ItineraryListPage extends ConsumerWidget {
     ItineraryItemModel item, {
     Key? key,
   }) {
-    final theme = Theme.of(context);
-
     return Dismissible(
       key: key ?? ValueKey(item.id),
       background: Container(
-        color: Colors.red,
+        color: context.errorColor,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
         child: const Icon(Icons.delete, color: Colors.white),
@@ -279,7 +261,7 @@ class ItineraryListPage extends ConsumerWidget {
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(foregroundColor: context.errorColor),
                 child: const Text('Delete'),
               ),
             ],
@@ -301,13 +283,13 @@ class ItineraryListPage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                    color: context.accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     DateFormat.Hm().format(item.startTime!),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.secondary,
+                    style: context.bodySmall.copyWith(
+                      color: context.accentColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -324,7 +306,7 @@ class ItineraryListPage extends ConsumerWidget {
                   children: [
                     Text(
                       item.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      style: context.titleMedium.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -335,14 +317,14 @@ class ItineraryListPage extends ConsumerWidget {
                           Icon(
                             Icons.location_on,
                             size: 16,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: context.textColor.withValues(alpha: 0.6),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               item.location!,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              style: context.bodyMedium.copyWith(
+                                color: context.textColor.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -353,8 +335,8 @@ class ItineraryListPage extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         item.description!,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        style: context.bodyMedium.copyWith(
+                          color: context.textColor.withValues(alpha: 0.8),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -364,8 +346,8 @@ class ItineraryListPage extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Until ${DateFormat.Hm().format(item.endTime!)}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        style: context.bodySmall.copyWith(
+                          color: context.textColor.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -376,7 +358,7 @@ class ItineraryListPage extends ConsumerWidget {
               // Reorder handle
               Icon(
                 Icons.drag_handle,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                color: context.textColor.withValues(alpha: 0.3),
               ),
             ],
           ),

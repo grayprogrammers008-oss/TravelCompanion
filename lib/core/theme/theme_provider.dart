@@ -13,7 +13,7 @@ class Theme extends _$Theme {
   AppThemeType build() {
     // Load saved theme asynchronously
     _loadTheme();
-    return AppThemeType.ocean; // Default theme - Ocean (Google-inspired)
+    return AppThemeType.ocean; // Default theme - Ocean Blue (clean & professional)
   }
 
   /// Load saved theme from SharedPreferences

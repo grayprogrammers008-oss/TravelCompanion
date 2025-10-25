@@ -186,7 +186,7 @@ class MessageConflictStrategy extends ConflictResolutionStrategy {
     required String source,
   }) async {
     // 1. Compare timestamps (Last Write Wins)
-    final comparison = remote.timestamp.compareTo(local.timestamp);
+    final comparison = remote.updatedAt.compareTo(local.updatedAt);
 
     if (comparison > 0) {
       // Remote is newer

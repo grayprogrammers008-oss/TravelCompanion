@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../../../core/services/supabase_client_wrapper.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/message_model.dart';
 
 /// Message Remote Data Source
@@ -392,13 +392,16 @@ class MessageRemoteDataSource {
     return SupabaseClientWrapper.client
         .from('messages')
         .stream(primaryKey: ['id'])
-        .eq('trip_id', tripId)
-        .eq('is_deleted', false)
         .order('created_at', ascending: false)
         .map((data) {
           debugPrint('   📡 Received realtime message update');
-          return MessageModel.fromJson(data.first);
-        });
+          // Filter for trip_id and is_deleted in the map operation
+          return data.where((message) =>
+            message['trip_id'] == tripId &&
+            (message['is_deleted'] == false || message['is_deleted'] == null)
+          ).map((message) => MessageModel.fromJson(message));
+        })
+        .expand((messages) => messages);
   }
 
   /// Subscribe to message updates (reactions, read status, etc.)
@@ -446,7 +449,7 @@ class MessageRemoteDataSource {
       final response = await SupabaseClientWrapper.client
           .from('message_queue')
           .select()
-          .in_('sync_status', ['pending', 'failed'])
+          .inFilter('sync_status', ['pending', 'failed'])
           .order('created_at', ascending: true);
 
       final messages = (response as List)

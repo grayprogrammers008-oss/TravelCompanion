@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
@@ -313,21 +314,21 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryPale,
+                  color: context.primaryLight,
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.info_outline,
                   size: 20,
-                  color: AppTheme.primaryTeal,
+                  color: context.primaryColor,
                 ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Text(
                 'Invite Details',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: context.titleMedium.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.neutral900,
+                      color: context.textColor,
                     ),
               ),
             ],
@@ -348,8 +349,8 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
           // Invited By
           _buildDetailRow(
             icon: Icons.person,
-            iconColor: AppTheme.accentGold,
-            iconBg: AppTheme.accentGold.withValues(alpha: 0.1),
+            iconColor: context.accentColor,
+            iconBg: context.accentColor.withValues(alpha: 0.1),
             label: 'Sent By',
             value: invite.email,
           ),
@@ -359,10 +360,10 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
           // Expires In
           _buildDetailRow(
             icon: Icons.schedule,
-            iconColor: daysUntilExpiry <= 1 ? AppTheme.error : AppTheme.accentCoral,
+            iconColor: daysUntilExpiry <= 1 ? AppTheme.error : context.accentColor,
             iconBg: daysUntilExpiry <= 1
                 ? AppTheme.error.withValues(alpha: 0.1)
-                : AppTheme.accentCoral.withValues(alpha: 0.1),
+                : context.accentColor.withValues(alpha: 0.1),
             label: 'Expires In',
             value: daysUntilExpiry <= 0
                 ? 'Expires today!'

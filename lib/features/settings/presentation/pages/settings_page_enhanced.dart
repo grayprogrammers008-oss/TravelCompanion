@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 /// Enhanced Settings Page with working toggles and preferences
@@ -96,15 +97,15 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                          backgroundColor: context.primaryLight,
                           child: Text(
                             user?.email.isNotEmpty == true
                                 ? user!.email[0].toUpperCase()
                                 : '?',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.primaryTeal,
+                              color: context.primaryColor,
                             ),
                           ),
                         ),
@@ -232,7 +233,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.color_lens,
-                  iconColor: AppTheme.accentPurple,
+                  iconColor: context.accentColor,
                   title: 'Color Scheme',
                   subtitle: themeData.name,
                   onTap: () => context.push('/settings/theme'),
@@ -248,7 +249,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.language,
-                  iconColor: AppTheme.primaryTeal,
+                  iconColor: context.primaryColor,
                   title: 'Language',
                   subtitle: _language,
                   onTap: () => _showLanguageDialog(context),
@@ -256,7 +257,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.attach_money,
-                  iconColor: AppTheme.accentGold,
+                  iconColor: context.accentColor,
                   title: 'Currency',
                   subtitle: _currency,
                   onTap: () => _showCurrencyDialog(context),
@@ -272,7 +273,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.lock,
-                  iconColor: AppTheme.accentOrange,
+                  iconColor: context.accentColor,
                   title: 'Change Password',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -378,19 +379,19 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
+                    color: context.errorColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
-                  child: const Icon(Icons.logout, color: AppTheme.error),
+                  child: Icon(Icons.logout, color: context.errorColor),
                 ),
-                title: const Text(
+                title: Text(
                   'Logout',
                   style: TextStyle(
-                    color: AppTheme.error,
+                    color: context.errorColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                trailing: const Icon(Icons.chevron_right, color: AppTheme.error),
+                trailing: Icon(Icons.chevron_right, color: context.errorColor),
                 onTap: () => _showLogoutDialog(context),
               ),
             ),
@@ -457,10 +458,10 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
       secondary: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppTheme.primaryTeal.withValues(alpha: 0.1),
+          color: context.primaryLight,
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
         ),
-        child: Icon(icon, color: AppTheme.primaryTeal, size: 20),
+        child: Icon(icon, color: context.primaryColor, size: 20),
       ),
       title: Text(
         title,
@@ -479,8 +480,8 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
             )
           : null,
       value: value,
-      activeTrackColor: AppTheme.primaryTeal.withValues(alpha: 0.5),
-      thumbColor: WidgetStateProperty.all(AppTheme.primaryTeal),
+      activeTrackColor: context.primaryColor.withValues(alpha: 0.5),
+      thumbColor: WidgetStateProperty.resolveWith<Color>((states) => context.primaryColor),
       onChanged: onChanged,
     );
   }
@@ -538,7 +539,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
               final isSelected = lang == _language;
               return ListTile(
                 title: Text(lang),
-                trailing: isSelected ? const Icon(Icons.check, color: AppTheme.primaryTeal) : null,
+                trailing: isSelected ? Icon(Icons.check, color: context.primaryColor) : null,
                 onTap: () {
                   setState(() => _language = lang);
                   _savePreference('language', lang);
@@ -578,7 +579,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
               final isSelected = code == _currency;
               return ListTile(
                 title: Text('$code - $name'),
-                trailing: isSelected ? const Icon(Icons.check, color: AppTheme.primaryTeal) : null,
+                trailing: isSelected ? Icon(Icons.check, color: context.primaryColor) : null,
                 onTap: () {
                   setState(() => _currency = code);
                   _savePreference('currency', code);

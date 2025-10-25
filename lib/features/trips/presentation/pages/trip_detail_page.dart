@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
@@ -11,6 +12,7 @@ import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../providers/trip_providers.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 
 class TripDetailPage extends ConsumerStatefulWidget {
   final String tripId;
@@ -47,7 +49,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     final themeData = context.appThemeData;
 
     return Scaffold(
-      backgroundColor: AppTheme.neutral50,
+      backgroundColor: context.backgroundColor,
       body: tripAsync.when(
         data: (trip) => DiagonalGradientBackground(
           child: CustomScrollView(
@@ -191,7 +193,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     // Quick Actions
                     FadeSlideAnimation(
                       delay: AppAnimations.staggerSmall * 3,
-                      child: _buildQuickActions(context),
+                      child: _buildQuickActions(context, trip),
                     ),
                     const SizedBox(height: AppTheme.spacingXl),
                   ],
@@ -221,8 +223,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               const SizedBox(height: AppTheme.spacingLg),
               Text(
                 'Loading trip details...',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.neutral600,
+                style: context.titleStyle.copyWith(
+                      color: context.textColor.withValues(alpha: 0.7),
                     ),
               ),
             ],
@@ -249,8 +251,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 const SizedBox(height: AppTheme.spacingLg),
                 Text(
                   'Error loading trip',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppTheme.neutral900,
+                  style: context.headlineStyle.copyWith(
+                        color: context.textColor,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -258,8 +260,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 Text(
                   error.toString(),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.neutral600,
+                  style: context.bodyStyle.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
                       ),
                 ),
                 const SizedBox(height: AppTheme.spacingXl),
@@ -321,8 +323,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             _buildInfoRow(
               context,
               icon: Icons.access_time,
-              iconColor: AppTheme.accentCoral,
-              iconBg: AppTheme.accentCoral.withValues(alpha: 0.1),
+              iconColor: context.accentColor,
+              iconBg: context.accentColor.withValues(alpha: 0.1),
               label: 'Duration',
               value:
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
@@ -358,7 +360,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutral600,
+                      color: context.textColor.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
               ),
@@ -366,7 +368,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Text(
                 value,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppTheme.neutral900,
+                      color: context.textColor,
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -393,21 +395,21 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.1),
+                  color: context.accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.description,
                   size: 20,
-                  color: AppTheme.accentPurple,
+                  color: context.accentColor,
                 ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Text(
                 'Description',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: context.titleStyle.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.neutral900,
+                      color: context.textColor,
                     ),
               ),
             ],
@@ -415,8 +417,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           const SizedBox(height: AppTheme.spacingMd),
           Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.neutral700,
+            style: context.bodyStyle.copyWith(
+                  color: context.textColor.withValues(alpha: 0.87),
                   height: 1.6,
                 ),
           ),
@@ -441,21 +443,21 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentGold.withValues(alpha: 0.1),
+                  color: context.accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.group,
                   size: 20,
-                  color: AppTheme.accentGold,
+                  color: context.accentColor,
                 ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Text(
                 'Members',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: context.titleStyle.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.neutral900,
+                      color: context.textColor,
                     ),
               ),
               const Spacer(),
@@ -483,12 +485,12 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
               decoration: BoxDecoration(
-                color: AppTheme.neutral100,
+                color: context.backgroundColor,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.person_add_outlined, color: AppTheme.neutral600),
+                  Icon(Icons.person_add_outlined, color: context.textColor.withValues(alpha: 0.7)),
                   const SizedBox(width: AppTheme.spacingMd),
                   const Expanded(
                     child: Text('No other members yet'),
@@ -514,9 +516,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: AppTheme.neutral50,
+                        color: context.backgroundColor,
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        border: Border.all(color: AppTheme.neutral200),
+                        border: Border.all(color: context.textColor.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         children: [
@@ -537,10 +539,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                               children: [
                                 Text(
                                   'Member ${entry.value.userId.substring(0, 8)}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
+                                  style: context.bodyStyle.copyWith(
                                         fontWeight: FontWeight.w600,
                                       ),
                                 ),
@@ -550,7 +549,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                                       .textTheme
                                       .bodySmall
                                       ?.copyWith(
-                                        color: AppTheme.neutral600,
+                                        color: context.textColor.withValues(alpha: 0.7),
                                       ),
                                 ),
                               ],
@@ -586,7 +585,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
+  Widget _buildQuickActions(BuildContext context, dynamic trip) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -607,9 +606,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             const SizedBox(width: AppTheme.spacingMd),
             Text(
               'Quick Actions',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: context.titleStyle.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.neutral900,
+                    color: context.textColor,
                   ),
             ),
           ],
@@ -623,7 +622,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: _ActionCard(
                   icon: Icons.person_add,
                   label: 'Invite',
-                  color: AppTheme.accentGold,
+                  color: context.accentColor,
                   onTap: () {
                     InviteBottomSheet.show(
                       context: context,
@@ -641,7 +640,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: _ActionCard(
                   icon: Icons.list_alt,
                   label: 'Itinerary',
-                  color: AppTheme.accentPurple,
+                  color: context.accentColor,
                   onTap: () {
                     context.push('/trips/${widget.tripId}/itinerary');
                   },
@@ -657,11 +656,48 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               child: FadeSlideAnimation(
                 delay: AppAnimations.staggerTiny * 2,
                 child: _ActionCard(
+                  icon: Icons.chat_bubble_outline,
+                  label: 'Chat',
+                  color: context.primaryColor,
+                  onTap: () {
+                    final currentUserId = ref.read(authStateProvider).value ?? '';
+                    context.push(
+                      '/trips/${widget.tripId}/chat'
+                      '?tripName=${Uri.encodeComponent(trip.trip.name)}'
+                      '&userId=$currentUserId',
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            Expanded(
+              child: FadeSlideAnimation(
+                delay: AppAnimations.staggerTiny * 3,
+                child: _ActionCard(
                   icon: Icons.checklist,
                   label: 'Checklist',
                   color: AppTheme.success,
                   onTap: () {
                     context.push('/trips/${widget.tripId}/checklists');
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spacingMd),
+        Row(
+          children: [
+            Expanded(
+              child: FadeSlideAnimation(
+                delay: AppAnimations.staggerTiny * 4,
+                child: _ActionCard(
+                  icon: Icons.payments,
+                  label: 'Expenses',
+                  color: context.accentColor,
+                  onTap: () {
+                    context.push('/trips/${widget.tripId}/expenses');
                   },
                 ),
               ),
@@ -673,7 +709,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: _ActionCard(
                   icon: Icons.payments,
                   label: 'Expenses',
-                  color: AppTheme.accentCoral,
+                  color: context.accentColor,
                   onTap: () {
                     context.push('/trips/${widget.tripId}/expenses');
                   },
@@ -709,8 +745,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
         content: Text(
           'Are you sure you want to delete this trip? This action cannot be undone.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.neutral600,
+          style: context.bodyStyle.copyWith(
+                color: context.textColor.withValues(alpha: 0.7),
               ),
         ),
         actions: [
@@ -811,9 +847,9 @@ class _ActionCard extends StatelessWidget {
             const SizedBox(height: AppTheme.spacingMd),
             Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: context.bodyStyle.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.neutral900,
+                    color: context.textColor,
                   ),
               textAlign: TextAlign.center,
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 
 /// Enhanced Reaction Picker with Multiple Categories
 /// Shows a beautiful emoji picker with categories and search
@@ -228,9 +229,9 @@ class _ReactionPickerState extends State<ReactionPicker>
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppTheme.radiusXl),
         ),
       ),
@@ -307,9 +308,9 @@ class _ReactionPickerState extends State<ReactionPicker>
             TabBar(
               controller: _tabController,
               isScrollable: true,
-              labelColor: AppTheme.primaryTeal,
+              labelColor: context.primaryColor,
               unselectedLabelColor: AppTheme.neutral500,
-              indicatorColor: AppTheme.primaryTeal,
+              indicatorColor: context.primaryColor,
               labelStyle: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

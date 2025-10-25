@@ -13,6 +13,8 @@ import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
 import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
 import '../../features/checklists/presentation/pages/checklist_list_page.dart';
 import '../../features/checklists/presentation/pages/checklist_detail_page.dart';
+import '../../features/messaging/presentation/pages/chat_screen.dart';
+import '../../features/messaging/presentation/pages/message_queue_screen.dart';
 import '../../features/settings/presentation/pages/theme_settings_page.dart';
 import '../../features/settings/presentation/pages/settings_page_enhanced.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
@@ -40,6 +42,8 @@ class AppRoutes {
   static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
   static const String checklistList = '/trips/:tripId/checklists';
   static const String checklistDetail = '/trips/:tripId/checklists/:checklistId';
+  static const String chat = '/trips/:tripId/chat';
+  static const String messageQueue = '/trips/:tripId/messages/queue';
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
@@ -205,6 +209,28 @@ final routerProvider = Provider<GoRouter>((ref) {
           final tripId = state.pathParameters['tripId']!;
           final checklistId = state.pathParameters['checklistId']!;
           return ChecklistDetailPage(tripId: tripId, checklistId: checklistId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.chat,
+        name: 'chat',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final tripName = state.uri.queryParameters['tripName'] ?? 'Chat';
+          final currentUserId = state.uri.queryParameters['userId'] ?? '';
+          return ChatScreen(
+            tripId: tripId,
+            tripName: tripName,
+            currentUserId: currentUserId,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.messageQueue,
+        name: 'messageQueue',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return MessageQueueScreen(tripId: tripId);
         },
       ),
       GoRoute(

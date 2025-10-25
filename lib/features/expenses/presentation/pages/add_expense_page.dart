@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
@@ -110,9 +111,9 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
 
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Expense added successfully!'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('Expense added successfully!'),
+            backgroundColor: context.successColor,
           ),
         );
       }
@@ -121,7 +122,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.errorColor,
           ),
         );
       }
@@ -231,8 +232,8 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                       : 'Select date (optional)',
                   style: TextStyle(
                     color: _transactionDate != null
-                        ? Theme.of(context).textTheme.bodyLarge?.color
-                        : Theme.of(context).hintColor,
+                        ? context.bodyLarge.color
+                        : context.textColor.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -256,19 +257,18 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: context.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue.shade700),
+                  Icon(Icons.info_outline, color: context.primaryColor),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'This expense will be split equally among all trip members',
-                      style: TextStyle(
-                        color: Colors.blue.shade900,
-                        fontSize: 13,
+                      style: context.bodySmall.copyWith(
+                        color: context.textColor.withValues(alpha: 0.8),
                       ),
                     ),
                   ),

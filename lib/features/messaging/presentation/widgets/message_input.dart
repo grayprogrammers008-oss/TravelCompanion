@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 
 /// Message Input Widget
 /// Text field for composing and sending messages
@@ -63,12 +64,12 @@ class _MessageInputState extends State<MessageInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
         boxShadow: [
           BoxShadow(
-            color: Color(0x0A000000),
-            offset: Offset(0, -2),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.04),
+            offset: const Offset(0, -2),
             blurRadius: 8,
           ),
         ],
@@ -91,7 +92,7 @@ class _MessageInputState extends State<MessageInput> {
                     IconButton(
                       onPressed: widget.isEnabled ? widget.onAttachmentTap : null,
                       icon: const Icon(Icons.add_circle_outline),
-                      color: AppTheme.primaryTeal,
+                      color: context.primaryColor,
                       iconSize: 28,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -127,7 +128,7 @@ class _MessageInputState extends State<MessageInput> {
                               textInputAction: TextInputAction.newline,
                               decoration: InputDecoration(
                                 hintText: 'Type a message...',
-                                hintStyle: TextStyle(
+                                hintStyle: context.bodyMedium.copyWith(
                                   color: AppTheme.neutral400,
                                   fontSize: 15,
                                 ),
@@ -157,10 +158,10 @@ class _MessageInputState extends State<MessageInput> {
                               ),
                               child: Text(
                                 '${_controller.text.length}/2000',
-                                style: TextStyle(
+                                style: context.bodySmall.copyWith(
                                   fontSize: 11,
                                   color: _controller.text.length > 2000
-                                      ? AppTheme.error
+                                      ? context.errorColor
                                       : AppTheme.neutral400,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -192,9 +193,9 @@ class _MessageInputState extends State<MessageInput> {
         horizontal: AppTheme.spacingMd,
         vertical: AppTheme.spacingXs,
       ),
-      decoration: const BoxDecoration(
-        color: AppTheme.primaryPale,
-        border: Border(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        border: const Border(
           bottom: BorderSide(
             color: AppTheme.neutral200,
             width: 1,
@@ -207,7 +208,7 @@ class _MessageInputState extends State<MessageInput> {
             width: 3,
             height: 32,
             decoration: BoxDecoration(
-              color: AppTheme.primaryTeal,
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(AppTheme.radiusFull),
             ),
           ),
@@ -221,7 +222,7 @@ class _MessageInputState extends State<MessageInput> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryTeal,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -271,7 +272,7 @@ class _MessageInputState extends State<MessageInput> {
         ),
         child: Icon(
           Icons.send_rounded,
-          color: canSend ? Colors.white : AppTheme.neutral400,
+          color: canSend ? Theme.of(context).colorScheme.onPrimary : AppTheme.neutral400,
           size: 20,
         ),
       ),

@@ -1,7 +1,50 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+// import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';  // Package available but may have compatibility issues
+
+// Stub classes for WiFi Direct P2P Connection
+// TODO: Replace with actual implementation when package is fully compatible
+class FlutterP2pConnection {
+  Future<bool> createGroup() async => false;
+  Future<bool> startScan() async => false;
+  Future<void> stopScan() async {}
+  Future<bool> connectWithDevice(P2pDevice device) async => false;
+  Future<void> removeGroup() async {}
+  Future<void> disconnect() async {}
+  Future<void> broadcastText(String message) async {}
+  Future<void> broadcastFile({required File file, required String fileName}) async {}
+  Future<File?> downloadFile({required int fileId, required String savePath, Function(double)? onProgress}) async => null;
+  Stream<dynamic> streamHotspotState() => const Stream.empty();
+  Stream<List<P2pDevice>> streamClientList() => const Stream.empty();
+  Stream<List<P2pDevice>> streamScanResults() => const Stream.empty();
+  Stream<TextData> streamReceivedTexts() => const Stream.empty();
+  Stream<FileInfo> streamReceivedFilesInfo() => const Stream.empty();
+}
+
+class HotspotEnabled {}
+
+class P2pDevice {
+  final String? deviceAddress;
+  final String? deviceName;
+
+  P2pDevice({this.deviceAddress, this.deviceName});
+}
+
+class TextData {
+  final String? senderAddress;
+  final String? text;
+
+  TextData({this.senderAddress, this.text});
+}
+
+class FileInfo {
+  final String? senderAddress;
+  final String? fileName;
+  final int? fileId;
+
+  FileInfo({this.senderAddress, this.fileName, this.fileId});
+}
 
 /// WiFi Direct P2P Service for Android
 /// Provides high-bandwidth peer-to-peer communication using WiFi Direct

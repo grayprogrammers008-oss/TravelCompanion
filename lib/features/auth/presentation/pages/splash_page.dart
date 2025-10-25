@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/core/router/app_router.dart';
 import 'package:travel_crew/core/constants/app_constants.dart';
+import 'package:travel_crew/core/theme/theme_extensions.dart';
 
 /// Splash screen that handles initial app routing
 class SplashPage extends ConsumerStatefulWidget {
@@ -47,8 +48,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.secondary,
+              context.primaryColor,
+              context.accentColor,
             ],
           ),
         ),
@@ -60,7 +61,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
               const SizedBox(height: 24),
               Text(
                 AppConstants.appName,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                style: context.headlineLarge.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -68,9 +69,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
               const SizedBox(height: 8),
               Text(
                 AppConstants.appTagline,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: Colors.white70),
+                style: context.bodyLarge.copyWith(
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),

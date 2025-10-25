@@ -64,42 +64,62 @@ final meshMessagesProvider = StreamProvider<MeshMessage>((ref) {
 /// State Provider: BLE Initialized Status
 /// Tracks whether the BLE service has been initialized
 /// Usage: ref.watch(bleInitializedProvider)
-final bleInitializedProvider = StateProvider<bool>((ref) {
-  return false;
-});
+final bleInitializedProvider = NotifierProvider<BleInitializedNotifier, bool>(
+  BleInitializedNotifier.new,
+);
+
+class BleInitializedNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
 
 /// State Provider: BLE Scanning Status
 /// Tracks whether BLE scanning is currently active
 /// Usage: ref.watch(bleScanningProvider)
-final bleScanningProvider = StateProvider<bool>((ref) {
-  return false;
-});
+final bleScanningProvider = NotifierProvider<BleScanningNotifier, bool>(
+  BleScanningNotifier.new,
+);
+
+class BleScanningNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
 
 /// State Provider: Mesh Statistics
 /// Tracks current mesh network statistics
 /// Usage: ref.watch(meshStatisticsProvider)
-final meshStatisticsProvider = StateProvider<MeshStatistics?>((ref) {
-  return null;
-});
+final meshStatisticsProvider = NotifierProvider<MeshStatisticsNotifier, MeshStatistics?>(
+  MeshStatisticsNotifier.new,
+);
+
+class MeshStatisticsNotifier extends Notifier<MeshStatistics?> {
+  @override
+  MeshStatistics? build() => null;
+
+  void set(MeshStatistics? value) => state = value;
+}
 
 // ============================================================================
 // BLE NOTIFIER PROVIDERS
 // ============================================================================
 
 /// Notifier for BLE Service initialization and management
-class BLEServiceNotifier extends StateNotifier<BLEServiceState> {
-  final BLEService _bleService;
-  final EncryptionService _encryptionService;
-  final MeshCoordinator _meshCoordinator;
+class BLEServiceNotifier extends Notifier<BLEServiceState> {
+  late final BLEService _bleService;
+  late final EncryptionService _encryptionService;
+  late final MeshCoordinator _meshCoordinator;
 
-  BLEServiceNotifier({
-    required BLEService bleService,
-    required EncryptionService encryptionService,
-    required MeshCoordinator meshCoordinator,
-  })  : _bleService = bleService,
-        _encryptionService = encryptionService,
-        _meshCoordinator = meshCoordinator,
-        super(BLEServiceState.initial());
+  @override
+  BLEServiceState build() {
+    _bleService = ref.read(bleServiceProvider);
+    _encryptionService = ref.read(encryptionServiceProvider);
+    _meshCoordinator = ref.read(meshCoordinatorProvider);
+    return BLEServiceState.initial();
+  }
 
   /// Initialize all BLE services
   Future<void> initialize({
@@ -196,6 +216,7 @@ class BLEServiceNotifier extends StateNotifier<BLEServiceState> {
       return await _meshCoordinator.sendMeshMessage(
         tripId: tripId,
         recipientId: recipientId,
+        senderId: state.userId ?? '',
         message: message,
       );
     } catch (e) {
@@ -221,13 +242,9 @@ class BLEServiceNotifier extends StateNotifier<BLEServiceState> {
 }
 
 /// Provider for BLE Service Notifier
-final bleServiceNotifierProvider = StateNotifierProvider<BLEServiceNotifier, BLEServiceState>((ref) {
-  return BLEServiceNotifier(
-    bleService: ref.read(bleServiceProvider),
-    encryptionService: ref.read(encryptionServiceProvider),
-    meshCoordinator: ref.read(meshCoordinatorProvider),
-  );
-});
+final bleServiceNotifierProvider = NotifierProvider<BLEServiceNotifier, BLEServiceState>(
+  BLEServiceNotifier.new,
+);
 
 // ============================================================================
 // STATE CLASSES

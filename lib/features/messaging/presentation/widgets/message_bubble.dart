@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/message_entity.dart';
 import 'image_viewer.dart';
 
@@ -77,8 +78,8 @@ class MessageBubble extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: _isOwnMessage
-                          ? AppTheme.primaryTeal
-                          : Colors.white,
+                          ? context.primaryColor
+                          : context.surfaceColor,
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(AppTheme.radiusLg),
                         topRight: const Radius.circular(AppTheme.radiusLg),
@@ -175,8 +176,8 @@ class MessageBubble extends StatelessWidget {
           ),
           child: Text(
             message.message ?? '',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: _isOwnMessage ? Colors.white : AppTheme.neutral900,
+            style: context.bodyMedium.copyWith(
+                  color: _isOwnMessage ? Theme.of(context).colorScheme.onPrimary : context.textColor,
                   height: 1.4,
                 ),
           ),
@@ -244,7 +245,7 @@ class MessageBubble extends StatelessWidget {
             children: [
               Icon(
                 Icons.location_on,
-                color: _isOwnMessage ? Colors.white : AppTheme.primaryTeal,
+                color: _isOwnMessage ? Theme.of(context).colorScheme.onPrimary : context.primaryColor,
                 size: 20,
               ),
               const SizedBox(width: AppTheme.spacingXs),
@@ -268,7 +269,7 @@ class MessageBubble extends StatelessWidget {
             children: [
               Icon(
                 Icons.attach_money,
-                color: _isOwnMessage ? Colors.white : AppTheme.accentGold,
+                color: _isOwnMessage ? Colors.white : context.accentColor,
                 size: 20,
               ),
               const SizedBox(width: AppTheme.spacingXs),
@@ -334,10 +335,10 @@ class MessageBubble extends StatelessWidget {
       );
     } else {
       // Read by others
-      return const Icon(
+      return Icon(
         Icons.done_all,
         size: 14,
-        color: AppTheme.primaryTeal,
+        color: Theme.of(context).colorScheme.primary,
       );
     }
   }
@@ -465,17 +466,17 @@ class _AnimatedReactionBubbleState extends State<_AnimatedReactionBubble>
           decoration: BoxDecoration(
             color: widget.hasReacted
                 ? (widget.isOwnMessage
-                    ? Colors.white.withValues(alpha: 0.3)
-                    : AppTheme.primaryPale)
+                    ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.3)
+                    : Theme.of(context).colorScheme.primaryContainer)
                 : (widget.isOwnMessage
-                    ? Colors.white.withValues(alpha: 0.2)
+                    ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2)
                     : AppTheme.neutral100),
             borderRadius: BorderRadius.circular(AppTheme.radiusFull),
             border: widget.hasReacted
                 ? Border.all(
                     color: widget.isOwnMessage
-                        ? Colors.white.withValues(alpha: 0.5)
-                        : AppTheme.primaryTeal,
+                        ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.5)
+                        : Theme.of(context).colorScheme.primary,
                     width: 1,
                   )
                 : null,

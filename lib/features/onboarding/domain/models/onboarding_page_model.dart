@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
 
 /// Model representing an onboarding screen
 class OnboardingPageModel {
@@ -24,7 +23,7 @@ class OnboardingPageModel {
           title: 'Welcome to Travel Crew',
           subtitle: 'Plan trips together with your crew and make unforgettable memories',
           icon: Icons.luggage,
-          gradientColors: [AppTheme.primaryTeal, AppTheme.primaryDeep],
+          gradientColors: [Color(0xFF00B8A9), Color(0xFF008C7D)],
           features: [
             'Collaborate with friends',
             'Real-time sync',
@@ -37,7 +36,7 @@ class OnboardingPageModel {
           title: 'Split Costs Effortlessly',
           subtitle: 'Track expenses and settle up fairly with automatic splitting',
           icon: Icons.account_balance_wallet,
-          gradientColors: [AppTheme.accentCoral, AppTheme.accentOrange],
+          gradientColors: [Color(0xFFFF6B9D), Color(0xFFFF8A65)],
           features: [
             'Auto-calculate splits',
             'Track who owes what',
@@ -50,7 +49,7 @@ class OnboardingPageModel {
           title: 'Build the Perfect Schedule',
           subtitle: 'Create detailed itineraries and keep everyone on the same page',
           icon: Icons.calendar_month,
-          gradientColors: [AppTheme.primaryTeal, AppTheme.info],
+          gradientColors: [Color(0xFF00B8A9), Color(0xFF3B82F6)],
           features: [
             'Day-by-day planning',
             'Location tracking',
@@ -63,7 +62,7 @@ class OnboardingPageModel {
           title: 'Let AI Guide Your Adventure',
           subtitle: 'Get personalized recommendations and smart suggestions powered by AI',
           icon: Icons.auto_awesome,
-          gradientColors: [AppTheme.accentPurple, AppTheme.accentCoral],
+          gradientColors: [Color(0xFF9B5DE5), Color(0xFFFF6B9D)],
           features: [
             'Smart recommendations',
             'Local insights',

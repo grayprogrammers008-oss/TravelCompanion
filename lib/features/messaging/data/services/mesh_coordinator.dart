@@ -23,6 +23,7 @@ class MeshCoordinator {
   // Streams
   final _meshMessageController = StreamController<MeshMessage>.broadcast();
   Stream<MeshMessage> get meshMessageStream => _meshMessageController.stream;
+  Stream<MeshMessage> get messagesStream => _meshMessageController.stream;
 
   // Callbacks
   Function(MeshMessage message)? onMeshMessageReceived;

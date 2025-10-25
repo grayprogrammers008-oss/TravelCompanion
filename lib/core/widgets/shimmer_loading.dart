@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/theme_extensions.dart';
 
 /// Premium shimmer loading effect
 ///
@@ -79,9 +80,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
                 _controller.value + 0.3,
               ],
               colors: [
-                widget.baseColor ?? AppTheme.neutral200,
-                widget.highlightColor ?? AppTheme.neutral100,
-                widget.baseColor ?? AppTheme.neutral200,
+                widget.baseColor ?? context.surfaceColor,
+                widget.highlightColor ?? context.cardColor,
+                widget.baseColor ?? context.surfaceColor,
               ],
             ).createShader(bounds);
           },
@@ -113,7 +114,7 @@ class ShimmerBox extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppTheme.neutral200,
+          color: context.surfaceColor,
           borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusMd),
         ),
       ),
@@ -135,8 +136,8 @@ class ShimmerCircle extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        decoration: const BoxDecoration(
-          color: AppTheme.neutral200,
+        decoration: BoxDecoration(
+          color: context.surfaceColor,
           shape: BoxShape.circle,
         ),
       ),
@@ -161,7 +162,7 @@ class ShimmerText extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppTheme.neutral200,
+          color: context.surfaceColor,
           borderRadius: BorderRadius.circular(AppTheme.radiusXs),
         ),
       ),

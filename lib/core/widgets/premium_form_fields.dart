@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../theme/theme_access.dart';
+import '../theme/theme_extensions.dart';
 
 /// Premium animated text field with glassmorphic design
 class PremiumTextField extends StatefulWidget {
@@ -131,7 +132,7 @@ class _PremiumTextFieldState extends State<PremiumTextField>
               textCapitalization: widget.textCapitalization,
               inputFormatters: widget.inputFormatters,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppTheme.neutral900,
+                    color: context.textColor,
                     fontWeight: FontWeight.w500,
                   ),
               decoration: InputDecoration(
@@ -142,7 +143,7 @@ class _PremiumTextFieldState extends State<PremiumTextField>
                         widget.prefixIcon,
                         color: _isFocused
                             ? themeData.primaryColor
-                            : AppTheme.neutral400,
+                            : context.textColor.withValues(alpha: context.opacityMedium),
                       )
                     : null,
                 suffixIcon: widget.suffixIcon,
@@ -150,15 +151,15 @@ class _PremiumTextFieldState extends State<PremiumTextField>
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppTheme.neutral200,
+                  borderSide: BorderSide(
+                    color: context.surfaceColor,
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppTheme.neutral200,
+                  borderSide: BorderSide(
+                    color: context.surfaceColor,
                     width: 1.5,
                   ),
                 ),
@@ -171,15 +172,15 @@ class _PremiumTextFieldState extends State<PremiumTextField>
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppTheme.error,
+                  borderSide: BorderSide(
+                    color: context.errorColor,
                     width: 1.5,
                   ),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppTheme.error,
+                  borderSide: BorderSide(
+                    color: context.errorColor,
                     width: 2.0,
                   ),
                 ),
@@ -273,15 +274,15 @@ class _PremiumDropdownState<T> extends State<PremiumDropdown<T>>
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: const BorderSide(
-                  color: AppTheme.neutral200,
+                borderSide: BorderSide(
+                  color: context.surfaceColor,
                   width: 1.5,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: const BorderSide(
-                  color: AppTheme.neutral200,
+                borderSide: BorderSide(
+                  color: context.surfaceColor,
                   width: 1.5,
                 ),
               ),
@@ -366,7 +367,7 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
               primary: themeData.primaryColor,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: AppTheme.neutral900,
+              onSurface: context.textColor,
             ),
           ),
           child: child!,
@@ -395,7 +396,7 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
               primary: themeData.primaryColor,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: AppTheme.neutral900,
+              onSurface: context.textColor,
             ),
           ),
           child: child!,
@@ -425,15 +426,15 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
           fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            borderSide: const BorderSide(
-              color: AppTheme.neutral200,
+            borderSide: BorderSide(
+              color: context.surfaceColor,
               width: 1.5,
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            borderSide: const BorderSide(
-              color: AppTheme.neutral200,
+            borderSide: BorderSide(
+              color: context.surfaceColor,
               width: 1.5,
             ),
           ),
@@ -446,8 +447,8 @@ class _PremiumDateTimePickerState extends State<PremiumDateTimePicker> {
           _getDisplayText(),
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: (widget.selectedDate != null || widget.selectedTime != null)
-                    ? AppTheme.neutral900
-                    : AppTheme.neutral400,
+                    ? context.textColor
+                    : context.textColor.withValues(alpha: context.opacityMedium),
                 fontWeight: FontWeight.w500,
               ),
         ),
@@ -547,7 +548,7 @@ class _PremiumCheckboxState extends State<PremiumCheckbox>
               Text(
                 widget.label!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.neutral700,
+                      color: context.textColor.withValues(alpha: context.opacityHigh),
                     ),
               ),
             ],

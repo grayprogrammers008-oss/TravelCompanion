@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../data/services/ble_service.dart';
 import '../../data/services/mesh_coordinator.dart';
 
@@ -25,7 +26,7 @@ class NearbyPeersSheet extends StatefulWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => NearbyPeersSheet(
+      builder: (buildContext) => NearbyPeersSheet(
         userId: userId,
         userName: userName,
       ),
@@ -161,9 +162,9 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.8,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppTheme.radiusXl),
         ),
       ),
@@ -188,9 +189,9 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
             padding: const EdgeInsets.all(AppTheme.spacingLg),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.bluetooth_searching,
-                  color: AppTheme.primaryTeal,
+                  color: context.primaryColor,
                   size: 28,
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
@@ -220,7 +221,7 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
                 IconButton(
                   icon: Icon(
                     _isScanning ? Icons.stop : Icons.refresh,
-                    color: AppTheme.primaryTeal,
+                    color: context.primaryColor,
                   ),
                   onPressed: _isScanning
                       ? () => _bleService.stopScanning()
@@ -242,7 +243,7 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
               margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               decoration: BoxDecoration(
-                color: AppTheme.primaryPale,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: Row(
@@ -276,15 +277,14 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(AppTheme.primaryTeal),
                     ),
                   ),
-                  SizedBox(width: AppTheme.spacingMd),
+                  const SizedBox(width: AppTheme.spacingMd),
                   Text(
                     'Scanning for nearby peers...',
                     style: TextStyle(
@@ -323,7 +323,7 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AppTheme.primaryTeal, size: 20),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
         const SizedBox(height: 4),
         Text(
           value,
@@ -349,10 +349,10 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: isConnected ? AppTheme.primaryTeal : AppTheme.neutral200,
+        backgroundColor: isConnected ? Theme.of(context).colorScheme.primary : AppTheme.neutral200,
         child: Icon(
           isConnected ? Icons.link : Icons.person,
-          color: isConnected ? Colors.white : AppTheme.neutral600,
+          color: isConnected ? Theme.of(context).colorScheme.onPrimary : AppTheme.neutral600,
         ),
       ),
       title: Text(
@@ -384,8 +384,8 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
           : ElevatedButton(
               onPressed: () => _connectToPeer(peer),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryTeal,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppTheme.spacingMd,
                   vertical: AppTheme.spacingSm,

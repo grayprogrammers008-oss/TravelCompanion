@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
@@ -45,7 +46,7 @@ class ExpenseListPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              Icon(Icons.error_outline, size: 48, color: context.errorColor),
               const SizedBox(height: 16),
               Text('Error loading expenses:\n${error.toString()}'),
               const SizedBox(height: 16),
@@ -84,13 +85,12 @@ class ExpenseListPage extends ConsumerWidget {
                 onPressed: null, // Handled by AnimatedScaleButton
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                icon: const Icon(Icons.add, color: Colors.white, size: 24),
-                label: const Text(
+                icon: Icon(Icons.add, color: context.surfaceColor, size: 24),
+                label: Text(
                   'Add Expense',
-                  style: TextStyle(
-                    color: Colors.white,
+                  style: context.titleMedium.copyWith(
+                    color: context.surfaceColor,
                     fontWeight: FontWeight.w700,
-                    fontSize: 16,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -109,21 +109,17 @@ class ExpenseListPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.receipt_long, size: 120, color: Colors.grey[300]),
+            Icon(Icons.receipt_long, size: 120, color: context.textColor.withValues(alpha: 0.2)),
             const SizedBox(height: 24),
             Text(
               'No expenses yet',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: context.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               'Add expenses to track shared costs and settle up later',
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+              style: context.bodyMedium.copyWith(color: context.textColor.withValues(alpha: 0.6)),
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
@@ -163,8 +159,8 @@ class ExpenseListPage extends ConsumerWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).primaryColor.withValues(alpha: 0.8),
+                context.primaryColor,
+                context.primaryColor.withValues(alpha: 0.8),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -173,15 +169,13 @@ class ExpenseListPage extends ConsumerWidget {
             children: [
               Text(
                 'Total Expenses',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: Colors.white),
+                style: context.titleMedium.copyWith(color: context.surfaceColor),
               ),
               const SizedBox(height: 8),
               Text(
                 total.toINR(),
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
+                style: context.headlineMedium.copyWith(
+                  color: context.surfaceColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -237,18 +231,12 @@ class ExpenseListPage extends ConsumerWidget {
                                 children: [
                                   Text(
                                     expense.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                    style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   if (expense.category != null)
                                     Text(
                                       expense.category!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(color: Colors.grey[600]),
+                                      style: context.bodySmall.copyWith(color: context.textColor.withValues(alpha: 0.6)),
                                     ),
                                 ],
                               ),
@@ -257,11 +245,10 @@ class ExpenseListPage extends ConsumerWidget {
                             // Amount
                             Text(
                               expense.amount.toINR(),
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
+                              style: context.titleLarge.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.primaryColor,
+                              ),
                             ),
                           ],
                         ),
@@ -276,14 +263,13 @@ class ExpenseListPage extends ConsumerWidget {
                             Icon(
                               Icons.person_outline,
                               size: 16,
-                              color: Colors.grey[600],
+                              color: context.textColor.withValues(alpha: 0.6),
                             ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 'Paid by: ${expense.payerName ?? expense.paidBy}',
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: Colors.grey[700]),
+                                style: context.bodySmall.copyWith(color: context.textColor.withValues(alpha: 0.7)),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -292,13 +278,12 @@ class ExpenseListPage extends ConsumerWidget {
                             Icon(
                               Icons.group_outlined,
                               size: 16,
-                              color: Colors.grey[600],
+                              color: context.textColor.withValues(alpha: 0.6),
                             ),
                             const SizedBox(width: 4),
                             Text(
                               'Split ${splits.length} ways',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: Colors.grey[700]),
+                              style: context.bodySmall.copyWith(color: context.textColor.withValues(alpha: 0.7)),
                             ),
                           ],
                         ),
@@ -311,13 +296,12 @@ class ExpenseListPage extends ConsumerWidget {
                               Icon(
                                 Icons.calendar_today,
                                 size: 16,
-                                color: Colors.grey[600],
+                                color: context.textColor.withValues(alpha: 0.6),
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 expense.transactionDate!.toFormattedDate(),
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: Colors.grey[600]),
+                                style: context.bodySmall.copyWith(color: context.textColor.withValues(alpha: 0.6)),
                               ),
                             ],
                           ),
@@ -362,7 +346,7 @@ class ExpenseListPage extends ConsumerWidget {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: context.textColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -371,7 +355,7 @@ class ExpenseListPage extends ConsumerWidget {
               // Title
               Text(
                 expense.title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                style: context.headlineSmall.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -382,23 +366,22 @@ class ExpenseListPage extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  color: context.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   children: [
                     Text(
                       'Total Amount',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: context.bodyMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       expense.amount.toINR(),
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                      style: context.headlineMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: context.primaryColor,
+                      ),
                     ),
                   ],
                 ),
@@ -409,7 +392,7 @@ class ExpenseListPage extends ConsumerWidget {
               if (expense.description != null) ...[
                 Text(
                   'Description',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: context.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -421,9 +404,7 @@ class ExpenseListPage extends ConsumerWidget {
               // Splits
               Text(
                 'Split Details',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
 
@@ -444,16 +425,16 @@ class ExpenseListPage extends ConsumerWidget {
                       title: Text(split.userName ?? 'Member ${split.userId}'),
                       trailing: Text(
                         split.amount.toINR(),
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: context.titleMedium,
                       ),
                       subtitle: split.isSettled
-                          ? const Text(
+                          ? Text(
                               'Settled',
-                              style: TextStyle(color: Colors.green),
+                              style: TextStyle(color: context.successColor),
                             )
-                          : const Text(
+                          : Text(
                               'Not settled',
-                              style: TextStyle(color: Colors.orange),
+                              style: TextStyle(color: context.textColor.withValues(alpha: 0.7)),
                             ),
                     );
                   },
@@ -481,7 +462,7 @@ class ExpenseListPage extends ConsumerWidget {
                           TextButton(
                             onPressed: () => Navigator.pop(context, true),
                             style: TextButton.styleFrom(
-                              foregroundColor: Colors.red,
+                              foregroundColor: context.errorColor,
                             ),
                             child: const Text('Delete'),
                           ),
@@ -499,9 +480,9 @@ class ExpenseListPage extends ConsumerWidget {
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Expense deleted successfully'),
-                              backgroundColor: Colors.green,
+                            SnackBar(
+                              content: const Text('Expense deleted successfully'),
+                              backgroundColor: context.successColor,
                             ),
                           );
                         }
@@ -510,7 +491,7 @@ class ExpenseListPage extends ConsumerWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Error: ${e.toString()}'),
-                              backgroundColor: Colors.red,
+                              backgroundColor: context.errorColor,
                             ),
                           );
                         }
@@ -518,16 +499,16 @@ class ExpenseListPage extends ConsumerWidget {
                     }
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.red),
+                    side: BorderSide(color: context.errorColor),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
+                      Icon(Icons.delete, color: context.errorColor),
+                      const SizedBox(width: 8),
                       Text(
                         'Delete Expense',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: context.errorColor),
                       ),
                     ],
                   ),
@@ -564,7 +545,7 @@ class ExpenseListPage extends ConsumerWidget {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: context.textColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -572,7 +553,7 @@ class ExpenseListPage extends ConsumerWidget {
 
               Text(
                 'Balances',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                style: context.headlineSmall.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -615,9 +596,7 @@ class ExpenseListPage extends ConsumerWidget {
                                     Expanded(
                                       child: Text(
                                         balance.userName,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleMedium,
+                                        style: context.titleMedium,
                                       ),
                                     ),
                                   ],
@@ -633,15 +612,11 @@ class ExpenseListPage extends ConsumerWidget {
                                       children: [
                                         Text(
                                           'Paid',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodySmall,
+                                          style: context.bodySmall,
                                         ),
                                         Text(
                                           balance.totalPaid.toINR(),
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleSmall,
+                                          style: context.titleSmall,
                                         ),
                                       ],
                                     ),
@@ -651,15 +626,11 @@ class ExpenseListPage extends ConsumerWidget {
                                       children: [
                                         Text(
                                           'Owes',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodySmall,
+                                          style: context.bodySmall,
                                         ),
                                         Text(
                                           balance.totalOwed.toINR(),
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleSmall,
+                                          style: context.titleSmall,
                                         ),
                                       ],
                                     ),
@@ -669,23 +640,18 @@ class ExpenseListPage extends ConsumerWidget {
                                       children: [
                                         Text(
                                           'Balance',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodySmall,
+                                          style: context.bodySmall,
                                         ),
                                         Text(
                                           balance.balance.abs().toINR(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                color: isZero
-                                                    ? Colors.grey
-                                                    : isPositive
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                          style: context.titleMedium.copyWith(
+                                            color: isZero
+                                                ? context.textColor.withValues(alpha: 0.5)
+                                                : isPositive
+                                                ? context.successColor
+                                                : context.errorColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -697,13 +663,12 @@ class ExpenseListPage extends ConsumerWidget {
                                     isPositive
                                         ? 'Gets back ${balance.balance.toINR()}'
                                         : 'Owes ${balance.balance.abs().toINR()}',
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: isPositive
-                                              ? Colors.green
-                                              : Colors.red,
-                                          fontStyle: FontStyle.italic,
-                                        ),
+                                    style: context.bodySmall.copyWith(
+                                      color: isPositive
+                                          ? context.successColor
+                                          : context.errorColor,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
                                 ],
                               ],

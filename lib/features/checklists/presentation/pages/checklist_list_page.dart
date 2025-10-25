@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../providers/checklist_providers.dart';
 import '../widgets/checklist_card.dart';
 import '../widgets/edit_checklist_dialog.dart';
@@ -22,7 +23,7 @@ class ChecklistListPage extends ConsumerWidget {
     final checklistsAsync = ref.watch(tripChecklistsProvider(tripId));
 
     return Scaffold(
-      backgroundColor: AppTheme.neutral50,
+      backgroundColor: context.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Checklists',
@@ -139,8 +140,8 @@ class ChecklistListPage extends ConsumerWidget {
               const SizedBox(height: AppTheme.spacingLg),
               Text(
                 'Loading checklists...',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.neutral600,
+                style: context.titleMedium.copyWith(
+                      color: context.textColor.withValues(alpha: 0.7),
                     ),
               ),
             ],
@@ -167,8 +168,8 @@ class ChecklistListPage extends ConsumerWidget {
                 const SizedBox(height: AppTheme.spacingLg),
                 Text(
                   'Error loading checklists',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppTheme.neutral900,
+                  style: context.headlineSmall.copyWith(
+                        color: context.textColor,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -176,8 +177,8 @@ class ChecklistListPage extends ConsumerWidget {
                 Text(
                   error.toString(),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.neutral600,
+                  style: context.bodyMedium.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
                       ),
                 ),
                 const SizedBox(height: AppTheme.spacingXl),
@@ -244,8 +245,8 @@ class ChecklistListPage extends ConsumerWidget {
             const SizedBox(height: AppTheme.spacingXl),
             Text(
               'No Checklists Yet',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: AppTheme.neutral900,
+              style: context.headlineMedium.copyWith(
+                    color: context.textColor,
                     fontWeight: FontWeight.w700,
                   ),
             ),
@@ -253,8 +254,8 @@ class ChecklistListPage extends ConsumerWidget {
             Text(
               'Create your first checklist to start organizing\nyour trip tasks and packing items',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppTheme.neutral600,
+              style: context.bodyLarge.copyWith(
+                    color: context.textColor.withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: AppTheme.spacing2xl),

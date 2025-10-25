@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../auth/data/datasources/profile_photo_service.dart';
 
@@ -138,7 +139,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.photo_camera, color: AppTheme.primaryTeal),
+              leading: Icon(Icons.photo_camera, color: context.primaryColor),
               title: const Text('Take Photo'),
               onTap: () {
                 Navigator.pop(context);
@@ -146,7 +147,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: AppTheme.primaryTeal),
+              leading: Icon(Icons.photo_library, color: context.primaryColor),
               title: const Text('Choose from Gallery'),
               onTap: () {
                 Navigator.pop(context);
@@ -154,7 +155,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.cancel, color: AppTheme.neutral600),
+              leading: Icon(Icons.cancel, color: context.textColor.withValues(alpha: 0.7)),
               title: const Text('Cancel'),
               onTap: () => Navigator.pop(context),
             ),
@@ -323,7 +324,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       }
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryTeal,
+                backgroundColor: context.primaryColor,
                 foregroundColor: Colors.white,
               ),
               child: isLoading
@@ -349,7 +350,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final themeData = context.appThemeData;
 
     return Scaffold(
-      backgroundColor: AppTheme.neutral50,
+      backgroundColor: context.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Profile',
@@ -424,7 +425,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ),
                       CircleAvatar(
                         radius: 60,
-                        backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                        backgroundColor: context.primaryColor.withValues(alpha: 0.1),
                         child: user.avatarUrl != null
                             ? ClipOval(
                                 child: Image.network(
@@ -446,8 +447,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           onTap: _isUploadingPhoto ? null : _showPhotoSourceDialog,
                           child: Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: AppTheme.primaryTeal,
+                            decoration: BoxDecoration(
+                              color: context.primaryColor,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -483,7 +484,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           'Personal Information',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: AppTheme.neutral900,
+                                color: context.textColor,
                               ),
                         ),
                         const SizedBox(height: AppTheme.spacingLg),
@@ -566,11 +567,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         // Account Created Date
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          leading: const Icon(Icons.calendar_today, color: AppTheme.neutral600),
+                          leading: Icon(Icons.calendar_today, color: context.textColor.withValues(alpha: 0.7)),
                           title: const Text('Account Created'),
                           subtitle: Text(
                             _formatDate(user.createdAt),
-                            style: const TextStyle(color: AppTheme.neutral600),
+                            style: TextStyle(color: context.textColor.withValues(alpha: 0.7)),
                           ),
                         ),
                       ],
@@ -599,52 +600,62 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           'Your Travel Stats',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: AppTheme.neutral900,
+                                color: context.textColor,
                               ),
                         ),
                         const SizedBox(height: AppTheme.spacingLg),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatCard(
-                                icon: Icons.luggage,
-                                label: 'Trips',
-                                value: '0', // TODO: Query from trip_members table
-                                color: AppTheme.primaryTeal,
+                        Builder(
+                          builder: (context) => Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildStatCard(
+                                      context: context,
+                                      icon: Icons.luggage,
+                                      label: 'Trips',
+                                      value: '0', // TODO: Query from trip_members table
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppTheme.spacingMd),
+                                  Expanded(
+                                    child: _buildStatCard(
+                                      context: context,
+                                      icon: Icons.receipt_long,
+                                      label: 'Expenses',
+                                      value: '0', // TODO: Query from expense_splits table
+                                      color: context.accentColor,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            Expanded(
-                              child: _buildStatCard(
-                                icon: Icons.receipt_long,
-                                label: 'Expenses',
-                                value: '0', // TODO: Query from expense_splits table
-                                color: AppTheme.accentCoral,
+                              const SizedBox(height: AppTheme.spacingMd),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildStatCard(
+                                      context: context,
+                                      icon: Icons.attach_money,
+                                      label: 'Total Spent',
+                                      value: '₹0', // TODO: Sum from expenses table
+                                      color: context.accentColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppTheme.spacingMd),
+                                  Expanded(
+                                    child: _buildStatCard(
+                                      context: context,
+                                      icon: Icons.people,
+                                      label: 'Crew Members',
+                                      value: '0', // TODO: Count unique members from trip_members
+                                      color: context.accentColor,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatCard(
-                                icon: Icons.attach_money,
-                                label: 'Total Spent',
-                                value: '₹0', // TODO: Sum from expenses table
-                                color: AppTheme.accentOrange,
-                              ),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            Expanded(
-                              child: _buildStatCard(
-                                icon: Icons.people,
-                                label: 'Crew Members',
-                                value: '0', // TODO: Count unique members from trip_members
-                                color: AppTheme.accentPurple,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -658,7 +669,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _saveProfile,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryTeal,
+                          backgroundColor: context.primaryColor,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
                           shape: RoundedRectangleBorder(
@@ -701,10 +712,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentOrange.withValues(alpha: 0.1),
+                              color: context.accentColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                             ),
-                            child: const Icon(Icons.lock, color: AppTheme.accentOrange),
+                            child: Icon(Icons.lock, color: context.accentColor),
                           ),
                           title: const Text('Change Password'),
                           trailing: const Icon(Icons.chevron_right),
@@ -759,10 +770,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Widget _buildAvatarInitial(String? email) {
     return Text(
       email != null && email.isNotEmpty ? email[0].toUpperCase() : '?',
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 48,
         fontWeight: FontWeight.w600,
-        color: AppTheme.primaryTeal,
+        color: context.primaryColor,
       ),
     );
   }
@@ -808,6 +819,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   Widget _buildStatCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
@@ -834,9 +846,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           const SizedBox(height: AppTheme.spacing2xs),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: AppTheme.neutral600,
+              color: context.textColor.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),

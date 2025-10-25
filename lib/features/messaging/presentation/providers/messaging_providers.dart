@@ -154,7 +154,7 @@ final messageUpdatesProvider = StreamProvider.family<MessageEntity, String>((ref
 /// State Provider: Connectivity Status
 /// Tracks the current connectivity status
 /// Usage: ref.watch(connectivityStatusProvider)
-final connectivityStatusProvider = StreamProvider<ConnectivityResult>((ref) {
+final connectivityStatusProvider = StreamProvider<List<ConnectivityResult>>((ref) {
   final connectivity = ref.read(connectivityProvider);
   return connectivity.onConnectivityChanged;
 });

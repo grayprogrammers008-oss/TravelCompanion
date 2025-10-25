@@ -1,15 +1,15 @@
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../data/services/image_picker_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../domain/entities/message_entity.dart';
-import '../../domain/usecases/send_message_usecase.dart';
 import '../providers/messaging_providers.dart';
 import '../providers/ble_providers.dart';
-import '../providers/p2p_providers.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
 import '../widgets/sync_fab.dart';
@@ -167,13 +167,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             const SizedBox(height: AppTheme.spacingMd),
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppTheme.primaryTeal),
+              leading: Icon(Icons.camera_alt, color: context.primaryColor),
               title: const Text('Camera'),
               subtitle: const Text('Take a photo'),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: AppTheme.accentCoral),
+              leading: Icon(Icons.photo_library, color: context.accentColor),
               title: const Text('Gallery'),
               subtitle: const Text('Choose from gallery'),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
@@ -407,8 +407,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             Text(widget.tripName),
             // Connectivity indicator
             connectivityAsync.whenOrNull(
-              data: (connectivity) {
-                final isOffline = connectivity.name == 'none';
+              data: (connectivityList) {
+                final isOffline = connectivityList.contains(ConnectivityResult.none) || connectivityList.isEmpty;
                 if (!isOffline) return null;
 
                 return Text(
@@ -447,7 +447,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: context.errorColor,
                           shape: BoxShape.circle,
                         ),
                         constraints: const BoxConstraints(
@@ -760,10 +760,10 @@ class _ReactionButton extends StatelessWidget {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isMore ? AppTheme.primaryPale : AppTheme.neutral100,
+          color: isMore ? Theme.of(context).colorScheme.primaryContainer : AppTheme.neutral100,
           shape: BoxShape.circle,
           border: Border.all(
-            color: isMore ? AppTheme.primaryTeal : AppTheme.neutral200,
+            color: isMore ? Theme.of(context).colorScheme.primary : AppTheme.neutral200,
             width: 1.5,
           ),
         ),
@@ -772,7 +772,7 @@ class _ReactionButton extends StatelessWidget {
             emoji,
             style: TextStyle(
               fontSize: 28,
-              color: isMore ? AppTheme.primaryTeal : null,
+              color: isMore ? Theme.of(context).colorScheme.primary : null,
             ),
           ),
         ),

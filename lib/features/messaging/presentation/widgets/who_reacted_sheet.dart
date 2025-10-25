@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/message_entity.dart';
 
 /// Who Reacted Bottom Sheet
@@ -82,9 +83,9 @@ class _WhoReactedSheetState extends State<WhoReactedSheet>
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: context.surfaceColor,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppTheme.radiusXl),
         ),
       ),
@@ -131,9 +132,9 @@ class _WhoReactedSheetState extends State<WhoReactedSheet>
           TabBar(
             controller: _tabController,
             isScrollable: true,
-            labelColor: AppTheme.primaryTeal,
+            labelColor: context.primaryColor,
             unselectedLabelColor: AppTheme.neutral500,
-            indicatorColor: AppTheme.primaryTeal,
+            indicatorColor: context.primaryColor,
             indicatorSize: TabBarIndicatorSize.label,
             labelPadding: const EdgeInsets.symmetric(
               horizontal: AppTheme.spacingMd,
@@ -148,7 +149,7 @@ class _WhoReactedSheetState extends State<WhoReactedSheet>
                   ),
                   decoration: BoxDecoration(
                     color: _tabController.index == 0
-                        ? AppTheme.primaryPale
+                        ? Theme.of(context).colorScheme.primaryContainer
                         : AppTheme.neutral100,
                     borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                   ),
@@ -180,7 +181,7 @@ class _WhoReactedSheetState extends State<WhoReactedSheet>
                     ),
                     decoration: BoxDecoration(
                       color: _tabController.index == index
-                          ? AppTheme.primaryPale
+                          ? Theme.of(context).colorScheme.primaryContainer
                           : AppTheme.neutral100,
                       borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                     ),
@@ -246,11 +247,11 @@ class _WhoReactedSheetState extends State<WhoReactedSheet>
 
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: AppTheme.primaryPale,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             child: Text(
               userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-              style: const TextStyle(
-                color: AppTheme.primaryTeal,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),

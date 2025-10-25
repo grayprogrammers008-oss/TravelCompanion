@@ -14,6 +14,23 @@ class ImageViewer extends StatefulWidget {
     this.heroTag,
   });
 
+  /// Show image viewer as a full-screen dialog
+  static Future<void> show(
+    BuildContext context, {
+    required String imageUrl,
+    String? heroTag,
+  }) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ImageViewer(
+          imageUrl: imageUrl,
+          heroTag: heroTag,
+        ),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
   @override
   State<ImageViewer> createState() => _ImageViewerState();
 }

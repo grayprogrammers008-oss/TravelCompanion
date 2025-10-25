@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../theme/theme_access.dart';
+import '../theme/theme_extensions.dart';
 
 /// Animated gradient background with wave effect
 class AnimatedGradientBackground extends StatefulWidget {
@@ -58,8 +58,8 @@ class _AnimatedGradientBackgroundState
     final colors = widget.colors ??
         [
           themeData.primaryColor,
-          AppTheme.accentPurple,
-          AppTheme.accentCoral,
+          themeData.accentColor,
+          themeData.accentColor.withValues(alpha: 0.7),
         ];
 
     return AnimatedBuilder(
@@ -102,9 +102,9 @@ class MeshGradientBackgroundSimple extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
     final defaultGradients = [
-      [themeData.primaryColor, AppTheme.accentPurple],
-      [AppTheme.accentCoral, AppTheme.accentGold],
-      [AppTheme.accentOrange, themeData.primaryColor],
+      [themeData.primaryColor, themeData.accentColor],
+      [themeData.accentColor, themeData.accentColor.withValues(alpha: 0.6)],
+      [themeData.accentColor.withValues(alpha: 0.8), themeData.primaryColor],
     ];
 
     final usedGradients = gradients ?? defaultGradients;
@@ -112,7 +112,7 @@ class MeshGradientBackgroundSimple extends StatelessWidget {
     return Stack(
       children: [
         // Base color
-        Container(color: AppTheme.neutral50),
+        Container(color: context.surfaceColor),
 
         // Gradient layers
         ...List.generate(usedGradients.length, (index) {
@@ -178,7 +178,7 @@ class GlassmorphicBackground extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: [
                 themeData.primaryColor.withValues(alpha: 0.1),
-                AppTheme.accentPurple.withValues(alpha: 0.05),
+                themeData.accentColor.withValues(alpha: 0.05),
               ],
             ),
       ),
@@ -253,15 +253,15 @@ class _FloatingCirclesBackgroundState extends State<FloatingCirclesBackground>
     final colors = widget.colors ??
         [
           themeData.primaryColor.withValues(alpha: 0.1),
-          AppTheme.accentCoral.withValues(alpha: 0.1),
-          AppTheme.accentPurple.withValues(alpha: 0.1),
-          AppTheme.accentGold.withValues(alpha: 0.1),
-          AppTheme.accentOrange.withValues(alpha: 0.1),
+          themeData.accentColor.withValues(alpha: 0.1),
+          themeData.accentColor.withValues(alpha: 0.08),
+          themeData.primaryColor.withValues(alpha: 0.08),
+          themeData.accentColor.withValues(alpha: 0.06),
         ];
 
     return Stack(
       children: [
-        Container(color: AppTheme.neutral50),
+        Container(color: context.surfaceColor),
         ...List.generate(widget.circleCount, (index) {
           return AnimatedBuilder(
             animation: _controllers[index],
@@ -342,7 +342,7 @@ class _WaveBackgroundState extends State<WaveBackground>
     final themeData = context.appThemeData;
     return Stack(
       children: [
-        Container(color: AppTheme.neutral50),
+        Container(color: context.surfaceColor),
         AnimatedBuilder(
           animation: _animation,
           builder: (context, child) {

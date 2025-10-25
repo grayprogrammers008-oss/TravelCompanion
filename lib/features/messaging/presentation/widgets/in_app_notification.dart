@@ -194,7 +194,7 @@ class _NotificationBannerState extends State<_NotificationBanner>
             margin: const EdgeInsets.all(AppTheme.spacingMd),
             padding: const EdgeInsets.all(AppTheme.spacingMd),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               boxShadow: AppTheme.shadowLg,
             ),
@@ -203,7 +203,7 @@ class _NotificationBannerState extends State<_NotificationBanner>
                 // Avatar
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: AppTheme.primaryPale,
+                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                   backgroundImage: widget.payload.senderAvatarUrl != null
                       ? NetworkImage(widget.payload.senderAvatarUrl!)
                       : null,
@@ -213,10 +213,10 @@ class _NotificationBannerState extends State<_NotificationBanner>
                                   ?.substring(0, 1)
                                   .toUpperCase() ??
                               '?',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: AppTheme.primaryTeal,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         )
                       : null,

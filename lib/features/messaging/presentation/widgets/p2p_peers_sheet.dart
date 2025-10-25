@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../data/services/p2p_connection_manager.dart';
-import '../providers/p2p_providers.dart';
+import '../providers/p2p_providers.dart' show
+  p2pConnectionNotifierProvider,
+  p2pPeersProvider,
+  P2PNotifierState,
+  P2PConnectionMode;
+
+// Type alias for consistency with old code
+typedef P2PConnectionState = P2PNotifierState;
 
 /// P2P Peers Bottom Sheet
 /// Shows discovered and connected peers for WiFi Direct (Android) or Multipeer (iOS)
@@ -89,7 +97,7 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
               error: (error, stack) => Center(
                 child: Text(
                   'Error loading peers: $error',
-                  style: const TextStyle(color: AppTheme.error),
+                  style: TextStyle(color: context.errorColor),
                 ),
               ),
             ),
@@ -112,7 +120,7 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
           state.transportType == P2PTransportType.wifiDirect
               ? Icons.wifi
               : Icons.devices,
-          color: AppTheme.primaryTeal,
+          color: context.primaryColor,
           size: 32,
         ),
         const SizedBox(width: AppTheme.spacingSm),
@@ -122,13 +130,13 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
             children: [
               Text(
                 'High-Speed P2P',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                style: context.titleLarge.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               Text(
                 transportName,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: context.bodySmall.copyWith(
                       color: AppTheme.neutral400,
                     ),
               ),
@@ -167,9 +175,9 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: state.mode == P2PConnectionMode.host
-                  ? AppTheme.success
-                  : AppTheme.primaryTeal,
-              foregroundColor: Colors.white,
+                  ? context.successColor
+                  : context.primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),
@@ -192,8 +200,8 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
             style: ElevatedButton.styleFrom(
               backgroundColor: state.mode == P2PConnectionMode.discovering
                   ? AppTheme.warning
-                  : AppTheme.accentCoral,
-              foregroundColor: Colors.white,
+                  : context.accentColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),
@@ -216,7 +224,7 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
               icon: Icons.people,
               label: 'Connected',
               value: '${stats.connectedPeers}',
-              color: AppTheme.success,
+              color: context.successColor,
             ),
             _buildStatItem(
               icon: Icons.visibility,
@@ -230,7 +238,7 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
               value: stats.transportType == P2PTransportType.wifiDirect
                   ? '250 Mbps'
                   : 'Auto',
-              color: AppTheme.primaryTeal,
+              color: context.primaryColor,
             ),
           ],
         ),
@@ -322,10 +330,10 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
       margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: isConnected ? AppTheme.success : AppTheme.info,
+          backgroundColor: isConnected ? context.successColor : AppTheme.info,
           child: Icon(
             isConnected ? Icons.link : Icons.person,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         title: Text(
@@ -342,13 +350,13 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
                 Icon(
                   isConnected ? Icons.check_circle : Icons.radio_button_unchecked,
                   size: 16,
-                  color: isConnected ? AppTheme.success : AppTheme.neutral400,
+                  color: isConnected ? context.successColor : AppTheme.neutral400,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   peer.status,
                   style: TextStyle(
-                    color: isConnected ? AppTheme.success : AppTheme.neutral400,
+                    color: isConnected ? context.successColor : AppTheme.neutral400,
                     fontSize: 12,
                   ),
                 ),
@@ -359,14 +367,14 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryTeal.withOpacity(0.1),
+                    color: context.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     peer.transportName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
-                      color: AppTheme.primaryTeal,
+                      color: context.primaryColor,
                     ),
                   ),
                 ),
@@ -376,15 +384,15 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
         ),
         trailing: isConnected
             ? IconButton(
-                icon: const Icon(Icons.link_off, color: AppTheme.error),
+                icon: Icon(Icons.link_off, color: context.errorColor),
                 tooltip: 'Disconnect',
                 onPressed: () => _disconnectFromPeer(peer.id),
               )
             : ElevatedButton(
                 onPressed: () => _connectToPeer(peer.id),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryTeal,
-                  foregroundColor: Colors.white,
+                  backgroundColor: context.primaryColor,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
                 child: const Text('Connect'),
               ),
@@ -420,7 +428,7 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
           content: Text(
             success ? 'Connected to peer' : 'Failed to connect',
           ),
-          backgroundColor: success ? AppTheme.success : AppTheme.error,
+          backgroundColor: success ? context.successColor : context.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -435,8 +443,8 @@ class _P2PPeersSheetState extends ConsumerState<P2PPeersSheet> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Disconnected from peer'),
+        SnackBar(
+          content: const Text('Disconnected from peer'),
           backgroundColor: AppTheme.info,
           behavior: SnackBarBehavior.floating,
         ),

@@ -19,7 +19,6 @@ class BLEService {
   // State
   bool _isInitialized = false;
   bool _isScanning = false;
-  bool _isAdvertising = false;
 
   // Discovered peers
   final Map<String, BLEPeer> _discoveredPeers = {};

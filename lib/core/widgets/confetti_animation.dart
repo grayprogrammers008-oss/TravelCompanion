@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import '../theme/theme_extensions.dart';
 
 /// Premium confetti animation for celebrations
 ///
@@ -43,29 +43,23 @@ class _ConfettiAnimationState extends State<ConfettiAnimation>
         widget.onComplete?.call();
       }
     });
-
-    if (widget.show) {
-      _generateParticles();
-      _controller.forward();
-    }
   }
 
   @override
   void didUpdateWidget(ConfettiAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.show && !oldWidget.show) {
-      _generateParticles();
       _controller.reset();
       _controller.forward();
     }
   }
 
-  void _generateParticles() {
+  void _generateParticles(BuildContext context) {
     _particles.clear();
-    // Get theme data in initState - store it for later use
+    final colors = _getColors(context);
     for (int i = 0; i < widget.particleCount; i++) {
       _particles.add(ConfettiParticle(
-        color: _getRandomColor(),
+        color: colors[_random.nextInt(colors.length)],
         size: _random.nextDouble() * 10 + 5,
         startX: _random.nextDouble(),
         startY: -0.1,
@@ -77,16 +71,15 @@ class _ConfettiAnimationState extends State<ConfettiAnimation>
     }
   }
 
-  Color _getRandomColor() {
-    final colors = [
-      AppTheme.accentCoral,
-      AppTheme.accentGold,
-      AppTheme.accentPurple,
-      AppTheme.accentOrange,
-      AppTheme.success,
-      AppTheme.info,
+  List<Color> _getColors(BuildContext context) {
+    return [
+      context.accentColor,
+      context.accentColor.withValues(alpha: 0.8),
+      context.primaryColor,
+      context.primaryColor.withValues(alpha: 0.7),
+      context.successColor,
+      context.primaryColor.withValues(alpha: 0.6),
     ];
-    return colors[_random.nextInt(colors.length)];
   }
 
   @override
@@ -99,6 +92,12 @@ class _ConfettiAnimationState extends State<ConfettiAnimation>
   Widget build(BuildContext context) {
     if (!widget.show) {
       return const SizedBox.shrink();
+    }
+
+    // Generate particles on first build when showing
+    if (_particles.isEmpty) {
+      _generateParticles(context);
+      _controller.forward();
     }
 
     return IgnorePointer(

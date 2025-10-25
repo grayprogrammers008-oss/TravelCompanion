@@ -34,8 +34,8 @@ final p2pMessagesProvider = StreamProvider<P2PMessage>((ref) {
 
 /// Stream Provider: P2P Connection State
 /// Provides a realtime stream of connection state changes
-/// Usage: ref.watch(p2pConnectionStateProvider)
-final p2pConnectionStateProvider = StreamProvider<P2PConnectionState>((ref) {
+/// Usage: ref.watch(p2pConnectionStateStreamProvider)
+final p2pConnectionStateStreamProvider = StreamProvider<P2PConnectionState>((ref) {
   final manager = ref.read(p2pConnectionManagerProvider);
   return manager.connectionStateStream;
 });
@@ -51,36 +51,58 @@ final p2pFileProgressProvider = StreamProvider<P2PFileProgress>((ref) {
 /// State Provider: P2P Initialized Status
 /// Tracks whether the P2P service has been initialized
 /// Usage: ref.watch(p2pInitializedProvider)
-final p2pInitializedProvider = StateProvider<bool>((ref) {
-  return false;
-});
+final p2pInitializedProvider = NotifierProvider<P2pInitializedNotifier, bool>(
+  P2pInitializedNotifier.new,
+);
+
+class P2pInitializedNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
 
 /// State Provider: P2P Connection Mode
 /// Tracks current mode (idle, host, discovering)
 /// Usage: ref.watch(p2pConnectionModeProvider)
-final p2pConnectionModeProvider = StateProvider<P2PConnectionMode>((ref) {
-  return P2PConnectionMode.idle;
-});
+final p2pConnectionModeProvider = NotifierProvider<P2pConnectionModeNotifier, P2PConnectionMode>(
+  P2pConnectionModeNotifier.new,
+);
+
+class P2pConnectionModeNotifier extends Notifier<P2PConnectionMode> {
+  @override
+  P2PConnectionMode build() => P2PConnectionMode.idle;
+
+  void set(P2PConnectionMode value) => state = value;
+}
 
 /// State Provider: P2P Statistics
 /// Tracks current P2P connection statistics
 /// Usage: ref.watch(p2pStatisticsProvider)
-final p2pStatisticsProvider = StateProvider<P2PStatistics?>((ref) {
-  return null;
-});
+final p2pStatisticsProvider = NotifierProvider<P2pStatisticsNotifier, P2PStatistics?>(
+  P2pStatisticsNotifier.new,
+);
+
+class P2pStatisticsNotifier extends Notifier<P2PStatistics?> {
+  @override
+  P2PStatistics? build() => null;
+
+  void set(P2PStatistics? value) => state = value;
+}
 
 // ============================================================================
 // P2P NOTIFIER PROVIDERS
 // ============================================================================
 
 /// Notifier for P2P Connection Manager initialization and management
-class P2PConnectionNotifier extends StateNotifier<P2PConnectionState> {
-  final P2PConnectionManager _manager;
+class P2PConnectionNotifier extends Notifier<P2PNotifierState> {
+  late final P2PConnectionManager _manager;
 
-  P2PConnectionNotifier({
-    required P2PConnectionManager manager,
-  })  : _manager = manager,
-        super(P2PConnectionState.initial());
+  @override
+  P2PNotifierState build() {
+    _manager = ref.read(p2pConnectionManagerProvider);
+    return P2PNotifierState.initial();
+  }
 
   /// Initialize P2P services
   Future<void> initialize({
@@ -271,12 +293,9 @@ class P2PConnectionNotifier extends StateNotifier<P2PConnectionState> {
 }
 
 /// Provider for P2P Connection Notifier
-final p2pConnectionNotifierProvider =
-    StateNotifierProvider<P2PConnectionNotifier, P2PConnectionState>((ref) {
-  return P2PConnectionNotifier(
-    manager: ref.read(p2pConnectionManagerProvider),
-  );
-});
+final p2pConnectionNotifierProvider = NotifierProvider<P2PConnectionNotifier, P2PNotifierState>(
+  P2PConnectionNotifier.new,
+);
 
 // ============================================================================
 // STATE CLASSES
@@ -301,7 +320,7 @@ enum P2PConnectionMode {
 }
 
 /// State for P2P Connection Notifier
-class P2PConnectionState {
+class P2PNotifierState {
   final P2PStatus status;
   final P2PConnectionMode mode;
   final String? userId;
@@ -311,7 +330,7 @@ class P2PConnectionState {
   final P2PStatistics? statistics;
   final String? errorMessage;
 
-  P2PConnectionState({
+  P2PNotifierState({
     required this.status,
     required this.mode,
     this.userId,
@@ -322,14 +341,14 @@ class P2PConnectionState {
     this.errorMessage,
   });
 
-  factory P2PConnectionState.initial() {
-    return P2PConnectionState(
+  factory P2PNotifierState.initial() {
+    return P2PNotifierState(
       status: P2PStatus.initial,
       mode: P2PConnectionMode.idle,
     );
   }
 
-  P2PConnectionState copyWith({
+  P2PNotifierState copyWith({
     P2PStatus? status,
     P2PConnectionMode? mode,
     String? userId,
@@ -339,7 +358,7 @@ class P2PConnectionState {
     P2PStatistics? statistics,
     String? errorMessage,
   }) {
-    return P2PConnectionState(
+    return P2PNotifierState(
       status: status ?? this.status,
       mode: mode ?? this.mode,
       userId: userId ?? this.userId,

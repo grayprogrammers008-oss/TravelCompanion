@@ -157,14 +157,15 @@ enum SyncStatus {
 }
 
 /// Sync state notifier
-class SyncNotifier extends StateNotifier<SyncState> {
-  final SyncCoordinator _coordinator;
+class SyncNotifier extends Notifier<SyncState> {
+  late final SyncCoordinator _coordinator;
   StreamSubscription<SyncEvent>? _eventSubscription;
 
-  SyncNotifier({required SyncCoordinator coordinator})
-      : _coordinator = coordinator,
-        super(const SyncState()) {
+  @override
+  SyncState build() {
+    _coordinator = ref.read(syncCoordinatorProvider);
     _listenToSyncEvents();
+    return const SyncState();
   }
 
   /// Initialize sync coordinator
@@ -309,18 +310,15 @@ class SyncNotifier extends StateNotifier<SyncState> {
     });
   }
 
-  @override
-  void dispose() {
+  void disposeNotifier() {
     _eventSubscription?.cancel();
-    super.dispose();
   }
 }
 
 /// Sync state notifier provider
-final syncNotifierProvider = StateNotifierProvider<SyncNotifier, SyncState>((ref) {
-  final coordinator = ref.watch(syncCoordinatorProvider);
-  return SyncNotifier(coordinator: coordinator);
-});
+final syncNotifierProvider = NotifierProvider<SyncNotifier, SyncState>(
+  SyncNotifier.new,
+);
 
 // ============================================================================
 // HELPER PROVIDERS

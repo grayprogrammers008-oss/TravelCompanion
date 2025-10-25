@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -21,7 +22,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final themeData = context.appThemeData;
 
     return Scaffold(
-      backgroundColor: AppTheme.neutral50,
+      backgroundColor: context.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Settings',
@@ -63,15 +64,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     // Avatar
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                      backgroundColor: context.primaryColor.withValues(alpha: 0.1),
                       child: Text(
                         user?.email.isNotEmpty == true
                             ? user!.email[0].toUpperCase()
                             : '?',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryTeal,
+                          color: context.primaryColor,
                         ),
                       ),
                     ),
@@ -81,7 +82,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       user?.email != null ? user!.email.split('@')[0] : 'User',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: AppTheme.neutral900,
+                            color: context.textColor,
                           ),
                     ),
                     const SizedBox(height: AppTheme.spacingXs),
@@ -89,7 +90,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     Text(
                       user?.email ?? '',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.neutral600,
+                            color: context.textColor.withValues(alpha: 0.7),
                           ),
                     ),
                     const SizedBox(height: AppTheme.spacingLg),
@@ -104,7 +105,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryTeal,
+                          backgroundColor: context.primaryColor,
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 48),
                           shape: RoundedRectangleBorder(
@@ -331,7 +332,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Text(
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: AppTheme.neutral600,
+                  color: context.textColor.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                 ),
@@ -369,23 +370,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppTheme.primaryTeal.withValues(alpha: 0.1),
+          color: context.primaryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
         ),
-        child: Icon(icon, color: AppTheme.primaryTeal),
+        child: Icon(icon, color: context.primaryColor),
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w500,
-          color: AppTheme.neutral900,
+          color: context.textColor,
         ),
       ),
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: const TextStyle(
-                color: AppTheme.neutral600,
+              style: TextStyle(
+                color: context.textColor.withValues(alpha: 0.7),
                 fontSize: 13,
               ),
             )

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/sync_providers.dart';
-import '../../data/services/sync_coordinator.dart';
 import '../../data/services/priority_sync_queue.dart';
 
 /// Sync Status Bottom Sheet

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/checklist_entity.dart';
 import '../providers/checklist_providers.dart';
 
@@ -86,11 +87,11 @@ class _EditItemDialogState extends ConsumerState<EditItemDialog> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: const BorderSide(color: AppTheme.neutral300),
+                borderSide: BorderSide(color: context.textColor.withValues(alpha: 0.23)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: const BorderSide(color: AppTheme.primaryTeal, width: 2),
+                borderSide: BorderSide(color: context.primaryColor, width: 2),
               ),
             ),
             autofocus: true,
@@ -107,7 +108,7 @@ class _EditItemDialogState extends ConsumerState<EditItemDialog> {
         ElevatedButton(
           onPressed: _isLoading ? null : _saveChanges,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryTeal,
+            backgroundColor: context.primaryColor,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),

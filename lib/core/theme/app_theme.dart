@@ -18,15 +18,31 @@ class AppTheme {
   // Inspired by tropical destinations, luxury resorts, and wanderlust
 
   // Primary Brand Colors - Tropical Teal Paradise
+  // ⚠️ DEPRECATED: Use dynamic theme colors instead
+  @Deprecated('Use context.primaryColor or Theme.of(context).colorScheme.primary instead')
   static const Color primaryTeal = Color(0xFF00B8A9);      // Vibrant tropical waters
+
+  @Deprecated('Use context.primaryDark or Theme.of(context).colorScheme.onPrimaryContainer instead')
   static const Color primaryDeep = Color(0xFF008C7D);      // Deep ocean depths
+
+  @Deprecated('Use context.primaryColor.withValues(alpha: 0.7) instead')
   static const Color primaryLight = Color(0xFF4DD4C6);     // Shallow lagoon
+
+  @Deprecated('Use context.primaryLight or Theme.of(context).colorScheme.primaryContainer instead')
   static const Color primaryPale = Color(0xFFE0F7F5);      // Misty morning shore
 
   // Accent Colors - Sunset & Adventure
+  // ⚠️ DEPRECATED: Use dynamic theme colors instead
+  @Deprecated('Use context.accentColor or Theme.of(context).colorScheme.secondary instead')
   static const Color accentCoral = Color(0xFFFF6B9D);      // Tropical sunset
+
+  @Deprecated('Use context.accentColor or custom theme gradients instead')
   static const Color accentGold = Color(0xFFFFC145);       // Golden hour
+
+  @Deprecated('Use context.accentColor or Theme.of(context).colorScheme.secondary instead')
   static const Color accentPurple = Color(0xFF9B5DE5);     // Twilight magic
+
+  @Deprecated('Use context.accentColor or Theme.of(context).colorScheme.secondary instead')
   static const Color accentOrange = Color(0xFFFF8A65);     // Sunset glow
 
   // Neutral Colors - Sophisticated & Premium

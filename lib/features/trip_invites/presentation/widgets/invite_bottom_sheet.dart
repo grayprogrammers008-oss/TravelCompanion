@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/validators.dart';
@@ -369,7 +370,7 @@ Let's make it an adventure! 🎉
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           labelText: 'Phone Number (Optional)',
-          prefixIcon: const Icon(Icons.phone, color: AppTheme.neutral600),
+          prefixIcon: Icon(Icons.phone, color: context.textColor.withValues(alpha: 0.6)),
           hintText: '+1 234 567 8900',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -400,13 +401,13 @@ Let's make it an adventure! 🎉
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentCoral.withValues(alpha: 0.1),
+                  color: context.accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.access_time,
                   size: 20,
-                  color: AppTheme.accentCoral,
+                  color: context.accentColor,
                 ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
@@ -452,8 +453,8 @@ Let's make it an adventure! 🎉
         ),
         child: Text(
           label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: isSelected ? Colors.white : AppTheme.neutral700,
+          style: context.labelLarge.copyWith(
+                color: isSelected ? Colors.white : context.textColor.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w600,
               ),
         ),

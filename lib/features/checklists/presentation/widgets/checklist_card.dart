@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
+import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/checklist_entity.dart';
 import '../providers/checklist_providers.dart';
 
@@ -30,7 +31,7 @@ class ChecklistCard extends ConsumerWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        side: BorderSide(color: AppTheme.neutral200, width: 1),
+        side: BorderSide(color: context.textColor.withValues(alpha: 0.12), width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -67,9 +68,9 @@ class ChecklistCard extends ConsumerWidget {
                           children: [
                             Text(
                               checklist.name,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: context.titleMedium.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color: AppTheme.neutral900,
+                                    color: context.textColor,
                                   ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -77,8 +78,8 @@ class ChecklistCard extends ConsumerWidget {
                             const SizedBox(height: 2),
                             Text(
                               '$completedCount of $totalCount items',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.neutral600,
+                              style: context.bodySmall.copyWith(
+                                    color: context.textColor.withValues(alpha: 0.7),
                                   ),
                             ),
                           ],
@@ -86,7 +87,7 @@ class ChecklistCard extends ConsumerWidget {
                       ),
                       // Action menu button
                       PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, color: AppTheme.neutral600),
+                        icon: Icon(Icons.more_vert, color: context.textColor.withValues(alpha: 0.7)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         ),
@@ -98,13 +99,13 @@ class ChecklistCard extends ConsumerWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'edit',
                             child: Row(
                               children: [
-                                Icon(Icons.edit, color: AppTheme.primaryTeal, size: 20),
-                                SizedBox(width: AppTheme.spacingMd),
-                                Text('Edit'),
+                                Icon(Icons.edit, color: context.primaryColor, size: 20),
+                                const SizedBox(width: AppTheme.spacingMd),
+                                const Text('Edit'),
                               ],
                             ),
                           ),
@@ -128,7 +129,7 @@ class ChecklistCard extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                     child: LinearProgressIndicator(
                       value: progress,
-                      backgroundColor: AppTheme.neutral200,
+                      backgroundColor: context.textColor.withValues(alpha: 0.12),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         themeData.primaryColor,
                       ),
@@ -138,8 +139,8 @@ class ChecklistCard extends ConsumerWidget {
                   const SizedBox(height: AppTheme.spacingXs),
                   Text(
                     '${(progress * 100).toStringAsFixed(0)}% Complete',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.neutral600,
+                    style: context.bodySmall.copyWith(
+                          color: context.textColor.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -154,12 +155,12 @@ class ChecklistCard extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(AppTheme.spacingSm),
                       decoration: BoxDecoration(
-                        color: AppTheme.neutral200,
+                        color: context.textColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.checklist,
-                        color: AppTheme.neutral400,
+                        color: context.textColor.withValues(alpha: 0.4),
                         size: 20,
                       ),
                     ),
@@ -167,9 +168,9 @@ class ChecklistCard extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         checklist.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: context.titleMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.neutral900,
+                              color: context.textColor,
                             ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -180,8 +181,8 @@ class ChecklistCard extends ConsumerWidget {
                 const SizedBox(height: AppTheme.spacingMd),
                 Text(
                   'Loading items...',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.neutral600,
+                  style: context.bodySmall.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
                       ),
                 ),
               ],
@@ -207,9 +208,9 @@ class ChecklistCard extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         checklist.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: context.titleMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.neutral900,
+                              color: context.textColor,
                             ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -220,7 +221,7 @@ class ChecklistCard extends ConsumerWidget {
                 const SizedBox(height: AppTheme.spacingMd),
                 Text(
                   'Error loading items',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: context.bodySmall.copyWith(
                         color: AppTheme.error,
                       ),
                 ),
