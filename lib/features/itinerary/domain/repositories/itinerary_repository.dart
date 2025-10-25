@@ -56,4 +56,10 @@ abstract class ItineraryRepository {
     required String itemId,
     required int newDayNumber,
   });
+
+  /// Watch trip itinerary in real-time
+  Stream<List<ItineraryItemModel>> watchTripItinerary(String tripId);
+
+  /// Watch itinerary by days in real-time
+  Stream<List<ItineraryDay>> watchItineraryByDays(String tripId);
 }

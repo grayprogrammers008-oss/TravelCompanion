@@ -41,29 +41,19 @@ final updateTripUseCaseProvider = Provider<UpdateTripUseCase>((ref) {
   return UpdateTripUseCase(repository);
 });
 
-// User Trips Provider - fetches all trips for current user
-// Using autoDispose to ensure the provider refreshes when invalidated
-final userTripsProvider = FutureProvider.autoDispose<List<TripWithMembers>>((ref) async {
-  final useCase = ref.watch(getUserTripsUseCaseProvider);
-  return await useCase();
+// User Trips Provider - REAL-TIME stream of all trips for current user
+final userTripsProvider = StreamProvider<List<TripWithMembers>>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return repository.watchUserTrips();
 });
 
-// Single Trip Provider - fetches specific trip
-// Using autoDispose.family for proper cleanup while allowing refresh
-final tripProvider = FutureProvider.autoDispose.family<TripWithMembers, String>((
+// Single Trip Provider - REAL-TIME stream for specific trip
+final tripProvider = StreamProvider.family<TripWithMembers, String>((
   ref,
   tripId,
-) async {
-  // Keep provider alive briefly to allow proper refresh
-  final link = ref.keepAlive();
-
-  // Dispose after 10 seconds of inactivity to free memory
-  Timer(const Duration(seconds: 10), () {
-    link.close();
-  });
-
-  final useCase = ref.watch(getTripUseCaseProvider);
-  return await useCase(tripId);
+) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return repository.watchTrip(tripId);
 });
 
 // Trip Controller State

@@ -19,34 +19,10 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
   return ExpenseRepositoryImpl(remoteDataSource);
 });
 
-// User Expenses Provider (all expenses for current user)
-final userExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
-  ref,
-) async {
-  try {
-    final repository = ref.watch(expenseRepositoryProvider);
-    final expenses = await repository.getUserExpenses().timeout(
-      const Duration(seconds: 10),
-      onTimeout: () {
-        if (kDebugMode) {
-          debugPrint('⏱️ userExpensesProvider timeout - returning empty list');
-        }
-        return <ExpenseWithSplits>[];
-      },
-    );
-    if (kDebugMode) {
-      debugPrint('✅ userExpensesProvider fetched ${expenses.length} expenses');
-    }
-    return expenses;
-  } catch (e) {
-    // Log the error for debugging
-    if (kDebugMode) {
-      debugPrint('❌ userExpensesProvider error: $e');
-    }
-    // Return empty list instead of throwing to show empty state
-    // This allows the UI to show the empty state instead of hanging
-    return <ExpenseWithSplits>[];
-  }
+// User Expenses Provider (all expenses for current user) - REAL-TIME
+final userExpensesProvider = StreamProvider<List<ExpenseWithSplits>>((ref) {
+  final repository = ref.watch(expenseRepositoryProvider);
+  return repository.watchUserExpenses();
 });
 
 // Standalone Expenses Provider
@@ -77,12 +53,13 @@ final standaloneExpensesProvider = FutureProvider<List<ExpenseWithSplits>>((
   }
 });
 
-// Trip Expenses Provider
-final tripExpensesProvider =
-    FutureProvider.family<List<ExpenseWithSplits>, String>((ref, tripId) async {
-      final repository = ref.watch(expenseRepositoryProvider);
-      return await repository.getTripExpenses(tripId);
-    });
+// Trip Expenses Provider - REAL-TIME
+final tripExpensesProvider = StreamProvider.family<List<ExpenseWithSplits>, String>(
+  (ref, tripId) {
+    final repository = ref.watch(expenseRepositoryProvider);
+    return repository.watchTripExpenses(tripId);
+  },
+);
 
 // Single Expense Provider
 final expenseProvider = FutureProvider.family<ExpenseWithSplits, String>((

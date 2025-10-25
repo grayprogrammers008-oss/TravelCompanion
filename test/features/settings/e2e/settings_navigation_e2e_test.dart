@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
@@ -12,11 +11,9 @@ import 'package:travel_crew/shared/models/trip_model.dart';
 /// Tests the complete user journey from HomePage to SettingsPage
 void main() {
   group('Settings Navigation E2E Tests', () {
-    late AuthLocalDataSource mockAuthDataSource;
     late UserEntity testUser;
 
     setUp(() {
-      mockAuthDataSource = AuthLocalDataSource();
       testUser = UserEntity(
         id: 'test-user-1',
         email: 'john.doe@example.com',
@@ -32,10 +29,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
             authStateProvider.overrideWith((ref) => Stream.value(testUser.id)),
-            userTripsProvider.overrideWith((ref) async => <TripWithMembers>[]),
+            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
@@ -136,10 +132,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
             authStateProvider.overrideWith((ref) => Stream.value(testUser.id)),
-            userTripsProvider.overrideWith((ref) async => <TripWithMembers>[]),
+            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
@@ -234,7 +229,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: MaterialApp.router(
@@ -299,10 +293,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
             authStateProvider.overrideWith((ref) => Stream.value(testUser.id)),
-            userTripsProvider.overrideWith((ref) async => <TripWithMembers>[]),
+            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(

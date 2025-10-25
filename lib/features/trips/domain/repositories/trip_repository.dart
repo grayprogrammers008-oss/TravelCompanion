@@ -45,6 +45,9 @@ abstract class TripRepository {
   /// Remove member from trip
   Future<void> removeMember({required String tripId, required String userId});
 
+  /// Stream of all user trips with real-time updates
+  Stream<List<TripWithMembers>> watchUserTrips();
+
   /// Stream of trip updates
   Stream<TripWithMembers> watchTrip(String tripId);
 }

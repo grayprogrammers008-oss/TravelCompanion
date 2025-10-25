@@ -22,7 +22,14 @@ class RealtimeService {
     final channelName = 'trip:$tripId';
 
     if (_controllers.containsKey(channelName)) {
+      if (kDebugMode) {
+        debugPrint('📡 Reusing existing subscription: $channelName');
+      }
       return _controllers[channelName]!.stream as Stream<PostgresChangePayload>;
+    }
+
+    if (kDebugMode) {
+      debugPrint('📡 Creating NEW subscription: $channelName');
     }
 
     final controller = StreamController<PostgresChangePayload>.broadcast();
@@ -43,11 +50,22 @@ class RealtimeService {
           callback: (payload) {
             if (kDebugMode) {
               debugPrint('🔄 Trip change detected: ${payload.eventType} - $tripId');
+              debugPrint('   Payload: ${payload.newRecord}');
             }
             controller.add(payload);
           },
         )
-        .subscribe();
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ Subscription TIMED OUT for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ Channel ERROR for trip:$tripId - Error: $error');
+            }
+          }
+        });
 
     _channels[channelName] = channel;
 
@@ -258,7 +276,14 @@ class RealtimeService {
     final channelName = 'user_trips:$userId';
 
     if (_controllers.containsKey(channelName)) {
+      if (kDebugMode) {
+        debugPrint('📡 Reusing existing subscription: $channelName');
+      }
       return _controllers[channelName]!.stream as Stream<PostgresChangePayload>;
+    }
+
+    if (kDebugMode) {
+      debugPrint('📡 Creating NEW subscription for user trips: $userId');
     }
 
     final controller = StreamController<PostgresChangePayload>.broadcast();
@@ -281,11 +306,22 @@ class RealtimeService {
           callback: (payload) {
             if (kDebugMode) {
               debugPrint('🔄 User trip membership change detected: ${payload.eventType}');
+              debugPrint('   Trip Member Payload: ${payload.newRecord}');
             }
             controller.add(payload);
           },
         )
-        .subscribe();
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to user trips for user:$userId');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ User trips subscription TIMED OUT for user:$userId');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ User trips channel ERROR for user:$userId - Error: $error');
+            }
+          }
+        });
 
     _channels[channelName] = channel;
 

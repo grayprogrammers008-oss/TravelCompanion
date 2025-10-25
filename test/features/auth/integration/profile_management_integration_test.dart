@@ -149,7 +149,7 @@ void main() {
       when(mockDataSource.changePassword(
         currentPassword: anyNamed('currentPassword'),
         newPassword: anyNamed('newPassword'),
-      )).throwError(Exception('Network error'));
+      )).thenThrow(Exception('Network error'));
 
       // act & assert
       expect(

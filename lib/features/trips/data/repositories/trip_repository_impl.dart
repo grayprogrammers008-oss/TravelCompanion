@@ -147,9 +147,22 @@ class TripRepositoryImpl implements TripRepository {
   }
 
   @override
+  Stream<List<TripWithMembers>> watchUserTrips() {
+    try {
+      // Delegate to remote datasource which has real-time implementation
+      return _remoteDataSource.watchUserTrips();
+    } catch (e) {
+      throw Exception('Failed to watch user trips: $e');
+    }
+  }
+
+  @override
   Stream<TripWithMembers> watchTrip(String tripId) {
-    // TODO: Implement Supabase real-time stream for single trip
-    // For now, return a stream that emits once from getTripById
-    return Stream.fromFuture(getTripById(tripId));
+    try {
+      // Delegate to remote datasource which has real-time implementation
+      return _remoteDataSource.watchTrip(tripId);
+    } catch (e) {
+      throw Exception('Failed to watch trip: $e');
+    }
   }
 }

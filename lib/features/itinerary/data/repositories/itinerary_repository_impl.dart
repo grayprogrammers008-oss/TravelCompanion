@@ -108,4 +108,22 @@ class ItineraryRepositoryImpl implements ItineraryRepository {
       newDayNumber: newDayNumber,
     );
   }
+
+  @override
+  Stream<List<ItineraryItemModel>> watchTripItinerary(String tripId) {
+    try {
+      return _remoteDataSource.watchTripItinerary(tripId);
+    } catch (e) {
+      throw Exception('Failed to watch trip itinerary: $e');
+    }
+  }
+
+  @override
+  Stream<List<ItineraryDay>> watchItineraryByDays(String tripId) {
+    try {
+      return _remoteDataSource.watchItineraryByDays(tripId);
+    } catch (e) {
+      throw Exception('Failed to watch itinerary by days: $e');
+    }
+  }
 }

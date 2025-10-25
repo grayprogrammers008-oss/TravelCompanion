@@ -28,13 +28,14 @@ class OnboardingScreen extends StatelessWidget {
             horizontal: AppTheme.spacingXl,
             vertical: AppTheme.spacing2xl,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: AppTheme.spacing3xl),
 
-              // Icon illustration
-              FadeSlideAnimation(
+                // Icon illustration
+                FadeSlideAnimation(
                 delay: Duration.zero,
                 child: Container(
                   width: 160,
@@ -121,8 +122,9 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
 
-              const Spacer(),
-            ],
+                const SizedBox(height: AppTheme.spacing3xl),
+              ],
+            ),
           ),
         ),
       ),

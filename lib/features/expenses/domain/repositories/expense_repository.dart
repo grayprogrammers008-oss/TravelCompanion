@@ -64,4 +64,10 @@ abstract class ExpenseRepository {
     required String status,
     String? paymentProofUrl,
   });
+
+  /// Watch trip expenses in real-time
+  Stream<List<ExpenseWithSplits>> watchTripExpenses(String tripId);
+
+  /// Watch user expenses in real-time
+  Stream<List<ExpenseWithSplits>> watchUserExpenses();
 }

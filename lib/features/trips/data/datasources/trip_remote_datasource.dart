@@ -238,30 +238,67 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
     // Use enhanced realtime service to watch trip changes
     final controller = StreamController<List<TripWithMembers>>.broadcast();
 
-    // Subscribe to user's trip membership changes
-    final subscription = _realtimeService.subscribeUserTrips(userId).listen(
-      (payload) async {
-        if (kDebugMode) {
-          debugPrint('🔄 User trips changed: ${payload.eventType}');
-        }
-        // Refetch trips when changes occur
-        try {
-          final trips = await getUserTrips();
+    // Function to refetch and emit trips
+    Future<void> refetchTrips(String reason) async {
+      if (kDebugMode) {
+        debugPrint('🔄 $reason - Refetching trips...');
+      }
+      try {
+        final trips = await getUserTrips();
+        if (!controller.isClosed) {
           controller.add(trips);
-        } catch (e) {
-          if (kDebugMode) {
-            debugPrint('❌ Error fetching trips after realtime update: $e');
-          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Error fetching trips after realtime update: $e');
+        }
+        if (!controller.isClosed) {
           controller.addError(e);
         }
-      },
+      }
+    }
+
+    // Subscribe to trip_members changes (when user joins/leaves trips)
+    final memberSubscription = _realtimeService.subscribeUserTrips(userId).listen(
+      (payload) => refetchTrips('Trip membership changed: ${payload.eventType}'),
       onError: (error) {
         if (kDebugMode) {
-          debugPrint('❌ Realtime subscription error: $error');
+          debugPrint('❌ Trip members subscription error: $error');
         }
-        controller.addError(error);
+        if (!controller.isClosed) {
+          controller.addError(error);
+        }
       },
     );
+
+    // Also subscribe to ALL trips table changes (for updates to trip details)
+    // We'll subscribe to the trips table directly and refetch when any trip changes
+    final tripUpdatesChannel = _client.channel('all_trips_updates:$userId');
+
+    tripUpdatesChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'trips',
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Trip table changed: ${payload.eventType}');
+            }
+            // Refetch trips when any trip is created, updated, or deleted
+            refetchTrips('Trip ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to trips table updates');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ Trips table subscription TIMED OUT');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ Trips table subscription ERROR: $error');
+            }
+          }
+        });
 
     // Initial load
     getUserTrips().then((trips) {
@@ -276,7 +313,8 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
 
     // Cleanup on close
     controller.onCancel = () {
-      subscription.cancel();
+      memberSubscription.cancel();
+      tripUpdatesChannel.unsubscribe();
     };
 
     return controller.stream;

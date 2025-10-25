@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart';
+// Removed AuthLocalDataSource import - no longer needed
 import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/features/settings/presentation/pages/settings_page_enhanced.dart';
 
 void main() {
   group('SettingsPageEnhanced Widget Tests', () {
-    late AuthLocalDataSource mockAuthDataSource;
     late UserEntity testUser;
 
     setUp(() async {
       // Initialize SharedPreferences mock
       SharedPreferences.setMockInitialValues({});
 
-      mockAuthDataSource = AuthLocalDataSource();
       testUser = UserEntity(
         id: 'test-user-1',
         email: 'john.doe@example.com',
@@ -31,7 +29,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -53,7 +50,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -80,7 +76,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -121,7 +116,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -142,7 +136,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -163,7 +156,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -188,7 +180,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -208,7 +199,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -228,7 +218,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -254,7 +243,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -280,7 +268,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -311,7 +298,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -349,7 +335,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -375,12 +360,10 @@ void main() {
   });
 
   group('SettingsPageEnhanced Integration Tests', () {
-    late AuthLocalDataSource mockAuthDataSource;
     late UserEntity testUser;
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
-      mockAuthDataSource = AuthLocalDataSource();
       testUser = UserEntity(
         id: 'test-user-1',
         email: 'test@example.com',
@@ -397,7 +380,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -423,7 +405,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(

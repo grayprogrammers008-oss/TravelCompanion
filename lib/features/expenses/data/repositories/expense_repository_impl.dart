@@ -171,4 +171,22 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
       throw Exception('Failed to update settlement: $e');
     }
   }
+
+  @override
+  Stream<List<ExpenseWithSplits>> watchTripExpenses(String tripId) {
+    try {
+      return _remoteDataSource.watchTripExpenses(tripId);
+    } catch (e) {
+      throw Exception('Failed to watch trip expenses: $e');
+    }
+  }
+
+  @override
+  Stream<List<ExpenseWithSplits>> watchUserExpenses() {
+    try {
+      return _remoteDataSource.watchUserExpenses();
+    } catch (e) {
+      throw Exception('Failed to watch user expenses: $e');
+    }
+  }
 }

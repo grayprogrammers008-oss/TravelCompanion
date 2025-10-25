@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/models/expense_model.dart';
@@ -491,5 +492,203 @@ class ExpenseRemoteDataSource {
     }).toList();
 
     return ExpenseWithSplits(expense: expense, splits: splits);
+  }
+
+  /// Watch trip expenses in real-time
+  Stream<List<ExpenseWithSplits>> watchTripExpenses(String tripId) {
+    final controller = StreamController<List<ExpenseWithSplits>>.broadcast();
+
+    // Refetch function
+    Future<void> refetchExpenses(String reason) async {
+      if (kDebugMode) {
+        debugPrint('🔄 $reason - Refetching trip expenses...');
+      }
+      try {
+        final expenses = await getTripExpenses(tripId);
+        if (!controller.isClosed) {
+          controller.add(expenses);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Error fetching expenses: $e');
+        }
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
+      }
+    }
+
+    // Subscribe to expenses table changes
+    final expensesChannel = _client.channel('expenses:$tripId');
+
+    expensesChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'expenses',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'trip_id',
+            value: tripId,
+          ),
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Expense changed: ${payload.eventType}');
+            }
+            refetchExpenses('Expense ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to expenses for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ Expenses subscription TIMED OUT for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ Expenses subscription ERROR for trip:$tripId - Error: $error');
+            }
+          }
+        });
+
+    // Also subscribe to expense_splits changes
+    final splitsChannel = _client.channel('expense_splits:$tripId');
+
+    splitsChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'expense_splits',
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Expense split changed: ${payload.eventType}');
+            }
+            refetchExpenses('Expense split ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to expense splits for trip:$tripId');
+            }
+          }
+        });
+
+    // Initial load
+    getTripExpenses(tripId).then((expenses) {
+      if (!controller.isClosed) {
+        controller.add(expenses);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup
+    controller.onCancel = () {
+      expensesChannel.unsubscribe();
+      splitsChannel.unsubscribe();
+    };
+
+    return controller.stream;
+  }
+
+  /// Watch user expenses in real-time
+  Stream<List<ExpenseWithSplits>> watchUserExpenses() {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      return Stream.error(Exception('User not authenticated'));
+    }
+
+    final controller = StreamController<List<ExpenseWithSplits>>.broadcast();
+
+    // Refetch function
+    Future<void> refetchExpenses(String reason) async {
+      if (kDebugMode) {
+        debugPrint('🔄 $reason - Refetching user expenses...');
+      }
+      try {
+        final expenses = await getUserExpenses(userId);
+        if (!controller.isClosed) {
+          controller.add(expenses);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Error fetching user expenses: $e');
+        }
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
+      }
+    }
+
+    // Subscribe to ALL expenses table changes (will filter on refetch)
+    final expensesChannel = _client.channel('all_expenses:$userId');
+
+    expensesChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'expenses',
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Expense changed: ${payload.eventType}');
+            }
+            refetchExpenses('Expense ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to all expenses');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ All expenses subscription TIMED OUT');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ All expenses subscription ERROR: $error');
+            }
+          }
+        });
+
+    // Subscribe to expense_splits changes
+    final splitsChannel = _client.channel('all_splits:$userId');
+
+    splitsChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'expense_splits',
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Expense split changed: ${payload.eventType}');
+            }
+            refetchExpenses('Expense split ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to all expense splits');
+            }
+          }
+        });
+
+    // Initial load
+    getUserExpenses(userId).then((expenses) {
+      if (!controller.isClosed) {
+        controller.add(expenses);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup
+    controller.onCancel = () {
+      expensesChannel.unsubscribe();
+      splitsChannel.unsubscribe();
+    };
+
+    return controller.stream;
   }
 }

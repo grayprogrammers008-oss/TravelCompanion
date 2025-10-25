@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/features/settings/presentation/pages/settings_page.dart';
 
 void main() {
   group('SettingsPage Widget Tests', () {
-    late AuthLocalDataSource mockAuthDataSource;
-
     setUp(() {
-      mockAuthDataSource = AuthLocalDataSource();
+      // Test setup
     });
 
     testWidgets('should display loading state initially', (WidgetTester tester) async {
@@ -19,7 +16,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith(
               (ref) => Future.delayed(
                 const Duration(seconds: 10),
@@ -50,7 +46,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -81,7 +76,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -127,7 +121,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -156,7 +149,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -188,7 +180,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -220,7 +211,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -268,7 +258,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -309,7 +298,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => throw Exception('Failed to load user')),
           ],
           child: const MaterialApp(
@@ -338,7 +326,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -358,7 +345,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => null),
           ],
           child: const MaterialApp(
@@ -387,7 +373,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -425,7 +410,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(AuthLocalDataSource()),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(
@@ -457,7 +441,6 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authLocalDataSourceProvider.overrideWithValue(AuthLocalDataSource()),
             currentUserProvider.overrideWith((ref) async => testUser),
           ],
           child: const MaterialApp(

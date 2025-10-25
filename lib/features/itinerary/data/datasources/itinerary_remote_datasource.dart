@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/itinerary_model.dart';
@@ -256,5 +259,155 @@ class ItineraryRemoteDataSource {
     } catch (e) {
       throw Exception('Failed to move item to day: $e');
     }
+  }
+
+  /// Watch trip itinerary in real-time
+  Stream<List<ItineraryItemModel>> watchTripItinerary(String tripId) {
+    final controller = StreamController<List<ItineraryItemModel>>.broadcast();
+
+    // Refetch function
+    Future<void> refetch(String reason) async {
+      if (kDebugMode) {
+        debugPrint('🔄 $reason - Refetching itinerary...');
+      }
+      try {
+        final items = await getTripItinerary(tripId);
+        if (!controller.isClosed) {
+          controller.add(items);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Error fetching itinerary: $e');
+        }
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
+      }
+    }
+
+    // Subscribe to itinerary_items table changes
+    final channel = SupabaseClientWrapper.client.channel('itinerary:$tripId');
+
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'itinerary_items',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'trip_id',
+            value: tripId,
+          ),
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Itinerary item changed: ${payload.eventType}');
+            }
+            refetch('Itinerary ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to itinerary for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ Itinerary subscription TIMED OUT for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ Itinerary subscription ERROR for trip:$tripId - Error: $error');
+            }
+          }
+        });
+
+    // Initial load
+    getTripItinerary(tripId).then((items) {
+      if (!controller.isClosed) {
+        controller.add(items);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup
+    controller.onCancel = () {
+      channel.unsubscribe();
+    };
+
+    return controller.stream;
+  }
+
+  /// Watch itinerary by days in real-time
+  Stream<List<ItineraryDay>> watchItineraryByDays(String tripId) {
+    final controller = StreamController<List<ItineraryDay>>.broadcast();
+
+    // Refetch function
+    Future<void> refetch(String reason) async {
+      if (kDebugMode) {
+        debugPrint('🔄 $reason - Refetching itinerary by days...');
+      }
+      try {
+        final days = await getItineraryByDays(tripId);
+        if (!controller.isClosed) {
+          controller.add(days);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Error fetching itinerary by days: $e');
+        }
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
+      }
+    }
+
+    // Subscribe to itinerary_items table changes
+    final channel = SupabaseClientWrapper.client.channel('itinerary_days:$tripId');
+
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'itinerary_items',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'trip_id',
+            value: tripId,
+          ),
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Itinerary item changed: ${payload.eventType}');
+            }
+            refetch('Itinerary ${payload.eventType}');
+          },
+        )
+        .subscribe((status, error) {
+          if (kDebugMode) {
+            if (status == RealtimeSubscribeStatus.subscribed) {
+              debugPrint('✅ Successfully subscribed to itinerary by days for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.timedOut) {
+              debugPrint('❌ Itinerary by days subscription TIMED OUT for trip:$tripId');
+            } else if (status == RealtimeSubscribeStatus.channelError) {
+              debugPrint('❌ Itinerary by days subscription ERROR for trip:$tripId - Error: $error');
+            }
+          }
+        });
+
+    // Initial load
+    getItineraryByDays(tripId).then((days) {
+      if (!controller.isClosed) {
+        controller.add(days);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup
+    controller.onCancel = () {
+      channel.unsubscribe();
+    };
+
+    return controller.stream;
   }
 }

@@ -52,23 +52,21 @@ final reorderItemsUseCaseProvider = Provider<ReorderItemsUseCase>((ref) {
   return ReorderItemsUseCase(repository);
 });
 
-// Trip Itinerary Provider - fetches all items for a trip
-final tripItineraryProvider = FutureProvider.family<List<ItineraryItemModel>, String>((
-  ref,
-  tripId,
-) async {
-  final useCase = ref.watch(getTripItineraryUseCaseProvider);
-  return await useCase(tripId);
-});
+// Trip Itinerary Provider - REAL-TIME stream of all items for a trip
+final tripItineraryProvider = StreamProvider.family<List<ItineraryItemModel>, String>(
+  (ref, tripId) {
+    final repository = ref.watch(itineraryRepositoryProvider);
+    return repository.watchTripItinerary(tripId);
+  },
+);
 
-// Itinerary By Days Provider - fetches items grouped by days
-final itineraryByDaysProvider = FutureProvider.family<List<ItineraryDay>, String>((
-  ref,
-  tripId,
-) async {
-  final useCase = ref.watch(getItineraryByDaysUseCaseProvider);
-  return await useCase(tripId);
-});
+// Itinerary By Days Provider - REAL-TIME stream of items grouped by days
+final itineraryByDaysProvider = StreamProvider.family<List<ItineraryDay>, String>(
+  (ref, tripId) {
+    final repository = ref.watch(itineraryRepositoryProvider);
+    return repository.watchItineraryByDays(tripId);
+  },
+);
 
 // Itinerary Controller State
 class ItineraryState {
