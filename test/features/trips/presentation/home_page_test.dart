@@ -12,7 +12,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userTripsProvider.overrideWith((ref) async => <TripWithMembers>[]),
+            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -34,9 +34,11 @@ void main() {
         ProviderScope(
           overrides: [
             userTripsProvider.overrideWith(
-              (ref) => Future.delayed(
-                const Duration(seconds: 10),
-                () => <TripWithMembers>[],
+              (ref) => Stream.fromFuture(
+                Future.delayed(
+                  const Duration(seconds: 10),
+                  () => <TripWithMembers>[],
+                ),
               ),
             ),
           ],
@@ -80,7 +82,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userTripsProvider.overrideWith((ref) async => [tripWithMembers]),
+            userTripsProvider.overrideWith((ref) => Stream.value([tripWithMembers])),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -125,7 +127,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userTripsProvider.overrideWith((ref) async => [tripWithMembers]),
+            userTripsProvider.overrideWith((ref) => Stream.value([tripWithMembers])),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -171,7 +173,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userTripsProvider.overrideWith((ref) async => [tripWithMembers]),
+            userTripsProvider.overrideWith((ref) => Stream.value([tripWithMembers])),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -217,7 +219,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userTripsProvider.overrideWith((ref) async => [tripWithMembers]),
+            userTripsProvider.overrideWith((ref) => Stream.value([tripWithMembers])),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -261,7 +263,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userTripsProvider.overrideWith((ref) async => [tripWithMembers]),
+            userTripsProvider.overrideWith((ref) => Stream.value([tripWithMembers])),
           ],
           child: const MaterialApp(
             home: HomePage(),

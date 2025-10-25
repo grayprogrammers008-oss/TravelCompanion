@@ -88,7 +88,7 @@ void main() {
         ProviderScope(
           overrides: [
             tripRepositoryProvider.overrideWithValue(mockRepository),
-            currentUserProvider.overrideWith((ref) => AsyncValue.data(mockUser)),
+            currentUserProvider.overrideWith((ref) async => mockUser),
           ],
           child: MaterialApp(
             home: const HomePage(),
@@ -119,7 +119,7 @@ void main() {
         ProviderScope(
           overrides: [
             tripRepositoryProvider.overrideWithValue(mockRepository),
-            currentUserProvider.overrideWith((ref) => AsyncValue.data(mockUser)),
+            currentUserProvider.overrideWith((ref) async => mockUser),
           ],
           child: MaterialApp(
             home: const HomePage(),
@@ -359,7 +359,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           tripRepositoryProvider.overrideWithValue(mockRepository),
-          currentUserProvider.overrideWith((ref) => AsyncValue.data(mockUser)),
+          currentUserProvider.overrideWith((ref) async => mockUser),
         ],
       );
 
