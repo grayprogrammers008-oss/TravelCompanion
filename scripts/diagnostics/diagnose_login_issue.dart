@@ -144,7 +144,7 @@ void main() async {
     }
 
     if (kDebugMode) {
-      debugPrint('\n' + '=' * 60);
+      debugPrint('\n${'=' * 60}');
       debugPrint('✅ Diagnostics Complete!');
       debugPrint('=' * 60);
     }
