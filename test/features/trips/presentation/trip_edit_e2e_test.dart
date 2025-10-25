@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:travel_crew/features/trips/data/repositories/trip_repository_impl.dart';
 import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/trips/presentation/pages/home_page.dart';
@@ -11,7 +10,6 @@ import 'package:travel_crew/features/trips/presentation/pages/create_trip_page.d
 import 'package:travel_crew/shared/models/trip_model.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
-import 'package:go_router/go_router.dart';
 
 @GenerateMocks([TripRepository])
 import 'trip_edit_e2e_test.mocks.dart';

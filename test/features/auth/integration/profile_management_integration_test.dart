@@ -128,7 +128,7 @@ void main() {
       when(mockDataSource.changePassword(
         currentPassword: anyNamed('currentPassword'),
         newPassword: anyNamed('newPassword'),
-      )).thenAnswer((_) async => null);
+      )).thenAnswer((_) async {});
 
       // act & assert
       for (final password in strongPasswords) {

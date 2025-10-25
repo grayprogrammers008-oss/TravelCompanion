@@ -1,6 +1,6 @@
 /// Messaging Module Exports
 /// Barrel file for easy importing of messaging module components
-library messaging_exports;
+library;
 
 // ============================================================================
 // DOMAIN LAYER

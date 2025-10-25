@@ -4,9 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_crew/features/messaging/presentation/widgets/sync_status_sheet.dart';
 import 'package:travel_crew/features/messaging/presentation/providers/sync_providers.dart';
 import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_crew/features/messaging/data/services/message_deduplication_service.dart';
-import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
-import 'package:travel_crew/features/messaging/data/services/conflict_resolution_engine.dart';
 
 void main() {
   group('SyncStatusSheet Widget Tests', () {

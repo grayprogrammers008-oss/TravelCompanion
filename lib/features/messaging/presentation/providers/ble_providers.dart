@@ -135,9 +135,11 @@ class BLEServiceNotifier extends Notifier<BLEServiceState> {
       // Initialize BLE service
       final bleInitialized = await _bleService.initialize();
       if (!bleInitialized) {
+        // Get detailed error message from BLE service
+        final errorMsg = _bleService.lastError ?? 'Bluetooth initialization failed';
         state = state.copyWith(
           status: BLEServiceStatus.error,
-          errorMessage: 'Bluetooth initialization failed',
+          errorMessage: errorMsg,
         );
         return;
       }

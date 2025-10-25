@@ -37,31 +37,38 @@ class BLEService {
   Function(BLEMessage message)? onMessageReceived;
   Function(String peerId, bool isConnected)? onPeerConnectionChanged;
 
+  /// Error message from last initialization attempt
+  String? _lastError;
+  String? get lastError => _lastError;
+
   /// Initialize BLE service
   Future<bool> initialize() async {
     if (_isInitialized) return true;
 
     try {
       debugPrint('📡 [BLEService] Initializing...');
+      _lastError = null;
 
       // Check if Bluetooth is supported
       if (!await FlutterBluePlus.isSupported) {
-        debugPrint('❌ [BLEService] Bluetooth not supported on this device');
+        _lastError = 'Bluetooth is not supported on this device';
+        debugPrint('❌ [BLEService] $_lastError');
         return false;
       }
 
       // Request permissions
       final permissionsGranted = await _requestPermissions();
       if (!permissionsGranted) {
-        debugPrint('❌ [BLEService] Required permissions not granted');
+        _lastError = 'Bluetooth permissions were denied. Please grant permissions in Settings.';
+        debugPrint('❌ [BLEService] $_lastError');
         return false;
       }
 
       // Check if Bluetooth is enabled
       final adapterState = await FlutterBluePlus.adapterState.first;
       if (adapterState != BluetoothAdapterState.on) {
-        debugPrint('⚠️ [BLEService] Bluetooth is turned off');
-        // You might want to prompt user to turn on Bluetooth
+        _lastError = 'Bluetooth is turned off. Please turn on Bluetooth and try again.';
+        debugPrint('⚠️ [BLEService] $_lastError');
         return false;
       }
 
@@ -69,6 +76,7 @@ class BLEService {
       debugPrint('✅ [BLEService] Initialized successfully');
       return true;
     } catch (e, stackTrace) {
+      _lastError = 'Failed to initialize Bluetooth: ${e.toString()}';
       debugPrint('❌ [BLEService] Initialization failed: $e');
       debugPrint('   Stack Trace: $stackTrace');
       return false;
@@ -392,7 +400,9 @@ class BLEService {
   /// Dispose resources
   void dispose() {
     stopScanning();
-    _connectedDevices.values.forEach((device) => device.disconnect());
+    for (var device in _connectedDevices.values) {
+      device.disconnect();
+    }
     _connectedDevices.clear();
     _discoveredPeers.clear();
     _peersController.close();
