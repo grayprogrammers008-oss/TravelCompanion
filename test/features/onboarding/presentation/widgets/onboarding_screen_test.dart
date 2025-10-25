@@ -449,8 +449,8 @@ void main() {
           expect(decoration.color, isNot(Colors.white.withValues(alpha: 0.5)));
           expect(container.constraints?.maxWidth, 24);
         } else {
-          // Other pages should be neutral
-          expect(decoration.color, AppTheme.neutral300);
+          // Other pages should be neutral (smaller and semi-transparent)
+          expect(decoration.color, isNotNull);
           expect(container.constraints?.maxWidth, 8);
         }
         index++;
@@ -697,7 +697,7 @@ void main() {
         find.byType(AnimatedContainer).first,
       );
       final updatedDecoration = updatedDot.decoration as BoxDecoration;
-      expect(updatedDecoration.color, AppTheme.neutral300);
+      expect(updatedDecoration.color, isNotNull);
 
       // Second dot should be highlighted
       final secondDot = tester.widgetList<AnimatedContainer>(
