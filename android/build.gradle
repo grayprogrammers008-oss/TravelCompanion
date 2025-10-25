@@ -18,6 +18,15 @@ allprojects {
     }
 }
 
+// Enforce Java 17 for all subprojects and suppress obsolete warnings
+subprojects {
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        options.compilerArgs << '-Xlint:-options'
+    }
+}
+
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
