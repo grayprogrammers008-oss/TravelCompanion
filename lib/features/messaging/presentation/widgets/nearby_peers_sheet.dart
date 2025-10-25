@@ -187,51 +187,88 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
           // Header
           Padding(
             padding: const EdgeInsets.all(AppTheme.spacingLg),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.bluetooth_searching,
-                  color: context.primaryColor,
-                  size: 28,
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Nearby Peers',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.neutral900,
-                        ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bluetooth_searching,
+                      color: context.primaryColor,
+                      size: 28,
+                    ),
+                    const SizedBox(width: AppTheme.spacingMd),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nearby Peers (BLE Scan)',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.neutral900,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Scan for nearby devices',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.neutral600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Offline P2P Messaging via Bluetooth',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.neutral600,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        _isScanning ? Icons.stop : Icons.refresh,
+                        color: context.primaryColor,
+                      ),
+                      onPressed: _isScanning
+                          ? () => _bleService.stopScanning()
+                          : _startScanning,
+                      tooltip: _isScanning ? 'Stop scanning' : 'Scan again',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                      color: AppTheme.neutral600,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                // Limitation notice
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                  decoration: BoxDecoration(
+                    color: AppTheme.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    border: Border.all(
+                      color: AppTheme.warning.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: AppTheme.warning,
+                      ),
+                      const SizedBox(width: AppTheme.spacingSm),
+                      const Expanded(
+                        child: Text(
+                          'BLE can only scan. Use WiFi Direct icon (top-right) for two-way P2P connectivity.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.neutral700,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    _isScanning ? Icons.stop : Icons.refresh,
-                    color: context.primaryColor,
-                  ),
-                  onPressed: _isScanning
-                      ? () => _bleService.stopScanning()
-                      : _startScanning,
-                  tooltip: _isScanning ? 'Stop scanning' : 'Scan again',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                  color: AppTheme.neutral600,
                 ),
               ],
             ),
@@ -398,35 +435,82 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            _isScanning ? Icons.bluetooth_searching : Icons.bluetooth_disabled,
-            size: 64,
-            color: AppTheme.neutral300,
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          Text(
-            _isScanning ? 'Searching...' : 'No nearby peers found',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.neutral600,
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              _isScanning ? Icons.bluetooth_searching : Icons.bluetooth_disabled,
+              size: 64,
+              color: AppTheme.neutral300,
             ),
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            _isScanning
-                ? 'Looking for Travel Companion users nearby'
-                : 'Tap the refresh button to scan again',
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppTheme.neutral500,
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              _isScanning ? 'Searching...' : 'No nearby peers found',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.neutral600,
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              _isScanning
+                  ? 'Looking for BLE devices broadcasting Travel Companion service'
+                  : 'No devices found with Travel Companion BLE service',
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppTheme.neutral500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              decoration: BoxDecoration(
+                color: AppTheme.info.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(
+                  color: AppTheme.info.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_outline,
+                        size: 20,
+                        color: AppTheme.info,
+                      ),
+                      const SizedBox(width: AppTheme.spacingSm),
+                      const Expanded(
+                        child: Text(
+                          'For full P2P connectivity:',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.neutral800,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingSm),
+                  const Text(
+                    '• BLE Scan-Only: Can only discover devices broadcasting Travel Companion service\n\n• WiFi Direct: Tap the WiFi icon (📶) in chat screen for full two-way P2P with host/discover modes',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.neutral700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
