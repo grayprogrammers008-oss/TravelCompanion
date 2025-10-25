@@ -208,7 +208,9 @@ class SyncCoordinator {
   void stopAutoSync() {
     _isSyncing = false;
     _syncQueue.pause();
-    _eventController.add(SyncEvent.syncStopped());
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncEvent.syncStopped());
+    }
     debugPrint('Auto sync stopped');
   }
 
