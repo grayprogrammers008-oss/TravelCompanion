@@ -277,14 +277,14 @@ class _NearbyPeersSheetState extends State<NearbyPeersSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
+                  SizedBox(
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
+                  SizedBox(width: AppTheme.spacingMd),
                   Text(
                     'Scanning for nearby peers...',
                     style: TextStyle(

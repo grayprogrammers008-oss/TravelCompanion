@@ -6,7 +6,7 @@ import '../../data/services/priority_sync_queue.dart';
 /// Sync Status Bottom Sheet
 /// Displays comprehensive sync statistics, queue status, and manual controls
 class SyncStatusSheet extends ConsumerStatefulWidget {
-  const SyncStatusSheet({Key? key}) : super(key: key);
+  const SyncStatusSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
@@ -123,7 +123,7 @@ class _SyncStatusSheetState extends ConsumerState<SyncStatusSheet> {
         child: Container(
           decoration: BoxDecoration(
             color: isSelected
-                ? Theme.of(context).primaryColor.withOpacity(0.1)
+                ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
