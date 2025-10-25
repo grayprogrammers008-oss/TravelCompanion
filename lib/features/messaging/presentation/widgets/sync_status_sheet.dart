@@ -27,8 +27,6 @@ class _SyncStatusSheetState extends ConsumerState<SyncStatusSheet> {
   @override
   Widget build(BuildContext context) {
     final syncState = ref.watch(syncNotifierProvider);
-    final syncStats = ref.watch(syncStatisticsProvider);
-    final queueStats = ref.watch(queueStatisticsProvider);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
@@ -362,7 +360,6 @@ class _SyncStatusSheetState extends ConsumerState<SyncStatusSheet> {
   }
 
   Widget _buildStatisticsTab() {
-    final syncStats = ref.watch(syncStatisticsProvider);
     final dedupStats = ref.watch(deduplicationStatisticsProvider);
     final conflictStats = ref.watch(conflictStatisticsProvider);
 

@@ -59,10 +59,6 @@ class WiFiDirectService {
   bool _isHost = false;
   bool _isInitialized = false;
 
-  // Current user info
-  String? _userId;
-  String? _userName;
-
   // State tracking
   final Map<String, WifiDirectPeer> _discoveredPeers = {};
   final Map<String, WifiDirectPeer> _connectedPeers = {};
@@ -122,9 +118,6 @@ class WiFiDirectService {
     }
 
     try {
-      _userId = userId;
-      _userName = userName;
-
       // Create group
       final success = await _p2pConnection!.createGroup();
       if (!success) {
@@ -190,8 +183,6 @@ class WiFiDirectService {
     }
 
     try {
-      _userId = userId;
-      _userName = userName;
       _isHost = false;
 
       // Start BLE scanning for discovery

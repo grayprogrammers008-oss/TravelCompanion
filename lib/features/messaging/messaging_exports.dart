@@ -75,8 +75,7 @@ export 'presentation/providers/notification_provider.dart';
 export 'presentation/providers/ble_providers.dart';
 
 // WiFi Direct/Multipeer P2P Providers (High-Bandwidth)
-// Note: P2PConnectionState is also defined in p2p_connection_manager.dart, so we hide it here
-export 'presentation/providers/p2p_providers.dart' hide P2PConnectionState;
+export 'presentation/providers/p2p_providers.dart';
 
 // Hybrid Sync Providers (Deduplication, Priority Queue, Conflict Resolution)
 export 'presentation/providers/sync_providers.dart';

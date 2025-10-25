@@ -95,7 +95,7 @@ class SyncCoordinator {
       final task = SyncTask(
         id: 'sync_${message.id}_${DateTime.now().millisecondsSinceEpoch}',
         type: 'sync_message',
-        tripId: message.tripId ?? '',
+        tripId: message.tripId,
         priority: priority,
         data: {
           'message': message,
