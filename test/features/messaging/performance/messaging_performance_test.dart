@@ -44,7 +44,7 @@ void main() {
   group('Performance - Bulk Message Sending', () {
     test('✅ Positive: Send 100+ messages in acceptable time', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockRemoteDataSource.sendMessage(any)).thenAnswer(
@@ -105,7 +105,7 @@ void main() {
       );
 
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
       when(mockLocalDataSource.getTripMessages(
         tripId: 'trip-123',
         limit: 1000,
@@ -129,7 +129,7 @@ void main() {
 
     test('✅ Positive: Batch reaction additions', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.addReaction(
         messageId: any,
@@ -165,11 +165,12 @@ void main() {
   });
 
   group('Performance - Message Deduplication', () {
-    test('✅ Positive: Deduplication performance with large datasets', () {
+    test('✅ Positive: Deduplication performance with large datasets', () async {
       final deduplicationService = MessageDeduplicationService();
-      deduplicationService.initialize();
+      await deduplicationService.initialize();
 
       const messageCount = 1000;
+      final now = DateTime.now();
       final messages = List.generate(
         messageCount,
         (i) => MessageEntity(
@@ -180,8 +181,8 @@ void main() {
           messageType: MessageType.text,
           reactions: const [],
           readBy: const [],
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
+          createdAt: now,
+          updatedAt: now,
         ),
       );
 
@@ -189,9 +190,15 @@ void main() {
 
       final uniqueMessages = <MessageEntity>[];
       for (final message in messages) {
-        if (!deduplicationService.isDuplicate(message.id, message.tripId)) {
+        if (!deduplicationService.isMessageKnown(message.id)) {
           uniqueMessages.add(message);
-          deduplicationService.markAsSeen(message.id, message.tripId);
+          deduplicationService.registerMessage(
+            messageId: message.id,
+            tripId: message.tripId,
+            senderId: message.senderId,
+            content: message.message ?? '',
+            timestamp: message.createdAt,
+          );
         }
       }
 
@@ -203,19 +210,26 @@ void main() {
       print('📊 Performance: Deduplicated $messageCount messages to ${uniqueMessages.length} in ${stopwatch.elapsedMilliseconds}ms');
     });
 
-    test('✅ Positive: Deduplication cache cleanup performance', () {
+    test('✅ Positive: Deduplication cache cleanup performance', () async {
       final deduplicationService = MessageDeduplicationService();
-      deduplicationService.initialize();
+      await deduplicationService.initialize();
 
       // Add many messages to cache
       const cacheSize = 10000;
+      final now = DateTime.now();
       for (var i = 0; i < cacheSize; i++) {
-        deduplicationService.markAsSeen('msg-$i', 'trip-123');
+        deduplicationService.registerMessage(
+          messageId: 'msg-$i',
+          tripId: 'trip-123',
+          senderId: 'user-1',
+          content: 'Message $i',
+          timestamp: now,
+        );
       }
 
       final stopwatch = Stopwatch()..start();
 
-      deduplicationService.cleanup();
+      deduplicationService.clearCache();
 
       stopwatch.stop();
 
@@ -224,25 +238,32 @@ void main() {
       print('📊 Performance: Cleaned up cache of $cacheSize entries in ${stopwatch.elapsedMilliseconds}ms');
     });
 
-    test('❌ Negative: Memory leak detection with continuous message flow', () {
+    test('❌ Negative: Memory leak detection with continuous message flow', () async {
       final deduplicationService = MessageDeduplicationService();
-      deduplicationService.initialize();
+      await deduplicationService.initialize();
 
       // Simulate continuous message flow
       const totalMessages = 50000;
       var duplicateCount = 0;
+      final now = DateTime.now();
 
       for (var i = 0; i < totalMessages; i++) {
         final messageId = 'msg-${i % 1000}'; // Rotating set of 1000 messages
-        if (deduplicationService.isDuplicate(messageId, 'trip-123')) {
+        if (deduplicationService.isMessageKnown(messageId)) {
           duplicateCount++;
         } else {
-          deduplicationService.markAsSeen(messageId, 'trip-123');
+          deduplicationService.registerMessage(
+            messageId: messageId,
+            tripId: 'trip-123',
+            senderId: 'user-1',
+            content: 'Message ${i % 1000}',
+            timestamp: now,
+          );
         }
 
         // Periodic cleanup
         if (i % 10000 == 0) {
-          deduplicationService.cleanup();
+          deduplicationService.clearTripCache('trip-123');
         }
       }
 
@@ -255,7 +276,7 @@ void main() {
   group('Performance - Concurrent User Scenarios', () {
     test('✅ Positive: Multiple users sending messages simultaneously', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockRemoteDataSource.sendMessage(any)).thenAnswer(
@@ -322,7 +343,7 @@ void main() {
       );
 
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
       when(mockLocalDataSource.getTripMessages(
         tripId: any,
         limit: any,
@@ -351,7 +372,7 @@ void main() {
 
     test('✅ Positive: Mixed read/write operations', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       final testMessages = List.generate(
         50,
@@ -413,7 +434,7 @@ void main() {
   group('Performance - Large Attachment Handling', () {
     test('❌ Negative: Large attachment size handling', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       // Simulate large attachment URL (representing large file)
       const largeAttachmentUrl = 'https://storage.example.com/large-video-10mb.mp4';
@@ -455,7 +476,7 @@ void main() {
 
     test('✅ Positive: Multiple small attachments', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockRemoteDataSource.sendMessage(any)).thenAnswer(
@@ -501,7 +522,7 @@ void main() {
       const pageSize = 50;
 
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       final stopwatch = Stopwatch()..start();
 
@@ -571,7 +592,7 @@ void main() {
   group('Performance - Stress Tests', () {
     test('✅ Positive: Rapid-fire message sending', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockRemoteDataSource.sendMessage(any)).thenAnswer(
@@ -615,7 +636,7 @@ void main() {
 
     test('✅ Positive: Repository handles rapid state changes', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.markMessageAsRead(messageId: any, userId: any))
           .thenAnswer((_) async => {});

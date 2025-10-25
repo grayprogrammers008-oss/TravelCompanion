@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_companion/features/messaging/presentation/providers/sync_providers.dart';
-import 'package:travel_companion/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_companion/features/messaging/domain/entities/message_entity.dart';
+import 'package:travel_crew/features/messaging/presentation/providers/sync_providers.dart';
+import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart' hide SyncStatus;
+import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('Sync Providers Tests', () {
@@ -167,7 +168,8 @@ void main() {
           senderId: 'user-1',
           message: 'Test',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
@@ -194,7 +196,8 @@ void main() {
             senderId: 'user-1',
             message: 'Message $i',
             messageType: MessageType.text,
-            timestamp: DateTime.now(),
+            createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
             reactions: [],
             readBy: [],
           ),
@@ -223,7 +226,8 @@ void main() {
           senderId: 'user-1',
           message: 'Old',
           messageType: MessageType.text,
-          timestamp: earlier,
+          createdAt: earlier,
+          updatedAt: earlier,
           reactions: [],
           readBy: [],
         );
@@ -234,7 +238,8 @@ void main() {
           senderId: 'user-1',
           message: 'New',
           messageType: MessageType.text,
-          timestamp: now,
+          createdAt: now,
+          updatedAt: now,
           reactions: [],
           readBy: [],
         );
@@ -430,7 +435,8 @@ void main() {
           senderId: 'user-1',
           message: 'Test',
           messageType: MessageType.text,
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
           reactions: [],
           readBy: [],
         );
