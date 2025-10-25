@@ -131,14 +131,18 @@ class PrioritySyncQueue {
   void pause() {
     _isPaused = true;
     debugPrint('Sync queue paused');
-    _eventController.add(SyncQueueEvent.queuePaused());
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncQueueEvent.queuePaused());
+    }
   }
 
   /// Resume queue processing
   void resume() {
     _isPaused = false;
     debugPrint('Sync queue resumed');
-    _eventController.add(SyncQueueEvent.queueResumed());
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncQueueEvent.queueResumed());
+    }
 
     if (!_isProcessing && queueSize > 0) {
       _startProcessing();
@@ -151,7 +155,9 @@ class PrioritySyncQueue {
     _mediumPriorityQueue.clear();
     _lowPriorityQueue.clear();
     debugPrint('All sync tasks cleared');
-    _eventController.add(SyncQueueEvent.queueCleared());
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncQueueEvent.queueCleared());
+    }
   }
 
   /// Get queue statistics
@@ -270,8 +276,10 @@ class PrioritySyncQueue {
 
   /// Dispose resources
   void dispose() {
-    clearAll();
     _eventController.close();
+    _highPriorityQueue.clear();
+    _mediumPriorityQueue.clear();
+    _lowPriorityQueue.clear();
     _taskHandlers.clear();
   }
 }
