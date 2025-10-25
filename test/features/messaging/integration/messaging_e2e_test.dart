@@ -49,7 +49,7 @@ void main() {
     test('✅ Positive: Complete messaging flow with online connectivity', () async {
       // Setup: Online connectivity
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       // Step 1: Send initial message
       final sentMessage = MessageModel(
@@ -162,7 +162,7 @@ void main() {
 
     test('✅ Positive: Image attachment upload and download flow', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       const imageUrl = 'https://storage.example.com/image-123.jpg';
 
@@ -198,7 +198,7 @@ void main() {
 
     test('✅ Positive: Message editing flow', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       // Original message
       final originalMessage = MessageModel(
@@ -230,7 +230,7 @@ void main() {
 
     test('✅ Positive: Read receipts update correctly for multiple users', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       // User 1 marks as read
       when(mockLocalDataSource.markMessageAsRead(
@@ -274,7 +274,7 @@ void main() {
 
     test('❌ Negative: Sending to non-existent trip', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockRemoteDataSource.sendMessage(any))
@@ -297,7 +297,7 @@ void main() {
 
     test('❌ Negative: Unauthorized access attempts', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockRemoteDataSource.sendMessage(any))
@@ -321,7 +321,7 @@ void main() {
     test('❌ Negative: Network disconnection during send', () async {
       // Start with connection
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
 
@@ -347,7 +347,7 @@ void main() {
     test('❌ Negative: Offline mode - messages are queued', () async {
       // No connectivity
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.none);
+          .thenAnswer((_) async => [ConnectivityResult.none]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockLocalDataSource.queueMessage(any)).thenAnswer((_) async => {});
@@ -368,7 +368,7 @@ void main() {
 
     test('❌ Negative: Duplicate message detection', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       final duplicateMessage = MessageModel(
         id: 'msg-duplicate',
@@ -415,7 +415,7 @@ void main() {
     test('✅ Positive: Messages sync when coming back online', () async {
       // Start offline
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.none);
+          .thenAnswer((_) async => [ConnectivityResult.none]);
 
       when(mockLocalDataSource.saveMessage(any)).thenAnswer((_) async => {});
       when(mockLocalDataSource.queueMessage(any)).thenAnswer((_) async => {});
@@ -432,7 +432,7 @@ void main() {
 
       // Simulate coming back online and syncing
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       final queuedMessage = QueuedMessageModel(
         id: 'queue-001',
@@ -479,7 +479,7 @@ void main() {
 
     test('✅ Positive: Retry failed messages', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       final queuedMessage = QueuedMessageModel(
         id: 'queue-failed',
@@ -544,7 +544,7 @@ void main() {
 
     test('✅ Positive: Cache is used for offline-first reads', () async {
       when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+          .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       final cachedMessages = [
         MessageModel(
