@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'lib/core/network/supabase_client.dart';
-import 'lib/core/config/supabase_config.dart';
+import 'package:travel_crew/core/network/supabase_client.dart';
+import 'package:travel_crew/core/config/supabase_config.dart';
 
 /// Test script to verify Supabase connection
 /// Run with: dart run test_supabase_connection.dart

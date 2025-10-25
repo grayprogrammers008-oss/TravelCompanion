@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_companion/features/messaging/presentation/widgets/sync_status_sheet.dart';
-import 'package:travel_companion/features/messaging/presentation/providers/sync_providers.dart';
-import 'package:travel_companion/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_companion/features/messaging/data/services/message_deduplication_service.dart';
-import 'package:travel_companion/features/messaging/data/services/priority_sync_queue.dart';
-import 'package:travel_companion/features/messaging/data/services/conflict_resolution_engine.dart';
+import 'package:travel_crew/features/messaging/presentation/widgets/sync_status_sheet.dart';
+import 'package:travel_crew/features/messaging/presentation/providers/sync_providers.dart';
+import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
+import 'package:travel_crew/features/messaging/data/services/message_deduplication_service.dart';
+import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:travel_crew/features/messaging/data/services/conflict_resolution_engine.dart';
 
 void main() {
   group('SyncStatusSheet Widget Tests', () {
@@ -237,19 +237,17 @@ void main() {
       await tester.pumpAndSettle();
 
       // Handle bar should be a Container with grey background
-      final handleBar = tester.widget<Container>(
-        find.descendant(
-          of: find.byType(SyncStatusSheet),
-          matching: find.byWidgetPredicate(
-            (widget) =>
-                widget is Container &&
-                widget.width == 40 &&
-                widget.height == 4,
-          ),
+      final handleBar = find.descendant(
+        of: find.byType(SyncStatusSheet),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Container &&
+              widget.constraints != null &&
+              widget.constraints!.maxWidth == 40,
         ),
       );
 
-      expect(handleBar, isNotNull);
+      expect(handleBar, findsOneWidget);
     });
 
     testWidgets('should show sync icon in header', (tester) async {

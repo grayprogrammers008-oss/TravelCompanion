@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_crew/features/messaging/data/services/mesh_coordinator.dart';
+import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('MeshMessage', () {
@@ -14,6 +15,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Hello via mesh!',
+        messageType: MessageType.text,
         hops: ['peer-1', 'peer-2'],
         timestamp: timestamp,
         ttl: const Duration(minutes: 10),
@@ -38,6 +40,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Test message',
+        messageType: MessageType.text,
         hops: ['peer-1'],
         timestamp: DateTime(2025, 1, 24, 10, 30),
         ttl: const Duration(minutes: 10),
@@ -91,6 +94,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Test message',
+        messageType: MessageType.text,
         hops: ['peer-1'],
         timestamp: DateTime.now(),
         ttl: const Duration(minutes: 10),
@@ -114,6 +118,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Direct message',
+        messageType: MessageType.text,
         hops: [],
         timestamp: DateTime.now(),
         ttl: const Duration(minutes: 10),
@@ -134,6 +139,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Multi-hop message',
+        messageType: MessageType.text,
         hops: maxHops,
         timestamp: DateTime.now(),
         ttl: const Duration(minutes: 10),
@@ -147,7 +153,7 @@ void main() {
   group('MeshStatistics', () {
     test('should create statistics with all fields', () {
       // Act
-      const stats = MeshStatistics(
+      final stats = MeshStatistics(
         connectedNodes: 5,
         cachedMessages: 12,
         knownRoutes: 8,
@@ -161,7 +167,7 @@ void main() {
 
     test('should handle zero values', () {
       // Act
-      const stats = MeshStatistics(
+      final stats = MeshStatistics(
         connectedNodes: 0,
         cachedMessages: 0,
         knownRoutes: 0,
@@ -175,7 +181,7 @@ void main() {
 
     test('should handle large values', () {
       // Act
-      const stats = MeshStatistics(
+      final stats = MeshStatistics(
         connectedNodes: 100,
         cachedMessages: 1000,
         knownRoutes: 500,
@@ -218,6 +224,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Test',
+        messageType: MessageType.text,
         hops: [],
         timestamp: DateTime.now(),
         ttl: const Duration(minutes: 5),
@@ -238,6 +245,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Test',
+        messageType: MessageType.text,
         hops: [],
         timestamp: DateTime.now(),
         ttl: const Duration(seconds: 90), // 1.5 minutes
@@ -260,6 +268,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Multi-hop test',
+        messageType: MessageType.text,
         hops: ['peer-1', 'peer-2', 'peer-3'],
         timestamp: DateTime.now(),
         ttl: const Duration(minutes: 10),
@@ -280,6 +289,7 @@ void main() {
         senderId: 'user-alice',
         recipientId: 'user-bob',
         content: 'Order test',
+        messageType: MessageType.text,
         hops: originalHops,
         timestamp: DateTime.now(),
         ttl: const Duration(minutes: 10),
