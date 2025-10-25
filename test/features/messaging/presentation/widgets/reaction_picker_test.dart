@@ -133,7 +133,7 @@ void main() {
       );
 
       if (emojiTexts.evaluate().isNotEmpty) {
-        await tester.tap(emojiTexts.first);
+        await tester.tap(emojiTexts.first, warnIfMissed: false);
         await tester.pumpAndSettle();
 
         // Assert
@@ -208,7 +208,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap clear button
-      await tester.tap(find.byIcon(Icons.clear));
+      await tester.tap(find.byIcon(Icons.clear), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert
@@ -259,7 +259,7 @@ void main() {
       );
 
       // Act - Tap button to open picker
-      await tester.tap(find.text('Open Picker'));
+      await tester.tap(find.text('Open Picker'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - Picker is displayed
@@ -345,11 +345,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Act - Rapidly switch between tabs
-      await tester.tap(find.text('Smileys'));
+      await tester.tap(find.text('Smileys'), warnIfMissed: false);
       await tester.pump();
-      await tester.tap(find.text('Hearts'));
+      await tester.tap(find.text('Hearts'), warnIfMissed: false);
       await tester.pump();
-      await tester.tap(find.text('Gestures'));
+      await tester.tap(find.text('Gestures'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - Should not crash and should show selected tab
@@ -371,9 +371,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Act - Switch to different tab and back
-      await tester.tap(find.text('Hearts'));
+      await tester.tap(find.text('Hearts'), warnIfMissed: false);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Frequently Used'));
+      await tester.tap(find.text('Frequently Used'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - Should still display correctly

@@ -99,7 +99,7 @@ void main() {
       expect(switchWidget.value, isTrue);
 
       // Act - toggle the switch
-      await tester.tap(pushNotificationsSwitch);
+      await tester.tap(pushNotificationsSwitch, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - switch should be off now
@@ -229,7 +229,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find and tap Language tile
-      await tester.tap(find.text('Language'));
+      await tester.tap(find.text('Language'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - dialog should be shown
@@ -254,7 +254,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find and tap Currency tile
-      await tester.tap(find.text('Currency'));
+      await tester.tap(find.text('Currency'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - dialog should be shown
@@ -279,7 +279,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find and tap Logout button
-      await tester.tap(find.text('Logout'));
+      await tester.tap(find.text('Logout'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - confirmation dialog should be shown
@@ -314,7 +314,7 @@ void main() {
         matching: find.byType(SwitchListTile),
       );
 
-      await tester.tap(emailNotificationsSwitch);
+      await tester.tap(emailNotificationsSwitch, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify preference was saved
@@ -419,19 +419,19 @@ void main() {
       await tester.tap(find.ancestor(
         of: find.text('Push Notifications'),
         matching: find.byType(SwitchListTile),
-      ));
+      ), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       await tester.tap(find.ancestor(
         of: find.text('Trip Invites'),
         matching: find.byType(SwitchListTile),
-      ));
+      ), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       await tester.tap(find.ancestor(
         of: find.text('Expense Updates'),
         matching: find.byType(SwitchListTile),
-      ));
+      ), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify all changes were persisted
