@@ -126,20 +126,4 @@ class _ImageViewerState extends State<ImageViewer> {
       ),
     );
   }
-
-  /// Open image viewer
-  static void show(
-    BuildContext context, {
-    required String imageUrl,
-    String? heroTag,
-  }) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ImageViewer(
-          imageUrl: imageUrl,
-          heroTag: heroTag,
-        ),
-      ),
-    );
-  }
 }
