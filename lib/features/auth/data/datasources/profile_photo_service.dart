@@ -3,13 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
+import '../../../../core/constants/app_constants.dart';
 
 /// Service for handling profile photo uploads to Supabase Storage
 class ProfilePhotoService {
   final SupabaseClient _client = SupabaseClientWrapper.client;
   final ImagePicker _imagePicker = ImagePicker();
 
-  static const String bucketName = 'avatars';
+  static const String bucketName = AppConstants.profileAvatarsBucket;
 
   /// Pick image from gallery
   Future<XFile?> pickImageFromGallery() async {
@@ -57,7 +58,7 @@ class ProfilePhotoService {
         print('📤 Uploading profile photo for user: $userId');
       }
 
-      // Create file path: avatars/userId/profile.jpg
+      // Create file path: profile-avatars/userId/profile.jpg
       final fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final filePath = '$userId/$fileName';
 
