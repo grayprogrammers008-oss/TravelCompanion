@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
+import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/expenses/presentation/pages/expense_list_page.dart';
@@ -27,6 +28,7 @@ import '../presentation/main_scaffold.dart';
 class AppRoutes {
   static const String login = '/';
   static const String signup = '/signup';
+  static const String resetPassword = '/auth/reset-password';
   static const String home = '/home';
   static const String expenses = '/expenses';
   static const String tripDetail = '/trips/:tripId';
@@ -63,11 +65,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       final needsOnboarding = onboardingState.value == false;
       final isLoginRoute = state.matchedLocation == AppRoutes.login;
       final isSignupRoute = state.matchedLocation == AppRoutes.signup;
+      final isResetPasswordRoute = state.matchedLocation.startsWith('/auth/reset-password');
       final isOnboardingRoute = state.matchedLocation == AppRoutes.onboarding;
       final isInviteRoute = state.matchedLocation.startsWith('/invite/');
 
       // Allow invite routes without authentication
       if (isInviteRoute) {
+        return null;
+      }
+
+      // Allow reset password route without authentication
+      if (isResetPasswordRoute) {
         return null;
       }
 
@@ -103,6 +111,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.signup,
         name: 'signup',
         builder: (context, state) => const SignUpPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        name: 'resetPassword',
+        builder: (context, state) {
+          final accessToken = state.uri.queryParameters['access_token'];
+          return ResetPasswordPage(accessToken: accessToken);
+        },
       ),
       GoRoute(
         path: AppRoutes.home,

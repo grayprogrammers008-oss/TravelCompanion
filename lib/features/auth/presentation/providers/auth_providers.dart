@@ -201,6 +201,18 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  /// Update password - used after clicking reset password link
+  Future<void> updatePassword({required String newPassword}) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.updatePassword(newPassword: newPassword);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
   /// Update profile
   Future<void> updateProfile({
     String? fullName,

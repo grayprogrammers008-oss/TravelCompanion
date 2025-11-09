@@ -173,7 +173,10 @@ Original error: ${e.message}''';
   /// Reset password
   Future<void> resetPassword(String email) async {
     try {
-      await _client.auth.resetPasswordForEmail(email);
+      await _client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'https://travelcrew.app/auth/reset-password',
+      );
     } on AuthException catch (e) {
       throw Exception('Password reset failed: ${e.message}');
     } catch (e) {
@@ -270,6 +273,31 @@ Original error: ${e.message}''';
       }
       print('❌ [ChangePassword] Unexpected error: $e');
       throw Exception('Password change failed: $e');
+    }
+  }
+
+  /// Update password (used after reset password link)
+  Future<void> updatePassword({required String newPassword}) async {
+    try {
+      print('🔐 [UpdatePassword] Updating password via reset link...');
+
+      // User is already authenticated via the access token from the reset link
+      final response = await _client.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+
+      if (response.user == null) {
+        print('❌ [UpdatePassword] Update returned null user');
+        throw Exception('Password update failed');
+      }
+
+      print('✅ [UpdatePassword] Password updated successfully');
+    } on AuthException catch (e) {
+      print('❌ [UpdatePassword] AuthException: ${e.message}');
+      throw Exception('Password update failed: ${e.message}');
+    } catch (e) {
+      print('❌ [UpdatePassword] Unexpected error: $e');
+      throw Exception('Password update failed: $e');
     }
   }
 

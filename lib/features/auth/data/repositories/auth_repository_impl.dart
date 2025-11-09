@@ -205,6 +205,26 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> updatePassword({required String newPassword}) async {
+    try {
+      if (kDebugMode) {
+        print('🔐 Updating password via reset link');
+      }
+
+      await _remoteDataSource.updatePassword(newPassword: newPassword);
+
+      if (kDebugMode) {
+        print('✅ Password updated successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Password update failed: $e');
+      }
+      rethrow;
+    }
+  }
+
+  @override
   bool get isAuthenticated {
     return _remoteDataSource.isAuthenticated;
   }

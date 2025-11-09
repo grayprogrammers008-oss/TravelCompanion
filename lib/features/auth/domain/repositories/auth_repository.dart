@@ -43,6 +43,9 @@ abstract class AuthRepository {
     required String newPassword,
   });
 
+  /// Update password (used after reset password link)
+  Future<void> updatePassword({required String newPassword});
+
   /// Check if user is authenticated
   bool get isAuthenticated;
 }
