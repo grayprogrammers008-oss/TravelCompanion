@@ -44,15 +44,24 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       return;
     }
 
+    // Check if we have the verification code
+    if (widget.accessToken == null || widget.accessToken!.isEmpty) {
+      setState(() {
+        _errorMessage = 'Invalid reset password link. Please request a new one.';
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      // Use Supabase's updateUser to set new password
-      // The user is already authenticated via the access token in the deep link
-      await ref.read(authControllerProvider.notifier).updatePassword(
+      // Verify the OTP code and update password
+      // The accessToken here is actually the verification code from the email
+      await ref.read(authControllerProvider.notifier).verifyOtpAndUpdatePassword(
+            token: widget.accessToken!,
             newPassword: _passwordController.text.trim(),
           );
 

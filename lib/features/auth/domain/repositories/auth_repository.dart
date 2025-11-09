@@ -46,6 +46,12 @@ abstract class AuthRepository {
   /// Update password (used after reset password link)
   Future<void> updatePassword({required String newPassword});
 
+  /// Verify OTP token and update password (password reset flow)
+  Future<void> verifyOtpAndUpdatePassword({
+    required String token,
+    required String newPassword,
+  });
+
   /// Check if user is authenticated
   bool get isAuthenticated;
 }

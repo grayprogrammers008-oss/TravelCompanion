@@ -225,6 +225,32 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> verifyOtpAndUpdatePassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('🔐 Verifying OTP and updating password');
+      }
+
+      await _remoteDataSource.verifyOtpAndUpdatePassword(
+        token: token,
+        newPassword: newPassword,
+      );
+
+      if (kDebugMode) {
+        print('✅ Password reset completed successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Password reset failed: $e');
+      }
+      rethrow;
+    }
+  }
+
+  @override
   bool get isAuthenticated {
     return _remoteDataSource.isAuthenticated;
   }

@@ -213,6 +213,24 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  /// Verify OTP token and update password (password reset flow)
+  Future<void> verifyOtpAndUpdatePassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.verifyOtpAndUpdatePassword(
+        token: token,
+        newPassword: newPassword,
+      );
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
   /// Update profile
   Future<void> updateProfile({
     String? fullName,

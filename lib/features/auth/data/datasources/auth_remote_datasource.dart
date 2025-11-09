@@ -175,7 +175,7 @@ Original error: ${e.message}''';
     try {
       await _client.auth.resetPasswordForEmail(
         email,
-        redirectTo: 'https://travelcrew.app/auth/reset-password',
+        redirectTo: 'travelcrew://auth/reset-password',
       );
     } on AuthException catch (e) {
       throw Exception('Password reset failed: ${e.message}');
@@ -298,6 +298,69 @@ Original error: ${e.message}''';
     } catch (e) {
       print('❌ [UpdatePassword] Unexpected error: $e');
       throw Exception('Password update failed: $e');
+    }
+  }
+
+  /// Verify OTP token and update password (password reset flow)
+  ///
+  /// This method handles the complete password reset flow:
+  /// 1. Verifies the OTP token from the email
+  /// 2. Updates the user's password
+  Future<void> verifyOtpAndUpdatePassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      print('🔐 [VerifyOTP] Starting password reset with OTP verification...');
+      print('🔐 [VerifyOTP] Token: ${token.substring(0, 8)}...');
+
+      // Step 1: Verify the OTP token (this will authenticate the user)
+      final verifyResponse = await _client.auth.verifyOTP(
+        type: OtpType.recovery,
+        token: token,
+      );
+
+      if (verifyResponse.user == null) {
+        print('❌ [VerifyOTP] Token verification failed - no user returned');
+        throw Exception('Invalid or expired reset link. Please request a new one.');
+      }
+
+      print('✅ [VerifyOTP] Step 1 SUCCESS: Token verified, user authenticated');
+      print('🔐 [VerifyOTP] Step 2: Updating password...');
+
+      // Step 2: Update the password (user is now authenticated)
+      final updateResponse = await _client.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+
+      if (updateResponse.user == null) {
+        print('❌ [VerifyOTP] Password update failed - no user returned');
+        throw Exception('Password update failed. Please try again.');
+      }
+
+      print('✅ [VerifyOTP] Step 2 SUCCESS: Password updated');
+      print('✅ [VerifyOTP] Password reset complete!');
+    } on AuthException catch (e) {
+      print('❌ [VerifyOTP] AuthException: ${e.message}');
+
+      // Provide user-friendly error messages
+      if (e.message.toLowerCase().contains('invalid') ||
+          e.message.toLowerCase().contains('expired')) {
+        throw Exception('Invalid or expired reset link. Please request a new password reset email.');
+      } else if (e.message.toLowerCase().contains('weak')) {
+        throw Exception('Password is too weak. Please use a stronger password.');
+      }
+
+      throw Exception('Password reset failed: ${e.message}');
+    } catch (e) {
+      print('❌ [VerifyOTP] Unexpected error: $e');
+
+      // Don't wrap our custom exceptions
+      if (e.toString().contains('Invalid or expired')) {
+        rethrow;
+      }
+
+      throw Exception('Password reset failed: $e');
     }
   }
 

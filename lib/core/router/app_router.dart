@@ -116,7 +116,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.resetPassword,
         name: 'resetPassword',
         builder: (context, state) {
-          final accessToken = state.uri.queryParameters['access_token'];
+          // Supabase can send either 'access_token' or 'code' parameter
+          final accessToken = state.uri.queryParameters['access_token'] ??
+                             state.uri.queryParameters['code'];
           return ResetPasswordPage(accessToken: accessToken);
         },
       ),
