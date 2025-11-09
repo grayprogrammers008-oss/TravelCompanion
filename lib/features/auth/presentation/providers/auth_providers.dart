@@ -5,6 +5,7 @@ import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/change_password_usecase.dart';
+import '../../domain/usecases/reset_password_usecase.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
@@ -45,6 +46,11 @@ final updateProfileUseCaseProvider = Provider<UpdateProfileUseCase>((ref) {
 final changePasswordUseCaseProvider = Provider<ChangePasswordUseCase>((ref) {
   final repository = ref.watch(authRepositoryProvider);
   return ChangePasswordUseCase(repository);
+});
+
+final resetPasswordUseCaseProvider = Provider<ResetPasswordUseCase>((ref) {
+  final repository = ref.watch(authRepositoryProvider);
+  return ResetPasswordUseCase(repository);
 });
 
 // Profile Photo Service Provider
@@ -100,6 +106,7 @@ class AuthController extends Notifier<AuthState> {
   late final SignOutUseCase _signOutUseCase;
   late final UpdateProfileUseCase _updateProfileUseCase;
   late final ChangePasswordUseCase _changePasswordUseCase;
+  late final ResetPasswordUseCase _resetPasswordUseCase;
   late final AuthRepository _repository;
 
   @override
@@ -110,6 +117,7 @@ class AuthController extends Notifier<AuthState> {
     _signOutUseCase = ref.read(signOutUseCaseProvider);
     _updateProfileUseCase = ref.read(updateProfileUseCaseProvider);
     _changePasswordUseCase = ref.read(changePasswordUseCaseProvider);
+    _resetPasswordUseCase = ref.read(resetPasswordUseCaseProvider);
     _repository = ref.read(authRepositoryProvider);
 
     return AuthState();
@@ -181,11 +189,11 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
-  /// Reset password
+  /// Reset password - sends password reset email via use case
   Future<void> resetPassword(String email) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _repository.resetPassword(email);
+      await _resetPasswordUseCase(email);
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
