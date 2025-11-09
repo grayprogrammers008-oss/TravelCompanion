@@ -304,8 +304,8 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
   /// Build message list
   Widget _buildMessageList(List<QueuedMessageEntity> messages, bool isOffline) {
     // Group by status
-    final pending = messages.where((m) => m.syncStatus == 'pending').toList();
-    final failed = messages.where((m) => m.syncStatus == 'failed').toList();
+    final pending = messages.where((m) => m.syncStatus == MessageSyncStatus.pending).toList();
+    final failed = messages.where((m) => m.syncStatus == MessageSyncStatus.failed).toList();
 
     return ListView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),

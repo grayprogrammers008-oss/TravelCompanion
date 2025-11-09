@@ -40,7 +40,7 @@ class SyncStatusBanner extends ConsumerWidget {
               );
             },
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (error, stackTrace) => const SizedBox.shrink(),
           );
         } else {
           // Offline - show offline banner
@@ -67,12 +67,12 @@ class SyncStatusBanner extends ConsumerWidget {
               actionLabel: null,
               onActionTap: null,
             ),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (error, stackTrace) => const SizedBox.shrink(),
           );
         }
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 
