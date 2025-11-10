@@ -8,8 +8,9 @@ enum AppThemeType {
   sunset,     // Warm coral (Airbnb inspired)
   emerald,    // Trustworthy green (Grab inspired)
   royal,      // Premium purple (Stripe inspired)
-  slate,      // Minimal dark (Apple inspired)
-  midnight,   // Deep black (Uber inspired)
+  lavender,   // Calming lavender (Meditation app inspired)
+  blossom,    // Soft pink (Wellness app inspired)
+  desert,     // Warm beige (Wellness app inspired)
 }
 
 /// Theme data for each theme type
@@ -59,10 +60,12 @@ class AppThemeData {
         return _emerald;
       case AppThemeType.royal:
         return _royal;
-      case AppThemeType.slate:
-        return _slate;
-      case AppThemeType.midnight:
-        return _midnight;
+      case AppThemeType.lavender:
+        return _lavender;
+      case AppThemeType.blossom:
+        return _blossom;
+      case AppThemeType.desert:
+        return _desert;
     }
   }
 
@@ -296,98 +299,39 @@ class AppThemeData {
     isDark: false,
   );
 
-  // ==================== DARK THEMES ====================
-
-  /// Theme 5: Slate Dark - Minimal & Modern (Apple inspired)
-  static const AppThemeData _slate = AppThemeData(
-    name: 'Slate Dark',
-    description: 'Dark slate - Minimal & modern',
-    primaryColor: Color(0xFF0066CC),      // Blue accent on dark
-    primaryDeep: Color(0xFF0052A3),       // Darker blue
-    primaryLight: Color(0xFF3385D6),      // Lighter blue
-    primaryPale: Color(0xFF1E293B),       // Dark slate
+  /// Theme 5: Lavender Serenity - Calming & Peaceful (Meditation app inspired)
+  static const AppThemeData _lavender = AppThemeData(
+    name: 'Lavender Serenity',
+    description: 'Calming lavender - Peace & mindfulness',
+    primaryColor: Color(0xFF9B88ED),      // Soft lavender
+    primaryDeep: Color(0xFF7E6BC9),       // Deeper lavender
+    primaryLight: Color(0xFFB9A8F5),      // Lighter lavender
+    primaryPale: Color(0xFFF3F0FF),       // Very pale lavender
     primaryGradient: LinearGradient(
-      colors: [Color(0xFF0066CC), Color(0xFF0052A3)],
+      colors: [Color(0xFF9B88ED), Color(0xFFB9A8F5)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     glossyGradient: LinearGradient(
       colors: [
-        Color(0xFF0052A3),
-        Color(0xFF0066CC),
-        Color(0xFF3385D6),
+        Color(0xFF7E6BC9),
+        Color(0xFF9B88ED),
+        Color(0xFFD4C8FF),
       ],
       stops: [0.0, 0.5, 1.0],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     headerGradient: LinearGradient(
-      colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+      colors: [Color(0xFF9B88ED), Color(0xFFB9A8F5)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     backgroundGradient: LinearGradient(
       colors: [
-        Color(0xFF0F172A),  // Deep dark
-        Color(0xFF1E293B),  // Medium dark
-        Color(0xFF334155),  // Lighter dark
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    primaryShadow: [
-      BoxShadow(
-        color: Color(0x40000000),
-        blurRadius: 16,
-        offset: Offset(0, 4),
-      ),
-    ],
-    glossyShadow: [
-      BoxShadow(
-        color: Color(0x50000000),
-        blurRadius: 24,
-        offset: Offset(0, 8),
-      ),
-    ],
-    icon: Icons.dark_mode_rounded,
-    accentColor: Color(0xFF00C48C),       // Green accent
-    isDark: true,
-  );
-
-  /// Theme 6: Midnight Black - Bold & Premium (Uber inspired)
-  static const AppThemeData _midnight = AppThemeData(
-    name: 'Midnight Black',
-    description: 'Deep black - Bold & premium',
-    primaryColor: Color(0xFFFFFFFF),      // White on black (Uber style)
-    primaryDeep: Color(0xFFE5E7EB),       // Light gray
-    primaryLight: Color(0xFFFFFFFF),      // Pure white
-    primaryPale: Color(0xFF1F2937),       // Dark gray
-    primaryGradient: LinearGradient(
-      colors: [Color(0xFFFFFFFF), Color(0xFFE5E7EB)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    glossyGradient: LinearGradient(
-      colors: [
-        Color(0xFFE5E7EB),
+        Color(0xFFFDFCFF),
         Color(0xFFFFFFFF),
-        Color(0xFFF3F4F6),
-      ],
-      stops: [0.0, 0.5, 1.0],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    headerGradient: LinearGradient(
-      colors: [Color(0xFF000000), Color(0xFF111827)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    backgroundGradient: LinearGradient(
-      colors: [
-        Color(0xFF000000),  // Pure black
-        Color(0xFF111827),  // Dark gray
-        Color(0xFF1F2937),  // Medium gray
+        Color(0xFFF8F6FF),
       ],
       stops: [0.0, 0.5, 1.0],
       begin: Alignment.topCenter,
@@ -395,22 +339,137 @@ class AppThemeData {
     ),
     primaryShadow: [
       BoxShadow(
-        color: Color(0x60000000),
+        color: Color(0x209B88ED),
         blurRadius: 16,
         offset: Offset(0, 4),
       ),
     ],
     glossyShadow: [
       BoxShadow(
-        color: Color(0x80000000),
+        color: Color(0x309B88ED),
         blurRadius: 24,
         offset: Offset(0, 8),
       ),
     ],
-    icon: Icons.nightlight_round,
-    accentColor: Color(0xFF00C48C),       // Green accent (like Uber uses)
-    isDark: true,
+    icon: Icons.spa_rounded,
+    accentColor: Color(0xFFE0B3FF),       // Soft pink-purple accent
+    isDark: false,
   );
+
+  /// Theme 6: Blossom Pink - Soft & Gentle (Wellness app inspired)
+  static const AppThemeData _blossom = AppThemeData(
+    name: 'Blossom Pink',
+    description: 'Soft pink - Gentle & nurturing',
+    primaryColor: Color(0xFFE896D5),      // Soft pink
+    primaryDeep: Color(0xFFD576C1),       // Deeper pink
+    primaryLight: Color(0xFFF0B3E3),      // Lighter pink
+    primaryPale: Color(0xFFFFF5FC),       // Very pale pink
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFFE896D5), Color(0xFFF0B3E3)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFFD576C1),
+        Color(0xFFE896D5),
+        Color(0xFFFFC8F2),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFFE896D5), Color(0xFFF0B3E3)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFFFDFE),
+        Color(0xFFFFFFFF),
+        Color(0xFFFFF8FC),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x20E896D5),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x30E896D5),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.favorite_rounded,
+    accentColor: Color(0xFFFFB8E8),       // Bright pink accent
+    isDark: false,
+  );
+
+  /// Theme 7: Desert Bloom - Warm & Peaceful (Wellness app inspired - 222.webp)
+  static const AppThemeData _desert = AppThemeData(
+    name: 'Desert Bloom',
+    description: 'Warm beige - Calm & balanced',
+    primaryColor: Color(0xFFD4A574),      // Warm tan/beige
+    primaryDeep: Color(0xFFB88C5D),       // Deeper tan
+    primaryLight: Color(0xFFE6C9A8),      // Lighter beige
+    primaryPale: Color(0xFFF5E6DD),       // Very pale peach (from reference)
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFFD4A574), Color(0xFFB88C5D)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFFB88C5D),
+        Color(0xFFD4A574),
+        Color(0xFFE6C9A8),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFFD4A574), Color(0xFFE6C9A8)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFFFBF8),
+        Color(0xFFFFFFFF),
+        Color(0xFFF5E6DD),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x20D4A574),
+        blurRadius: 16,
+        offset: Offset(0, 4),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x30D4A574),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+    ],
+    icon: Icons.wb_sunny_rounded,
+    accentColor: Color(0xFFC9A58D),       // Muted rose-tan accent
+    isDark: false,
+  );
+
 
   /// Generate Flutter ThemeData from AppThemeData
   ThemeData toThemeData() {

@@ -44,7 +44,7 @@
     <uses-feature android:name="android.hardware.wifi.direct" android:required="false" />
 
     <application
-        android:label="travel_crew"
+        android:label="Pathio"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -77,12 +77,12 @@
                 <!-- HTTPS links for invites -->
                 <data
                     android:scheme="https"
-                    android:host="travelcrew.app"
+                    android:host="pathio.travel"
                     android:pathPrefix="/invite" />
 
                 <!-- Custom scheme for invites -->
                 <data
-                    android:scheme="travelcrew"
+                    android:scheme="pathio"
                     android:host="invite" />
             </intent-filter>
 
@@ -95,12 +95,12 @@
                 <!-- HTTPS links for auth callbacks -->
                 <data
                     android:scheme="https"
-                    android:host="travelcrew.app"
+                    android:host="pathio.travel"
                     android:pathPrefix="/auth" />
 
                 <!-- Custom scheme for auth callbacks -->
                 <data
-                    android:scheme="travelcrew"
+                    android:scheme="pathio"
                     android:host="auth" />
             </intent-filter>
         </activity>

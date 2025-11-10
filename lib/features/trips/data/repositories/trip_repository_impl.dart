@@ -1,12 +1,17 @@
 import '../../../../shared/models/trip_model.dart';
 import '../../domain/repositories/trip_repository.dart';
 import '../datasources/trip_remote_datasource.dart';
+import '../services/trip_notification_service.dart';
 
 /// Implementation of trip repository using Supabase as the data source
 class TripRepositoryImpl implements TripRepository {
   final TripRemoteDataSource _remoteDataSource;
+  final TripNotificationService? _notificationService;
 
-  TripRepositoryImpl(this._remoteDataSource);
+  TripRepositoryImpl(
+    this._remoteDataSource, {
+    TripNotificationService? notificationService,
+  }) : _notificationService = notificationService;
 
   @override
   Future<TripModel> createTrip({
@@ -29,7 +34,12 @@ class TripRepositoryImpl implements TripRepository {
         createdBy: '', // Will be set by backend
       );
 
-      return await _remoteDataSource.createTrip(trip);
+      final createdTrip = await _remoteDataSource.createTrip(trip);
+
+      // Send notification to other members (if any join later, they'll get notified via member_added)
+      // Note: For now, only creator exists, so notification will be sent when members are added
+
+      return createdTrip;
     } catch (e) {
       throw Exception('Failed to create trip: $e');
     }
@@ -70,12 +80,29 @@ class TripRepositoryImpl implements TripRepository {
     try {
       // Build updates map
       final updates = <String, dynamic>{};
-      if (name != null) updates['name'] = name;
-      if (description != null) updates['description'] = description;
-      if (destination != null) updates['destination'] = destination;
-      if (startDate != null) updates['startDate'] = startDate;
-      if (endDate != null) updates['endDate'] = endDate;
-      if (coverImageUrl != null) updates['coverImageUrl'] = coverImageUrl;
+      String? updatedField;
+
+      if (name != null) {
+        updates['name'] = name;
+        updatedField = 'name';
+      }
+      if (description != null) {
+        updates['description'] = description;
+        updatedField = updatedField == null ? 'description' : 'details';
+      }
+      if (destination != null) {
+        updates['destination'] = destination;
+        updatedField = updatedField == null ? 'destination' : 'details';
+      }
+      if (startDate != null || endDate != null) {
+        if (startDate != null) updates['startDate'] = startDate;
+        if (endDate != null) updates['endDate'] = endDate;
+        updatedField = updatedField == null ? 'dates' : 'details';
+      }
+      if (coverImageUrl != null) {
+        updates['coverImageUrl'] = coverImageUrl;
+        updatedField = updatedField == null ? 'cover image' : 'details';
+      }
 
       await _remoteDataSource.updateTrip(tripId, updates);
 
@@ -84,6 +111,10 @@ class TripRepositoryImpl implements TripRepository {
       if (updatedTrip == null) {
         throw Exception('Failed to fetch updated trip');
       }
+
+      // Send notification (handled by Supabase trigger/edge function)
+      // The notification service will be called via database trigger
+
       return updatedTrip.trip;
     } catch (e) {
       throw Exception('Failed to update trip: $e');
@@ -128,6 +159,10 @@ class TripRepositoryImpl implements TripRepository {
         orElse: () => throw Exception('Member not found after adding'),
       );
       if (member == null) throw Exception('Member not found');
+
+      // Send notification to other trip members
+      // (handled by Supabase trigger/edge function)
+
       return member;
     } catch (e) {
       throw Exception('Failed to add member: $e');
