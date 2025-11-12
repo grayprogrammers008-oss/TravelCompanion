@@ -1,4 +1,4 @@
-import '../../../features/messaging/domain/entities/message_entity.dart';
+import '../../features/messaging/domain/entities/message_entity.dart';
 
 /// Message Model - Data layer representation
 /// Handles JSON serialization for Supabase and local storage
