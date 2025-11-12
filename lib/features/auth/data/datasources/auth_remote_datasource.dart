@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../models/user_model.dart';
@@ -173,9 +174,19 @@ Original error: ${e.message}''';
   /// Reset password
   Future<void> resetPassword(String email) async {
     try {
+      // Use different redirect URLs for web and mobile
+      String redirectUrl;
+      if (kIsWeb) {
+        // For web: Use HTTPS URL
+        redirectUrl = 'https://travelcrew.app/auth/reset-password';
+      } else {
+        // For mobile: Use custom scheme
+        redirectUrl = 'travelcrew://auth/reset-password';
+      }
+
       await _client.auth.resetPasswordForEmail(
         email,
-        redirectTo: 'travelcrew://auth/reset-password',
+        redirectTo: redirectUrl,
       );
     } on AuthException catch (e) {
       throw Exception('Password reset failed: ${e.message}');
