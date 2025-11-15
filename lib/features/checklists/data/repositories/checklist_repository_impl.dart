@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/checklist_entity.dart';
 import '../../domain/repositories/checklist_repository.dart';
@@ -52,14 +53,14 @@ class ChecklistRepositoryImpl implements ChecklistRepository {
     required String createdBy,
   }) async {
     try {
-      print('🟢 [Repository] createChecklist START');
-      print('   Trip ID: $tripId');
-      print('   Name: $name');
-      print('   Created By: $createdBy');
+      debugPrint('🟢 [Repository] createChecklist START');
+      debugPrint('   Trip ID: $tripId');
+      debugPrint('   Name: $name');
+      debugPrint('   Created By: $createdBy');
 
       final now = DateTime.now();
       final id = _uuid.v4();
-      print('   Generated UUID: $id');
+      debugPrint('   Generated UUID: $id');
 
       final model = ChecklistModel(
         id: id,
@@ -70,24 +71,24 @@ class ChecklistRepositoryImpl implements ChecklistRepository {
         updatedAt: now,
       );
 
-      print('   Created ChecklistModel: $model');
-      print('   Calling remoteDataSource.upsertChecklist()...');
+      debugPrint('   Created ChecklistModel: $model');
+      debugPrint('   Calling remoteDataSource.upsertChecklist()...');
 
       final created = await remoteDataSource.upsertChecklist(model);
 
-      print('   ✅ Remote datasource returned successfully');
-      print('   Converting to entity...');
+      debugPrint('   ✅ Remote datasource returned successfully');
+      debugPrint('   Converting to entity...');
 
       final entity = created.toEntity();
 
-      print('   ✅ Converted to entity successfully');
-      print('🟢 [Repository] createChecklist SUCCESS');
+      debugPrint('   ✅ Converted to entity successfully');
+      debugPrint('🟢 [Repository] createChecklist SUCCESS');
 
       return entity;
     } catch (e, stackTrace) {
-      print('❌ [Repository] createChecklist FAILED');
-      print('   Exception: $e');
-      print('   Stack Trace: $stackTrace');
+      debugPrint('❌ [Repository] createChecklist FAILED');
+      debugPrint('   Exception: $e');
+      debugPrint('   Stack Trace: $stackTrace');
       throw Exception('Failed to create checklist: $e');
     }
   }

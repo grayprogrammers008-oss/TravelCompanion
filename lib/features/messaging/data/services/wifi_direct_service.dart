@@ -72,8 +72,8 @@ class WiFiDirectService {
       StreamController<FileTransferProgress>.broadcast();
 
   // WiFi Direct constants
-  static const int MAX_CONNECTIONS = 8;
-  static const Duration DISCOVERY_TIMEOUT = Duration(seconds: 45);
+  static const int maxConnections = 8;
+  static const Duration discoveryTimeout = Duration(seconds: 45);
 
   // Getters
   bool get isInitialized => _isInitialized;
@@ -175,7 +175,7 @@ class WiFiDirectService {
   Future<bool> startDiscovery({
     required String userId,
     required String userName,
-    Duration timeout = DISCOVERY_TIMEOUT,
+    Duration timeout = discoveryTimeout,
   }) async {
     if (!_isInitialized || _p2pConnection == null) {
       debugPrint('WiFi Direct not initialized');
@@ -454,7 +454,7 @@ class WiFiDirectService {
       connectedPeers: _connectedPeers.length,
       discoveredPeers: _discoveredPeers.length,
       isHost: _isHost,
-      maxConnections: MAX_CONNECTIONS,
+      maxConnections: maxConnections,
     );
   }
 

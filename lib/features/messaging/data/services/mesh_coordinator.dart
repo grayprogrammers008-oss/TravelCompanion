@@ -30,9 +30,9 @@ class MeshCoordinator {
   Function(String messageId, MeshDeliveryStatus status)? onDeliveryStatusChanged;
 
   // Configuration
-  static const int MAX_HOPS = 5; // Maximum relay hops
-  static const Duration MESSAGE_TTL = Duration(minutes: 10);
-  static const Duration CACHE_CLEANUP_INTERVAL = Duration(minutes: 5);
+  static const int maxHops = 5; // Maximum relay hops
+  static const Duration messageTtl = Duration(minutes: 10);
+  static const Duration cacheCleanupInterval = Duration(minutes: 5);
 
   Timer? _cacheCleanupTimer;
 
@@ -90,7 +90,7 @@ class MeshCoordinator {
         attachmentUrl: attachmentUrl,
         hops: [],
         timestamp: DateTime.now(),
-        ttl: MESSAGE_TTL,
+        ttl: messageTtl,
       );
 
       // Check if recipient is directly connected
@@ -181,7 +181,7 @@ class MeshCoordinator {
       debugPrint('🔀 [MeshCoordinator] Relaying via: $relayPeerId');
 
       // Check hop count
-      if (message.hops.length >= MAX_HOPS) {
+      if (message.hops.length >= maxHops) {
         debugPrint('❌ [MeshCoordinator] Max hops reached');
         _notifyDeliveryStatus(message.id, MeshDeliveryStatus.maxHopsReached);
         return false;
@@ -284,7 +284,7 @@ class MeshCoordinator {
         attachmentUrl: data['attachmentUrl'] as String?,
         hops: [],
         timestamp: DateTime.parse(data['timestamp'] as String),
-        ttl: MESSAGE_TTL,
+        ttl: messageTtl,
       );
 
       _addToCache(meshMessage);
@@ -447,7 +447,7 @@ class MeshCoordinator {
   /// Start cache cleanup timer
   void _startCacheCleanup() {
     _cacheCleanupTimer?.cancel();
-    _cacheCleanupTimer = Timer.periodic(CACHE_CLEANUP_INTERVAL, (_) {
+    _cacheCleanupTimer = Timer.periodic(cacheCleanupInterval, (_) {
       _cleanupCache();
     });
   }
@@ -577,7 +577,7 @@ class MeshMessage {
       attachmentUrl: json['attachmentUrl'] as String?,
       hops: (json['hops'] as List<dynamic>).cast<String>(),
       timestamp: DateTime.parse(json['timestamp'] as String),
-      ttl: MeshCoordinator.MESSAGE_TTL,
+      ttl: MeshCoordinator.messageTtl,
     );
   }
 }

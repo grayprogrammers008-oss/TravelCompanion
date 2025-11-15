@@ -12,9 +12,9 @@ class BLEService {
   BLEService._internal();
 
   // UUIDs for Travel Companion P2P Messaging
-  static const String SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
-  static const String TX_CHARACTERISTIC_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'; // Write
-  static const String RX_CHARACTERISTIC_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'; // Notify
+  static const String serviceUuid = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+  static const String txCharacteristicUuid = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'; // Write
+  static const String rxCharacteristicUuid = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'; // Notify
 
   // State
   bool _isInitialized = false;
@@ -173,7 +173,7 @@ class BLEService {
       final advertisementData = result.advertisementData;
 
       // Check if device advertises our service
-      if (!advertisementData.serviceUuids.contains(SERVICE_UUID)) {
+      if (!advertisementData.serviceUuids.contains(serviceUuid)) {
         return; // Not a Travel Companion peer
       }
 
@@ -203,7 +203,7 @@ class BLEService {
   Map<String, dynamic>? _extractPeerInfo(AdvertisementData advertisementData) {
     try {
       // Try to extract from service data
-      final serviceData = advertisementData.serviceData[SERVICE_UUID];
+      final serviceData = advertisementData.serviceData[serviceUuid];
       if (serviceData != null && serviceData.isNotEmpty) {
         final json = utf8.decode(serviceData);
         return jsonDecode(json) as Map<String, dynamic>;
@@ -264,13 +264,13 @@ class BLEService {
 
       // Find our service
       final service = services.firstWhere(
-        (s) => s.uuid.toString().toLowerCase() == SERVICE_UUID.toLowerCase(),
+        (s) => s.uuid.toString().toLowerCase() == serviceUuid.toLowerCase(),
         orElse: () => throw Exception('Service not found'),
       );
 
       // Find characteristics
       final rxChar = service.characteristics.firstWhere(
-        (c) => c.uuid.toString().toLowerCase() == RX_CHARACTERISTIC_UUID.toLowerCase(),
+        (c) => c.uuid.toString().toLowerCase() == rxCharacteristicUuid.toLowerCase(),
       );
 
       // Subscribe to notifications
@@ -324,11 +324,11 @@ class BLEService {
       // Get TX characteristic
       final services = await device.discoverServices();
       final service = services.firstWhere(
-        (s) => s.uuid.toString().toLowerCase() == SERVICE_UUID.toLowerCase(),
+        (s) => s.uuid.toString().toLowerCase() == serviceUuid.toLowerCase(),
       );
 
       final txChar = service.characteristics.firstWhere(
-        (c) => c.uuid.toString().toLowerCase() == TX_CHARACTERISTIC_UUID.toLowerCase(),
+        (c) => c.uuid.toString().toLowerCase() == txCharacteristicUuid.toLowerCase(),
       );
 
       // Split message into chunks (BLE MTU limit is typically 20-512 bytes)

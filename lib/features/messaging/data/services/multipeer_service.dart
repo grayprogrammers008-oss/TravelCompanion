@@ -25,7 +25,7 @@ class NearbyService {
   Future<void> dispose() async {}
 }
 
-enum Strategy { P2P_CLUSTER, P2P_STAR, P2P_POINT_TO_POINT }
+enum Strategy { p2pCluster, p2pStar, p2pPointToPoint }
 
 class Callbacks {
   final Function(String peerId, int status)? onConnected;
@@ -73,9 +73,9 @@ class MultipeerService {
       StreamController<FileTransferProgress>.broadcast();
 
   // Multipeer constants
-  static const String SERVICE_TYPE = 'travel-companion';
-  static const int MAX_CONNECTIONS = 8;
-  static const Duration DISCOVERY_TIMEOUT = Duration(seconds: 45);
+  static const String serviceType = 'travel-companion';
+  static const int maxConnections = 8;
+  static const Duration discoveryTimeout = Duration(seconds: 45);
 
   // Getters
   bool get isInitialized => _isInitialized;
@@ -108,8 +108,8 @@ class MultipeerService {
       // Initialize NearbyService
       await _nearbyService.initialize(
         userName: userName,
-        strategy: Strategy.P2P_CLUSTER,
-        serviceType: SERVICE_TYPE,
+        strategy: Strategy.p2pCluster,
+        serviceType: serviceType,
         callback: Callbacks(
           onConnected: (String peerId, int status) => _onConnected(peerId, userName),
           onDisconnected: _onDisconnected,
@@ -160,7 +160,7 @@ class MultipeerService {
   }
 
   /// Start browsing for nearby peers
-  Future<bool> startBrowsing({Duration timeout = DISCOVERY_TIMEOUT}) async {
+  Future<bool> startBrowsing({Duration timeout = discoveryTimeout}) async {
     if (!_isInitialized) {
       debugPrint('Multipeer service not initialized');
       return false;
@@ -420,7 +420,7 @@ class MultipeerService {
       discoveredPeers: _discoveredPeers.length,
       isAdvertising: _isAdvertising,
       isBrowsing: _isBrowsing,
-      maxConnections: MAX_CONNECTIONS,
+      maxConnections: maxConnections,
     );
   }
 

@@ -20,9 +20,9 @@ class MessageDeduplicationService {
   final LinkedHashMap<String, DateTime> _accessOrder = LinkedHashMap();
 
   // Configuration
-  static const int MAX_CACHE_SIZE = 10000;
-  static const Duration CACHE_TTL = Duration(hours: 24);
-  static const Duration CLEANUP_INTERVAL = Duration(hours: 1);
+  static const int maxCacheSize = 10000;
+  static const Duration cacheTtl = Duration(hours: 24);
+  static const Duration cleanupInterval = Duration(hours: 1);
 
   Timer? _cleanupTimer;
   bool _isInitialized = false;
@@ -37,7 +37,7 @@ class MessageDeduplicationService {
     if (_isInitialized) return;
 
     // Start periodic cleanup
-    _cleanupTimer = Timer.periodic(CLEANUP_INTERVAL, (_) => _cleanupExpiredEntries());
+    _cleanupTimer = Timer.periodic(cleanupInterval, (_) => _cleanupExpiredEntries());
 
     _isInitialized = true;
     debugPrint('Message Deduplication Service initialized');
@@ -170,7 +170,7 @@ class MessageDeduplicationService {
       duplicatesFound: _duplicatesFound,
       uniqueMessages: _uniqueMessages,
       cacheSize: _messageCache.length,
-      maxCacheSize: MAX_CACHE_SIZE,
+      maxCacheSize: maxCacheSize,
       duplicateRate: _totalChecks > 0 ? _duplicatesFound / _totalChecks : 0.0,
     );
   }
@@ -224,7 +224,7 @@ class MessageDeduplicationService {
     required DateTime timestamp,
   }) {
     // Check cache size and evict if necessary
-    if (_messageCache.length >= MAX_CACHE_SIZE) {
+    if (_messageCache.length >= maxCacheSize) {
       _evictOldest();
     }
 
@@ -260,7 +260,7 @@ class MessageDeduplicationService {
 
   bool _isExpired(DeduplicationEntry entry) {
     final age = DateTime.now().difference(entry.addedAt);
-    return age > CACHE_TTL;
+    return age > cacheTtl;
   }
 
   void _cleanupExpiredEntries() {

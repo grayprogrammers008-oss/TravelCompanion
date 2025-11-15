@@ -138,7 +138,7 @@ class _AddEditItineraryItemPageNewState
         );
 
         // Show confetti for new item!
-        if (mounted) {
+        if (mounted && scaffoldContext.mounted) {
           ConfettiOverlay.show(scaffoldContext, particleCount: 80);
         }
       } else {
@@ -160,6 +160,7 @@ class _AddEditItineraryItemPageNewState
 
       if (mounted) {
         await Future.delayed(const Duration(milliseconds: 500));
+        if (!scaffoldContext.mounted) return;
         scaffoldContext.pop();
       }
     } catch (e) {

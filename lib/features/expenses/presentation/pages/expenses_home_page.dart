@@ -802,7 +802,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                                 balance.userName,
                                               );
 
-                                              if (upiId != null && upiId.isNotEmpty && mounted) {
+                                              if (upiId != null && upiId.isNotEmpty && mounted && context.mounted) {
                                                 PaymentOptionsSheet.show(
                                                   context,
                                                   recipientUPIId: upiId,

@@ -97,7 +97,9 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
 
       if (mounted) {
         // Show confetti for new expense!
-        ConfettiOverlay.show(scaffoldContext, particleCount: 100);
+        if (scaffoldContext.mounted) {
+          ConfettiOverlay.show(scaffoldContext, particleCount: 100);
+        }
 
         // Refresh expenses list
         if (widget.tripId != null) {
@@ -109,6 +111,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
         }
 
         await Future.delayed(const Duration(milliseconds: 500));
+        if (!scaffoldContext.mounted) return;
         scaffoldContext.pop();
 
         ScaffoldMessenger.of(scaffoldContext).showSnackBar(

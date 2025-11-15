@@ -23,9 +23,9 @@ class PrioritySyncQueue {
   SyncTask? _currentTask;
 
   // Configuration
-  static const int MAX_QUEUE_SIZE = 1000;
-  static const int MAX_RETRY_ATTEMPTS = 3;
-  static const Duration RETRY_DELAY = Duration(seconds: 5);
+  static const int maxQueueSize = 1000;
+  static const int maxRetryAttempts = 3;
+  static const Duration retryDelay = Duration(seconds: 5);
 
   // Task callbacks
   final Map<String, Future<bool> Function(SyncTask)> _taskHandlers = {};
@@ -60,7 +60,7 @@ class PrioritySyncQueue {
 
   /// Add a task to the sync queue
   Future<void> enqueue(SyncTask task) async {
-    if (queueSize >= MAX_QUEUE_SIZE) {
+    if (queueSize >= maxQueueSize) {
       debugPrint('Sync queue full, dropping task: ${task.id}');
       _eventController.add(SyncQueueEvent.taskDropped(task));
       return;
@@ -208,7 +208,7 @@ class PrioritySyncQueue {
         _eventController.add(SyncQueueEvent.taskCompleted(task));
       } else {
         // Retry logic
-        if (task.retryCount < MAX_RETRY_ATTEMPTS) {
+        if (task.retryCount < maxRetryAttempts) {
           debugPrint('Retrying task: ${task.id} (attempt ${task.retryCount + 1})');
           _totalTasksRetried++;
 
@@ -216,7 +216,7 @@ class PrioritySyncQueue {
           final retriedTask = task.copyWith(retryCount: task.retryCount + 1);
 
           // Wait before retry
-          await Future.delayed(RETRY_DELAY);
+          await Future.delayed(retryDelay);
 
           await enqueue(retriedTask);
           _eventController.add(SyncQueueEvent.taskRetried(retriedTask));
