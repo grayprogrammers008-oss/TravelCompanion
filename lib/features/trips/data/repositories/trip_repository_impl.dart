@@ -1,17 +1,12 @@
 import '../../../../shared/models/trip_model.dart';
 import '../../domain/repositories/trip_repository.dart';
 import '../datasources/trip_remote_datasource.dart';
-import '../services/trip_notification_service.dart';
 
 /// Implementation of trip repository using Supabase as the data source
 class TripRepositoryImpl implements TripRepository {
   final TripRemoteDataSource _remoteDataSource;
-  final TripNotificationService? _notificationService;
 
-  TripRepositoryImpl(
-    this._remoteDataSource, {
-    TripNotificationService? notificationService,
-  }) : _notificationService = notificationService;
+  TripRepositoryImpl(this._remoteDataSource);
 
   @override
   Future<TripModel> createTrip({

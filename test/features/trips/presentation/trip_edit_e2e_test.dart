@@ -106,7 +106,6 @@ void main() {
       // Simulate navigation to edit page
       // In a real app, this would be triggered by tapping the edit button
       // For this test, we'll directly push the edit page
-      final context = tester.element(find.byType(HomePage));
 
       // Update mock to return updated trip after edit
       when(mockRepository.getUserTrips())
