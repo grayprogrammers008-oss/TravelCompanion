@@ -188,11 +188,11 @@ class P2PConnectionManager {
       return await _wifiDirectService.startDiscovery(
         userId: _userId!,
         userName: _userName!,
-        timeout: timeout ?? WiFiDirectService.DISCOVERY_TIMEOUT,
+        timeout: timeout ?? WiFiDirectService.discoveryTimeout,
       );
     } else if (Platform.isIOS || Platform.isMacOS) {
       return await _multipeerService.startBrowsing(
-        timeout: timeout ?? MultipeerService.DISCOVERY_TIMEOUT,
+        timeout: timeout ?? MultipeerService.discoveryTimeout,
       );
     }
 
