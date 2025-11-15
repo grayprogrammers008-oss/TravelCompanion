@@ -11,6 +11,12 @@ import 'core/theme/theme_access.dart';
 import 'features/messaging/data/initialization/messaging_initialization.dart';
 
 void main() async {
+  // Catch any uncaught errors in the app
+  FlutterError.onError = (FlutterErrorDetails details) {
+    debugPrint('❌ Flutter Error: ${details.exception}');
+    debugPrint('Stack trace: ${details.stack}');
+  };
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // Set system UI overlay style for premium look
@@ -25,18 +31,34 @@ void main() async {
   );
 
   // Initialize Hive for local storage
-  await Hive.initFlutter();
+  try {
+    await Hive.initFlutter();
+    debugPrint('✅ Hive initialized successfully');
+  } catch (e, stackTrace) {
+    debugPrint('❌ Failed to initialize Hive: $e');
+    debugPrint('Stack trace: $stackTrace');
+    // Continue anyway - app might work with limited functionality
+  }
 
   // Initialize messaging module (opens Hive boxes for messages)
-  await MessagingInitialization.initialize();
+  try {
+    await MessagingInitialization.initialize();
+    debugPrint('✅ Messaging initialized successfully');
+  } catch (e, stackTrace) {
+    debugPrint('❌ Failed to initialize messaging: $e');
+    debugPrint('Stack trace: $stackTrace');
+    // Continue anyway - messaging features will be disabled
+  }
 
   // Initialize Supabase Backend (online-only mode)
   try {
     await SupabaseClientWrapper.initialize();
     debugPrint('✅ Supabase initialized successfully (online-only mode)');
-  } catch (e) {
+  } catch (e, stackTrace) {
     debugPrint('❌ Failed to initialize Supabase: $e');
+    debugPrint('Stack trace: $stackTrace');
     debugPrint('⚠️  App requires internet connection to function');
+    // Continue anyway - will show error screen in app
   }
 
   runApp(
