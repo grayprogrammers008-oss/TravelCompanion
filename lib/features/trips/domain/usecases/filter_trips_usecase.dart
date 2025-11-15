@@ -18,6 +18,10 @@ enum TripSortBy {
   dateOldest,   // Oldest trips first (by start date)
   createdNewest, // Recently created first
   createdOldest, // Oldest created first
+  ratingHighest, // Highest rated trips first
+  ratingLowest,  // Lowest rated trips first
+  priceHighest,  // Most expensive trips first (requires trip costs)
+  priceLowest,   // Cheapest trips first (requires trip costs)
 }
 
 /// Parameters for filtering and sorting trips
@@ -26,12 +30,22 @@ class TripFilterParams {
   final TripSortBy sortBy;
   final DateTime? customStartDate; // Optional: filter trips starting after this date
   final DateTime? customEndDate;   // Optional: filter trips ending before this date
+  final double? minPrice;          // Optional: minimum price filter
+  final double? maxPrice;          // Optional: maximum price filter
+  final double? minRating;         // Optional: minimum rating filter (0.0 - 5.0)
+  final double? maxRating;         // Optional: maximum rating filter (0.0 - 5.0)
+  final Map<String, double>? tripCosts; // Optional: map of tripId -> total cost for price-based sorting/filtering
 
   const TripFilterParams({
     this.filterType = TripFilterType.all,
     this.sortBy = TripSortBy.dateNewest,
     this.customStartDate,
     this.customEndDate,
+    this.minPrice,
+    this.maxPrice,
+    this.minRating,
+    this.maxRating,
+    this.tripCosts,
   });
 
   TripFilterParams copyWith({
@@ -39,12 +53,22 @@ class TripFilterParams {
     TripSortBy? sortBy,
     DateTime? customStartDate,
     DateTime? customEndDate,
+    double? minPrice,
+    double? maxPrice,
+    double? minRating,
+    double? maxRating,
+    Map<String, double>? tripCosts,
   }) {
     return TripFilterParams(
       filterType: filterType ?? this.filterType,
       sortBy: sortBy ?? this.sortBy,
       customStartDate: customStartDate ?? this.customStartDate,
       customEndDate: customEndDate ?? this.customEndDate,
+      minPrice: minPrice ?? this.minPrice,
+      maxPrice: maxPrice ?? this.maxPrice,
+      minRating: minRating ?? this.minRating,
+      maxRating: maxRating ?? this.maxRating,
+      tripCosts: tripCosts ?? this.tripCosts,
     );
   }
 }
@@ -60,7 +84,7 @@ class FilterTripsUseCase {
     var filteredTrips = _applyFilter(trips, params);
 
     // Step 2: Apply sorting
-    filteredTrips = _applySort(filteredTrips, params.sortBy);
+    filteredTrips = _applySort(filteredTrips, params.sortBy, tripCosts: params.tripCosts);
 
     return filteredTrips;
   }
@@ -123,12 +147,44 @@ class FilterTripsUseCase {
       }).toList();
     }
 
+    // Apply price range filter
+    if (params.minPrice != null || params.maxPrice != null) {
+      filtered = filtered.where((tripWithMembers) {
+        final trip = tripWithMembers.trip;
+        final cost = params.tripCosts?[trip.id] ?? 0.0;
+
+        if (params.minPrice != null && cost < params.minPrice!) {
+          return false;
+        }
+        if (params.maxPrice != null && cost > params.maxPrice!) {
+          return false;
+        }
+        return true;
+      }).toList();
+    }
+
+    // Apply rating range filter
+    if (params.minRating != null || params.maxRating != null) {
+      filtered = filtered.where((tripWithMembers) {
+        final trip = tripWithMembers.trip;
+
+        if (params.minRating != null && trip.rating < params.minRating!) {
+          return false;
+        }
+        if (params.maxRating != null && trip.rating > params.maxRating!) {
+          return false;
+        }
+        return true;
+      }).toList();
+    }
+
     return filtered;
   }
 
   List<TripWithMembers> _applySort(
     List<TripWithMembers> trips,
     TripSortBy sortBy,
+    {Map<String, double>? tripCosts}
   ) {
     final sortedTrips = List<TripWithMembers>.from(trips);
 
@@ -176,6 +232,30 @@ class FilterTripsUseCase {
           if (a.trip.createdAt == null) return 1;
           if (b.trip.createdAt == null) return -1;
           return a.trip.createdAt!.compareTo(b.trip.createdAt!);
+        });
+        break;
+
+      case TripSortBy.ratingHighest:
+        sortedTrips.sort((a, b) => b.trip.rating.compareTo(a.trip.rating));
+        break;
+
+      case TripSortBy.ratingLowest:
+        sortedTrips.sort((a, b) => a.trip.rating.compareTo(b.trip.rating));
+        break;
+
+      case TripSortBy.priceHighest:
+        sortedTrips.sort((a, b) {
+          final costA = tripCosts?[a.trip.id] ?? 0.0;
+          final costB = tripCosts?[b.trip.id] ?? 0.0;
+          return costB.compareTo(costA);
+        });
+        break;
+
+      case TripSortBy.priceLowest:
+        sortedTrips.sort((a, b) {
+          final costA = tripCosts?[a.trip.id] ?? 0.0;
+          final costB = tripCosts?[b.trip.id] ?? 0.0;
+          return costA.compareTo(costB);
         });
         break;
     }

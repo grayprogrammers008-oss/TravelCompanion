@@ -27,6 +27,8 @@ abstract class TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    bool? isCompleted,
+    DateTime? completedAt,
   });
 
   /// Delete trip

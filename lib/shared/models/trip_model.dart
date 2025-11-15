@@ -10,6 +10,9 @@ class TripModel {
   final String createdBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final bool isCompleted;
+  final DateTime? completedAt;
+  final double rating; // Trip rating 0.0 to 5.0 stars
 
   const TripModel({
     required this.id,
@@ -22,6 +25,9 @@ class TripModel {
     required this.createdBy,
     this.createdAt,
     this.updatedAt,
+    this.isCompleted = false,
+    this.completedAt,
+    this.rating = 0.0,
   });
 
   TripModel copyWith({
@@ -35,6 +41,9 @@ class TripModel {
     String? createdBy,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isCompleted,
+    DateTime? completedAt,
+    double? rating,
   }) {
     return TripModel(
       id: id ?? this.id,
@@ -47,6 +56,9 @@ class TripModel {
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isCompleted: isCompleted ?? this.isCompleted,
+      completedAt: completedAt ?? this.completedAt,
+      rating: rating ?? this.rating,
     );
   }
 
@@ -62,6 +74,9 @@ class TripModel {
       'created_by': createdBy,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
+      'is_completed': isCompleted,
+      'completed_at': completedAt?.toIso8601String(),
+      'rating': rating,
     };
   }
 
@@ -85,6 +100,11 @@ class TripModel {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
           : null,
+      isCompleted: json['is_completed'] as bool? ?? false,
+      completedAt: json['completed_at'] != null
+          ? DateTime.parse(json['completed_at'] as String)
+          : null,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -101,7 +121,10 @@ class TripModel {
         other.coverImageUrl == coverImageUrl &&
         other.createdBy == createdBy &&
         other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+        other.updatedAt == updatedAt &&
+        other.isCompleted == isCompleted &&
+        other.completedAt == completedAt &&
+        other.rating == rating;
   }
 
   @override
@@ -117,12 +140,15 @@ class TripModel {
       createdBy,
       createdAt,
       updatedAt,
+      isCompleted,
+      completedAt,
+      rating,
     );
   }
 
   @override
   String toString() {
-    return 'TripModel(id: $id, name: $name, description: $description, destination: $destination, startDate: $startDate, endDate: $endDate, coverImageUrl: $coverImageUrl, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TripModel(id: $id, name: $name, description: $description, destination: $destination, startDate: $startDate, endDate: $endDate, coverImageUrl: $coverImageUrl, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, isCompleted: $isCompleted, completedAt: $completedAt, rating: $rating)';
   }
 }
 
