@@ -1,4 +1,4 @@
-package com.travelcrew.travel_crew
+package com.pathio.travel
 
 import io.flutter.embedding.android.FlutterActivity
 
