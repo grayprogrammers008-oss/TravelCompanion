@@ -3,10 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:travel_crew/features/trips/data/datasources/trip_remote_datasource.dart'
+    as _i4;
+import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart'
     as _i3;
 import 'package:travel_crew/shared/models/trip_model.dart' as _i2;
 
@@ -29,104 +31,131 @@ class _FakeTripModel_0 extends _i1.SmartFake implements _i2.TripModel {
     : super(parent, parentInvocation);
 }
 
+class _FakeUserTravelStats_1 extends _i1.SmartFake
+    implements _i3.UserTravelStats {
+  _FakeUserTravelStats_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [TripRemoteDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTripRemoteDataSource extends _i1.Mock
-    implements _i3.TripRemoteDataSource {
+    implements _i4.TripRemoteDataSource {
   MockTripRemoteDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i2.TripModel> createTrip(_i2.TripModel? trip) =>
+  _i5.Future<_i2.TripModel> createTrip(_i2.TripModel? trip) =>
       (super.noSuchMethod(
             Invocation.method(#createTrip, [trip]),
-            returnValue: _i4.Future<_i2.TripModel>.value(
+            returnValue: _i5.Future<_i2.TripModel>.value(
               _FakeTripModel_0(this, Invocation.method(#createTrip, [trip])),
             ),
           )
-          as _i4.Future<_i2.TripModel>);
+          as _i5.Future<_i2.TripModel>);
 
   @override
-  _i4.Future<List<_i2.TripWithMembers>> getUserTrips() =>
+  _i5.Future<List<_i2.TripWithMembers>> getUserTrips() =>
       (super.noSuchMethod(
             Invocation.method(#getUserTrips, []),
-            returnValue: _i4.Future<List<_i2.TripWithMembers>>.value(
+            returnValue: _i5.Future<List<_i2.TripWithMembers>>.value(
               <_i2.TripWithMembers>[],
             ),
           )
-          as _i4.Future<List<_i2.TripWithMembers>>);
+          as _i5.Future<List<_i2.TripWithMembers>>);
 
   @override
-  _i4.Future<_i2.TripWithMembers?> getTripById(String? tripId) =>
+  _i5.Future<_i2.TripWithMembers?> getTripById(String? tripId) =>
       (super.noSuchMethod(
             Invocation.method(#getTripById, [tripId]),
-            returnValue: _i4.Future<_i2.TripWithMembers?>.value(),
+            returnValue: _i5.Future<_i2.TripWithMembers?>.value(),
           )
-          as _i4.Future<_i2.TripWithMembers?>);
+          as _i5.Future<_i2.TripWithMembers?>);
 
   @override
-  _i4.Future<void> updateTrip(String? tripId, Map<String, dynamic>? updates) =>
+  _i5.Future<void> updateTrip(String? tripId, Map<String, dynamic>? updates) =>
       (super.noSuchMethod(
             Invocation.method(#updateTrip, [tripId, updates]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<void> deleteTrip(String? tripId) =>
+  _i5.Future<void> deleteTrip(String? tripId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteTrip, [tripId]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<void> addMember(
+  _i5.Future<void> addMember(
     String? tripId,
     String? userId, {
     String? role = 'member',
   }) =>
       (super.noSuchMethod(
             Invocation.method(#addMember, [tripId, userId], {#role: role}),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<void> removeMember(String? tripId, String? userId) =>
+  _i5.Future<void> removeMember(String? tripId, String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#removeMember, [tripId, userId]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Stream<List<_i2.TripWithMembers>> watchUserTrips() =>
+  _i5.Stream<List<_i2.TripWithMembers>> watchUserTrips() =>
       (super.noSuchMethod(
             Invocation.method(#watchUserTrips, []),
-            returnValue: _i4.Stream<List<_i2.TripWithMembers>>.empty(),
+            returnValue: _i5.Stream<List<_i2.TripWithMembers>>.empty(),
           )
-          as _i4.Stream<List<_i2.TripWithMembers>>);
+          as _i5.Stream<List<_i2.TripWithMembers>>);
 
   @override
-  _i4.Stream<_i2.TripWithMembers> watchTrip(String? tripId) =>
+  _i5.Stream<_i2.TripWithMembers> watchTrip(String? tripId) =>
       (super.noSuchMethod(
             Invocation.method(#watchTrip, [tripId]),
-            returnValue: _i4.Stream<_i2.TripWithMembers>.empty(),
+            returnValue: _i5.Stream<_i2.TripWithMembers>.empty(),
           )
-          as _i4.Stream<_i2.TripWithMembers>);
+          as _i5.Stream<_i2.TripWithMembers>);
 
   @override
-  _i4.Stream<List<_i2.TripMemberModel>> watchTripMembers(String? tripId) =>
+  _i5.Stream<List<_i2.TripMemberModel>> watchTripMembers(String? tripId) =>
       (super.noSuchMethod(
             Invocation.method(#watchTripMembers, [tripId]),
-            returnValue: _i4.Stream<List<_i2.TripMemberModel>>.empty(),
+            returnValue: _i5.Stream<List<_i2.TripMemberModel>>.empty(),
           )
-          as _i4.Stream<List<_i2.TripMemberModel>>);
+          as _i5.Stream<List<_i2.TripMemberModel>>);
+
+  @override
+  _i5.Future<_i3.UserTravelStats> getUserStats() =>
+      (super.noSuchMethod(
+            Invocation.method(#getUserStats, []),
+            returnValue: _i5.Future<_i3.UserTravelStats>.value(
+              _FakeUserTravelStats_1(
+                this,
+                Invocation.method(#getUserStats, []),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.UserTravelStats>);
+
+  @override
+  _i5.Stream<_i3.UserTravelStats> watchUserStats() =>
+      (super.noSuchMethod(
+            Invocation.method(#watchUserStats, []),
+            returnValue: _i5.Stream<_i3.UserTravelStats>.empty(),
+          )
+          as _i5.Stream<_i3.UserTravelStats>);
 }
