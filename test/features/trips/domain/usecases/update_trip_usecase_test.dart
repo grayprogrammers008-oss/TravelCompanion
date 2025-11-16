@@ -37,6 +37,8 @@ class MockTripRepository implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    bool? isCompleted,
+    DateTime? completedAt,
   }) async {
     _updateTripCalled = true;
     _lastCallParams = {
@@ -47,6 +49,8 @@ class MockTripRepository implements TripRepository {
       'startDate': startDate,
       'endDate': endDate,
       'coverImageUrl': coverImageUrl,
+      'isCompleted': isCompleted,
+      'completedAt': completedAt,
     };
 
     if (_exceptionToThrow != null) {

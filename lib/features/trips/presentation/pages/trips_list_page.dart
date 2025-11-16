@@ -25,6 +25,11 @@ class TripsListPage extends ConsumerWidget {
         title: const Text('My Trips'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Trip History',
+            onPressed: () => context.push(AppRoutes.tripHistory),
+          ),
+          IconButton(
             icon: const Icon(Icons.person),
             onPressed: () => _showProfileMenu(context, ref),
           ),

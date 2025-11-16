@@ -19,6 +19,7 @@ import '../../features/messaging/presentation/pages/message_queue_screen.dart';
 import '../../features/settings/presentation/pages/theme_settings_page.dart';
 import '../../features/settings/presentation/pages/settings_page_enhanced.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
+import '../../features/trips/presentation/pages/trip_history_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/onboarding/presentation/providers/onboarding_provider.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
@@ -49,6 +50,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
+  static const String tripHistory = '/trip-history';
   static const String onboarding = '/onboarding';
 }
 
@@ -265,6 +267,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.themeSettings,
         name: 'themeSettings',
         builder: (context, state) => const ThemeSettingsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.tripHistory,
+        name: 'tripHistory',
+        builder: (context, state) => const TripHistoryPage(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,

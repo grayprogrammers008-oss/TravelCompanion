@@ -63,6 +63,8 @@ class MockTripRepository implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    bool? isCompleted,
+    DateTime? completedAt,
   }) async {
     throw UnimplementedError();
   }
