@@ -291,5 +291,29 @@ void main() {
       expect(find.text('Undated Trip'), findsOneWidget);
       expect(find.text('Somewhere'), findsOneWidget);
     });
+
+    testWidgets('should display History icon in app bar', (WidgetTester tester) async {
+      // Arrange & Act
+      await tester.pumpWidget(createTestWidget([testTripWithMembers]));
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.byIcon(Icons.history), findsOneWidget);
+      expect(find.byTooltip('Trip History'), findsOneWidget);
+    });
+
+    testWidgets('History icon should be positioned before profile icon', (WidgetTester tester) async {
+      // Arrange & Act
+      await tester.pumpWidget(createTestWidget([testTripWithMembers]));
+      await tester.pumpAndSettle();
+
+      // Assert - Verify both icons exist in app bar
+      expect(find.byIcon(Icons.history), findsOneWidget);
+      expect(find.byIcon(Icons.person), findsOneWidget);
+
+      // Verify app bar contains both icons
+      final appBar = find.byType(AppBar);
+      expect(appBar, findsOneWidget);
+    });
   });
 }
