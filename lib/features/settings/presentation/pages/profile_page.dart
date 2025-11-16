@@ -6,6 +6,7 @@ import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../auth/data/datasources/profile_photo_service.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 
 /// Profile Page - View and edit user profile
 class ProfilePage extends ConsumerStatefulWidget {
@@ -604,58 +605,121 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ),
                         ),
                         const SizedBox(height: AppTheme.spacingLg),
-                        Builder(
-                          builder: (context) => Column(
-                            children: [
-                              Row(
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final statsAsync = ref.watch(userStatsProvider);
+
+                            return statsAsync.when(
+                              data: (stats) => Column(
                                 children: [
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      context: context,
-                                      icon: Icons.luggage,
-                                      label: 'Trips',
-                                      value: '0', // TODO: Query from trip_members table
-                                      color: context.primaryColor,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.luggage,
+                                          label: 'Trips',
+                                          value: '${stats.totalTrips}',
+                                          color: context.primaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppTheme.spacingMd),
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.receipt_long,
+                                          label: 'Expenses',
+                                          value: '${stats.totalExpenses}',
+                                          color: context.accentColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: AppTheme.spacingMd),
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      context: context,
-                                      icon: Icons.receipt_long,
-                                      label: 'Expenses',
-                                      value: '0', // TODO: Query from expense_splits table
-                                      color: context.accentColor,
-                                    ),
+                                  const SizedBox(height: AppTheme.spacingMd),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.attach_money,
+                                          label: 'Total Spent',
+                                          value: '₹${stats.totalSpent.toStringAsFixed(0)}',
+                                          color: context.accentColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppTheme.spacingMd),
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.people,
+                                          label: 'Crew Members',
+                                          value: '${stats.uniqueCrewMembers}',
+                                          color: context.accentColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: AppTheme.spacingMd),
-                              Row(
+                              loading: () => const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(AppTheme.spacingLg),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                              error: (error, stack) => Column(
                                 children: [
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      context: context,
-                                      icon: Icons.attach_money,
-                                      label: 'Total Spent',
-                                      value: '₹0', // TODO: Sum from expenses table
-                                      color: context.accentColor,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.luggage,
+                                          label: 'Trips',
+                                          value: '0',
+                                          color: context.primaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppTheme.spacingMd),
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.receipt_long,
+                                          label: 'Expenses',
+                                          value: '0',
+                                          color: context.accentColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: AppTheme.spacingMd),
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      context: context,
-                                      icon: Icons.people,
-                                      label: 'Crew Members',
-                                      value: '0', // TODO: Count unique members from trip_members
-                                      color: context.accentColor,
-                                    ),
+                                  const SizedBox(height: AppTheme.spacingMd),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.attach_money,
+                                          label: 'Total Spent',
+                                          value: '₹0',
+                                          color: context.accentColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppTheme.spacingMd),
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          context: context,
+                                          icon: Icons.people,
+                                          label: 'Crew Members',
+                                          value: '0',
+                                          color: context.accentColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ],
                     ),

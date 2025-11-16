@@ -9,6 +9,7 @@ import '../../domain/usecases/update_trip_usecase.dart';
 import '../../domain/usecases/get_trip_usecase.dart';
 import '../../domain/usecases/get_user_trips_usecase.dart';
 import '../../domain/usecases/get_trip_history_usecase.dart';
+import '../../domain/usecases/get_user_stats_usecase.dart';
 
 // Remote Data Source Provider - Supabase (online-only mode)
 final tripRemoteDataSourceProvider = Provider<TripRemoteDataSource>((ref) {
@@ -47,6 +48,11 @@ final getTripHistoryUseCaseProvider = Provider<GetTripHistoryUseCase>((ref) {
   return GetTripHistoryUseCase(repository);
 });
 
+final getUserStatsUseCaseProvider = Provider<GetUserStatsUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return GetUserStatsUseCase(repository);
+});
+
 // User Trips Provider - REAL-TIME stream of all trips for current user
 final userTripsProvider = StreamProvider<List<TripWithMembers>>((ref) {
   final repository = ref.watch(tripRepositoryProvider);
@@ -72,6 +78,12 @@ final tripHistoryProvider = StreamProvider<List<TripWithMembers>>((ref) {
 final tripHistoryStatisticsProvider = FutureProvider<TripHistoryStatistics>((ref) async {
   final useCase = ref.watch(getTripHistoryUseCaseProvider);
   return await useCase.getStatistics();
+});
+
+// User Travel Statistics Provider - REAL-TIME stream of user stats
+final userStatsProvider = StreamProvider<UserTravelStats>((ref) {
+  final useCase = ref.watch(getUserStatsUseCaseProvider);
+  return useCase.watch();
 });
 
 // Trip Controller State

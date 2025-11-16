@@ -1,5 +1,6 @@
 import '../../../../shared/models/trip_model.dart';
 import '../../domain/repositories/trip_repository.dart';
+import '../../domain/usecases/get_user_stats_usecase.dart';
 import '../datasources/trip_remote_datasource.dart';
 
 /// Implementation of trip repository using Supabase as the data source
@@ -203,6 +204,26 @@ class TripRepositoryImpl implements TripRepository {
       return _remoteDataSource.watchTrip(tripId);
     } catch (e) {
       throw Exception('Failed to watch trip: $e');
+    }
+  }
+
+  @override
+  Future<UserTravelStats> getUserStats() async {
+    try {
+      final stats = await _remoteDataSource.getUserStats();
+      return stats;
+    } catch (e) {
+      throw Exception('Failed to get user stats: $e');
+    }
+  }
+
+  @override
+  Stream<UserTravelStats> watchUserStats() {
+    try {
+      // Delegate to remote datasource which has real-time implementation
+      return _remoteDataSource.watchUserStats();
+    } catch (e) {
+      throw Exception('Failed to watch user stats: $e');
     }
   }
 }

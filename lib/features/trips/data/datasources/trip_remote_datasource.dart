@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../core/services/realtime_service.dart';
 import '../../../../shared/models/trip_model.dart';
+import '../../domain/usecases/get_user_stats_usecase.dart';
 
 /// Trip Remote Data Source - Supabase Implementation
 ///
@@ -39,6 +40,12 @@ abstract class TripRemoteDataSource {
 
   /// Watch trip member changes
   Stream<List<TripMemberModel>> watchTripMembers(String tripId);
+
+  /// Get user's travel statistics
+  Future<UserTravelStats> getUserStats();
+
+  /// Watch user's travel statistics with real-time updates
+  Stream<UserTravelStats> watchUserStats();
 }
 
 class TripRemoteDataSourceImpl implements TripRemoteDataSource {
@@ -462,5 +469,166 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       RegExp(r'[A-Z]'),
       (match) => '_${match.group(0)!.toLowerCase()}',
     );
+  }
+
+  @override
+  Future<UserTravelStats> getUserStats() async {
+    try {
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Query 1: Count total trips where user is a member
+      final tripsResponse = await _client
+          .from('trip_members')
+          .select('trip_id')
+          .eq('user_id', userId);
+
+      final totalTrips = (tripsResponse as List).length;
+
+      // Query 2 & 3: Get all expense splits for user (count and sum)
+      final expenseSplitsResponse = await _client
+          .from('expense_splits')
+          .select('id, amount')
+          .eq('user_id', userId);
+
+      final expenseSplitsList = expenseSplitsResponse as List;
+      final totalExpenses = expenseSplitsList.length;
+
+      double totalSpent = 0.0;
+      for (final split in expenseSplitsList) {
+        totalSpent += (split['amount'] as num?)?.toDouble() ?? 0.0;
+      }
+
+      // Query 4: Count unique crew members (other users in same trips)
+      final userTripsResponse = await _client
+          .from('trip_members')
+          .select('trip_id')
+          .eq('user_id', userId);
+
+      final userTripIds = (userTripsResponse as List)
+          .map((m) => m['trip_id'] as String)
+          .toList();
+
+      int uniqueCrewMembers = 0;
+      if (userTripIds.isNotEmpty) {
+        final crewMembersResponse = await _client
+            .from('trip_members')
+            .select('user_id')
+            .inFilter('trip_id', userTripIds)
+            .neq('user_id', userId);
+
+        // Get unique user IDs
+        final uniqueUserIds = (crewMembersResponse as List)
+            .map((m) => m['user_id'] as String)
+            .toSet();
+
+        uniqueCrewMembers = uniqueUserIds.length;
+      }
+
+      return UserTravelStats(
+        totalTrips: totalTrips,
+        totalExpenses: totalExpenses,
+        totalSpent: totalSpent,
+        uniqueCrewMembers: uniqueCrewMembers,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching user stats: $e');
+      }
+      throw Exception('Failed to get user stats: $e');
+    }
+  }
+
+  @override
+  Stream<UserTravelStats> watchUserStats() {
+    final userId = SupabaseClientWrapper.currentUserId;
+    if (userId == null) {
+      return Stream.error(Exception('User not authenticated'));
+    }
+
+    final controller = StreamController<UserTravelStats>.broadcast();
+
+    // Function to refetch and emit stats
+    Future<void> refetchStats(String reason) async {
+      if (kDebugMode) {
+        debugPrint('🔄 $reason - Refetching user stats...');
+      }
+      try {
+        final stats = await getUserStats();
+        if (!controller.isClosed) {
+          controller.add(stats);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Error fetching stats after realtime update: $e');
+        }
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
+      }
+    }
+
+    // Subscribe to trip_members changes
+    final tripMembersChannel = _client.channel('user_stats_trip_members:$userId');
+    tripMembersChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'trip_members',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Trip members changed: ${payload.eventType}');
+            }
+            refetchStats('Trip membership ${payload.eventType}');
+          },
+        )
+        .subscribe();
+
+    // Subscribe to expense_splits changes
+    final expenseSplitsChannel = _client.channel('user_stats_expense_splits:$userId');
+    expenseSplitsChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'expense_splits',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            if (kDebugMode) {
+              debugPrint('🔄 Expense splits changed: ${payload.eventType}');
+            }
+            refetchStats('Expense splits ${payload.eventType}');
+          },
+        )
+        .subscribe();
+
+    // Initial load
+    getUserStats().then((stats) {
+      if (!controller.isClosed) {
+        controller.add(stats);
+      }
+    }).catchError((error) {
+      if (!controller.isClosed) {
+        controller.addError(error);
+      }
+    });
+
+    // Cleanup on close
+    controller.onCancel = () {
+      tripMembersChannel.unsubscribe();
+      expenseSplitsChannel.unsubscribe();
+    };
+
+    return controller.stream;
   }
 }
