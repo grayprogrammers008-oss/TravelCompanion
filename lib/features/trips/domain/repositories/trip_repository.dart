@@ -1,4 +1,5 @@
 import '../../../../shared/models/trip_model.dart';
+import '../usecases/get_user_stats_usecase.dart';
 
 /// Abstract trip repository
 abstract class TripRepository {
@@ -52,4 +53,10 @@ abstract class TripRepository {
 
   /// Stream of trip updates
   Stream<TripWithMembers> watchTrip(String tripId);
+
+  /// Get user's travel statistics
+  Future<UserTravelStats> getUserStats();
+
+  /// Watch user's travel statistics with real-time updates
+  Stream<UserTravelStats> watchUserStats();
 }
