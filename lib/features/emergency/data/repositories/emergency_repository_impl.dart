@@ -1,0 +1,309 @@
+import '../../../../shared/models/emergency_contact_model.dart';
+import '../../../../shared/models/emergency_alert_model.dart';
+import '../../../../shared/models/location_share_model.dart';
+import '../../domain/repositories/emergency_repository.dart';
+import '../datasources/emergency_remote_datasource.dart';
+
+/// Implementation of emergency repository using Supabase as the data source
+class EmergencyRepositoryImpl implements EmergencyRepository {
+  final EmergencyRemoteDataSource _remoteDataSource;
+
+  EmergencyRepositoryImpl(this._remoteDataSource);
+
+  // ============================================
+  // Emergency Contacts
+  // ============================================
+
+  @override
+  Future<List<EmergencyContactModel>> getEmergencyContacts() async {
+    try {
+      return await _remoteDataSource.getEmergencyContacts();
+    } catch (e) {
+      throw Exception('Failed to get emergency contacts: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyContactModel?> getEmergencyContactById(
+      String contactId) async {
+    try {
+      return await _remoteDataSource.getEmergencyContactById(contactId);
+    } catch (e) {
+      throw Exception('Failed to get emergency contact: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyContactModel> addEmergencyContact({
+    required String name,
+    required String phoneNumber,
+    String? email,
+    required String relationship,
+    bool isPrimary = false,
+  }) async {
+    try {
+      return await _remoteDataSource.addEmergencyContact(
+        name: name,
+        phoneNumber: phoneNumber,
+        email: email,
+        relationship: relationship,
+        isPrimary: isPrimary,
+      );
+    } catch (e) {
+      throw Exception('Failed to add emergency contact: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyContactModel> updateEmergencyContact({
+    required String contactId,
+    String? name,
+    String? phoneNumber,
+    String? email,
+    String? relationship,
+    bool? isPrimary,
+  }) async {
+    try {
+      return await _remoteDataSource.updateEmergencyContact(
+        contactId: contactId,
+        name: name,
+        phoneNumber: phoneNumber,
+        email: email,
+        relationship: relationship,
+        isPrimary: isPrimary,
+      );
+    } catch (e) {
+      throw Exception('Failed to update emergency contact: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteEmergencyContact(String contactId) async {
+    try {
+      await _remoteDataSource.deleteEmergencyContact(contactId);
+    } catch (e) {
+      throw Exception('Failed to delete emergency contact: $e');
+    }
+  }
+
+  @override
+  Future<void> setPrimaryContact(String contactId) async {
+    try {
+      await _remoteDataSource.setPrimaryContact(contactId);
+    } catch (e) {
+      throw Exception('Failed to set primary contact: $e');
+    }
+  }
+
+  // ============================================
+  // Location Sharing
+  // ============================================
+
+  @override
+  Future<LocationShareModel> startLocationSharing({
+    required List<String> contactIds,
+    String? tripId,
+    Duration? duration,
+    String? message,
+  }) async {
+    try {
+      // Get current location (placeholder - should use actual location service)
+      const double latitude = 0.0;
+      const double longitude = 0.0;
+
+      return await _remoteDataSource.startLocationSharing(
+        contactIds: contactIds,
+        tripId: tripId,
+        duration: duration,
+        message: message,
+        latitude: latitude,
+        longitude: longitude,
+      );
+    } catch (e) {
+      throw Exception('Failed to start location sharing: $e');
+    }
+  }
+
+  @override
+  Future<LocationShareModel> updateSharedLocation({
+    required String sessionId,
+    required double latitude,
+    required double longitude,
+    double? accuracy,
+    double? altitude,
+    double? speed,
+    double? heading,
+    String? message,
+  }) async {
+    try {
+      return await _remoteDataSource.updateSharedLocation(
+        sessionId: sessionId,
+        latitude: latitude,
+        longitude: longitude,
+        accuracy: accuracy,
+        altitude: altitude,
+        speed: speed,
+        heading: heading,
+        message: message,
+      );
+    } catch (e) {
+      throw Exception('Failed to update shared location: $e');
+    }
+  }
+
+  @override
+  Future<void> pauseLocationSharing(String sessionId) async {
+    try {
+      await _remoteDataSource.pauseLocationSharing(sessionId);
+    } catch (e) {
+      throw Exception('Failed to pause location sharing: $e');
+    }
+  }
+
+  @override
+  Future<void> resumeLocationSharing(String sessionId) async {
+    try {
+      await _remoteDataSource.resumeLocationSharing(sessionId);
+    } catch (e) {
+      throw Exception('Failed to resume location sharing: $e');
+    }
+  }
+
+  @override
+  Future<void> stopLocationSharing(String sessionId) async {
+    try {
+      await _remoteDataSource.stopLocationSharing(sessionId);
+    } catch (e) {
+      throw Exception('Failed to stop location sharing: $e');
+    }
+  }
+
+  @override
+  Future<LocationShareModel?> getActiveLocationShare() async {
+    try {
+      return await _remoteDataSource.getActiveLocationShare();
+    } catch (e) {
+      throw Exception('Failed to get active location share: $e');
+    }
+  }
+
+  @override
+  Stream<LocationShareModel> watchLocationShare(String sessionId) {
+    try {
+      return _remoteDataSource.watchLocationShare(sessionId);
+    } catch (e) {
+      throw Exception('Failed to watch location share: $e');
+    }
+  }
+
+  @override
+  Future<List<LocationShareModel>> getSharedLocations() async {
+    try {
+      return await _remoteDataSource.getSharedLocations();
+    } catch (e) {
+      throw Exception('Failed to get shared locations: $e');
+    }
+  }
+
+  // ============================================
+  // Emergency Alerts/SOS
+  // ============================================
+
+  @override
+  Future<EmergencyAlertModel> triggerEmergencyAlert({
+    required EmergencyAlertType type,
+    String? tripId,
+    String? message,
+    double? latitude,
+    double? longitude,
+    List<String>? contactIds,
+  }) async {
+    try {
+      return await _remoteDataSource.triggerEmergencyAlert(
+        type: type,
+        tripId: tripId,
+        message: message,
+        latitude: latitude,
+        longitude: longitude,
+        contactIds: contactIds,
+      );
+    } catch (e) {
+      throw Exception('Failed to trigger emergency alert: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyAlertModel> acknowledgeAlert(String alertId) async {
+    try {
+      return await _remoteDataSource.acknowledgeAlert(alertId);
+    } catch (e) {
+      throw Exception('Failed to acknowledge alert: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyAlertModel> resolveAlert({
+    required String alertId,
+    String? resolution,
+  }) async {
+    try {
+      return await _remoteDataSource.resolveAlert(
+        alertId: alertId,
+        resolution: resolution,
+      );
+    } catch (e) {
+      throw Exception('Failed to resolve alert: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyAlertModel> cancelAlert(String alertId) async {
+    try {
+      return await _remoteDataSource.cancelAlert(alertId);
+    } catch (e) {
+      throw Exception('Failed to cancel alert: $e');
+    }
+  }
+
+  @override
+  Future<EmergencyAlertModel?> getAlertById(String alertId) async {
+    try {
+      return await _remoteDataSource.getAlertById(alertId);
+    } catch (e) {
+      throw Exception('Failed to get alert: $e');
+    }
+  }
+
+  @override
+  Future<List<EmergencyAlertModel>> getUserAlerts({
+    EmergencyAlertStatus? status,
+    DateTime? since,
+  }) async {
+    try {
+      return await _remoteDataSource.getUserAlerts(
+        status: status,
+        since: since,
+      );
+    } catch (e) {
+      throw Exception('Failed to get user alerts: $e');
+    }
+  }
+
+  @override
+  Stream<List<EmergencyAlertModel>> watchActiveAlerts() {
+    try {
+      return _remoteDataSource.watchActiveAlerts();
+    } catch (e) {
+      throw Exception('Failed to watch active alerts: $e');
+    }
+  }
+
+  @override
+  Stream<List<EmergencyAlertModel>> watchReceivedAlerts() {
+    try {
+      return _remoteDataSource.watchReceivedAlerts();
+    } catch (e) {
+      throw Exception('Failed to watch received alerts: $e');
+    }
+  }
+}
