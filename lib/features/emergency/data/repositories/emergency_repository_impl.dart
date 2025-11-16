@@ -1,14 +1,16 @@
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
+import '../../../../core/services/location_service.dart';
 import '../../domain/repositories/emergency_repository.dart';
 import '../datasources/emergency_remote_datasource.dart';
 
 /// Implementation of emergency repository using Supabase as the data source
 class EmergencyRepositoryImpl implements EmergencyRepository {
   final EmergencyRemoteDataSource _remoteDataSource;
+  final LocationService _locationService;
 
-  EmergencyRepositoryImpl(this._remoteDataSource);
+  EmergencyRepositoryImpl(this._remoteDataSource, this._locationService);
 
   // ============================================
   // Emergency Contacts
@@ -107,9 +109,10 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
     String? message,
   }) async {
     try {
-      // Get current location (placeholder - should use actual location service)
-      const double latitude = 0.0;
-      const double longitude = 0.0;
+      // Get current location using location service
+      final coordinates = await _locationService.getCurrentCoordinates();
+      final double latitude = coordinates?['latitude'] ?? 0.0;
+      final double longitude = coordinates?['longitude'] ?? 0.0;
 
       return await _remoteDataSource.startLocationSharing(
         contactIds: contactIds,
@@ -189,11 +192,9 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
 
   @override
   Stream<LocationShareModel> watchLocationShare(String sessionId) {
-    try {
-      return _remoteDataSource.watchLocationShare(sessionId);
-    } catch (e) {
-      throw Exception('Failed to watch location share: $e');
-    }
+    return _remoteDataSource.watchLocationShare(sessionId).handleError((error) {
+      throw Exception('Failed to watch location share: $error');
+    });
   }
 
   @override
@@ -291,19 +292,15 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
 
   @override
   Stream<List<EmergencyAlertModel>> watchActiveAlerts() {
-    try {
-      return _remoteDataSource.watchActiveAlerts();
-    } catch (e) {
-      throw Exception('Failed to watch active alerts: $e');
-    }
+    return _remoteDataSource.watchActiveAlerts().handleError((error) {
+      throw Exception('Failed to watch active alerts: $error');
+    });
   }
 
   @override
   Stream<List<EmergencyAlertModel>> watchReceivedAlerts() {
-    try {
-      return _remoteDataSource.watchReceivedAlerts();
-    } catch (e) {
-      throw Exception('Failed to watch received alerts: $e');
-    }
+    return _remoteDataSource.watchReceivedAlerts().handleError((error) {
+      throw Exception('Failed to watch received alerts: $error');
+    });
   }
 }

@@ -3,20 +3,23 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:travel_crew/features/emergency/data/repositories/emergency_repository_impl.dart';
 import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart';
+import 'package:travel_crew/core/services/location_service.dart';
 import 'package:travel_crew/shared/models/emergency_contact_model.dart';
 import 'package:travel_crew/shared/models/emergency_alert_model.dart';
 import 'package:travel_crew/shared/models/location_share_model.dart';
 
 import 'emergency_repository_impl_test.mocks.dart';
 
-@GenerateMocks([EmergencyRemoteDataSource])
+@GenerateMocks([EmergencyRemoteDataSource, LocationService])
 void main() {
   late EmergencyRepositoryImpl repository;
   late MockEmergencyRemoteDataSource mockRemoteDataSource;
+  late MockLocationService mockLocationService;
 
   setUp(() {
     mockRemoteDataSource = MockEmergencyRemoteDataSource();
-    repository = EmergencyRepositoryImpl(mockRemoteDataSource);
+    mockLocationService = MockLocationService();
+    repository = EmergencyRepositoryImpl(mockRemoteDataSource, mockLocationService);
   });
 
   group('EmergencyRepositoryImpl', () {

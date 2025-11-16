@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
+import '../../../../core/services/location_service.dart';
 import '../../data/datasources/emergency_remote_datasource.dart';
 import '../../data/repositories/emergency_repository_impl.dart';
 import '../../domain/repositories/emergency_repository.dart';
@@ -10,6 +11,15 @@ import '../../domain/usecases/add_emergency_contact_usecase.dart';
 import '../../domain/usecases/get_emergency_contacts_usecase.dart';
 import '../../domain/usecases/start_location_sharing_usecase.dart';
 import '../../domain/usecases/update_shared_location_usecase.dart';
+
+// ============================================
+// Service Providers
+// ============================================
+
+/// Location Service Provider
+final locationServiceProvider = Provider<LocationService>((ref) {
+  return LocationService();
+});
 
 // ============================================
 // Data Source and Repository Providers
@@ -24,7 +34,8 @@ final emergencyRemoteDataSourceProvider =
 /// Emergency Repository Provider
 final emergencyRepositoryProvider = Provider<EmergencyRepository>((ref) {
   final remoteDataSource = ref.watch(emergencyRemoteDataSourceProvider);
-  return EmergencyRepositoryImpl(remoteDataSource);
+  final locationService = ref.watch(locationServiceProvider);
+  return EmergencyRepositoryImpl(remoteDataSource, locationService);
 });
 
 // ============================================

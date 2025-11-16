@@ -3,11 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i7;
 
+import 'package:geolocator/geolocator.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:travel_crew/core/services/location_service.dart' as _i8;
 import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart'
-    as _i5;
+    as _i6;
 import 'package:travel_crew/shared/models/emergency_alert_model.dart' as _i4;
 import 'package:travel_crew/shared/models/emergency_contact_model.dart' as _i2;
 import 'package:travel_crew/shared/models/location_share_model.dart' as _i3;
@@ -44,37 +46,42 @@ class _FakeEmergencyAlertModel_2 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakePosition_3 extends _i1.SmartFake implements _i5.Position {
+  _FakePosition_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [EmergencyRemoteDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockEmergencyRemoteDataSource extends _i1.Mock
-    implements _i5.EmergencyRemoteDataSource {
+    implements _i6.EmergencyRemoteDataSource {
   MockEmergencyRemoteDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<List<_i2.EmergencyContactModel>> getEmergencyContacts() =>
+  _i7.Future<List<_i2.EmergencyContactModel>> getEmergencyContacts() =>
       (super.noSuchMethod(
             Invocation.method(#getEmergencyContacts, []),
-            returnValue: _i6.Future<List<_i2.EmergencyContactModel>>.value(
+            returnValue: _i7.Future<List<_i2.EmergencyContactModel>>.value(
               <_i2.EmergencyContactModel>[],
             ),
           )
-          as _i6.Future<List<_i2.EmergencyContactModel>>);
+          as _i7.Future<List<_i2.EmergencyContactModel>>);
 
   @override
-  _i6.Future<_i2.EmergencyContactModel?> getEmergencyContactById(
+  _i7.Future<_i2.EmergencyContactModel?> getEmergencyContactById(
     String? contactId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getEmergencyContactById, [contactId]),
-            returnValue: _i6.Future<_i2.EmergencyContactModel?>.value(),
+            returnValue: _i7.Future<_i2.EmergencyContactModel?>.value(),
           )
-          as _i6.Future<_i2.EmergencyContactModel?>);
+          as _i7.Future<_i2.EmergencyContactModel?>);
 
   @override
-  _i6.Future<_i2.EmergencyContactModel> addEmergencyContact({
+  _i7.Future<_i2.EmergencyContactModel> addEmergencyContact({
     required String? name,
     required String? phoneNumber,
     String? email,
@@ -89,7 +96,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #relationship: relationship,
               #isPrimary: isPrimary,
             }),
-            returnValue: _i6.Future<_i2.EmergencyContactModel>.value(
+            returnValue: _i7.Future<_i2.EmergencyContactModel>.value(
               _FakeEmergencyContactModel_0(
                 this,
                 Invocation.method(#addEmergencyContact, [], {
@@ -102,10 +109,10 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i6.Future<_i2.EmergencyContactModel>);
+          as _i7.Future<_i2.EmergencyContactModel>);
 
   @override
-  _i6.Future<_i2.EmergencyContactModel> updateEmergencyContact({
+  _i7.Future<_i2.EmergencyContactModel> updateEmergencyContact({
     required String? contactId,
     String? name,
     String? phoneNumber,
@@ -122,7 +129,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #relationship: relationship,
               #isPrimary: isPrimary,
             }),
-            returnValue: _i6.Future<_i2.EmergencyContactModel>.value(
+            returnValue: _i7.Future<_i2.EmergencyContactModel>.value(
               _FakeEmergencyContactModel_0(
                 this,
                 Invocation.method(#updateEmergencyContact, [], {
@@ -136,28 +143,28 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i6.Future<_i2.EmergencyContactModel>);
+          as _i7.Future<_i2.EmergencyContactModel>);
 
   @override
-  _i6.Future<void> deleteEmergencyContact(String? contactId) =>
+  _i7.Future<void> deleteEmergencyContact(String? contactId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteEmergencyContact, [contactId]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> setPrimaryContact(String? contactId) =>
+  _i7.Future<void> setPrimaryContact(String? contactId) =>
       (super.noSuchMethod(
             Invocation.method(#setPrimaryContact, [contactId]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<_i3.LocationShareModel> startLocationSharing({
+  _i7.Future<_i3.LocationShareModel> startLocationSharing({
     required List<String>? contactIds,
     String? tripId,
     Duration? duration,
@@ -182,7 +189,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #speed: speed,
               #heading: heading,
             }),
-            returnValue: _i6.Future<_i3.LocationShareModel>.value(
+            returnValue: _i7.Future<_i3.LocationShareModel>.value(
               _FakeLocationShareModel_1(
                 this,
                 Invocation.method(#startLocationSharing, [], {
@@ -200,10 +207,10 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i6.Future<_i3.LocationShareModel>);
+          as _i7.Future<_i3.LocationShareModel>);
 
   @override
-  _i6.Future<_i3.LocationShareModel> updateSharedLocation({
+  _i7.Future<_i3.LocationShareModel> updateSharedLocation({
     required String? sessionId,
     required double? latitude,
     required double? longitude,
@@ -224,7 +231,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #heading: heading,
               #message: message,
             }),
-            returnValue: _i6.Future<_i3.LocationShareModel>.value(
+            returnValue: _i7.Future<_i3.LocationShareModel>.value(
               _FakeLocationShareModel_1(
                 this,
                 Invocation.method(#updateSharedLocation, [], {
@@ -240,63 +247,63 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i6.Future<_i3.LocationShareModel>);
+          as _i7.Future<_i3.LocationShareModel>);
 
   @override
-  _i6.Future<void> pauseLocationSharing(String? sessionId) =>
+  _i7.Future<void> pauseLocationSharing(String? sessionId) =>
       (super.noSuchMethod(
             Invocation.method(#pauseLocationSharing, [sessionId]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> resumeLocationSharing(String? sessionId) =>
+  _i7.Future<void> resumeLocationSharing(String? sessionId) =>
       (super.noSuchMethod(
             Invocation.method(#resumeLocationSharing, [sessionId]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<void> stopLocationSharing(String? sessionId) =>
+  _i7.Future<void> stopLocationSharing(String? sessionId) =>
       (super.noSuchMethod(
             Invocation.method(#stopLocationSharing, [sessionId]),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
           )
-          as _i6.Future<void>);
+          as _i7.Future<void>);
 
   @override
-  _i6.Future<_i3.LocationShareModel?> getActiveLocationShare() =>
+  _i7.Future<_i3.LocationShareModel?> getActiveLocationShare() =>
       (super.noSuchMethod(
             Invocation.method(#getActiveLocationShare, []),
-            returnValue: _i6.Future<_i3.LocationShareModel?>.value(),
+            returnValue: _i7.Future<_i3.LocationShareModel?>.value(),
           )
-          as _i6.Future<_i3.LocationShareModel?>);
+          as _i7.Future<_i3.LocationShareModel?>);
 
   @override
-  _i6.Stream<_i3.LocationShareModel> watchLocationShare(String? sessionId) =>
+  _i7.Stream<_i3.LocationShareModel> watchLocationShare(String? sessionId) =>
       (super.noSuchMethod(
             Invocation.method(#watchLocationShare, [sessionId]),
-            returnValue: _i6.Stream<_i3.LocationShareModel>.empty(),
+            returnValue: _i7.Stream<_i3.LocationShareModel>.empty(),
           )
-          as _i6.Stream<_i3.LocationShareModel>);
+          as _i7.Stream<_i3.LocationShareModel>);
 
   @override
-  _i6.Future<List<_i3.LocationShareModel>> getSharedLocations() =>
+  _i7.Future<List<_i3.LocationShareModel>> getSharedLocations() =>
       (super.noSuchMethod(
             Invocation.method(#getSharedLocations, []),
-            returnValue: _i6.Future<List<_i3.LocationShareModel>>.value(
+            returnValue: _i7.Future<List<_i3.LocationShareModel>>.value(
               <_i3.LocationShareModel>[],
             ),
           )
-          as _i6.Future<List<_i3.LocationShareModel>>);
+          as _i7.Future<List<_i3.LocationShareModel>>);
 
   @override
-  _i6.Future<_i4.EmergencyAlertModel> triggerEmergencyAlert({
+  _i7.Future<_i4.EmergencyAlertModel> triggerEmergencyAlert({
     required _i4.EmergencyAlertType? type,
     String? tripId,
     String? message,
@@ -313,7 +320,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #longitude: longitude,
               #contactIds: contactIds,
             }),
-            returnValue: _i6.Future<_i4.EmergencyAlertModel>.value(
+            returnValue: _i7.Future<_i4.EmergencyAlertModel>.value(
               _FakeEmergencyAlertModel_2(
                 this,
                 Invocation.method(#triggerEmergencyAlert, [], {
@@ -327,23 +334,23 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i6.Future<_i4.EmergencyAlertModel>);
+          as _i7.Future<_i4.EmergencyAlertModel>);
 
   @override
-  _i6.Future<_i4.EmergencyAlertModel> acknowledgeAlert(String? alertId) =>
+  _i7.Future<_i4.EmergencyAlertModel> acknowledgeAlert(String? alertId) =>
       (super.noSuchMethod(
             Invocation.method(#acknowledgeAlert, [alertId]),
-            returnValue: _i6.Future<_i4.EmergencyAlertModel>.value(
+            returnValue: _i7.Future<_i4.EmergencyAlertModel>.value(
               _FakeEmergencyAlertModel_2(
                 this,
                 Invocation.method(#acknowledgeAlert, [alertId]),
               ),
             ),
           )
-          as _i6.Future<_i4.EmergencyAlertModel>);
+          as _i7.Future<_i4.EmergencyAlertModel>);
 
   @override
-  _i6.Future<_i4.EmergencyAlertModel> resolveAlert({
+  _i7.Future<_i4.EmergencyAlertModel> resolveAlert({
     required String? alertId,
     String? resolution,
   }) =>
@@ -352,7 +359,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #alertId: alertId,
               #resolution: resolution,
             }),
-            returnValue: _i6.Future<_i4.EmergencyAlertModel>.value(
+            returnValue: _i7.Future<_i4.EmergencyAlertModel>.value(
               _FakeEmergencyAlertModel_2(
                 this,
                 Invocation.method(#resolveAlert, [], {
@@ -362,31 +369,31 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i6.Future<_i4.EmergencyAlertModel>);
+          as _i7.Future<_i4.EmergencyAlertModel>);
 
   @override
-  _i6.Future<_i4.EmergencyAlertModel> cancelAlert(String? alertId) =>
+  _i7.Future<_i4.EmergencyAlertModel> cancelAlert(String? alertId) =>
       (super.noSuchMethod(
             Invocation.method(#cancelAlert, [alertId]),
-            returnValue: _i6.Future<_i4.EmergencyAlertModel>.value(
+            returnValue: _i7.Future<_i4.EmergencyAlertModel>.value(
               _FakeEmergencyAlertModel_2(
                 this,
                 Invocation.method(#cancelAlert, [alertId]),
               ),
             ),
           )
-          as _i6.Future<_i4.EmergencyAlertModel>);
+          as _i7.Future<_i4.EmergencyAlertModel>);
 
   @override
-  _i6.Future<_i4.EmergencyAlertModel?> getAlertById(String? alertId) =>
+  _i7.Future<_i4.EmergencyAlertModel?> getAlertById(String? alertId) =>
       (super.noSuchMethod(
             Invocation.method(#getAlertById, [alertId]),
-            returnValue: _i6.Future<_i4.EmergencyAlertModel?>.value(),
+            returnValue: _i7.Future<_i4.EmergencyAlertModel?>.value(),
           )
-          as _i6.Future<_i4.EmergencyAlertModel?>);
+          as _i7.Future<_i4.EmergencyAlertModel?>);
 
   @override
-  _i6.Future<List<_i4.EmergencyAlertModel>> getUserAlerts({
+  _i7.Future<List<_i4.EmergencyAlertModel>> getUserAlerts({
     _i4.EmergencyAlertStatus? status,
     DateTime? since,
   }) =>
@@ -395,25 +402,126 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #status: status,
               #since: since,
             }),
-            returnValue: _i6.Future<List<_i4.EmergencyAlertModel>>.value(
+            returnValue: _i7.Future<List<_i4.EmergencyAlertModel>>.value(
               <_i4.EmergencyAlertModel>[],
             ),
           )
-          as _i6.Future<List<_i4.EmergencyAlertModel>>);
+          as _i7.Future<List<_i4.EmergencyAlertModel>>);
 
   @override
-  _i6.Stream<List<_i4.EmergencyAlertModel>> watchActiveAlerts() =>
+  _i7.Stream<List<_i4.EmergencyAlertModel>> watchActiveAlerts() =>
       (super.noSuchMethod(
             Invocation.method(#watchActiveAlerts, []),
-            returnValue: _i6.Stream<List<_i4.EmergencyAlertModel>>.empty(),
+            returnValue: _i7.Stream<List<_i4.EmergencyAlertModel>>.empty(),
           )
-          as _i6.Stream<List<_i4.EmergencyAlertModel>>);
+          as _i7.Stream<List<_i4.EmergencyAlertModel>>);
 
   @override
-  _i6.Stream<List<_i4.EmergencyAlertModel>> watchReceivedAlerts() =>
+  _i7.Stream<List<_i4.EmergencyAlertModel>> watchReceivedAlerts() =>
       (super.noSuchMethod(
             Invocation.method(#watchReceivedAlerts, []),
-            returnValue: _i6.Stream<List<_i4.EmergencyAlertModel>>.empty(),
+            returnValue: _i7.Stream<List<_i4.EmergencyAlertModel>>.empty(),
           )
-          as _i6.Stream<List<_i4.EmergencyAlertModel>>);
+          as _i7.Stream<List<_i4.EmergencyAlertModel>>);
+}
+
+/// A class which mocks [LocationService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLocationService extends _i1.Mock implements _i8.LocationService {
+  MockLocationService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i7.Future<_i5.Position> getCurrentLocation() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCurrentLocation, []),
+            returnValue: _i7.Future<_i5.Position>.value(
+              _FakePosition_3(this, Invocation.method(#getCurrentLocation, [])),
+            ),
+          )
+          as _i7.Future<_i5.Position>);
+
+  @override
+  _i7.Future<Map<String, double>?> getCurrentCoordinates() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCurrentCoordinates, []),
+            returnValue: _i7.Future<Map<String, double>?>.value(),
+          )
+          as _i7.Future<Map<String, double>?>);
+
+  @override
+  _i7.Stream<_i5.Position> watchLocation({
+    _i5.LocationAccuracy? accuracy = _i5.LocationAccuracy.high,
+    int? distanceFilter = 10,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#watchLocation, [], {
+              #accuracy: accuracy,
+              #distanceFilter: distanceFilter,
+            }),
+            returnValue: _i7.Stream<_i5.Position>.empty(),
+          )
+          as _i7.Stream<_i5.Position>);
+
+  @override
+  _i7.Future<bool> hasLocationPermission() =>
+      (super.noSuchMethod(
+            Invocation.method(#hasLocationPermission, []),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<bool> requestLocationPermission() =>
+      (super.noSuchMethod(
+            Invocation.method(#requestLocationPermission, []),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<bool> openLocationSettings() =>
+      (super.noSuchMethod(
+            Invocation.method(#openLocationSettings, []),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  double getDistanceBetween({
+    required double? startLatitude,
+    required double? startLongitude,
+    required double? endLatitude,
+    required double? endLongitude,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDistanceBetween, [], {
+              #startLatitude: startLatitude,
+              #startLongitude: startLongitude,
+              #endLatitude: endLatitude,
+              #endLongitude: endLongitude,
+            }),
+            returnValue: 0.0,
+          )
+          as double);
+
+  @override
+  double getBearingBetween({
+    required double? startLatitude,
+    required double? startLongitude,
+    required double? endLatitude,
+    required double? endLongitude,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBearingBetween, [], {
+              #startLatitude: startLatitude,
+              #startLongitude: startLongitude,
+              #endLatitude: endLatitude,
+              #endLongitude: endLongitude,
+            }),
+            returnValue: 0.0,
+          )
+          as double);
 }
