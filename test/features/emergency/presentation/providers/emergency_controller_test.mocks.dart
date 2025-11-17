@@ -9,13 +9,14 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:travel_crew/features/emergency/domain/repositories/emergency_repository.dart'
     as _i5;
 import 'package:travel_crew/features/emergency/domain/usecases/add_emergency_contact_usecase.dart'
-    as _i8;
-import 'package:travel_crew/features/emergency/domain/usecases/start_location_sharing_usecase.dart'
     as _i9;
+import 'package:travel_crew/features/emergency/domain/usecases/start_location_sharing_usecase.dart'
+    as _i10;
 import 'package:travel_crew/features/emergency/domain/usecases/trigger_emergency_alert_usecase.dart'
-    as _i7;
+    as _i8;
 import 'package:travel_crew/shared/models/emergency_alert_model.dart' as _i4;
 import 'package:travel_crew/shared/models/emergency_contact_model.dart' as _i2;
+import 'package:travel_crew/shared/models/hospital_model.dart' as _i7;
 import 'package:travel_crew/shared/models/location_share_model.dart' as _i3;
 
 // ignore_for_file: type=lint
@@ -404,13 +405,91 @@ class MockEmergencyRepository extends _i1.Mock
             returnValue: _i6.Stream<List<_i4.EmergencyAlertModel>>.empty(),
           )
           as _i6.Stream<List<_i4.EmergencyAlertModel>>);
+
+  @override
+  _i6.Future<List<_i7.HospitalModel>> findNearestHospitals({
+    required double? latitude,
+    required double? longitude,
+    double? maxDistanceKm = 50.0,
+    int? limit = 10,
+    bool? onlyEmergency = true,
+    bool? only24_7 = false,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#findNearestHospitals, [], {
+              #latitude: latitude,
+              #longitude: longitude,
+              #maxDistanceKm: maxDistanceKm,
+              #limit: limit,
+              #onlyEmergency: onlyEmergency,
+              #only24_7: only24_7,
+            }),
+            returnValue: _i6.Future<List<_i7.HospitalModel>>.value(
+              <_i7.HospitalModel>[],
+            ),
+          )
+          as _i6.Future<List<_i7.HospitalModel>>);
+
+  @override
+  _i6.Future<List<_i7.HospitalModel>> searchHospitals({
+    required String? searchTerm,
+    String? city,
+    String? state,
+    int? limit = 20,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#searchHospitals, [], {
+              #searchTerm: searchTerm,
+              #city: city,
+              #state: state,
+              #limit: limit,
+            }),
+            returnValue: _i6.Future<List<_i7.HospitalModel>>.value(
+              <_i7.HospitalModel>[],
+            ),
+          )
+          as _i6.Future<List<_i7.HospitalModel>>);
+
+  @override
+  _i6.Future<_i7.HospitalModel?> getHospitalById({
+    required String? hospitalId,
+    double? userLatitude,
+    double? userLongitude,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getHospitalById, [], {
+              #hospitalId: hospitalId,
+              #userLatitude: userLatitude,
+              #userLongitude: userLongitude,
+            }),
+            returnValue: _i6.Future<_i7.HospitalModel?>.value(),
+          )
+          as _i6.Future<_i7.HospitalModel?>);
+
+  @override
+  _i6.Future<List<_i7.HospitalModel>> getHospitalsByLocation({
+    String? city,
+    String? state,
+    int? limit = 50,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getHospitalsByLocation, [], {
+              #city: city,
+              #state: state,
+              #limit: limit,
+            }),
+            returnValue: _i6.Future<List<_i7.HospitalModel>>.value(
+              <_i7.HospitalModel>[],
+            ),
+          )
+          as _i6.Future<List<_i7.HospitalModel>>);
 }
 
 /// A class which mocks [TriggerEmergencyAlertUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTriggerEmergencyAlertUseCase extends _i1.Mock
-    implements _i7.TriggerEmergencyAlertUseCase {
+    implements _i8.TriggerEmergencyAlertUseCase {
   MockTriggerEmergencyAlertUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -454,7 +533,7 @@ class MockTriggerEmergencyAlertUseCase extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAddEmergencyContactUseCase extends _i1.Mock
-    implements _i8.AddEmergencyContactUseCase {
+    implements _i9.AddEmergencyContactUseCase {
   MockAddEmergencyContactUseCase() {
     _i1.throwOnMissingStub(this);
   }
@@ -495,7 +574,7 @@ class MockAddEmergencyContactUseCase extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockStartLocationSharingUseCase extends _i1.Mock
-    implements _i9.StartLocationSharingUseCase {
+    implements _i10.StartLocationSharingUseCase {
   MockStartLocationSharingUseCase() {
     _i1.throwOnMissingStub(this);
   }

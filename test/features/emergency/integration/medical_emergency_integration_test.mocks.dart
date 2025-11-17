@@ -7,11 +7,12 @@ import 'dart:async' as _i7;
 
 import 'package:geolocator/geolocator.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:travel_crew/core/services/location_service.dart' as _i8;
+import 'package:travel_crew/core/services/location_service.dart' as _i9;
 import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart'
     as _i6;
 import 'package:travel_crew/shared/models/emergency_alert_model.dart' as _i4;
 import 'package:travel_crew/shared/models/emergency_contact_model.dart' as _i2;
+import 'package:travel_crew/shared/models/hospital_model.dart' as _i8;
 import 'package:travel_crew/shared/models/location_share_model.dart' as _i3;
 
 // ignore_for_file: type=lint
@@ -423,12 +424,90 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
             returnValue: _i7.Stream<List<_i4.EmergencyAlertModel>>.empty(),
           )
           as _i7.Stream<List<_i4.EmergencyAlertModel>>);
+
+  @override
+  _i7.Future<List<_i8.HospitalModel>> findNearestHospitals({
+    required double? latitude,
+    required double? longitude,
+    double? maxDistanceKm = 50.0,
+    int? limit = 10,
+    bool? onlyEmergency = true,
+    bool? only24_7 = false,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#findNearestHospitals, [], {
+              #latitude: latitude,
+              #longitude: longitude,
+              #maxDistanceKm: maxDistanceKm,
+              #limit: limit,
+              #onlyEmergency: onlyEmergency,
+              #only24_7: only24_7,
+            }),
+            returnValue: _i7.Future<List<_i8.HospitalModel>>.value(
+              <_i8.HospitalModel>[],
+            ),
+          )
+          as _i7.Future<List<_i8.HospitalModel>>);
+
+  @override
+  _i7.Future<List<_i8.HospitalModel>> searchHospitals({
+    required String? searchTerm,
+    String? city,
+    String? state,
+    int? limit = 20,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#searchHospitals, [], {
+              #searchTerm: searchTerm,
+              #city: city,
+              #state: state,
+              #limit: limit,
+            }),
+            returnValue: _i7.Future<List<_i8.HospitalModel>>.value(
+              <_i8.HospitalModel>[],
+            ),
+          )
+          as _i7.Future<List<_i8.HospitalModel>>);
+
+  @override
+  _i7.Future<_i8.HospitalModel?> getHospitalById({
+    required String? hospitalId,
+    double? userLatitude,
+    double? userLongitude,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getHospitalById, [], {
+              #hospitalId: hospitalId,
+              #userLatitude: userLatitude,
+              #userLongitude: userLongitude,
+            }),
+            returnValue: _i7.Future<_i8.HospitalModel?>.value(),
+          )
+          as _i7.Future<_i8.HospitalModel?>);
+
+  @override
+  _i7.Future<List<_i8.HospitalModel>> getHospitalsByLocation({
+    String? city,
+    String? state,
+    int? limit = 50,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getHospitalsByLocation, [], {
+              #city: city,
+              #state: state,
+              #limit: limit,
+            }),
+            returnValue: _i7.Future<List<_i8.HospitalModel>>.value(
+              <_i8.HospitalModel>[],
+            ),
+          )
+          as _i7.Future<List<_i8.HospitalModel>>);
 }
 
 /// A class which mocks [LocationService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLocationService extends _i1.Mock implements _i8.LocationService {
+class MockLocationService extends _i1.Mock implements _i9.LocationService {
   MockLocationService() {
     _i1.throwOnMissingStub(this);
   }
