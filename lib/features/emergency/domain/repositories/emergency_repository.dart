@@ -1,6 +1,7 @@
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/location_share_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
+import '../../../../shared/models/hospital_model.dart';
 
 /// Abstract repository for emergency service operations
 abstract class EmergencyRepository {
@@ -121,4 +122,59 @@ abstract class EmergencyRepository {
 
   /// Watch emergency alerts that the current user has been notified about
   Stream<List<EmergencyAlertModel>> watchReceivedAlerts();
+
+  // ============================================
+  // Hospital/Medical Emergency Services
+  // ============================================
+
+  /// Find nearest hospitals to a given location
+  ///
+  /// Parameters:
+  /// - [latitude]: User's current latitude
+  /// - [longitude]: User's current longitude
+  /// - [maxDistanceKm]: Maximum search radius in kilometers (default: 50)
+  /// - [limit]: Maximum number of results to return (default: 10)
+  /// - [onlyEmergency]: Filter only hospitals with emergency rooms (default: true)
+  /// - [only24_7]: Filter only 24/7 hospitals (default: false)
+  Future<List<HospitalModel>> findNearestHospitals({
+    required double latitude,
+    required double longitude,
+    double maxDistanceKm = 50.0,
+    int limit = 10,
+    bool onlyEmergency = true,
+    bool only24_7 = false,
+  });
+
+  /// Search hospitals by name, city, or address
+  ///
+  /// Parameters:
+  /// - [searchTerm]: Search query string
+  /// - [city]: Optional city filter
+  /// - [state]: Optional state filter
+  /// - [limit]: Maximum number of results (default: 20)
+  Future<List<HospitalModel>> searchHospitals({
+    required String searchTerm,
+    String? city,
+    String? state,
+    int limit = 20,
+  });
+
+  /// Get a specific hospital by ID with optional distance calculation
+  ///
+  /// Parameters:
+  /// - [hospitalId]: The hospital's unique identifier
+  /// - [userLatitude]: Optional user latitude for distance calculation
+  /// - [userLongitude]: Optional user longitude for distance calculation
+  Future<HospitalModel?> getHospitalById({
+    required String hospitalId,
+    double? userLatitude,
+    double? userLongitude,
+  });
+
+  /// Get all hospitals in a specific city/state
+  Future<List<HospitalModel>> getHospitalsByLocation({
+    String? city,
+    String? state,
+    int limit = 50,
+  });
 }

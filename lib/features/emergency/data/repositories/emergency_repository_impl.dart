@@ -1,6 +1,7 @@
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
+import '../../../../shared/models/hospital_model.dart';
 import '../../../../core/services/location_service.dart';
 import '../../domain/repositories/emergency_repository.dart';
 import '../datasources/emergency_remote_datasource.dart';
@@ -302,5 +303,85 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
     return _remoteDataSource.watchReceivedAlerts().handleError((error) {
       throw Exception('Failed to watch received alerts: $error');
     });
+  }
+
+  // ============================================
+  // Hospital/Medical Emergency Services
+  // ============================================
+
+  @override
+  Future<List<HospitalModel>> findNearestHospitals({
+    required double latitude,
+    required double longitude,
+    double maxDistanceKm = 50.0,
+    int limit = 10,
+    bool onlyEmergency = true,
+    bool only24_7 = false,
+  }) async {
+    try {
+      return await _remoteDataSource.findNearestHospitals(
+        latitude: latitude,
+        longitude: longitude,
+        maxDistanceKm: maxDistanceKm,
+        limit: limit,
+        onlyEmergency: onlyEmergency,
+        only24_7: only24_7,
+      );
+    } catch (e) {
+      throw Exception('Failed to find nearest hospitals: $e');
+    }
+  }
+
+  @override
+  Future<List<HospitalModel>> searchHospitals({
+    required String searchTerm,
+    String? city,
+    String? state,
+    int limit = 20,
+  }) async {
+    try {
+      return await _remoteDataSource.searchHospitals(
+        searchTerm: searchTerm,
+        city: city,
+        state: state,
+        limit: limit,
+      );
+    } catch (e) {
+      throw Exception('Failed to search hospitals: $e');
+    }
+  }
+
+  @override
+  Future<HospitalModel?> getHospitalById({
+    required String hospitalId,
+    double? userLatitude,
+    double? userLongitude,
+  }) async {
+    try {
+      return await _remoteDataSource.getHospitalById(
+        hospitalId: hospitalId,
+        userLatitude: userLatitude,
+        userLongitude: userLongitude,
+      );
+    } catch (e) {
+      throw Exception('Failed to get hospital by ID: $e');
+    }
+  }
+
+  @override
+  Future<List<HospitalModel>> getHospitalsByLocation({
+    String? city,
+    String? state,
+    int limit = 50,
+  }) async {
+    try {
+      return await _remoteDataSource.getHospitalsByLocation(
+        city: city,
+        state: state,
+        limit: limit,
+      );
+    } catch (e) {
+      throw Exception('Failed to get hospitals by location: $e');
+    }
   }
 }

@@ -5,6 +5,7 @@ import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
+import '../../../../shared/models/hospital_model.dart';
 
 /// Emergency Remote Data Source - Supabase Implementation
 ///
@@ -83,6 +84,32 @@ abstract class EmergencyRemoteDataSource {
   });
   Stream<List<EmergencyAlertModel>> watchActiveAlerts();
   Stream<List<EmergencyAlertModel>> watchReceivedAlerts();
+
+  // Hospital/Medical Emergency Services
+  Future<List<HospitalModel>> findNearestHospitals({
+    required double latitude,
+    required double longitude,
+    double maxDistanceKm = 50.0,
+    int limit = 10,
+    bool onlyEmergency = true,
+    bool only24_7 = false,
+  });
+  Future<List<HospitalModel>> searchHospitals({
+    required String searchTerm,
+    String? city,
+    String? state,
+    int limit = 20,
+  });
+  Future<HospitalModel?> getHospitalById({
+    required String hospitalId,
+    double? userLatitude,
+    double? userLongitude,
+  });
+  Future<List<HospitalModel>> getHospitalsByLocation({
+    String? city,
+    String? state,
+    int limit = 50,
+  });
 }
 
 class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
@@ -944,5 +971,141 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     };
 
     return controller.stream;
+  }
+
+  // ============================================
+  // Hospital/Medical Emergency Services Implementation
+  // ============================================
+
+  @override
+  Future<List<HospitalModel>> findNearestHospitals({
+    required double latitude,
+    required double longitude,
+    double maxDistanceKm = 50.0,
+    int limit = 10,
+    bool onlyEmergency = true,
+    bool only24_7 = false,
+  }) async {
+    try {
+      // Call the PostgreSQL function find_nearest_hospitals
+      final response = await _client.rpc(
+        'find_nearest_hospitals',
+        params: {
+          'user_lat': latitude,
+          'user_lng': longitude,
+          'max_distance_km': maxDistanceKm,
+          'result_limit': limit,
+          'only_emergency': onlyEmergency,
+          'only_24_7': only24_7,
+        },
+      );
+
+      if (response == null) {
+        return [];
+      }
+
+      // Convert response to list of HospitalModel
+      final List<dynamic> data = response as List<dynamic>;
+      return data
+          .map((json) => HospitalModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('Error finding nearest hospitals: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<HospitalModel>> searchHospitals({
+    required String searchTerm,
+    String? city,
+    String? state,
+    int limit = 20,
+  }) async {
+    try {
+      // Call the PostgreSQL function search_hospitals
+      final response = await _client.rpc(
+        'search_hospitals',
+        params: {
+          'search_term': searchTerm,
+          'search_city': city,
+          'search_state': state,
+          'result_limit': limit,
+        },
+      );
+
+      if (response == null) {
+        return [];
+      }
+
+      // Convert response to list of HospitalModel
+      final List<dynamic> data = response as List<dynamic>;
+      return data
+          .map((json) => HospitalModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('Error searching hospitals: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<HospitalModel?> getHospitalById({
+    required String hospitalId,
+    double? userLatitude,
+    double? userLongitude,
+  }) async {
+    try {
+      // Call the PostgreSQL function get_hospital_with_distance
+      final response = await _client.rpc(
+        'get_hospital_with_distance',
+        params: {
+          'hospital_id': hospitalId,
+          'user_lat': userLatitude,
+          'user_lng': userLongitude,
+        },
+      );
+
+      // The function returns a table, so we get the first row
+      final List<dynamic> data = response;
+      if (data.isEmpty) {
+        return null;
+      }
+
+      return HospitalModel.fromJson(data.first as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Error getting hospital by ID: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<HospitalModel>> getHospitalsByLocation({
+    String? city,
+    String? state,
+    int limit = 50,
+  }) async {
+    try {
+      var query = _client.from('hospitals').select().eq('is_active', true);
+
+      if (city != null) {
+        query = query.ilike('city', city);
+      }
+
+      if (state != null) {
+        query = query.ilike('state', state);
+      }
+
+      final response = await query.limit(limit);
+
+      // Convert response to list of HospitalModel
+      final List<dynamic> data = response;
+      return data
+          .map((json) => HospitalModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('Error getting hospitals by location: $e');
+      rethrow;
+    }
   }
 }
