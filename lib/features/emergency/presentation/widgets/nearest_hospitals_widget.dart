@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/services/location_service.dart';
 import '../../../../shared/models/hospital_model.dart';
 import '../../domain/usecases/find_nearest_hospitals_usecase.dart';
 import '../providers/emergency_providers.dart';

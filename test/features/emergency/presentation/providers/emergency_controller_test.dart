@@ -8,8 +8,6 @@ import 'package:travel_crew/features/emergency/domain/usecases/add_emergency_con
 import 'package:travel_crew/features/emergency/domain/usecases/start_location_sharing_usecase.dart';
 import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
 import 'package:travel_crew/shared/models/emergency_alert_model.dart';
-import 'package:travel_crew/shared/models/emergency_contact_model.dart';
-import 'package:travel_crew/shared/models/location_share_model.dart';
 
 import 'emergency_controller_test.mocks.dart';
 
