@@ -16,7 +16,7 @@ class TripHistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(tripHistoryProvider);
-    final statisticsAsync = ref.watch(tripHistoryStatisticsProvider);
+    final statistics = ref.watch(tripHistoryStatisticsProvider);
     final themeData = context.appThemeData;
 
     return Scaffold(
@@ -31,12 +31,8 @@ class TripHistoryPage extends ConsumerWidget {
           }
           return Column(
             children: [
-              // Statistics header
-              statisticsAsync.when(
-                data: (stats) => _buildStatisticsHeader(context, stats, themeData),
-                loading: () => const SizedBox.shrink(),
-                error: (_, _) => const SizedBox.shrink(),
-              ),
+              // Statistics header - automatically updates when trips change
+              _buildStatisticsHeader(context, statistics, themeData),
               const SizedBox(height: AppTheme.spacingMd),
               // Trip history list
               Expanded(

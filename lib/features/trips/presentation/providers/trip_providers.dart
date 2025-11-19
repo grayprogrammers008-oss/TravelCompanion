@@ -86,10 +86,54 @@ final tripHistoryProvider = StreamProvider<List<TripWithMembers>>((ref) {
   return useCase.watchHistory();
 });
 
-// Trip History Statistics Provider
-final tripHistoryStatisticsProvider = FutureProvider<TripHistoryStatistics>((ref) async {
-  final useCase = ref.watch(getTripHistoryUseCaseProvider);
-  return await useCase.getStatistics();
+// Trip History Statistics Provider - Automatically updates when trip history changes
+final tripHistoryStatisticsProvider = Provider<TripHistoryStatistics>((ref) {
+  // Watch the trip history and recalculate statistics whenever it changes
+  final tripHistoryAsync = ref.watch(tripHistoryProvider);
+
+  return tripHistoryAsync.when(
+    data: (completedTrips) {
+      if (completedTrips.isEmpty) {
+        return TripHistoryStatistics.empty();
+      }
+
+      // Calculate statistics
+      final totalTrips = completedTrips.length;
+
+      final tripsWithRatings = completedTrips.where((t) => t.trip.rating > 0).toList();
+      final totalRatings = tripsWithRatings.length;
+
+      final averageRating = tripsWithRatings.isEmpty
+          ? 0.0
+          : tripsWithRatings
+              .map((t) => t.trip.rating)
+              .reduce((a, b) => a + b) / totalRatings;
+
+      // Get earliest and latest completion dates
+      final completionDates = completedTrips
+          .where((t) => t.trip.completedAt != null)
+          .map((t) => t.trip.completedAt!)
+          .toList();
+
+      final earliestCompletion = completionDates.isEmpty
+          ? null
+          : completionDates.reduce((a, b) => a.isBefore(b) ? a : b);
+
+      final latestCompletion = completionDates.isEmpty
+          ? null
+          : completionDates.reduce((a, b) => a.isAfter(b) ? a : b);
+
+      return TripHistoryStatistics(
+        totalCompletedTrips: totalTrips,
+        averageRating: averageRating,
+        totalRatedTrips: totalRatings,
+        earliestCompletionDate: earliestCompletion,
+        latestCompletionDate: latestCompletion,
+      );
+    },
+    loading: () => TripHistoryStatistics.empty(),
+    error: (_, _) => TripHistoryStatistics.empty(),
+  );
 });
 
 // User Travel Statistics Provider - REAL-TIME stream of user stats
