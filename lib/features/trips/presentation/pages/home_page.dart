@@ -473,6 +473,54 @@ class _HomePageState extends ConsumerState<HomePage>
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
+                    color: AppTheme.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.history,
+                    color: AppTheme.success,
+                  ),
+                ),
+                title: const Text('Trip History'),
+                subtitle: const Text('View completed trips'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/trip-history');
+                  }
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                  decoration: BoxDecoration(
+                    color: AppTheme.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.emergency,
+                    color: AppTheme.error,
+                  ),
+                ),
+                title: const Text('Emergency Services'),
+                subtitle: const Text('SOS, hospitals & emergency help'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/emergency');
+                  }
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                  decoration: BoxDecoration(
                     color: context.accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),

@@ -10,6 +10,8 @@ import '../../domain/usecases/get_trip_usecase.dart';
 import '../../domain/usecases/get_user_trips_usecase.dart';
 import '../../domain/usecases/get_trip_history_usecase.dart';
 import '../../domain/usecases/get_user_stats_usecase.dart';
+import '../../domain/usecases/mark_trip_as_completed_usecase.dart';
+import '../../domain/usecases/unmark_trip_as_completed_usecase.dart';
 
 // Remote Data Source Provider - Supabase (online-only mode)
 final tripRemoteDataSourceProvider = Provider<TripRemoteDataSource>((ref) {
@@ -51,6 +53,16 @@ final getTripHistoryUseCaseProvider = Provider<GetTripHistoryUseCase>((ref) {
 final getUserStatsUseCaseProvider = Provider<GetUserStatsUseCase>((ref) {
   final repository = ref.watch(tripRepositoryProvider);
   return GetUserStatsUseCase(repository);
+});
+
+final markTripAsCompletedUseCaseProvider = Provider<MarkTripAsCompletedUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return MarkTripAsCompletedUseCase(repository);
+});
+
+final unmarkTripAsCompletedUseCaseProvider = Provider<UnmarkTripAsCompletedUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return UnmarkTripAsCompletedUseCase(repository);
 });
 
 // User Trips Provider - REAL-TIME stream of all trips for current user
@@ -114,6 +126,8 @@ class TripState {
 class TripController extends Notifier<TripState> {
   late final CreateTripUseCase _createTripUseCase;
   late final UpdateTripUseCase _updateTripUseCase;
+  late final MarkTripAsCompletedUseCase _markTripAsCompletedUseCase;
+  late final UnmarkTripAsCompletedUseCase _unmarkTripAsCompletedUseCase;
   late final TripRepository _repository;
 
   @override
@@ -121,6 +135,8 @@ class TripController extends Notifier<TripState> {
     // Initialize dependencies from ref
     _createTripUseCase = ref.read(createTripUseCaseProvider);
     _updateTripUseCase = ref.read(updateTripUseCaseProvider);
+    _markTripAsCompletedUseCase = ref.read(markTripAsCompletedUseCaseProvider);
+    _unmarkTripAsCompletedUseCase = ref.read(unmarkTripAsCompletedUseCaseProvider);
     _repository = ref.read(tripRepositoryProvider);
 
     return TripState();
@@ -219,6 +235,61 @@ class TripController extends Notifier<TripState> {
     try {
       await _repository.removeMember(tripId: tripId, userId: userId);
       state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Mark trip as completed
+  ///
+  /// This marks the trip as completed, optionally with a rating.
+  /// Only the trip creator or admins can mark a trip as completed.
+  Future<TripModel> markTripAsCompleted({
+    required String tripId,
+    required String userId,
+    double? rating,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      // Mark trip as completed
+      var trip = await _markTripAsCompletedUseCase(
+        tripId: tripId,
+        userId: userId,
+      );
+
+      // If rating is provided, update the trip with the rating
+      if (rating != null) {
+        trip = await _repository.updateTrip(
+          tripId: tripId,
+          rating: rating,
+        );
+      }
+
+      state = state.copyWith(isLoading: false, currentTrip: trip);
+      return trip;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Unmark trip as completed (reopen trip)
+  ///
+  /// This reopens a completed trip.
+  /// Only the trip creator or admins can unmark a trip as completed.
+  Future<TripModel> unmarkTripAsCompleted({
+    required String tripId,
+    required String userId,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final trip = await _unmarkTripAsCompletedUseCase(
+        tripId: tripId,
+        userId: userId,
+      );
+      state = state.copyWith(isLoading: false, currentTrip: trip);
+      return trip;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;

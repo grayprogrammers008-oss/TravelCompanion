@@ -132,6 +132,42 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   ),
                   itemBuilder: (context) => [
+                    if (!trip.trip.isCompleted)
+                      PopupMenuItem(
+                        value: 'complete',
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingXs),
+                              decoration: BoxDecoration(
+                                color: AppTheme.success.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                              ),
+                              child: const Icon(Icons.check_circle, color: AppTheme.success, size: 18),
+                            ),
+                            const SizedBox(width: AppTheme.spacingMd),
+                            const Text('Mark as Completed'),
+                          ],
+                        ),
+                      ),
+                    if (trip.trip.isCompleted)
+                      PopupMenuItem(
+                        value: 'reopen',
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingXs),
+                              decoration: BoxDecoration(
+                                color: AppTheme.info.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                              ),
+                              child: const Icon(Icons.refresh, color: AppTheme.info, size: 18),
+                            ),
+                            const SizedBox(width: AppTheme.spacingMd),
+                            const Text('Reopen Trip'),
+                          ],
+                        ),
+                      ),
                     PopupMenuItem(
                       value: 'delete',
                       child: Row(
@@ -151,7 +187,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     ),
                   ],
                   onSelected: (value) {
-                    if (value == 'delete') {
+                    if (value == 'complete') {
+                      _showCompleteDialog(context, ref);
+                    } else if (value == 'reopen') {
+                      _showReopenDialog(context, ref);
+                    } else if (value == 'delete') {
                       _showDeleteDialog(context, ref);
                     }
                   },
@@ -719,6 +759,163 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           ],
         ),
       ],
+    );
+  }
+
+  void _showCompleteDialog(BuildContext context, WidgetRef ref) {
+    double rating = 0.0;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
+                decoration: BoxDecoration(
+                  color: AppTheme.success.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+                child: const Icon(Icons.check_circle, color: AppTheme.success),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
+              const Text('Complete Trip?'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Mark this trip as completed and rate your experience.',
+                style: context.bodyStyle,
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+              const Text('Rate your trip:'),
+              const SizedBox(height: AppTheme.spacingMd),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    onPressed: () {
+                      setState(() {
+                        rating = (index + 1).toDouble();
+                      });
+                    },
+                    icon: Icon(
+                      index < rating ? Icons.star : Icons.star_border,
+                      color: AppTheme.warning,
+                      size: 32,
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  final userId = ref.read(authStateProvider).value ?? '';
+                  await ref.read(tripControllerProvider.notifier).markTripAsCompleted(
+                    tripId: widget.tripId,
+                    userId: userId,
+                    rating: rating > 0 ? rating : null,
+                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Trip marked as completed!'),
+                        backgroundColor: AppTheme.success,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                        backgroundColor: AppTheme.error,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Complete'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showReopenDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: AppTheme.info.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: const Icon(Icons.refresh, color: AppTheme.info),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            const Text('Reopen Trip?'),
+          ],
+        ),
+        content: const Text('This trip will be moved back to active trips.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                final userId = ref.read(authStateProvider).value ?? '';
+                await ref.read(tripControllerProvider.notifier).unmarkTripAsCompleted(
+                  tripId: widget.tripId,
+                  userId: userId,
+                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Trip reopened successfully!'),
+                      backgroundColor: AppTheme.success,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${e.toString()}'),
+                      backgroundColor: AppTheme.error,
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Reopen'),
+          ),
+        ],
+      ),
     );
   }
 

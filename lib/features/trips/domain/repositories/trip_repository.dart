@@ -30,6 +30,7 @@ abstract class TripRepository {
     String? coverImageUrl,
     bool? isCompleted,
     DateTime? completedAt,
+    double? rating,
   });
 
   /// Delete trip

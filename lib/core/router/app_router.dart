@@ -23,6 +23,7 @@ import '../../features/trips/presentation/pages/trip_history_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/onboarding/presentation/providers/onboarding_provider.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
+import '../../features/emergency/presentation/pages/emergency_page.dart';
 import '../presentation/main_scaffold.dart';
 
 // Route names
@@ -51,6 +52,7 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
   static const String tripHistory = '/trip-history';
+  static const String emergency = '/emergency';
   static const String onboarding = '/onboarding';
 }
 
@@ -272,6 +274,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.tripHistory,
         name: 'tripHistory',
         builder: (context, state) => const TripHistoryPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.emergency,
+        name: 'emergency',
+        builder: (context, state) {
+          final tripId = state.uri.queryParameters['tripId'];
+          return EmergencyPage(tripId: tripId);
+        },
       ),
       GoRoute(
         path: AppRoutes.onboarding,

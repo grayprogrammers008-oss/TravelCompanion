@@ -74,6 +74,7 @@ class TripRepositoryImpl implements TripRepository {
     String? coverImageUrl,
     bool? isCompleted,
     DateTime? completedAt,
+    double? rating,
   }) async {
     try {
       // Build updates map
@@ -108,6 +109,10 @@ class TripRepositoryImpl implements TripRepository {
       if (completedAt != null) {
         updates['completedAt'] = completedAt.toIso8601String();
         updatedField = updatedField == null ? 'completion date' : 'details';
+      }
+      if (rating != null) {
+        updates['rating'] = rating;
+        updatedField = updatedField == null ? 'rating' : 'details';
       }
 
       await _remoteDataSource.updateTrip(tripId, updates);
