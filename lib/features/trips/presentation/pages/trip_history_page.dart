@@ -66,7 +66,7 @@ class TripHistoryPage extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: themeData.glossyGradient,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: themeData.cardShadow,
+        boxShadow: themeData.glossyShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
