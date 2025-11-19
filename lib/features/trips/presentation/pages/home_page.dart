@@ -430,23 +430,24 @@ class _HomePageState extends ConsumerState<HomePage>
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle
-              Container(
-                margin: const EdgeInsets.only(top: AppTheme.spacingMd),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppTheme.neutral300,
-                  borderRadius: BorderRadius.circular(2),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle
+                Container(
+                  margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppTheme.neutral300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
+                const SizedBox(height: AppTheme.spacingLg),
 
-              // Menu Items
-              ListTile(
+                // Menu Items
+                ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
@@ -591,6 +592,7 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
               const SizedBox(height: AppTheme.spacingMd),
             ],
+          ),
           ),
         ),
       ),
