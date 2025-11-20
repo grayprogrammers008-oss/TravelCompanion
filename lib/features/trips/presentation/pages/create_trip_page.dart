@@ -60,15 +60,25 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
     try {
       if (kDebugMode) {
-        debugPrint('DEBUG: ========== REFRESHING TRIP DATA ==========');
+        debugPrint('DEBUG: ========== LOADING TRIP DATA FOR EDIT ==========');
         debugPrint('DEBUG: Trip ID: ${widget.tripId}');
-        debugPrint('DEBUG: Using ref.refresh() to force fresh data from backend...');
       }
 
-      // CRITICAL FIX: Use ref.refresh() instead of ref.invalidate()
-      // This forces an immediate re-fetch of data from the backend
-      // and returns the fresh data directly
-      final trip = await ref.refresh(tripProvider(widget.tripId!).future);
+      // Invalidate to force refresh, then read the provider
+      ref.invalidate(tripProvider(widget.tripId!));
+
+      // Wait a frame for the invalidation to take effect
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Get the trip data from the provider
+      final tripAsync = ref.read(tripProvider(widget.tripId!));
+
+      // Wait for the data
+      final trip = await tripAsync.when(
+        data: (trip) => Future.value(trip),
+        loading: () => ref.read(tripProvider(widget.tripId!).future),
+        error: (error, stack) => Future.error(error),
+      );
 
       if (kDebugMode) {
         debugPrint('DEBUG: Loaded Trip Name: ${trip.trip.name}');
@@ -89,16 +99,17 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         });
 
         if (kDebugMode) {
-          debugPrint('DEBUG: Form fields populated');
-          debugPrint('DEBUG: Name Controller: "${_nameController.text}"');
-          debugPrint('DEBUG: Description Controller: "${_descriptionController.text}"');
-          debugPrint('DEBUG: Destination Controller: "${_destinationController.text}"');
+          debugPrint('DEBUG: Form fields populated successfully');
+          debugPrint('DEBUG: Name: "${_nameController.text}"');
+          debugPrint('DEBUG: Description: "${_descriptionController.text}"');
+          debugPrint('DEBUG: Destination: "${_destinationController.text}"');
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (kDebugMode) {
         debugPrint('DEBUG: ========== ERROR LOADING TRIP ==========');
         debugPrint('DEBUG: Error: $e');
+        debugPrint('DEBUG: Stack trace: $stackTrace');
       }
       if (mounted) {
         setState(() => _isLoading = false);
@@ -106,6 +117,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           SnackBar(
             content: Text('Error loading trip: $e'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }
