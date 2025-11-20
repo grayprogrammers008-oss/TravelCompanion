@@ -205,6 +205,10 @@ class TripController extends Notifier<TripState> {
         endDate: endDate,
         coverImageUrl: coverImageUrl,
       );
+
+      // Invalidate providers to trigger refresh
+      ref.invalidate(userTripsProvider);
+
       state = state.copyWith(isLoading: false, currentTrip: trip);
       return trip;
     } catch (e) {
@@ -234,6 +238,11 @@ class TripController extends Notifier<TripState> {
         endDate: endDate,
         coverImageUrl: coverImageUrl,
       );
+
+      // Invalidate providers to trigger refresh
+      ref.invalidate(userTripsProvider);
+      ref.invalidate(tripHistoryProvider);
+
       state = state.copyWith(isLoading: false, currentTrip: trip);
       return trip;
     } catch (e) {
@@ -247,6 +256,11 @@ class TripController extends Notifier<TripState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _repository.deleteTrip(tripId);
+
+      // Invalidate providers to trigger refresh
+      ref.invalidate(userTripsProvider);
+      ref.invalidate(tripHistoryProvider);
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -310,6 +324,10 @@ class TripController extends Notifier<TripState> {
         );
       }
 
+      // Invalidate providers to trigger refresh
+      ref.invalidate(userTripsProvider);
+      ref.invalidate(tripHistoryProvider);
+
       state = state.copyWith(isLoading: false, currentTrip: trip);
       return trip;
     } catch (e) {
@@ -332,6 +350,11 @@ class TripController extends Notifier<TripState> {
         tripId: tripId,
         userId: userId,
       );
+
+      // Invalidate providers to trigger refresh
+      ref.invalidate(userTripsProvider);
+      ref.invalidate(tripHistoryProvider);
+
       state = state.copyWith(isLoading: false, currentTrip: trip);
       return trip;
     } catch (e) {
