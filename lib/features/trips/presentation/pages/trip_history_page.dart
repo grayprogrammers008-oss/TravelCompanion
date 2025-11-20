@@ -6,6 +6,7 @@ import 'package:travel_crew/core/theme/theme_access.dart';
 import 'package:travel_crew/core/animations/animated_widgets.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/trips/domain/usecases/get_trip_history_usecase.dart';
+import 'package:travel_crew/features/trips/domain/usecases/filter_trips_usecase.dart';
 import 'package:travel_crew/shared/models/trip_model.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +17,8 @@ class TripHistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(tripHistoryProvider);
+    final filteredTrips = ref.watch(filteredTripHistoryProvider);
+    final filterParams = ref.watch(tripHistoryFilterProvider);
     final statistics = ref.watch(tripHistoryStatisticsProvider);
     final themeData = context.appThemeData;
 
@@ -23,6 +26,19 @@ class TripHistoryPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Trip History'),
         elevation: 0,
+        actions: [
+          // Filter button
+          IconButton(
+            icon: Icon(
+              Icons.filter_list,
+              color: filterParams != const TripFilterParams()
+                  ? themeData.primaryColor
+                  : null,
+            ),
+            onPressed: () => _showFilterBottomSheet(context, ref),
+            tooltip: 'Filter & Sort',
+          ),
+        ],
       ),
       body: historyAsync.when(
         data: (completedTrips) {
@@ -34,9 +50,15 @@ class TripHistoryPage extends ConsumerWidget {
               // Statistics header - automatically updates when trips change
               _buildStatisticsHeader(context, statistics, themeData),
               const SizedBox(height: AppTheme.spacingMd),
-              // Trip history list
+              // Active filter chips
+              if (filterParams.sortBy != TripSortBy.dateNewest ||
+                  filterParams.minRating != null)
+                _buildActiveFilters(context, ref, filterParams, themeData),
+              // Trip history list (filtered and sorted)
               Expanded(
-                child: _buildHistoryList(context, ref, completedTrips),
+                child: filteredTrips.isEmpty
+                    ? _buildNoResultsState(context)
+                    : _buildHistoryList(context, ref, filteredTrips),
               ),
             ],
           );
@@ -428,6 +450,229 @@ class TripHistoryPage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildActiveFilters(
+    BuildContext context,
+    WidgetRef ref,
+    TripFilterParams params,
+    themeData,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+      child: Wrap(
+        spacing: AppTheme.spacingSm,
+        children: [
+          if (params.sortBy != TripSortBy.dateNewest)
+            Chip(
+              label: Text(_getSortLabel(params.sortBy)),
+              deleteIcon: const Icon(Icons.close, size: 18),
+              onDeleted: () {
+                ref.read(tripHistoryFilterProvider.notifier).updateSortBy(TripSortBy.dateNewest);
+              },
+            ),
+          if (params.minRating != null)
+            Chip(
+              label: Text('Rating ≥ ${params.minRating!.toStringAsFixed(1)}★'),
+              deleteIcon: const Icon(Icons.close, size: 18),
+              onDeleted: () {
+                ref.read(tripHistoryFilterProvider.notifier).updateRatingRange(null, params.maxRating);
+              },
+            ),
+          // Clear all button
+          if (params.sortBy != TripSortBy.dateNewest || params.minRating != null)
+            ActionChip(
+              label: const Text('Clear All'),
+              onPressed: () {
+                ref.read(tripHistoryFilterProvider.notifier).reset();
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _getSortLabel(TripSortBy sortBy) {
+    switch (sortBy) {
+      case TripSortBy.dateNewest:
+        return 'Newest First';
+      case TripSortBy.dateOldest:
+        return 'Oldest First';
+      case TripSortBy.createdNewest:
+        return 'Recently Created';
+      case TripSortBy.createdOldest:
+        return 'First Created';
+      case TripSortBy.ratingHighest:
+        return 'Highest Rated';
+      case TripSortBy.ratingLowest:
+        return 'Lowest Rated';
+      case TripSortBy.priceHighest:
+        return 'Highest Price';
+      case TripSortBy.priceLowest:
+        return 'Lowest Price';
+      default:
+        return sortBy.name;
+    }
+  }
+
+  Widget _buildNoResultsState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'No trips match your filters',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Colors.grey[600],
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try adjusting your filters',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[500],
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
+    final currentParams = ref.read(tripHistoryFilterProvider);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXl)),
+        ),
+        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Filter & Sort',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ref.read(tripHistoryFilterProvider.notifier).reset();
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Reset'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Sort By Section
+              Text(
+                'Sort By',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              Wrap(
+                spacing: AppTheme.spacingSm,
+                runSpacing: AppTheme.spacingSm,
+                children: [
+                  _buildSortChip(context, ref, 'Date Created (New → Old)', TripSortBy.createdNewest, currentParams),
+                  _buildSortChip(context, ref, 'Date Created (Old → New)', TripSortBy.createdOldest, currentParams),
+                  _buildSortChip(context, ref, 'Highest Rated', TripSortBy.ratingHighest, currentParams),
+                  _buildSortChip(context, ref, 'Lowest Rated', TripSortBy.ratingLowest, currentParams),
+                  _buildSortChip(context, ref, 'Trip Date (Newest)', TripSortBy.dateNewest, currentParams),
+                  _buildSortChip(context, ref, 'Trip Date (Oldest)', TripSortBy.dateOldest, currentParams),
+                ],
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Filter by Rating Section
+              Text(
+                'Filter by Rating',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              Wrap(
+                spacing: AppTheme.spacingSm,
+                children: [
+                  _buildRatingFilterChip(context, ref, 'All Ratings', null, currentParams),
+                  _buildRatingFilterChip(context, ref, '4+ Stars', 4.0, currentParams),
+                  _buildRatingFilterChip(context, ref, '3+ Stars', 3.0, currentParams),
+                  _buildRatingFilterChip(context, ref, '2+ Stars', 2.0, currentParams),
+                ],
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Apply Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Apply Filters'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSortChip(
+    BuildContext context,
+    WidgetRef ref,
+    String label,
+    TripSortBy sortBy,
+    TripFilterParams currentParams,
+  ) {
+    final isSelected = currentParams.sortBy == sortBy;
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (selected) {
+          ref.read(tripHistoryFilterProvider.notifier).updateSortBy(sortBy);
+        }
+      },
+    );
+  }
+
+  Widget _buildRatingFilterChip(
+    BuildContext context,
+    WidgetRef ref,
+    String label,
+    double? minRating,
+    TripFilterParams currentParams,
+  ) {
+    final isSelected = currentParams.minRating == minRating;
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (selected) {
+          ref.read(tripHistoryFilterProvider.notifier).updateRatingRange(minRating, null);
+        }
+      },
     );
   }
 }

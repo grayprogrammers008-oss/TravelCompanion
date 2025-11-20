@@ -12,6 +12,7 @@ import '../../domain/usecases/get_trip_history_usecase.dart';
 import '../../domain/usecases/get_user_stats_usecase.dart';
 import '../../domain/usecases/mark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/unmark_trip_as_completed_usecase.dart';
+import '../../domain/usecases/filter_trips_usecase.dart';
 
 // Remote Data Source Provider - Supabase (online-only mode)
 final tripRemoteDataSourceProvider = Provider<TripRemoteDataSource>((ref) {
@@ -133,6 +134,59 @@ final tripHistoryStatisticsProvider = Provider<TripHistoryStatistics>((ref) {
     },
     loading: () => TripHistoryStatistics.empty(),
     error: (_, _) => TripHistoryStatistics.empty(),
+  );
+});
+
+// Trip History Filter Controller
+class TripHistoryFilterController extends Notifier<TripFilterParams> {
+  @override
+  TripFilterParams build() {
+    return const TripFilterParams(
+      filterType: TripFilterType.all,
+      sortBy: TripSortBy.dateNewest,
+    );
+  }
+
+  void updateFilter(TripFilterParams params) {
+    state = params;
+  }
+
+  void updateSortBy(TripSortBy sortBy) {
+    state = state.copyWith(sortBy: sortBy);
+  }
+
+  void updateFilterType(TripFilterType filterType) {
+    state = state.copyWith(filterType: filterType);
+  }
+
+  void updateRatingRange(double? minRating, double? maxRating) {
+    state = state.copyWith(minRating: minRating, maxRating: maxRating);
+  }
+
+  void reset() {
+    state = const TripFilterParams(
+      filterType: TripFilterType.all,
+      sortBy: TripSortBy.dateNewest,
+    );
+  }
+}
+
+final tripHistoryFilterProvider = NotifierProvider<TripHistoryFilterController, TripFilterParams>(() {
+  return TripHistoryFilterController();
+});
+
+// Filtered Trip History Provider - applies filters and sorting
+final filteredTripHistoryProvider = Provider<List<TripWithMembers>>((ref) {
+  final tripHistoryAsync = ref.watch(tripHistoryProvider);
+  final filterParams = ref.watch(tripHistoryFilterProvider);
+
+  return tripHistoryAsync.when(
+    data: (trips) {
+      final filterUseCase = FilterTripsUseCase();
+      return filterUseCase(trips: trips, params: filterParams);
+    },
+    loading: () => [],
+    error: (_, _) => [],
   );
 });
 
