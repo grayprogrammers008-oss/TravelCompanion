@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../data/datasources/trip_remote_datasource.dart';
@@ -95,6 +96,9 @@ final tripHistoryStatisticsProvider = Provider<TripHistoryStatistics>((ref) {
   return tripHistoryAsync.when(
     data: (completedTrips) {
       if (completedTrips.isEmpty) {
+        if (kDebugMode) {
+          debugPrint('📊 Statistics: No completed trips');
+        }
         return TripHistoryStatistics.empty();
       }
 
@@ -123,6 +127,10 @@ final tripHistoryStatisticsProvider = Provider<TripHistoryStatistics>((ref) {
       final latestCompletion = completionDates.isEmpty
           ? null
           : completionDates.reduce((a, b) => a.isAfter(b) ? a : b);
+
+      if (kDebugMode) {
+        debugPrint('📊 Statistics Updated: $totalTrips completed trips, $totalRatings rated, avg rating: ${averageRating.toStringAsFixed(1)}');
+      }
 
       return TripHistoryStatistics(
         totalCompletedTrips: totalTrips,
@@ -161,6 +169,10 @@ class TripHistoryFilterController extends Notifier<TripFilterParams> {
 
   void updateRatingRange(double? minRating, double? maxRating) {
     state = state.copyWith(minRating: minRating, maxRating: maxRating);
+  }
+
+  void updateSearchQuery(String? query) {
+    state = state.copyWith(searchQuery: query);
   }
 
   void reset() {
@@ -364,6 +376,10 @@ class TripController extends Notifier<TripState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      if (kDebugMode) {
+        debugPrint('🏁 Marking trip as completed: $tripId${rating != null ? " with rating: $rating" : ""}');
+      }
+
       // Mark trip as completed
       var trip = await _markTripAsCompletedUseCase(
         tripId: tripId,
@@ -376,15 +392,40 @@ class TripController extends Notifier<TripState> {
           tripId: tripId,
           rating: rating,
         );
+        if (kDebugMode) {
+          debugPrint('⭐ Rating applied: $rating');
+        }
       }
 
+      if (kDebugMode) {
+        debugPrint('✅ Trip completed in database: ${trip.name} (isCompleted: ${trip.isCompleted}, rating: ${trip.rating})');
+      }
+
+      // Wait briefly for Supabase real-time to propagate the change
+      // This ensures the stream emits updated data before we invalidate providers
+      if (kDebugMode) {
+        debugPrint('⏳ Waiting 500ms for real-time propagation...');
+      }
+      await Future.delayed(const Duration(milliseconds: 500));
+
       // Invalidate providers to trigger refresh
+      if (kDebugMode) {
+        debugPrint('🔄 Invalidating providers to refresh UI...');
+      }
       ref.invalidate(userTripsProvider);
       ref.invalidate(tripHistoryProvider);
+      ref.invalidate(tripHistoryStatisticsProvider);
+      ref.invalidate(filteredTripHistoryProvider);
 
       state = state.copyWith(isLoading: false, currentTrip: trip);
+      if (kDebugMode) {
+        debugPrint('✅ Trip completion saved, providers invalidated');
+      }
       return trip;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error completing trip: $e');
+      }
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -400,18 +441,44 @@ class TripController extends Notifier<TripState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      if (kDebugMode) {
+        debugPrint('🔄 Reopening trip: $tripId');
+      }
+
       final trip = await _unmarkTripAsCompletedUseCase(
         tripId: tripId,
         userId: userId,
       );
 
+      if (kDebugMode) {
+        debugPrint('✅ Trip reopened in database: ${trip.name} (isCompleted: ${trip.isCompleted})');
+      }
+
+      // Wait briefly for Supabase real-time to propagate the change
+      // This ensures the stream emits updated data before we invalidate providers
+      if (kDebugMode) {
+        debugPrint('⏳ Waiting 500ms for real-time propagation...');
+      }
+      await Future.delayed(const Duration(milliseconds: 500));
+
       // Invalidate providers to trigger refresh
+      if (kDebugMode) {
+        debugPrint('🔄 Invalidating providers to refresh UI...');
+      }
       ref.invalidate(userTripsProvider);
       ref.invalidate(tripHistoryProvider);
+      ref.invalidate(tripHistoryStatisticsProvider);
+      ref.invalidate(filteredTripHistoryProvider);
 
       state = state.copyWith(isLoading: false, currentTrip: trip);
+      if (kDebugMode) {
+        debugPrint('✅ Trip reopen complete, providers invalidated');
+      }
       return trip;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error reopening trip: $e');
+      }
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }

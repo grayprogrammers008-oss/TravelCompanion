@@ -1,4 +1,5 @@
 import 'package:travel_crew/shared/models/trip_model.dart';
+import 'search_trips_usecase.dart';
 
 /// Filter criteria for trips
 enum TripFilterType {
@@ -28,6 +29,7 @@ enum TripSortBy {
 class TripFilterParams {
   final TripFilterType filterType;
   final TripSortBy sortBy;
+  final String? searchQuery;       // Optional: search query for filtering by name, description, destination
   final DateTime? customStartDate; // Optional: filter trips starting after this date
   final DateTime? customEndDate;   // Optional: filter trips ending before this date
   final double? minPrice;          // Optional: minimum price filter
@@ -39,6 +41,7 @@ class TripFilterParams {
   const TripFilterParams({
     this.filterType = TripFilterType.all,
     this.sortBy = TripSortBy.dateNewest,
+    this.searchQuery,
     this.customStartDate,
     this.customEndDate,
     this.minPrice,
@@ -51,6 +54,7 @@ class TripFilterParams {
   TripFilterParams copyWith({
     TripFilterType? filterType,
     TripSortBy? sortBy,
+    String? searchQuery,
     DateTime? customStartDate,
     DateTime? customEndDate,
     double? minPrice,
@@ -62,6 +66,7 @@ class TripFilterParams {
     return TripFilterParams(
       filterType: filterType ?? this.filterType,
       sortBy: sortBy ?? this.sortBy,
+      searchQuery: searchQuery ?? this.searchQuery,
       customStartDate: customStartDate ?? this.customStartDate,
       customEndDate: customEndDate ?? this.customEndDate,
       minPrice: minPrice ?? this.minPrice,
@@ -75,15 +80,20 @@ class TripFilterParams {
 
 /// Use case for filtering and sorting trips
 class FilterTripsUseCase {
+  final SearchTripsUseCase _searchUseCase = SearchTripsUseCase();
+
   /// Filter and sort trips based on provided parameters
   List<TripWithMembers> call({
     required List<TripWithMembers> trips,
     required TripFilterParams params,
   }) {
-    // Step 1: Apply filter
-    var filteredTrips = _applyFilter(trips, params);
+    // Step 1: Apply search (if query provided)
+    var filteredTrips = _searchUseCase(trips: trips, query: params.searchQuery);
 
-    // Step 2: Apply sorting
+    // Step 2: Apply filter
+    filteredTrips = _applyFilter(filteredTrips, params);
+
+    // Step 3: Apply sorting
     filteredTrips = _applySort(filteredTrips, params.sortBy, tripCosts: params.tripCosts);
 
     return filteredTrips;

@@ -11,11 +11,24 @@ import 'package:travel_crew/shared/models/trip_model.dart';
 import 'package:intl/intl.dart';
 
 /// Trip History Page - Shows completed trips with ratings and statistics
-class TripHistoryPage extends ConsumerWidget {
+class TripHistoryPage extends ConsumerStatefulWidget {
   const TripHistoryPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TripHistoryPage> createState() => _TripHistoryPageState();
+}
+
+class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final historyAsync = ref.watch(tripHistoryProvider);
     final filteredTrips = ref.watch(filteredTripHistoryProvider);
     final filterParams = ref.watch(tripHistoryFilterProvider);
@@ -50,9 +63,13 @@ class TripHistoryPage extends ConsumerWidget {
               // Statistics header - automatically updates when trips change
               _buildStatisticsHeader(context, statistics, themeData),
               const SizedBox(height: AppTheme.spacingMd),
+              // Search bar
+              _buildSearchBar(context, filterParams, themeData),
+              const SizedBox(height: AppTheme.spacingMd),
               // Active filter chips
               if (filterParams.sortBy != TripSortBy.dateNewest ||
-                  filterParams.minRating != null)
+                  filterParams.minRating != null ||
+                  (filterParams.searchQuery != null && filterParams.searchQuery!.isNotEmpty))
                 _buildActiveFilters(context, ref, filterParams, themeData),
               // Trip history list (filtered and sorted)
               Expanded(
@@ -150,6 +167,62 @@ class TripHistoryPage extends ConsumerWidget {
               ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSearchBar(
+    BuildContext context,
+    TripFilterParams filterParams,
+    themeData,
+  ) {
+    // Sync controller with filter params (e.g., when cleared via chip)
+    if (filterParams.searchQuery == null || filterParams.searchQuery!.isEmpty) {
+      if (_searchController.text.isNotEmpty) {
+        _searchController.clear();
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) {
+          ref.read(tripHistoryFilterProvider.notifier).updateSearchQuery(
+            value.isEmpty ? null : value,
+          );
+        },
+        decoration: InputDecoration(
+          hintText: 'Search trips by name, destination...',
+          prefixIcon: Icon(Icons.search, color: themeData.primaryColor),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    ref.read(tripHistoryFilterProvider.notifier).updateSearchQuery(null);
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: Colors.grey[100],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            borderSide: BorderSide(color: themeData.primaryColor, width: 2),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
+          ),
+        ),
+      ),
     );
   }
 
@@ -464,6 +537,14 @@ class TripHistoryPage extends ConsumerWidget {
       child: Wrap(
         spacing: AppTheme.spacingSm,
         children: [
+          if (params.searchQuery != null && params.searchQuery!.isNotEmpty)
+            Chip(
+              label: Text('Search: "${params.searchQuery}"'),
+              deleteIcon: const Icon(Icons.close, size: 18),
+              onDeleted: () {
+                ref.read(tripHistoryFilterProvider.notifier).updateSearchQuery(null);
+              },
+            ),
           if (params.sortBy != TripSortBy.dateNewest)
             Chip(
               label: Text(_getSortLabel(params.sortBy)),
@@ -481,7 +562,9 @@ class TripHistoryPage extends ConsumerWidget {
               },
             ),
           // Clear all button
-          if (params.sortBy != TripSortBy.dateNewest || params.minRating != null)
+          if (params.sortBy != TripSortBy.dateNewest ||
+              params.minRating != null ||
+              (params.searchQuery != null && params.searchQuery!.isNotEmpty))
             ActionChip(
               label: const Text('Clear All'),
               onPressed: () {
