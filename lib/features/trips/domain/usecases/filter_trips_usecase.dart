@@ -54,26 +54,26 @@ class TripFilterParams {
   TripFilterParams copyWith({
     TripFilterType? filterType,
     TripSortBy? sortBy,
-    String? searchQuery,
-    DateTime? customStartDate,
-    DateTime? customEndDate,
-    double? minPrice,
-    double? maxPrice,
-    double? minRating,
-    double? maxRating,
-    Map<String, double>? tripCosts,
+    Object? searchQuery = const _Undefined(),
+    Object? customStartDate = const _Undefined(),
+    Object? customEndDate = const _Undefined(),
+    Object? minPrice = const _Undefined(),
+    Object? maxPrice = const _Undefined(),
+    Object? minRating = const _Undefined(),
+    Object? maxRating = const _Undefined(),
+    Object? tripCosts = const _Undefined(),
   }) {
     return TripFilterParams(
       filterType: filterType ?? this.filterType,
       sortBy: sortBy ?? this.sortBy,
-      searchQuery: searchQuery ?? this.searchQuery,
-      customStartDate: customStartDate ?? this.customStartDate,
-      customEndDate: customEndDate ?? this.customEndDate,
-      minPrice: minPrice ?? this.minPrice,
-      maxPrice: maxPrice ?? this.maxPrice,
-      minRating: minRating ?? this.minRating,
-      maxRating: maxRating ?? this.maxRating,
-      tripCosts: tripCosts ?? this.tripCosts,
+      searchQuery: searchQuery is _Undefined ? this.searchQuery : searchQuery as String?,
+      customStartDate: customStartDate is _Undefined ? this.customStartDate : customStartDate as DateTime?,
+      customEndDate: customEndDate is _Undefined ? this.customEndDate : customEndDate as DateTime?,
+      minPrice: minPrice is _Undefined ? this.minPrice : minPrice as double?,
+      maxPrice: maxPrice is _Undefined ? this.maxPrice : maxPrice as double?,
+      minRating: minRating is _Undefined ? this.minRating : minRating as double?,
+      maxRating: maxRating is _Undefined ? this.maxRating : maxRating as double?,
+      tripCosts: tripCosts is _Undefined ? this.tripCosts : tripCosts as Map<String, double>?,
     );
   }
 }
@@ -272,4 +272,9 @@ class FilterTripsUseCase {
 
     return sortedTrips;
   }
+}
+
+/// Helper class to distinguish between "not provided" and "provided as null" in copyWith
+class _Undefined {
+  const _Undefined();
 }

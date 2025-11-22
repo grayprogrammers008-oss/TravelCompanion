@@ -608,10 +608,8 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
         throw Exception('User not authenticated');
       }
 
-      // Get user's emergency contact IDs to find shares
-      final contacts = await getEmergencyContacts();
-      final contactUserIds =
-          contacts.map((c) => c.userId).toList(); // Simplified for now
+      // Note: Currently returns all active location shares for the user
+      // Could be filtered by emergency contact IDs if needed in the future
 
       final response = await _client
           .from('location_shares')

@@ -40,16 +40,34 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
         title: const Text('Trip History'),
         elevation: 0,
         actions: [
-          // Filter button
-          IconButton(
-            icon: Icon(
-              Icons.filter_list,
-              color: filterParams != const TripFilterParams()
-                  ? themeData.primaryColor
-                  : null,
-            ),
-            onPressed: () => _showFilterBottomSheet(context, ref),
-            tooltip: 'Filter & Sort',
+          // Filter button with badge when filters are active
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.filter_list,
+                  color: Colors.white,
+                ),
+                onPressed: () => _showFilterBottomSheet(context, ref),
+                tooltip: 'Filter & Sort',
+              ),
+              // Active filter indicator badge
+              if (filterParams != const TripFilterParams())
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
@@ -69,7 +87,9 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
               // Active filter chips
               if (filterParams.sortBy != TripSortBy.dateNewest ||
                   filterParams.minRating != null ||
-                  (filterParams.searchQuery != null && filterParams.searchQuery!.isNotEmpty))
+                  (filterParams.searchQuery != null && filterParams.searchQuery!.isNotEmpty) ||
+                  filterParams.customStartDate != null ||
+                  filterParams.customEndDate != null)
                 _buildActiveFilters(context, ref, filterParams, themeData),
               // Trip history list (filtered and sorted)
               Expanded(
@@ -532,6 +552,8 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
     TripFilterParams params,
     themeData,
   ) {
+    final dateFormat = DateFormat('MMM dd, yyyy');
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
       child: Wrap(
@@ -561,10 +583,22 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
                 ref.read(tripHistoryFilterProvider.notifier).updateRatingRange(null, params.maxRating);
               },
             ),
+          if (params.customStartDate != null || params.customEndDate != null)
+            Chip(
+              label: Text(
+                'Date: ${params.customStartDate != null ? dateFormat.format(params.customStartDate!) : "Any"} - ${params.customEndDate != null ? dateFormat.format(params.customEndDate!) : "Any"}',
+              ),
+              deleteIcon: const Icon(Icons.close, size: 18),
+              onDeleted: () {
+                ref.read(tripHistoryFilterProvider.notifier).updateDateRange(null, null);
+              },
+            ),
           // Clear all button
           if (params.sortBy != TripSortBy.dateNewest ||
               params.minRating != null ||
-              (params.searchQuery != null && params.searchQuery!.isNotEmpty))
+              (params.searchQuery != null && params.searchQuery!.isNotEmpty) ||
+              params.customStartDate != null ||
+              params.customEndDate != null)
             ActionChip(
               label: const Text('Clear All'),
               onPressed: () {
@@ -625,23 +659,26 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
   }
 
   void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
-    final currentParams = ref.read(tripHistoryFilterProvider);
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXl)),
-        ),
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      builder: (context) => Consumer(
+        builder: (context, ref, child) {
+          final currentParams = ref.watch(tripHistoryFilterProvider);
+
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXl)),
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
               // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -706,6 +743,18 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
 
               const SizedBox(height: AppTheme.spacingLg),
 
+              // Custom Date Range Section
+              Text(
+                'Custom Date Range',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDateRangeSelector(context, ref, currentParams),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
               // Apply Button
               SizedBox(
                 width: double.infinity,
@@ -714,9 +763,12 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
                   child: const Text('Apply Filters'),
                 ),
               ),
-            ],
-          ),
-        ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -728,12 +780,23 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
     TripSortBy sortBy,
     TripFilterParams currentParams,
   ) {
+    final themeData = context.appThemeData;
     final isSelected = currentParams.sortBy == sortBy;
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
+      selectedColor: themeData.primaryColor.withValues(alpha: 0.2),
+      checkmarkColor: themeData.primaryColor,
+      backgroundColor: Colors.grey[100],
+      side: BorderSide(
+        color: isSelected ? themeData.primaryColor : Colors.grey[300]!,
+        width: isSelected ? 2 : 1,
+      ),
       onSelected: (selected) {
+        debugPrint('🔘 Filter chip tapped: $label, selected: $selected');
         if (selected) {
+          debugPrint('📝 Updating sort to: $sortBy');
           ref.read(tripHistoryFilterProvider.notifier).updateSortBy(sortBy);
         }
       },
@@ -747,15 +810,150 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
     double? minRating,
     TripFilterParams currentParams,
   ) {
+    final themeData = context.appThemeData;
     final isSelected = currentParams.minRating == minRating;
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
+      selectedColor: themeData.primaryColor.withValues(alpha: 0.2),
+      checkmarkColor: themeData.primaryColor,
+      backgroundColor: Colors.grey[100],
+      side: BorderSide(
+        color: isSelected ? themeData.primaryColor : Colors.grey[300]!,
+        width: isSelected ? 2 : 1,
+      ),
       onSelected: (selected) {
-        if (selected) {
-          ref.read(tripHistoryFilterProvider.notifier).updateRatingRange(minRating, null);
-        }
+        debugPrint('⭐ Rating filter tapped: $label, selected: $selected');
+        // Always update to the new rating filter (allows toggling back to "All Ratings")
+        debugPrint('📝 Updating rating filter to: $minRating');
+        ref.read(tripHistoryFilterProvider.notifier).updateRatingRange(minRating, null);
       },
+    );
+  }
+
+  Widget _buildDateRangeSelector(
+    BuildContext context,
+    WidgetRef ref,
+    TripFilterParams currentParams,
+  ) {
+    final dateFormat = DateFormat('MMM dd, yyyy');
+    final themeData = context.appThemeData;
+
+    return Column(
+      children: [
+        // Start Date
+        InkWell(
+          onTap: () async {
+            final pickedDate = await showDatePicker(
+              context: context,
+              initialDate: currentParams.customStartDate ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+              helpText: 'Select Start Date',
+            );
+            if (pickedDate != null) {
+              ref.read(tripHistoryFilterProvider.notifier).updateDateRange(
+                pickedDate,
+                currentParams.customEndDate,
+              );
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd,
+              vertical: AppTheme.spacingSm,
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 20, color: themeData.primaryColor),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Text(
+                      currentParams.customStartDate != null
+                          ? 'From: ${dateFormat.format(currentParams.customStartDate!)}'
+                          : 'Select Start Date',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                if (currentParams.customStartDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 18),
+                    onPressed: () {
+                      ref.read(tripHistoryFilterProvider.notifier).updateDateRange(
+                        null,
+                        currentParams.customEndDate,
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+        // End Date
+        InkWell(
+          onTap: () async {
+            final pickedDate = await showDatePicker(
+              context: context,
+              initialDate: currentParams.customEndDate ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+              helpText: 'Select End Date',
+            );
+            if (pickedDate != null) {
+              ref.read(tripHistoryFilterProvider.notifier).updateDateRange(
+                currentParams.customStartDate,
+                pickedDate,
+              );
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd,
+              vertical: AppTheme.spacingSm,
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 20, color: themeData.primaryColor),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Text(
+                      currentParams.customEndDate != null
+                          ? 'To: ${dateFormat.format(currentParams.customEndDate!)}'
+                          : 'Select End Date',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                if (currentParams.customEndDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 18),
+                    onPressed: () {
+                      ref.read(tripHistoryFilterProvider.notifier).updateDateRange(
+                        currentParams.customStartDate,
+                        null,
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -88,60 +88,54 @@ final tripHistoryProvider = StreamProvider<List<TripWithMembers>>((ref) {
   return useCase.watchHistory();
 });
 
-// Trip History Statistics Provider - Automatically updates when trip history changes
+// Trip History Statistics Provider - Automatically updates when filtered trip history changes
 final tripHistoryStatisticsProvider = Provider<TripHistoryStatistics>((ref) {
-  // Watch the trip history and recalculate statistics whenever it changes
-  final tripHistoryAsync = ref.watch(tripHistoryProvider);
+  // Watch the FILTERED trip history to show statistics for visible trips only
+  final filteredTrips = ref.watch(filteredTripHistoryProvider);
 
-  return tripHistoryAsync.when(
-    data: (completedTrips) {
-      if (completedTrips.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('📊 Statistics: No completed trips');
-        }
-        return TripHistoryStatistics.empty();
-      }
+  if (filteredTrips.isEmpty) {
+    if (kDebugMode) {
+      debugPrint('📊 Statistics: No trips matching current filters');
+    }
+    return TripHistoryStatistics.empty();
+  }
 
-      // Calculate statistics
-      final totalTrips = completedTrips.length;
+  // Calculate statistics from filtered trips
+  final totalTrips = filteredTrips.length;
 
-      final tripsWithRatings = completedTrips.where((t) => t.trip.rating > 0).toList();
-      final totalRatings = tripsWithRatings.length;
+  final tripsWithRatings = filteredTrips.where((t) => t.trip.rating > 0).toList();
+  final totalRatings = tripsWithRatings.length;
 
-      final averageRating = tripsWithRatings.isEmpty
-          ? 0.0
-          : tripsWithRatings
-              .map((t) => t.trip.rating)
-              .reduce((a, b) => a + b) / totalRatings;
+  final averageRating = tripsWithRatings.isEmpty
+      ? 0.0
+      : tripsWithRatings
+          .map((t) => t.trip.rating)
+          .reduce((a, b) => a + b) / totalRatings;
 
-      // Get earliest and latest completion dates
-      final completionDates = completedTrips
-          .where((t) => t.trip.completedAt != null)
-          .map((t) => t.trip.completedAt!)
-          .toList();
+  // Get earliest and latest completion dates
+  final completionDates = filteredTrips
+      .where((t) => t.trip.completedAt != null)
+      .map((t) => t.trip.completedAt!)
+      .toList();
 
-      final earliestCompletion = completionDates.isEmpty
-          ? null
-          : completionDates.reduce((a, b) => a.isBefore(b) ? a : b);
+  final earliestCompletion = completionDates.isEmpty
+      ? null
+      : completionDates.reduce((a, b) => a.isBefore(b) ? a : b);
 
-      final latestCompletion = completionDates.isEmpty
-          ? null
-          : completionDates.reduce((a, b) => a.isAfter(b) ? a : b);
+  final latestCompletion = completionDates.isEmpty
+      ? null
+      : completionDates.reduce((a, b) => a.isAfter(b) ? a : b);
 
-      if (kDebugMode) {
-        debugPrint('📊 Statistics Updated: $totalTrips completed trips, $totalRatings rated, avg rating: ${averageRating.toStringAsFixed(1)}');
-      }
+  if (kDebugMode) {
+    debugPrint('📊 Statistics Updated: $totalTrips filtered trips, $totalRatings rated, avg rating: ${averageRating.toStringAsFixed(1)}');
+  }
 
-      return TripHistoryStatistics(
-        totalCompletedTrips: totalTrips,
-        averageRating: averageRating,
-        totalRatedTrips: totalRatings,
-        earliestCompletionDate: earliestCompletion,
-        latestCompletionDate: latestCompletion,
-      );
-    },
-    loading: () => TripHistoryStatistics.empty(),
-    error: (_, _) => TripHistoryStatistics.empty(),
+  return TripHistoryStatistics(
+    totalCompletedTrips: totalTrips,
+    averageRating: averageRating,
+    totalRatedTrips: totalRatings,
+    earliestCompletionDate: earliestCompletion,
+    latestCompletionDate: latestCompletion,
   );
 });
 
@@ -173,6 +167,13 @@ class TripHistoryFilterController extends Notifier<TripFilterParams> {
 
   void updateSearchQuery(String? query) {
     state = state.copyWith(searchQuery: query);
+  }
+
+  void updateDateRange(DateTime? startDate, DateTime? endDate) {
+    state = state.copyWith(
+      customStartDate: startDate,
+      customEndDate: endDate,
+    );
   }
 
   void reset() {
