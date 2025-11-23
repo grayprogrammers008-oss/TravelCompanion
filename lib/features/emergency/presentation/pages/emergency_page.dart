@@ -187,9 +187,9 @@ class EmergencyPage extends ConsumerWidget {
                           child: _QuickActionCard(
                             icon: Icons.local_police,
                             title: 'Police',
-                            subtitle: 'Call 911',
+                            subtitle: 'Call 100',
                             color: Colors.blue,
-                            onTap: () => _callEmergencyNumber(context, '911'),
+                            onTap: () => _callEmergencyNumber(context, '100'),
                           ),
                         ),
                       ],
@@ -204,9 +204,9 @@ class EmergencyPage extends ConsumerWidget {
                           child: _QuickActionCard(
                             icon: Icons.fire_truck,
                             title: 'Fire',
-                            subtitle: 'Call 911',
+                            subtitle: 'Call 101',
                             color: Colors.orange,
-                            onTap: () => _callEmergencyNumber(context, '911'),
+                            onTap: () => _callEmergencyNumber(context, '101'),
                           ),
                         ),
                         const SizedBox(width: AppTheme.spacingMd),
@@ -306,7 +306,7 @@ class EmergencyPage extends ConsumerWidget {
                 icon: Icons.phone,
                 title: 'Emergency Numbers',
                 description:
-                    'Quick dial buttons for police (911), fire (911), and medical emergencies.',
+                    'Quick dial buttons for police (100), fire (101), and medical emergencies (102). Unified emergency: 112.',
               ),
               const SizedBox(height: AppTheme.spacingLg),
               Container(
