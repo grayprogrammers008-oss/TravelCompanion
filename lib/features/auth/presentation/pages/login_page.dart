@@ -81,9 +81,18 @@ class _LoginPageState extends ConsumerState<LoginPage>
   void _onTestUserSelected(String? userName) {
     if (userName == null) return;
 
-    final user = TestUsersConfig.testUsers.firstWhere((u) => u['name'] == userName);
     setState(() {
       _selectedTestUser = userName;
+
+      // Check if it's the empty placeholder option
+      if (userName == 'Select User' || userName.isEmpty) {
+        _emailController.clear();
+        _passwordController.clear();
+        return;
+      }
+
+      // Fill in the selected user's credentials
+      final user = TestUsersConfig.testUsers.firstWhere((u) => u['name'] == userName);
       _emailController.text = user['email']!;
       _passwordController.text = user['password']!;
     });
