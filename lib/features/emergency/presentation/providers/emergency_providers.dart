@@ -382,6 +382,30 @@ class EmergencyController extends Notifier<EmergencyState> {
       rethrow;
     }
   }
+
+  /// Pause location sharing
+  Future<void> pauseLocationSharing(String sessionId) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.pauseLocationSharing(sessionId);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Resume location sharing
+  Future<void> resumeLocationSharing(String sessionId) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _repository.resumeLocationSharing(sessionId);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
+    }
+  }
 }
 
 /// Emergency Controller Provider - Updated for Riverpod 3.0
