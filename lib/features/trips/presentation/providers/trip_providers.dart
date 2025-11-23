@@ -14,6 +14,7 @@ import '../../domain/usecases/get_user_stats_usecase.dart';
 import '../../domain/usecases/mark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/unmark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/filter_trips_usecase.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 
 // Remote Data Source Provider - Supabase (online-only mode)
 final tripRemoteDataSourceProvider = Provider<TripRemoteDataSource>((ref) {
@@ -68,9 +69,27 @@ final unmarkTripAsCompletedUseCaseProvider = Provider<UnmarkTripAsCompletedUseCa
 });
 
 // User Trips Provider - REAL-TIME stream of all trips for current user
-final userTripsProvider = StreamProvider<List<TripWithMembers>>((ref) {
+// This provider automatically disposes and recreates when user changes (auth state changes)
+// This prevents showing cached data from previous user (security issue)
+final userTripsProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref) async* {
+  // Watch auth state to ensure provider recreates when user changes
+  final authState = ref.watch(authStateProvider);
+
+  // Return empty list if not authenticated
+  if (authState.value == null) {
+    yield [];
+    return;
+  }
+
   final repository = ref.watch(tripRepositoryProvider);
-  return repository.watchUserTrips();
+
+  // Add a 5-second delay to show the packing animation
+  await Future.delayed(const Duration(seconds: 5));
+
+  // Then stream real-time updates
+  await for (final trips in repository.watchUserTrips()) {
+    yield trips;
+  }
 });
 
 // Single Trip Provider - REAL-TIME stream for specific trip
@@ -83,7 +102,17 @@ final tripProvider = StreamProvider.family<TripWithMembers, String>((
 });
 
 // Trip History Provider - REAL-TIME stream of completed trips only
-final tripHistoryProvider = StreamProvider<List<TripWithMembers>>((ref) {
+// This provider automatically disposes and recreates when user changes (auth state changes)
+// This prevents showing cached data from previous user (security issue)
+final tripHistoryProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref) {
+  // Watch auth state to ensure provider recreates when user changes
+  final authState = ref.watch(authStateProvider);
+
+  // Return empty list if not authenticated
+  if (authState.value == null) {
+    return Stream.value([]);
+  }
+
   final useCase = ref.watch(getTripHistoryUseCaseProvider);
   return useCase.watchHistory();
 });

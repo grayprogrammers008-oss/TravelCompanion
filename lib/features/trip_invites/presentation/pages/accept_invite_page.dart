@@ -421,16 +421,16 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
   Widget _buildActionButtons(String userId, String tripId, dynamic themeData) {
     return Column(
       children: [
-        // Accept Button
+        // Join Trip Button
         GlossyButton(
-          label: 'Accept Invitation',
+          label: _isAccepting ? 'Joining Trip...' : 'Join Trip',
           icon: Icons.check_circle,
           onPressed: (_isAccepting || _isDeclining) ? null : () => _acceptInvite(userId, tripId),
           isLoading: _isAccepting,
         ),
         const SizedBox(height: AppTheme.spacingMd),
 
-        // Decline Button
+        // Cancel Button
         OutlinedButton.icon(
           onPressed: (_isAccepting || _isDeclining) ? null : _declineInvite,
           style: OutlinedButton.styleFrom(
@@ -454,7 +454,7 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
                 )
               : const Icon(Icons.close, color: AppTheme.neutral600),
           label: Text(
-            _isDeclining ? 'Declining...' : 'Decline',
+            _isDeclining ? 'Cancelling...' : 'Cancel',
             style: const TextStyle(
               color: AppTheme.neutral700,
               fontSize: 16,

@@ -10,6 +10,7 @@ import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
 import '../../domain/usecases/update_profile_usecase.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 
 // Remote Data Source Provider - Supabase Only
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
@@ -162,6 +163,10 @@ class AuthController extends Notifier<AuthState> {
       // Invalidate current user provider to refresh with new user data
       ref.invalidate(currentUserProvider);
 
+      // Invalidate trips provider to refresh with new user's trips
+      ref.invalidate(userTripsProvider);
+      ref.invalidate(tripHistoryProvider);
+
       state = state.copyWith(
         isLoading: false,
         user: user,
@@ -181,6 +186,10 @@ class AuthController extends Notifier<AuthState> {
 
       // Invalidate current user provider to clear user data
       ref.invalidate(currentUserProvider);
+
+      // Invalidate trips provider to clear trips data
+      ref.invalidate(userTripsProvider);
+      ref.invalidate(tripHistoryProvider);
 
       state = AuthState(); // Reset to initial state
     } catch (e) {

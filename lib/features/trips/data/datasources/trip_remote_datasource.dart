@@ -88,17 +88,39 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         throw Exception('User not authenticated');
       }
 
-      // Get trips where user is a member
+      if (kDebugMode) {
+        debugPrint('🔍 Fetching trips for user: $userId');
+      }
+
+      // First, get all trip IDs where the user is a member
+      final userTripsResponse = await _client
+          .from('trip_members')
+          .select('trip_id')
+          .eq('user_id', userId);
+
+      final tripIds = (userTripsResponse as List)
+          .map((row) => row['trip_id'] as String)
+          .toList();
+
+      if (kDebugMode) {
+        debugPrint('🔍 Found ${tripIds.length} trip IDs: $tripIds');
+      }
+
+      if (tripIds.isEmpty) {
+        return [];
+      }
+
+      // Then get all trips with ALL their members
       final response = await _client
           .from('trips')
           .select('''
             *,
-            trip_members!inner(
+            trip_members(
               id,
               user_id,
               role,
               joined_at,
-              profiles!inner(
+              profiles(
                 id,
                 email,
                 full_name,
@@ -106,15 +128,25 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
               )
             )
           ''')
-          .eq('trip_members.user_id', userId)
+          .inFilter('id', tripIds)
           .order('created_at', ascending: false);
 
       final trips = (response as List)
           .map((tripData) => _parseTripWithMembers(tripData))
           .toList();
 
+      if (kDebugMode) {
+        debugPrint('🔍 Returning ${trips.length} trips with members');
+        for (final trip in trips) {
+          debugPrint('   - ${trip.trip.name}: ${trip.members.length} members, memberCount: ${trip.memberCount}');
+        }
+      }
+
       return trips;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error in getUserTrips: $e');
+      }
       throw Exception('Failed to get user trips: $e');
     }
   }
@@ -460,7 +492,14 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       );
     }).toList() ?? [];
 
-    return TripWithMembers(trip: trip, members: members);
+    // Get member count from data or use members list length
+    final memberCount = data['member_count'] as int? ?? members.length;
+
+    return TripWithMembers(
+      trip: trip,
+      members: members,
+      memberCount: memberCount,
+    );
   }
 
   /// Convert camelCase to snake_case

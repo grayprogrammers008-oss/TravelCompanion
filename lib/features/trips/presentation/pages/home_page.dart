@@ -184,33 +184,7 @@ class _HomePageState extends ConsumerState<HomePage>
               );
             },
             loading: () => SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingLg),
-                      decoration: BoxDecoration(
-                        gradient: themeData.primaryGradient,
-                        shape: BoxShape.circle,
-                        boxShadow: themeData.primaryShadow,
-                      ),
-                      child: const Icon(
-                        Icons.flight_takeoff,
-                        size: 48,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingLg),
-                    Text(
-                      'Loading your adventures...',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppTheme.neutral600,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
+              child: _buildPackingAnimation(context),
             ),
             error: (error, stack) => SliverFillRemaining(
               child: _buildErrorState(context, error.toString(), ref, themeData),
@@ -421,6 +395,9 @@ class _HomePageState extends ConsumerState<HomePage>
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
       builder: (bottomSheetContext) => Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -467,6 +444,30 @@ class _HomePageState extends ConsumerState<HomePage>
                   await Future.delayed(const Duration(milliseconds: 100));
                   if (parentContext.mounted) {
                     parentContext.push('/profile');
+                  }
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                  decoration: BoxDecoration(
+                    color: AppTheme.fitonistPurple.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.card_membership,
+                    color: AppTheme.fitonistPurple,
+                  ),
+                ),
+                title: const Text('Join Trip by Code'),
+                subtitle: const Text('Enter an invite code'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/join-trip');
                   }
                 },
               ),
@@ -598,6 +599,259 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     );
   }
+
+  // Packing luggage animation
+  Widget _buildPackingAnimation(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Animated bouncing bus loader
+          const _BouncingBusLoader(),
+          const SizedBox(height: AppTheme.spacingMd),
+
+          // Loading text
+          Text(
+            'Packing your trips...',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: context.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bouncing Bus Loader - Replicates the CSS animation
+class _BouncingBusLoader extends StatefulWidget {
+  const _BouncingBusLoader();
+
+  @override
+  State<_BouncingBusLoader> createState() => _BouncingBusLoaderState();
+}
+
+class _BouncingBusLoaderState extends State<_BouncingBusLoader>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _bounceAnimation;
+  late Animation<double> _roadAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 600ms animation cycle (matching CSS)
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    )..repeat();
+
+    // Bus bounce: 0 -> -5px -> 0
+    _bounceAnimation = Tween<double>(
+      begin: 0,
+      end: -5,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeInOut),
+      ),
+    );
+
+    // Road sliding animation
+    _roadAnimation = Tween<double>(
+      begin: 0,
+      end: -18,
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 90,
+      height: 70,
+      child: Stack(
+        children: [
+          // Road at bottom
+          Positioned(
+            bottom: 8,
+            left: 6,
+            right: 6,
+            child: AnimatedBuilder(
+              animation: _roadAnimation,
+              builder: (context, child) {
+                return Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF0F172A).withValues(alpha: 0.9),
+                        const Color(0xFF0F172A).withValues(alpha: 0.7),
+                      ],
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 3,
+                          bottom: 3,
+                          left: _roadAnimation.value,
+                          right: -18,
+                          child: CustomPaint(
+                            painter: _RoadDashesPainter(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Bouncing bus
+          Positioned(
+            bottom: 18,
+            left: 0,
+            right: 0,
+            child: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0, _bounceAnimation.value),
+                  child: Center(
+                    child: Container(
+                      width: 62,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF22D3EE), // Cyan
+                            Color(0xFF0EA5E9), // Blue
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF0F172A).withValues(alpha: 0.9),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          // Window
+                          Positioned(
+                            top: 6,
+                            left: 10,
+                            right: 10,
+                            bottom: 14,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFE0F2FE), // Light cyan
+                                    Color(0xFF7DD3FC), // Lighter blue
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Left wheel
+                          Positioned(
+                            bottom: -8,
+                            left: 12,
+                            child: Container(
+                              width: 13,
+                              height: 13,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF020617),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: const Color(0xFFE5E7EB),
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Right wheel
+                          Positioned(
+                            bottom: -8,
+                            right: 12,
+                            child: Container(
+                              width: 13,
+                              height: 13,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF020617),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: const Color(0xFFE5E7EB),
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Custom painter for road dashes
+class _RoadDashesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFE5E7EB)
+      ..style = PaintingStyle.fill;
+
+    // Draw repeating dashes (12px dash, 6px gap = 18px cycle)
+    double x = 4;
+    while (x < size.width + 18) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(x, 0, 12, 2),
+          const Radius.circular(1),
+        ),
+        paint,
+      );
+      x += 18;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Premium Trip Card Widget
@@ -758,14 +1012,14 @@ class TripCard extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: context.primaryLight,
+                              color: AppTheme.neutral100,
                               borderRadius:
                                   BorderRadius.circular(AppTheme.radiusXs),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.location_on,
                               size: 14,
-                              color: context.primaryColor,
+                              color: AppTheme.neutral600,
                             ),
                           ),
                           const SizedBox(width: AppTheme.spacingXs),
@@ -823,28 +1077,12 @@ class TripCard extends StatelessWidget {
                     ],
 
                     const SizedBox(height: AppTheme.spacingMd),
-                    const Divider(height: 1),
-                    const SizedBox(height: AppTheme.spacingMd),
 
-                    // Members
+                    // Members in bottom right
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        _buildMemberAvatars(members),
-                        const SizedBox(width: AppTheme.spacingXs),
-                        Text(
-                          '${members.length} ${members.length == 1 ? 'member' : 'members'}',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.neutral600,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                        ),
-                        const Spacer(),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: AppTheme.neutral400,
-                        ),
+                        _buildCompactMemberAvatars(members, tripWithMembers.memberCount ?? members.length),
                       ],
                     ),
                   ],
@@ -883,57 +1121,97 @@ class TripCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberAvatars(List<TripMemberModel> members) {
+  Widget _buildCompactMemberAvatars(List<TripMemberModel> members, int totalCount) {
     const maxVisible = 3;
     final visibleMembers = members.take(maxVisible).toList();
-    final remainingCount = members.length - maxVisible;
+    final showCount = visibleMembers.isNotEmpty && totalCount > 0;
 
-    // Calculate total width needed
-    final avatarCount = visibleMembers.length + (remainingCount > 0 ? 1 : 0);
-    final totalWidth = (avatarCount * 24.0) + 8.0; // 24px overlap + 8px padding
+    // Smart count formatting
+    String formatCount(int count) {
+      if (count >= 1000000) {
+        return '${(count / 1000000).toStringAsFixed(1).replaceAll('.0', '')}M+';
+      } else if (count >= 1000) {
+        return '${(count / 1000).toStringAsFixed(1).replaceAll('.0', '')}K+';
+      }
+      return '$count';
+    }
 
-    return SizedBox(
-      width: totalWidth,
-      height: 32,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          ...List.generate(visibleMembers.length, (index) {
-            final member = visibleMembers[index];
-            return Positioned(
-              left: index * 24.0,
-              child: UserAvatarWidget(
-                userName: member.email,
-                size: 32,
-                showBorder: true,
-              ),
-            );
-          }),
-          if (remainingCount > 0)
-            Positioned(
-              left: visibleMembers.length * 24.0,
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppTheme.neutral200,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    '+$remainingCount',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.neutral700,
+    if (!showCount) return const SizedBox.shrink();
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Overlapping avatars - only show up to maxVisible
+        SizedBox(
+          width: visibleMembers.length == 1
+              ? 32.0
+              : (visibleMembers.length * 22.0) + 10.0, // 22px overlap between circles
+          height: 32,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: List.generate(visibleMembers.length, (index) {
+              final member = visibleMembers[index];
+              return Positioned(
+                left: index * 22.0,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: UserAvatarWidget(
+                      userName: member.email ?? member.fullName,
+                      size: 28, // Slightly smaller to account for border
+                      showBorder: false,
                     ),
                   ),
                 ),
+              );
+            }),
+          ),
+        ),
+        const SizedBox(width: AppTheme.spacingSm),
+        // Member count with smart formatting
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingSm,
+            vertical: AppTheme.spacingXs,
+          ),
+          decoration: BoxDecoration(
+            color: AppTheme.neutral100,
+            borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+            border: Border.all(color: AppTheme.neutral300),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.people,
+                size: 14,
+                color: AppTheme.neutral600,
               ),
-            ),
-        ],
-      ),
+              const SizedBox(width: 4),
+              Text(
+                formatCount(totalCount),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.neutral700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

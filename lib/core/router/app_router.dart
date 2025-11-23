@@ -10,6 +10,7 @@ import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page_new.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
+import '../../features/trip_invites/presentation/pages/join_trip_by_code_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
 import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
 import '../../features/checklists/presentation/pages/checklist_list_page.dart';
@@ -26,6 +27,21 @@ import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/emergency/presentation/pages/emergency_page.dart';
 import '../presentation/main_scaffold.dart';
 
+// Custom page builder that removes the white transition overlay
+Page<void> buildPageWithoutTransition<T>({
+  required Widget child,
+  required LocalKey key,
+}) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // No transition animation - instant page swap
+      return child;
+    },
+  );
+}
+
 // Route names
 class AppRoutes {
   static const String login = '/';
@@ -41,6 +57,7 @@ class AppRoutes {
   static const String addStandaloneExpense = '/expenses/add';
   static const String expenseTest = '/expenses/test';
   static const String acceptInvite = '/invite/:inviteCode';
+  static const String joinByCode = '/join-trip';
   static const String itinerary = '/trips/:tripId/itinerary';
   static const String addItineraryItem = '/trips/:tripId/itinerary/add';
   static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
@@ -73,18 +90,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnboardingRoute = state.matchedLocation == AppRoutes.onboarding;
       final isInviteRoute = state.matchedLocation.startsWith('/invite/');
 
-      // Allow invite routes without authentication
-      if (isInviteRoute) {
-        return null;
-      }
-
       // Allow reset password route without authentication
       if (isResetPasswordRoute) {
         return null;
       }
 
       // If not authenticated and not on login/signup, redirect to login
+      // Store invite code in query parameter to redirect after login
       if (!isAuthenticated && !isLoginRoute && !isSignupRoute) {
+        // If user is trying to access an invite, save the path for after login
+        if (isInviteRoute) {
+          return '${AppRoutes.login}?redirect=${Uri.encodeComponent(state.matchedLocation)}';
+        }
         return AppRoutes.login;
       }
 
@@ -129,17 +146,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.home,
         name: 'home',
-        builder: (context, state) => const HomeShell(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const HomeShell(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.expenses,
         name: 'expenses',
-        builder: (context, state) => const ExpensesShell(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const ExpensesShell(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.createTrip,
         name: 'createTrip',
-        builder: (context, state) => const CreateTripPage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const CreateTripPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.addStandaloneExpense,
@@ -149,9 +175,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.tripDetail,
         name: 'tripDetail',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
-          return TripDetailPage(tripId: tripId);
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: TripDetailPage(tripId: tripId),
+          );
         },
       ),
       GoRoute(
@@ -190,6 +219,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           final inviteCode = state.pathParameters['inviteCode']!;
           return AcceptInvitePage(inviteCode: inviteCode);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.joinByCode,
+        name: 'joinByCode',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const JoinTripByCodePage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.itinerary,
@@ -258,22 +295,45 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.profile,
         name: 'profile',
-        builder: (context, state) => const ProfilePage(),
+        pageBuilder: (context, state) {
+          final userId = state.uri.queryParameters['userId'];
+          final fullName = state.uri.queryParameters['fullName'];
+          final email = state.uri.queryParameters['email'];
+          final role = state.uri.queryParameters['role'];
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: ProfilePage(
+              userId: userId,
+              fullName: fullName,
+              email: email,
+              role: role,
+            ),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.settings,
         name: 'settings',
-        builder: (context, state) => const SettingsPageEnhanced(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const SettingsPageEnhanced(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.themeSettings,
         name: 'themeSettings',
-        builder: (context, state) => const ThemeSettingsPage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const ThemeSettingsPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.tripHistory,
         name: 'tripHistory',
-        builder: (context, state) => const TripHistoryPage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const TripHistoryPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.emergency,

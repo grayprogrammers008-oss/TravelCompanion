@@ -1,11 +1,14 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/foundation.dart';
 import '../models/invite_model.dart';
+import '../../../../core/services/email_service.dart';
 
 /// Remote data source for trip invites using Supabase
 class InviteRemoteDataSource {
   final SupabaseClient _supabase;
   final Uuid _uuid = const Uuid();
+  final EmailService _emailService = EmailService();
 
   InviteRemoteDataSource(this._supabase);
 
@@ -37,15 +40,96 @@ class InviteRemoteDataSource {
         expiresAt: now.add(Duration(days: expiresInDays)),
       );
 
+      // Insert invite into database (only core fields, not extended join fields)
       final response = await _supabase
           .from('trip_invites')
-          .insert(invite.toJson())
+          .insert({
+            'id': invite.id,
+            'trip_id': invite.tripId,
+            'invited_by': invite.invitedBy,
+            'email': invite.email,
+            'phone_number': invite.phoneNumber,
+            'status': invite.status,
+            'invite_code': invite.inviteCode,
+            'created_at': invite.createdAt.toIso8601String(),
+            'expires_at': invite.expiresAt.toIso8601String(),
+          })
           .select()
           .single();
 
-      return InviteModel.fromJson(response);
+      final createdInvite = InviteModel.fromJson(response);
+
+      // Get trip details for email
+      final tripResponse = await _supabase
+          .from('trips')
+          .select('name, destination, start_date, end_date')
+          .eq('id', tripId)
+          .single();
+
+      // Get inviter details
+      final inviterResponse = await _supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', invitedBy)
+          .single();
+
+      final tripName = tripResponse['name'] as String? ?? 'Trip';
+      final tripDestination = tripResponse['destination'] as String?;
+      final tripStartDate = tripResponse['start_date'] as String?;
+      final tripEndDate = tripResponse['end_date'] as String?;
+      final inviterName = inviterResponse['full_name'] as String? ?? 'Someone';
+
+      // Extract recipient name from email (before @)
+      final recipientName = email.split('@').first.replaceAll('.', ' ').replaceAll('_', ' ');
+      final capitalizedName = recipientName.split(' ').map((word) {
+        if (word.isEmpty) return word;
+        return word[0].toUpperCase() + word.substring(1).toLowerCase();
+      }).join(' ');
+
+      // Send email invitation
+      try {
+        final emailSent = await _emailService.sendTripInvite(
+          toEmail: email,
+          toName: capitalizedName,
+          tripName: tripName,
+          inviterName: inviterName,
+          inviteCode: inviteCode,
+          tripDestination: tripDestination,
+          tripStartDate: tripStartDate != null ? _formatDate(tripStartDate) : null,
+          tripEndDate: tripEndDate != null ? _formatDate(tripEndDate) : null,
+        );
+
+        if (!emailSent) {
+          if (kDebugMode) {
+            debugPrint('⚠️ Warning: Failed to send email to $email for invite $inviteCode');
+          }
+          // Don't throw error - invite is created, email is optional
+        } else {
+          if (kDebugMode) {
+            debugPrint('✅ Invitation email sent to $email for trip $tripName');
+          }
+        }
+      } catch (emailError) {
+        if (kDebugMode) {
+          debugPrint('⚠️ Email sending error: $emailError');
+        }
+        // Don't throw error - invite is created, email is optional
+      }
+
+      return createdInvite;
     } catch (e) {
       throw Exception('Failed to create invite: $e');
+    }
+  }
+
+  /// Format ISO date string to readable format
+  String _formatDate(String isoDate) {
+    try {
+      final date = DateTime.parse(isoDate);
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return '${months[date.month - 1]} ${date.day}, ${date.year}';
+    } catch (e) {
+      return isoDate;
     }
   }
 

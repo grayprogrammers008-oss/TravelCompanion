@@ -10,7 +10,18 @@ import '../../../trips/presentation/providers/trip_providers.dart';
 
 /// Profile Page - View and edit user profile
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({super.key});
+  final String? userId; // If null, shows current user's profile
+  final String? fullName; // For viewing other user's profile
+  final String? email; // For viewing other user's profile
+  final String? role; // For viewing other user's profile
+
+  const ProfilePage({
+    super.key,
+    this.userId,
+    this.fullName,
+    this.email,
+    this.role,
+  });
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
@@ -349,13 +360,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
     final themeData = context.appThemeData;
+    final currentUserId = userAsync.value?.id;
+    final isViewingOwnProfile = widget.userId == null || widget.userId == currentUserId;
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Profile',
-          style: TextStyle(
+        title: Text(
+          isViewingOwnProfile ? 'Profile' : 'User Profile',
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
@@ -369,12 +382,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ),
         actions: [
-          if (!_isEditing)
+          if (isViewingOwnProfile && !_isEditing)
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.white),
               onPressed: () => setState(() => _isEditing = true),
             ),
-          if (_isEditing && !_isLoading)
+          if (isViewingOwnProfile && _isEditing && !_isLoading)
             IconButton(
               icon: const Icon(Icons.close, color: Colors.white),
               onPressed: () => setState(() => _isEditing = false),
@@ -383,20 +396,25 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       ),
       body: userAsync.when(
         data: (user) {
-          if (user == null) {
+          if (user == null && isViewingOwnProfile) {
             return const Center(
               child: Text('User not found'),
             );
           }
 
-          // Initialize controllers with user data
-          if (_fullNameController.text.isEmpty && user.fullName != null) {
+          // If viewing another user's profile, use the passed data
+          if (!isViewingOwnProfile) {
+            return _buildOtherUserProfile(context, themeData);
+          }
+
+          // Initialize controllers with current user data
+          if (_fullNameController.text.isEmpty && user!.fullName != null) {
             _fullNameController.text = user.fullName!;
           }
-          if (_phoneController.text.isEmpty && user.phoneNumber != null) {
+          if (_phoneController.text.isEmpty && user!.phoneNumber != null) {
             _phoneController.text = user.phoneNumber!;
           }
-          if (_bioController.text.isEmpty && user.bio != null) {
+          if (_bioController.text.isEmpty && user!.bio != null) {
             _bioController.text = user.bio!;
           }
 
@@ -427,7 +445,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       CircleAvatar(
                         radius: 60,
                         backgroundColor: context.primaryColor.withValues(alpha: 0.1),
-                        child: user.avatarUrl != null
+                        child: user!.avatarUrl != null
                             ? ClipOval(
                                 child: Image.network(
                                   user.avatarUrl!,
@@ -918,6 +936,127 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildOtherUserProfile(BuildContext context, dynamic themeData) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      child: Column(
+        children: [
+          // Profile Picture Section
+          CircleAvatar(
+            radius: 60,
+            backgroundColor: context.primaryColor.withValues(alpha: 0.1),
+            child: Text(
+              (widget.fullName?.isNotEmpty == true ? widget.fullName![0] :
+               widget.email?.isNotEmpty == true ? widget.email![0] : 'U').toUpperCase(),
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+                color: context.primaryColor,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // User Info Card
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacingLg),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Name
+                if (widget.fullName?.isNotEmpty == true) ...[
+                  _buildInfoRow(
+                    context: context,
+                    icon: Icons.person,
+                    label: 'Name',
+                    value: widget.fullName!,
+                    themeData: themeData,
+                  ),
+                  const Divider(height: AppTheme.spacingLg),
+                ],
+
+                // Email
+                if (widget.email?.isNotEmpty == true) ...[
+                  _buildInfoRow(
+                    context: context,
+                    icon: Icons.email,
+                    label: 'Email',
+                    value: widget.email!,
+                    themeData: themeData,
+                  ),
+                  const Divider(height: AppTheme.spacingLg),
+                ],
+
+                // Role
+                if (widget.role?.isNotEmpty == true)
+                  _buildInfoRow(
+                    context: context,
+                    icon: Icons.badge,
+                    label: 'Role',
+                    value: widget.role!.substring(0, 1).toUpperCase() + widget.role!.substring(1),
+                    themeData: themeData,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String value,
+    required dynamic themeData,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppTheme.spacingSm),
+          decoration: BoxDecoration(
+            color: context.primaryColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          ),
+          child: Icon(icon, size: 20, color: context.primaryColor),
+        ),
+        const SizedBox(width: AppTheme.spacingMd),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: context.textColor.withValues(alpha: 0.7),
+                    ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.textColor,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

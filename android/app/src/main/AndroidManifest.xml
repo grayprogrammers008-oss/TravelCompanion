@@ -80,9 +80,14 @@
                     android:host="pathio.travel"
                     android:pathPrefix="/invite" />
 
-                <!-- Custom scheme for invites -->
+                <!-- Custom scheme for invites (pathio) -->
                 <data
                     android:scheme="pathio"
+                    android:host="invite" />
+
+                <!-- Custom scheme for invites (travelcompanion - for email compatibility) -->
+                <data
+                    android:scheme="travelcompanion"
                     android:host="invite" />
             </intent-filter>
 

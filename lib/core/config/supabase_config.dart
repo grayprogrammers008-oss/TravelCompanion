@@ -26,20 +26,20 @@ class SupabaseConfig {
         'YOUR_CLAUDE_API_KEY_HERE', // Replace with your Claude API key
   );
 
-  /// Mailgun API Configuration for Email Invites
-  static const String mailgunApiKey = String.fromEnvironment(
-    'MAILGUN_API_KEY',
-    defaultValue: 'f6beec82ebcca0b6836ed84eb209c4c8-5e1ffd43-9d8d601f',
+  /// Brevo (SendinBlue) API Configuration for Email Invites
+  static const String brevoApiKey = String.fromEnvironment(
+    'BREVO_API_KEY',
+    defaultValue: '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',
   );
 
-  static const String mailgunDomain = String.fromEnvironment(
-    'MAILGUN_DOMAIN',
-    defaultValue: 'sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org',
+  static const String brevoSenderEmail = String.fromEnvironment(
+    'BREVO_SENDER_EMAIL',
+    defaultValue: 'palkarfoods224@gmail.com',
   );
 
-  static const String mailgunFromEmail = String.fromEnvironment(
-    'MAILGUN_FROM_EMAIL',
-    defaultValue: 'Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>',
+  static const String brevoSenderName = String.fromEnvironment(
+    'BREVO_SENDER_NAME',
+    defaultValue: 'TravelCompanion',
   );
 
   /// Validate configuration
@@ -52,10 +52,10 @@ class SupabaseConfig {
       }
     }
 
-    if (mailgunDomain.contains('YOUR_MAILGUN')) {
+    if (brevoApiKey.contains('YOUR_BREVO')) {
       if (kDebugMode) {
-        debugPrint('⚠️ Warning: Mailgun domain not configured!');
-        debugPrint('Email invites will not work until Mailgun is configured.');
+        debugPrint('⚠️ Warning: Brevo API key not configured!');
+        debugPrint('Email invites will not work until Brevo is configured.');
       }
     }
   }

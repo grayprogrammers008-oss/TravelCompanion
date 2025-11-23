@@ -211,7 +211,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       delay: Duration.zero,
                       child: _buildInfoSection(context, trip, themeData),
                     ),
-                    const SizedBox(height: AppTheme.spacingXl),
+                    const SizedBox(height: AppTheme.spacingLg),
 
                     // Description
                     if (trip.trip.description != null &&
@@ -521,6 +521,75 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingMd),
+
+          // Member Avatars Stack (only if there are members)
+          if (trip.members.isNotEmpty) ...[
+            SizedBox(
+              height: 40,
+              child: Stack(
+                children: [
+                  ...trip.members.take(5).toList().asMap().entries.map(
+                    (entry) {
+                      final index = entry.key;
+                      final member = entry.value;
+                      return Positioned(
+                        left: index * 28.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: themeData.primaryColor,
+                            child: Text(
+                              (member.fullName ?? member.email ?? 'U')[0].toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  if (trip.members.length > 5)
+                    Positioned(
+                      left: 5 * 28.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppTheme.neutral300,
+                          child: Text(
+                            '+${trip.members.length - 5}',
+                            style: TextStyle(
+                              color: AppTheme.neutral800,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+          ],
+
           if (trip.members.isEmpty)
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -554,68 +623,94 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     delay: AppAnimations.staggerTiny * entry.key,
                     child: Container(
                       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-                      padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
                         color: context.backgroundColor,
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         border: Border.all(color: context.textColor.withValues(alpha: 0.2)),
                       ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: themeData.primaryColor,
-                            child: Text(
-                              entry.value.userId.substring(0, 1).toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
+                      child: InkWell(
+                        onTap: () {
+                          // Check if it's the current user
+                          final currentUserId = ref.read(authStateProvider).value ?? '';
+                          if (entry.value.userId == currentUserId) {
+                            // Navigate to own profile
+                            context.push('/profile');
+                          } else {
+                            // Navigate to user's profile with all member data
+                            context.push('/profile'
+                                '?userId=${Uri.encodeComponent(entry.value.userId)}'
+                                '&fullName=${Uri.encodeComponent(entry.value.fullName ?? '')}'
+                                '&email=${Uri.encodeComponent(entry.value.email ?? '')}'
+                                '&role=${Uri.encodeComponent(entry.value.role)}');
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppTheme.spacingMd),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: themeData.primaryColor,
+                                child: Text(
+                                  (entry.value.fullName ?? entry.value.email ?? 'U')[0].toUpperCase(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      entry.value.fullName ?? entry.value.email ?? 'Unknown Member',
+                                      style: context.bodyStyle.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                    Text(
+                                      entry.value.role.substring(0, 1).toUpperCase() + entry.value.role.substring(1),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: context.textColor.withValues(alpha: 0.7),
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (entry.value.role == 'organizer')
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd,
+                                    vertical: AppTheme.spacingXs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: themeData.primaryGradient,
+                                    borderRadius:
+                                        BorderRadius.circular(AppTheme.radiusFull),
+                                  ),
+                                  child: const Text(
+                                    'Organizer',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(width: AppTheme.spacingXs),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                                color: context.textColor.withValues(alpha: 0.3),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: AppTheme.spacingMd),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Member ${entry.value.userId.substring(0, 8)}',
-                                  style: context.bodyStyle.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                Text(
-                                  'Role: ${entry.value.role.substring(0, 1).toUpperCase()}${entry.value.role.substring(1)}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: context.textColor.withValues(alpha: 0.7),
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (entry.value.role == 'organizer')
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppTheme.spacingMd,
-                                vertical: AppTheme.spacingXs,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: themeData.primaryGradient,
-                                borderRadius:
-                                    BorderRadius.circular(AppTheme.radiusFull),
-                              ),
-                              child: const Text(
-                                'Organizer',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -680,7 +775,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: _ActionCard(
                   icon: Icons.list_alt,
                   label: 'Itinerary',
-                  color: context.accentColor,
+                  color: context.primaryColor,
                   onTap: () {
                     context.push('/trips/${widget.tripId}/itinerary');
                   },
@@ -698,7 +793,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: _ActionCard(
                   icon: Icons.chat_bubble_outline,
                   label: 'Chat',
-                  color: context.primaryColor,
+                  color: AppTheme.info,
                   onTap: () {
                     final currentUserId = ref.read(authStateProvider).value ?? '';
                     context.push(
@@ -735,7 +830,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: _ActionCard(
                   icon: Icons.payments,
                   label: 'Expenses',
-                  color: context.accentColor,
+                  color: AppTheme.warning,
                   onTap: () {
                     context.push('/trips/${widget.tripId}/expenses');
                   },
@@ -745,13 +840,13 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: FadeSlideAnimation(
-                delay: AppAnimations.staggerTiny * 3,
+                delay: AppAnimations.staggerTiny * 5,
                 child: _ActionCard(
-                  icon: Icons.payments,
-                  label: 'Expenses',
-                  color: context.accentColor,
+                  icon: Icons.emergency,
+                  label: 'Emergency',
+                  color: AppTheme.error,
                   onTap: () {
-                    context.push('/trips/${widget.tripId}/expenses');
+                    context.push('/emergency?tripId=${widget.tripId}');
                   },
                 ),
               ),

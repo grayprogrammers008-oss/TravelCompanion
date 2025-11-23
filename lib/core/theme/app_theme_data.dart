@@ -11,6 +11,7 @@ enum AppThemeType {
   lavender,   // Calming lavender (Meditation app inspired)
   blossom,    // Soft pink (Wellness app inspired)
   desert,     // Warm beige (Wellness app inspired)
+  brilliant,  // Vibrant purple (Fitonist inspired) - NEW!
 }
 
 /// Theme data for each theme type
@@ -66,6 +67,8 @@ class AppThemeData {
         return _blossom;
       case AppThemeType.desert:
         return _desert;
+      case AppThemeType.brilliant:
+        return _brilliant;
     }
   }
 
@@ -467,6 +470,63 @@ class AppThemeData {
     ],
     icon: Icons.wb_sunny_rounded,
     accentColor: Color(0xFFC9A58D),       // Muted rose-tan accent
+    isDark: false,
+  );
+
+  /// Theme 8: Brilliant - Vibrant & Playful (Fitonist inspired)
+  static const AppThemeData _brilliant = AppThemeData(
+    name: 'Brilliant',
+    description: 'Vibrant purple - Energetic & playful',
+    primaryColor: Color(0xFF7B5FE8),      // Electric purple (Fitonist)
+    primaryDeep: Color(0xFF5234B8),       // Deep violet
+    primaryLight: Color(0xFFC8B8FF),      // Lavender dream
+    primaryPale: Color(0xFFEFE9FF),       // Purple mist
+    primaryGradient: LinearGradient(
+      colors: [Color(0xFF7B5FE8), Color(0xFF5234B8)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    glossyGradient: LinearGradient(
+      colors: [
+        Color(0xFF5234B8),
+        Color(0xFF7B5FE8),
+        Color(0xFFC8B8FF),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    headerGradient: LinearGradient(
+      colors: [Color(0xFF7B5FE8), Color(0xFF5234B8)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    backgroundGradient: LinearGradient(
+      colors: [
+        Color(0xFFFAFAFF),
+        Color(0xFFFFFFFF),
+        Color(0xFFF4F4FF),
+      ],
+      stops: [0.0, 0.5, 1.0],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    primaryShadow: [
+      BoxShadow(
+        color: Color(0x307B5FE8),
+        blurRadius: 20,
+        offset: Offset(0, 6),
+      ),
+    ],
+    glossyShadow: [
+      BoxShadow(
+        color: Color(0x407B5FE8),
+        blurRadius: 28,
+        offset: Offset(0, 10),
+      ),
+    ],
+    icon: Icons.auto_awesome,
+    accentColor: Color(0xFFFF88CC),       // Candy pink accent
     isDark: false,
   );
 
