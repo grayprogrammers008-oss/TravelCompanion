@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/theme/theme_access.dart';
 import 'package:travel_crew/features/emergency/presentation/widgets/sos_button.dart';
 import 'package:travel_crew/features/emergency/presentation/widgets/nearest_hospitals_widget.dart';
 import 'package:travel_crew/features/emergency/presentation/widgets/medical_emergency_button.dart';
+import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
 
 /// Emergency Service Page - Centralized emergency features
 ///
@@ -209,7 +211,7 @@ class EmergencyPage extends ConsumerWidget {
                           title: 'Share',
                           subtitle: 'Location',
                           color: Colors.green,
-                          onTap: () => _shareLocation(context),
+                          onTap: () => _shareLocation(context, ref),
                         ),
                       ),
                     ],
@@ -338,8 +340,8 @@ class EmergencyPage extends ConsumerWidget {
     );
   }
 
-  void _callEmergencyNumber(BuildContext context, String number) {
-    showDialog(
+  Future<void> _callEmergencyNumber(BuildContext context, String number) async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
@@ -355,21 +357,11 @@ class EmergencyPage extends ConsumerWidget {
         content: Text('Call $number for emergency assistance?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // TODO: Implement phone call functionality
-              // url_launcher package: launch('tel:$number');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Calling $number...'),
-                  backgroundColor: AppTheme.info,
-                ),
-              );
-            },
+            onPressed: () => Navigator.of(context).pop(true),
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red.shade600,
             ),
@@ -378,16 +370,121 @@ class EmergencyPage extends ConsumerWidget {
         ],
       ),
     );
+
+    if (confirmed == true && context.mounted) {
+      final uri = Uri.parse('tel:$number');
+      try {
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Cannot make phone call to $number'),
+                backgroundColor: AppTheme.error,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error making call: $e'),
+              backgroundColor: AppTheme.error,
+            ),
+          );
+        }
+      }
+    }
   }
 
-  void _shareLocation(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Location sharing feature coming soon!'),
-        backgroundColor: AppTheme.info,
+  Future<void> _shareLocation(BuildContext context, WidgetRef ref) async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.location_on, color: AppTheme.info),
+            SizedBox(width: AppTheme.spacingMd),
+            Text('Share Live Location'),
+          ],
+        ),
+        content: const Text(
+          'Share your live location with emergency contacts?\n\n'
+          'This will:\n'
+          '• Share your current GPS location\n'
+          '• Update location in real-time\n'
+          '• Notify your emergency contacts',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.success,
+            ),
+            child: const Text('Share Location'),
+          ),
+        ],
       ),
     );
-    // TODO: Implement location sharing functionality
+
+    if (confirmed == true && context.mounted) {
+      try {
+        // Get all emergency contacts
+        final contactsAsync = await ref.read(emergencyContactsProvider.future);
+
+        if (contactsAsync.isEmpty) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please add emergency contacts first'),
+                backgroundColor: AppTheme.warning,
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+          return;
+        }
+
+        // Start location sharing with all emergency contacts
+        final controller = ref.read(emergencyControllerProvider.notifier);
+        final contactIds = contactsAsync.map((c) => c.id).toList();
+        await controller.startLocationSharing(
+          contactIds: contactIds,
+          tripId: tripId,
+          message: 'Emergency location sharing activated',
+        );
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sharing location with ${contactsAsync.length} contacts'),
+              backgroundColor: AppTheme.success,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to share location: $e'),
+              backgroundColor: AppTheme.error,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    }
   }
 }
 
