@@ -352,6 +352,16 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
 
+          // Debug: Test if this section renders (ALWAYS VISIBLE)
+          const Divider(height: AppTheme.spacingLg),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              'DEBUG: Trip Cost Section Below',
+              style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ),
+
           // Trip Cost - Always show for debugging
           tripCostAsync.when(
             data: (costSummary) {

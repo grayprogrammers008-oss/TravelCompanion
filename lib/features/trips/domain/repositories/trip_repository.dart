@@ -11,6 +11,8 @@ abstract class TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   });
 
   /// Get all trips for current user
@@ -31,6 +33,8 @@ abstract class TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
+    double? budget,
+    String? currency,
   });
 
   /// Delete trip

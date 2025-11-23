@@ -14,6 +14,8 @@ class CreateTripUseCase {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) async {
     // Validation
     if (name.trim().isEmpty) {
@@ -30,6 +32,11 @@ class CreateTripUseCase {
       }
     }
 
+    // Budget validation
+    if (budget != null && budget < 0) {
+      throw Exception('Budget must be a positive number');
+    }
+
     return await _repository.createTrip(
       name: name.trim(),
       description: description?.trim(),
@@ -37,6 +44,8 @@ class CreateTripUseCase {
       startDate: startDate,
       endDate: endDate,
       coverImageUrl: coverImageUrl,
+      budget: budget,
+      currency: currency,
     );
   }
 }

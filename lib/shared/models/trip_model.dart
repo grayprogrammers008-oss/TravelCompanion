@@ -13,6 +13,8 @@ class TripModel {
   final bool isCompleted;
   final DateTime? completedAt;
   final double rating; // Trip rating 0.0 to 5.0 stars
+  final double? budget; // Trip budget (optional)
+  final String currency; // Currency code (e.g., 'INR', 'USD')
 
   const TripModel({
     required this.id,
@@ -28,6 +30,8 @@ class TripModel {
     this.isCompleted = false,
     this.completedAt,
     this.rating = 0.0,
+    this.budget,
+    this.currency = 'INR',
   });
 
   TripModel copyWith({
@@ -44,6 +48,8 @@ class TripModel {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
+    double? budget,
+    String? currency,
   }) {
     return TripModel(
       id: id ?? this.id,
@@ -59,6 +65,8 @@ class TripModel {
       isCompleted: isCompleted ?? this.isCompleted,
       completedAt: completedAt ?? this.completedAt,
       rating: rating ?? this.rating,
+      budget: budget ?? this.budget,
+      currency: currency ?? this.currency,
     );
   }
 
@@ -77,6 +85,8 @@ class TripModel {
       'is_completed': isCompleted,
       'completed_at': completedAt?.toIso8601String(),
       'rating': rating,
+      'budget': budget,
+      'currency': currency,
     };
   }
 
@@ -105,6 +115,8 @@ class TripModel {
           ? DateTime.parse(json['completed_at'] as String)
           : null,
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      budget: (json['budget'] as num?)?.toDouble(),
+      currency: json['currency'] as String? ?? 'INR',
     );
   }
 
@@ -124,7 +136,9 @@ class TripModel {
         other.updatedAt == updatedAt &&
         other.isCompleted == isCompleted &&
         other.completedAt == completedAt &&
-        other.rating == rating;
+        other.rating == rating &&
+        other.budget == budget &&
+        other.currency == currency;
   }
 
   @override
@@ -143,12 +157,14 @@ class TripModel {
       isCompleted,
       completedAt,
       rating,
+      budget,
+      currency,
     );
   }
 
   @override
   String toString() {
-    return 'TripModel(id: $id, name: $name, description: $description, destination: $destination, startDate: $startDate, endDate: $endDate, coverImageUrl: $coverImageUrl, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, isCompleted: $isCompleted, completedAt: $completedAt, rating: $rating)';
+    return 'TripModel(id: $id, name: $name, description: $description, destination: $destination, startDate: $startDate, endDate: $endDate, coverImageUrl: $coverImageUrl, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, isCompleted: $isCompleted, completedAt: $completedAt, rating: $rating, budget: $budget, currency: $currency)';
   }
 }
 

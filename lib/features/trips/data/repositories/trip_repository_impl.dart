@@ -17,6 +17,8 @@ class TripRepositoryImpl implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) async {
     try {
       final trip = TripModel(
@@ -28,6 +30,8 @@ class TripRepositoryImpl implements TripRepository {
         endDate: endDate,
         coverImageUrl: coverImageUrl,
         createdBy: '', // Will be set by backend
+        budget: budget,
+        currency: currency ?? 'INR',
       );
 
       final createdTrip = await _remoteDataSource.createTrip(trip);
