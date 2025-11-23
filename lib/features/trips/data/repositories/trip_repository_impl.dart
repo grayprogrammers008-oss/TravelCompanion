@@ -79,6 +79,8 @@ class TripRepositoryImpl implements TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
+    double? budget,
+    String? currency,
   }) async {
     try {
       // Build updates map
@@ -117,6 +119,14 @@ class TripRepositoryImpl implements TripRepository {
       if (rating != null) {
         updates['rating'] = rating;
         updatedField = updatedField == null ? 'rating' : 'details';
+      }
+      if (budget != null) {
+        updates['budget'] = budget;
+        updatedField = updatedField == null ? 'budget' : 'details';
+      }
+      if (currency != null) {
+        updates['currency'] = currency;
+        updatedField = updatedField == null ? 'currency' : 'details';
       }
 
       await _remoteDataSource.updateTrip(tripId, updates);

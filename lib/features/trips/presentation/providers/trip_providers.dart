@@ -308,6 +308,8 @@ class TripController extends Notifier<TripState> {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -318,6 +320,8 @@ class TripController extends Notifier<TripState> {
         startDate: startDate,
         endDate: endDate,
         coverImageUrl: coverImageUrl,
+        budget: budget,
+        currency: currency,
       );
 
       // Invalidate providers to trigger refresh
@@ -340,6 +344,8 @@ class TripController extends Notifier<TripState> {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -351,6 +357,8 @@ class TripController extends Notifier<TripState> {
         startDate: startDate,
         endDate: endDate,
         coverImageUrl: coverImageUrl,
+        budget: budget,
+        currency: currency,
       );
 
       // Invalidate providers to trigger refresh

@@ -15,6 +15,8 @@ class UpdateTripUseCase {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) async {
     // Validation
     if (tripId.trim().isEmpty) {
@@ -33,6 +35,11 @@ class UpdateTripUseCase {
       }
     }
 
+    // Budget validation
+    if (budget != null && budget < 0) {
+      throw Exception('Budget must be a positive number');
+    }
+
     return await _repository.updateTrip(
       tripId: tripId,
       name: name,
@@ -41,6 +48,8 @@ class UpdateTripUseCase {
       startDate: startDate,
       endDate: endDate,
       coverImageUrl: coverImageUrl,
+      budget: budget,
+      currency: currency,
     );
   }
 }
