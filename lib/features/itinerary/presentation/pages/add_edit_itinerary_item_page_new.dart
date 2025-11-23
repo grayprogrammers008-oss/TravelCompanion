@@ -9,6 +9,7 @@ import '../../../../core/widgets/premium_form_fields.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/confetti_animation.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../providers/itinerary_providers.dart';
 
 class AddEditItineraryItemPageNew extends ConsumerStatefulWidget {
@@ -193,9 +194,9 @@ class _AddEditItineraryItemPageNewState
           backgroundColor: themeData.primaryColor,
           foregroundColor: Colors.white,
         ),
-        body: Center(
-          child: CircularProgressIndicator(
-            color: themeData.primaryColor,
+        body: const Center(
+          child: AppLoadingIndicator(
+            message: 'Loading activity...',
           ),
         ),
       );

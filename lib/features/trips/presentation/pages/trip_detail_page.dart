@@ -10,6 +10,7 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../providers/trip_providers.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -243,31 +244,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           ],
           ),
         ),
-        loading: () => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingLg),
-                decoration: BoxDecoration(
-                  gradient: themeData.primaryGradient,
-                  shape: BoxShape.circle,
-                  boxShadow: themeData.primaryShadow,
-                ),
-                child: const Icon(
-                  Icons.flight_takeoff,
-                  size: 48,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              Text(
-                'Loading trip details...',
-                style: context.titleStyle.copyWith(
-                      color: context.textColor.withValues(alpha: 0.7),
-                    ),
-              ),
-            ],
+        loading: () => const Center(
+          child: AppLoadingIndicator(
+            message: 'Loading trip details...',
           ),
         ),
         error: (error, stack) => Center(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../providers/itinerary_providers.dart';
 
 class AddEditItineraryItemPage extends ConsumerStatefulWidget {
@@ -209,7 +210,9 @@ class _AddEditItineraryItemPageState
           title: const Text('Loading...'),
         ),
         body: const Center(
-          child: CircularProgressIndicator(),
+          child: AppLoadingIndicator(
+            message: 'Loading activity...',
+          ),
         ),
       );
     }

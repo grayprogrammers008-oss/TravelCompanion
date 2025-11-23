@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/services/image_picker_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../domain/entities/message_entity.dart';
@@ -622,7 +623,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 );
               },
               loading: () => const Center(
-                child: CircularProgressIndicator(),
+                child: AppLoadingIndicator(
+                  message: 'Loading messages...',
+                ),
               ),
               error: (error, stack) => Center(
                 child: Column(

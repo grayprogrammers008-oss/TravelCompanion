@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../domain/entities/message_entity.dart';
 import '../providers/messaging_providers.dart';
 
@@ -254,7 +255,11 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
               future: pendingAsync.value as Future<List<QueuedMessageEntity>>,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                    child: AppLoadingIndicator(
+                      message: 'Loading queue...',
+                    ),
+                  );
                 }
 
                 if (snapshot.hasError) {
@@ -278,7 +283,11 @@ class _MessageQueueScreenState extends ConsumerState<MessageQueueScreen> {
                 }
                 return _buildMessageList(messageList, isOffline);
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(
+                child: AppLoadingIndicator(
+                  message: 'Loading queue...',
+                ),
+              ),
               error: (error, stack) => _buildErrorState(error.toString()),
             ),
       bottomNavigationBar: pendingAsync is AsyncData

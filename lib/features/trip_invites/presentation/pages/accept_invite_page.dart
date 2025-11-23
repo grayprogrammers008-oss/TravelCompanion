@@ -9,6 +9,7 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/invite_providers.dart';
@@ -467,33 +468,9 @@ class _AcceptInvitePageState extends ConsumerState<AcceptInvitePage>
   }
 
   Widget _buildLoading(dynamic themeData) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ScaleAnimation(
-            child: Container(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: themeData.primaryGradient,
-                shape: BoxShape.circle,
-                boxShadow: themeData.primaryShadow,
-              ),
-              child: const Icon(
-                Icons.mail,
-                size: 48,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingLg),
-          Text(
-            'Loading invitation...',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppTheme.neutral600,
-                ),
-          ),
-        ],
+    return const Center(
+      child: AppLoadingIndicator(
+        message: 'Loading invitation...',
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/theme/theme_access.dart';
 import 'package:travel_crew/core/animations/animated_widgets.dart';
+import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/trips/domain/usecases/get_trip_history_usecase.dart';
 import 'package:travel_crew/features/trips/domain/usecases/filter_trips_usecase.dart';
@@ -100,7 +101,11 @@ class _TripHistoryPageState extends ConsumerState<TripHistoryPage> {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: AppLoadingIndicator(
+            message: 'Loading trip history...',
+          ),
+        ),
         error: (error, stack) => _buildErrorState(context, error.toString()),
       ),
     );
