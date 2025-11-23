@@ -352,49 +352,77 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
 
-          // Debug: Test if this section renders (ALWAYS VISIBLE)
-          const Divider(height: AppTheme.spacingLg),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'DEBUG: Trip Cost Section Below',
-              style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
-            ),
-          ),
-
-          // Trip Cost - Always show for debugging
+          // Budget vs Actual Cost Section
           tripCostAsync.when(
             data: (costSummary) {
-              if (kDebugMode) {
-                debugPrint('✅ Trip cost loaded: ${costSummary.totalCost} ${costSummary.currency}, ${costSummary.expenseCount} expenses');
-              }
+              final hasBudget = trip.trip.budget != null && trip.trip.budget! > 0;
+              final actualCost = costSummary.totalCost;
+              final budget = trip.trip.budget ?? 0.0;
+              final remaining = budget - actualCost;
+              final isOverBudget = hasBudget && actualCost > budget;
+              final isUnderBudget = hasBudget && actualCost < budget;
+
               return Column(
                 children: [
+                  // Budget (if set)
+                  if (hasBudget) ...[
+                    const Divider(height: AppTheme.spacingLg),
+                    _buildInfoRow(
+                      context,
+                      icon: Icons.savings,
+                      iconColor: Colors.blue.shade700,
+                      iconBg: Colors.blue.shade50,
+                      label: 'Planned Budget',
+                      value: '${trip.trip.currency} ${budget.toStringAsFixed(2)}',
+                      subtitle: 'Your trip budget',
+                    ),
+                  ],
+
+                  // Actual Cost
                   const Divider(height: AppTheme.spacingLg),
                   _buildInfoRow(
                     context,
                     icon: Icons.account_balance_wallet,
                     iconColor: costSummary.expenseCount > 0
-                        ? Colors.green.shade700
+                        ? (isOverBudget ? Colors.red.shade700 : Colors.green.shade700)
                         : Colors.grey.shade600,
                     iconBg: costSummary.expenseCount > 0
-                        ? Colors.green.shade50
+                        ? (isOverBudget ? Colors.red.shade50 : Colors.green.shade50)
                         : Colors.grey.shade100,
-                    label: 'Trip Cost',
+                    label: 'Actual Cost',
                     value: costSummary.expenseCount > 0
-                        ? '${costSummary.currency} ${costSummary.totalCost.toStringAsFixed(2)}'
+                        ? '${costSummary.currency} ${actualCost.toStringAsFixed(2)}'
                         : 'No expenses yet',
                     subtitle: costSummary.expenseCount > 0
                         ? '${costSummary.expenseCount} expense${costSummary.expenseCount > 1 ? 's' : ''}'
                         : 'Add expenses to track costs',
                   ),
+
+                  // Budget Status (if budget is set and there are expenses)
+                  if (hasBudget && costSummary.expenseCount > 0) ...[
+                    const Divider(height: AppTheme.spacingLg),
+                    _buildInfoRow(
+                      context,
+                      icon: isOverBudget ? Icons.warning : Icons.check_circle,
+                      iconColor: isOverBudget ? Colors.red.shade700 : Colors.green.shade700,
+                      iconBg: isOverBudget ? Colors.red.shade50 : Colors.green.shade50,
+                      label: 'Budget Status',
+                      value: isOverBudget
+                          ? '${trip.trip.currency} ${(-remaining).toStringAsFixed(2)} over budget'
+                          : isUnderBudget
+                              ? '${trip.trip.currency} ${remaining.toStringAsFixed(2)} remaining'
+                              : 'On budget',
+                      subtitle: isOverBudget
+                          ? 'You have exceeded your budget'
+                          : isUnderBudget
+                              ? 'You are under budget'
+                              : 'You are exactly on budget',
+                    ),
+                  ],
                 ],
               );
             },
             loading: () {
-              if (kDebugMode) {
-                debugPrint('⏳ Loading trip cost...');
-              }
               return Column(
                 children: [
                   const Divider(height: AppTheme.spacingLg),
@@ -403,8 +431,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     icon: Icons.account_balance_wallet,
                     iconColor: Colors.grey.shade600,
                     iconBg: Colors.grey.shade100,
-                    label: 'Trip Cost',
-                    value: 'Loading...',
+                    label: 'Loading Cost...',
+                    value: 'Please wait',
                   ),
                 ],
               );
@@ -412,19 +440,18 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             error: (error, stackTrace) {
               if (kDebugMode) {
                 debugPrint('❌ Error loading trip cost: $error');
-                debugPrint('Stack trace: $stackTrace');
               }
               return Column(
                 children: [
                   const Divider(height: AppTheme.spacingLg),
                   _buildInfoRow(
                     context,
-                    icon: Icons.account_balance_wallet,
+                    icon: Icons.error,
                     iconColor: Colors.red.shade700,
                     iconBg: Colors.red.shade50,
-                    label: 'Trip Cost',
-                    value: 'Error loading',
-                    subtitle: kDebugMode ? error.toString() : 'Unable to load cost',
+                    label: 'Cost Error',
+                    value: 'Unable to load',
+                    subtitle: 'Tap to retry',
                   ),
                 ],
               );
