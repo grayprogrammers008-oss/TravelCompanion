@@ -2,6 +2,7 @@ import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
 import '../../../../shared/models/hospital_model.dart';
+import '../../../../shared/models/emergency_number_model.dart';
 import '../../../../core/services/location_service.dart';
 import '../../domain/repositories/emergency_repository.dart';
 import '../datasources/emergency_remote_datasource.dart';
@@ -12,6 +13,36 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
   final LocationService _locationService;
 
   EmergencyRepositoryImpl(this._remoteDataSource, this._locationService);
+
+  // ============================================
+  // Emergency Numbers
+  // ============================================
+
+  @override
+  Future<List<EmergencyNumberModel>> getEmergencyNumbers({
+    String country = 'IN',
+  }) async {
+    try {
+      return await _remoteDataSource.getEmergencyNumbers(country: country);
+    } catch (e) {
+      throw Exception('Failed to get emergency numbers: $e');
+    }
+  }
+
+  @override
+  Future<List<EmergencyNumberModel>> getEmergencyNumbersByType({
+    required EmergencyServiceType serviceType,
+    String country = 'IN',
+  }) async {
+    try {
+      return await _remoteDataSource.getEmergencyNumbersByType(
+        serviceType: serviceType,
+        country: country,
+      );
+    } catch (e) {
+      throw Exception('Failed to get emergency numbers by type: $e');
+    }
+  }
 
   // ============================================
   // Emergency Contacts

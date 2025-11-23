@@ -2,9 +2,25 @@ import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/location_share_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/hospital_model.dart';
+import '../../../../shared/models/emergency_number_model.dart';
 
 /// Abstract repository for emergency service operations
 abstract class EmergencyRepository {
+  // ============================================
+  // Emergency Numbers
+  // ============================================
+
+  /// Get all emergency numbers for a specific country
+  Future<List<EmergencyNumberModel>> getEmergencyNumbers({
+    String country = 'IN',
+  });
+
+  /// Get emergency numbers filtered by service type
+  Future<List<EmergencyNumberModel>> getEmergencyNumbersByType({
+    required EmergencyServiceType serviceType,
+    String country = 'IN',
+  });
+
   // ============================================
   // Emergency Contacts Management
   // ============================================

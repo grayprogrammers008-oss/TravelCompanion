@@ -6,11 +6,21 @@ import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
 import '../../../../shared/models/hospital_model.dart';
+import '../../../../shared/models/emergency_number_model.dart';
 
 /// Emergency Remote Data Source - Supabase Implementation
 ///
 /// Handles all emergency-related operations with Supabase backend.
 abstract class EmergencyRemoteDataSource {
+  // Emergency Numbers
+  Future<List<EmergencyNumberModel>> getEmergencyNumbers({
+    String country = 'IN',
+  });
+  Future<List<EmergencyNumberModel>> getEmergencyNumbersByType({
+    required EmergencyServiceType serviceType,
+    String country = 'IN',
+  });
+
   // Emergency Contacts
   Future<List<EmergencyContactModel>> getEmergencyContacts();
   Future<EmergencyContactModel?> getEmergencyContactById(String contactId);
@@ -116,6 +126,66 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   final SupabaseClient _client;
 
   EmergencyRemoteDataSourceImpl() : _client = SupabaseClientWrapper.client;
+
+  // ============================================
+  // Emergency Numbers Implementation
+  // ============================================
+
+  @override
+  Future<List<EmergencyNumberModel>> getEmergencyNumbers({
+    String country = 'IN',
+  }) async {
+    try {
+      final response = await _client.rpc(
+        'get_all_emergency_numbers',
+        params: {'p_country': country},
+      );
+
+      if (response == null) {
+        return [];
+      }
+
+      final List<dynamic> data = response as List<dynamic>;
+      return data
+          .map((json) => EmergencyNumberModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching emergency numbers: $e');
+      }
+      throw Exception('Failed to get emergency numbers: $e');
+    }
+  }
+
+  @override
+  Future<List<EmergencyNumberModel>> getEmergencyNumbersByType({
+    required EmergencyServiceType serviceType,
+    String country = 'IN',
+  }) async {
+    try {
+      final response = await _client.rpc(
+        'get_emergency_numbers_by_type',
+        params: {
+          'p_service_type': serviceType.name,
+          'p_country': country,
+        },
+      );
+
+      if (response == null) {
+        return [];
+      }
+
+      final List<dynamic> data = response as List<dynamic>;
+      return data
+          .map((json) => EmergencyNumberModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching emergency numbers by type: $e');
+      }
+      throw Exception('Failed to get emergency numbers by type: $e');
+    }
+  }
 
   // ============================================
   // Emergency Contacts Implementation

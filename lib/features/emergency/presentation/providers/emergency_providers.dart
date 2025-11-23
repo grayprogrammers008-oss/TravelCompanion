@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
+import '../../../../shared/models/emergency_number_model.dart';
 import '../../../../core/services/location_service.dart';
 import '../../data/datasources/emergency_remote_datasource.dart';
 import '../../data/repositories/emergency_repository_impl.dart';
@@ -114,6 +115,24 @@ final sharedLocationsProvider =
     FutureProvider<List<LocationShareModel>>((ref) async {
   final repository = ref.watch(emergencyRepositoryProvider);
   return await repository.getSharedLocations();
+});
+
+/// Emergency Numbers Provider - Get all emergency numbers for India
+final emergencyNumbersProvider =
+    FutureProvider<List<EmergencyNumberModel>>((ref) async {
+  final repository = ref.watch(emergencyRepositoryProvider);
+  return await repository.getEmergencyNumbers(country: 'IN');
+});
+
+/// Emergency Numbers by Type Provider - Get emergency numbers filtered by type
+final emergencyNumbersByTypeProvider = FutureProvider.family<
+    List<EmergencyNumberModel>,
+    EmergencyServiceType>((ref, serviceType) async {
+  final repository = ref.watch(emergencyRepositoryProvider);
+  return await repository.getEmergencyNumbersByType(
+    serviceType: serviceType,
+    country: 'IN',
+  );
 });
 
 // ============================================
