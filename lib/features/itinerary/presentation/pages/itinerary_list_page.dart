@@ -7,6 +7,7 @@ import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../providers/itinerary_providers.dart';
 
@@ -52,7 +53,7 @@ class ItineraryListPage extends ConsumerWidget {
       ),
       body: itineraryAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(),
+          child: AppLoadingIndicator(message: 'Loading itinerary...'),
         ),
         error: (error, stack) => Center(
           child: Column(

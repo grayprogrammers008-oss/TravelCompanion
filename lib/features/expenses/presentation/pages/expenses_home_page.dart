@@ -7,6 +7,7 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../shared/models/expense_model.dart';
 import '../providers/expense_providers.dart';
 import '../widgets/payment_options_sheet.dart';
@@ -151,7 +152,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         }
         return _buildExpensesList(expenses);
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppLoadingIndicator(message: 'Loading expenses...')),
       error: (error, stack) => _buildErrorState(error.toString()),
     );
   }
@@ -860,7 +861,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                     );
                   },
                   loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                      const Center(child: AppLoadingIndicator(message: 'Loading balances...')),
                   error: (error, stack) =>
                       Center(child: Text('Error: ${error.toString()}')),
                 ),

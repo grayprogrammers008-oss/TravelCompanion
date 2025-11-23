@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../auth/data/datasources/profile_photo_service.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
@@ -682,7 +683,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               loading: () => const Center(
                                 child: Padding(
                                   padding: EdgeInsets.all(AppTheme.spacingLg),
-                                  child: CircularProgressIndicator(),
+                                  child: AppLoadingIndicator(message: 'Loading stats...', size: 60),
                                 ),
                               ),
                               error: (error, stack) => Column(
@@ -829,7 +830,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppLoadingIndicator(message: 'Loading profile...')),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

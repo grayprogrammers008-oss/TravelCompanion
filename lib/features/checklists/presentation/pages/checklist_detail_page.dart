@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/network/supabase_client.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../providers/checklist_providers.dart';
 import '../widgets/checklist_item_tile.dart';
 import '../widgets/add_item_bottom_sheet.dart';
@@ -210,32 +211,8 @@ class ChecklistDetailPage extends ConsumerWidget {
             ],
           );
         },
-        loading: () => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingLg),
-                decoration: BoxDecoration(
-                  gradient: context.appThemeData.primaryGradient,
-                  shape: BoxShape.circle,
-                  boxShadow: context.appThemeData.primaryShadow,
-                ),
-                child: const Icon(
-                  Icons.checklist,
-                  size: 48,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              Text(
-                'Loading checklist...',
-                style: context.titleMedium.copyWith(
-                      color: context.textColor.withValues(alpha: 0.7),
-                    ),
-              ),
-            ],
-          ),
+        loading: () => const Center(
+          child: AppLoadingIndicator(message: 'Loading checklist...'),
         ),
         error: (error, stack) => Center(
           child: Padding(

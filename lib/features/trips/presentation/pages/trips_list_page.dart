@@ -10,6 +10,7 @@ import 'package:travel_crew/features/auth/presentation/providers/auth_providers.
 import 'package:travel_crew/core/router/app_router.dart';
 import 'package:travel_crew/shared/models/trip_model.dart';
 import 'package:travel_crew/core/utils/extensions.dart';
+import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 
 /// Main page showing list of user's trips
 class TripsListPage extends ConsumerWidget {
@@ -42,7 +43,11 @@ class TripsListPage extends ConsumerWidget {
           }
           return _buildTripsList(context, ref, trips);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: AppLoadingIndicator(
+            message: 'Loading your trips...',
+          ),
+        ),
         error: (error, stack) =>
             _buildErrorState(context, ref, error.toString()),
       ),

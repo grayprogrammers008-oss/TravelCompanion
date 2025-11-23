@@ -5,6 +5,7 @@ import 'package:travel_crew/features/auth/presentation/providers/auth_providers.
 import 'package:travel_crew/core/router/app_router.dart';
 import 'package:travel_crew/core/constants/app_constants.dart';
 import 'package:travel_crew/core/theme/theme_extensions.dart';
+import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 
 /// Splash screen that handles initial app routing
 class SplashPage extends ConsumerStatefulWidget {
@@ -75,8 +76,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              const AppLoadingIndicator(
+                size: 80,
               ),
             ],
           ),
