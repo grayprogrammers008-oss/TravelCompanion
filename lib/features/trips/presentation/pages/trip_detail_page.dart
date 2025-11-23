@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -351,29 +352,73 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
 
-          // Trip Cost
+          // Trip Cost - Always show for debugging
           tripCostAsync.when(
             data: (costSummary) {
-              if (costSummary.expenseCount > 0) {
-                return Column(
-                  children: [
-                    const Divider(height: AppTheme.spacingLg),
-                    _buildInfoRow(
-                      context,
-                      icon: Icons.account_balance_wallet,
-                      iconColor: Colors.green.shade700,
-                      iconBg: Colors.green.shade50,
-                      label: 'Trip Cost',
-                      value: '${costSummary.currency} ${costSummary.totalCost.toStringAsFixed(2)}',
-                      subtitle: '${costSummary.expenseCount} expense${costSummary.expenseCount > 1 ? 's' : ''}',
-                    ),
-                  ],
-                );
+              if (kDebugMode) {
+                debugPrint('✅ Trip cost loaded: ${costSummary.totalCost} ${costSummary.currency}, ${costSummary.expenseCount} expenses');
               }
-              return const SizedBox.shrink();
+              return Column(
+                children: [
+                  const Divider(height: AppTheme.spacingLg),
+                  _buildInfoRow(
+                    context,
+                    icon: Icons.account_balance_wallet,
+                    iconColor: costSummary.expenseCount > 0
+                        ? Colors.green.shade700
+                        : Colors.grey.shade600,
+                    iconBg: costSummary.expenseCount > 0
+                        ? Colors.green.shade50
+                        : Colors.grey.shade100,
+                    label: 'Trip Cost',
+                    value: costSummary.expenseCount > 0
+                        ? '${costSummary.currency} ${costSummary.totalCost.toStringAsFixed(2)}'
+                        : 'No expenses yet',
+                    subtitle: costSummary.expenseCount > 0
+                        ? '${costSummary.expenseCount} expense${costSummary.expenseCount > 1 ? 's' : ''}'
+                        : 'Add expenses to track costs',
+                  ),
+                ],
+              );
             },
-            loading: () => const SizedBox.shrink(),
-            error: (error, _) => const SizedBox.shrink(),
+            loading: () {
+              if (kDebugMode) {
+                debugPrint('⏳ Loading trip cost...');
+              }
+              return Column(
+                children: [
+                  const Divider(height: AppTheme.spacingLg),
+                  _buildInfoRow(
+                    context,
+                    icon: Icons.account_balance_wallet,
+                    iconColor: Colors.grey.shade600,
+                    iconBg: Colors.grey.shade100,
+                    label: 'Trip Cost',
+                    value: 'Loading...',
+                  ),
+                ],
+              );
+            },
+            error: (error, stackTrace) {
+              if (kDebugMode) {
+                debugPrint('❌ Error loading trip cost: $error');
+                debugPrint('Stack trace: $stackTrace');
+              }
+              return Column(
+                children: [
+                  const Divider(height: AppTheme.spacingLg),
+                  _buildInfoRow(
+                    context,
+                    icon: Icons.account_balance_wallet,
+                    iconColor: Colors.red.shade700,
+                    iconBg: Colors.red.shade50,
+                    label: 'Trip Cost',
+                    value: 'Error loading',
+                    subtitle: kDebugMode ? error.toString() : 'Unable to load cost',
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
