@@ -26,8 +26,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _destinationController = TextEditingController();
+  final _budgetController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
+  String _currency = 'INR'; // Default currency
   bool _isLoading = false;
 
   late AnimationController _animationController;
@@ -86,6 +88,8 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         debugPrint('DEBUG: Loaded Trip Destination: ${trip.trip.destination ?? "NULL"}');
         debugPrint('DEBUG: Loaded Trip Start Date: ${trip.trip.startDate}');
         debugPrint('DEBUG: Loaded Trip End Date: ${trip.trip.endDate}');
+        debugPrint('DEBUG: Loaded Trip Budget: ${trip.trip.budget ?? "NULL"}');
+        debugPrint('DEBUG: Loaded Trip Currency: ${trip.trip.currency}');
       }
 
       if (mounted) {
@@ -93,6 +97,8 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           _nameController.text = trip.trip.name;
           _descriptionController.text = trip.trip.description ?? '';
           _destinationController.text = trip.trip.destination ?? '';
+          _budgetController.text = trip.trip.budget?.toString() ?? '';
+          _currency = trip.trip.currency;
           _startDate = trip.trip.startDate;
           _endDate = trip.trip.endDate;
           _isLoading = false;
@@ -103,6 +109,8 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Name: "${_nameController.text}"');
           debugPrint('DEBUG: Description: "${_descriptionController.text}"');
           debugPrint('DEBUG: Destination: "${_destinationController.text}"');
+          debugPrint('DEBUG: Budget: "${_budgetController.text}"');
+          debugPrint('DEBUG: Currency: "$_currency"');
         }
       }
     } catch (e, stackTrace) {
@@ -130,6 +138,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     _nameController.dispose();
     _descriptionController.dispose();
     _destinationController.dispose();
+    _budgetController.dispose();
     super.dispose();
   }
 
@@ -177,7 +186,13 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Destination (null if empty): ${_destinationController.text.trim().isEmpty ? 'NULL' : '"${_destinationController.text.trim()}"'}');
           debugPrint('DEBUG: Start Date: $_startDate');
           debugPrint('DEBUG: End Date: $_endDate');
+          debugPrint('DEBUG: Budget: ${_budgetController.text.isEmpty ? 'NULL' : _budgetController.text}');
+          debugPrint('DEBUG: Currency: $_currency');
         }
+
+        final budget = _budgetController.text.trim().isEmpty
+            ? null
+            : double.tryParse(_budgetController.text.trim());
 
         final updatedTrip = await ref.read(tripControllerProvider.notifier).updateTrip(
               tripId: widget.tripId!,
@@ -190,6 +205,8 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                   : _destinationController.text.trim(),
               startDate: _startDate,
               endDate: _endDate,
+              budget: budget,
+              currency: _currency,
             );
 
         if (kDebugMode) {
@@ -197,12 +214,20 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Updated Trip Name: ${updatedTrip.name}');
           debugPrint('DEBUG: Updated Trip Description: ${updatedTrip.description ?? "NULL"}');
           debugPrint('DEBUG: Updated Trip Destination: ${updatedTrip.destination ?? "NULL"}');
+          debugPrint('DEBUG: Updated Trip Budget: ${updatedTrip.budget ?? "NULL"}');
+          debugPrint('DEBUG: Updated Trip Currency: ${updatedTrip.currency}');
         }
       } else {
         // Create new trip
         if (kDebugMode) {
           debugPrint('DEBUG: Creating trip with name: ${_nameController.text.trim()}');
+          debugPrint('DEBUG: Budget: ${_budgetController.text.isEmpty ? 'NULL' : _budgetController.text}');
+          debugPrint('DEBUG: Currency: $_currency');
         }
+
+        final budget = _budgetController.text.trim().isEmpty
+            ? null
+            : double.tryParse(_budgetController.text.trim());
 
         final trip = await ref
             .read(tripControllerProvider.notifier)
@@ -216,10 +241,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                   : _destinationController.text.trim(),
               startDate: _startDate,
               endDate: _endDate,
+              budget: budget,
+              currency: _currency,
             );
 
         if (kDebugMode) {
           debugPrint('DEBUG: Trip created with ID: ${trip.id}');
+          debugPrint('DEBUG: Trip Budget: ${trip.budget ?? "NULL"}');
+          debugPrint('DEBUG: Trip Currency: ${trip.currency}');
         }
       }
 
@@ -398,9 +427,47 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 ),
                 const SizedBox(height: AppTheme.spacingMd),
 
-                // Date Section
+                // Budget Section
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 4,
+                  child: Row(
+                    children: [
+                      // Currency Dropdown
+                      Expanded(
+                        flex: 2,
+                        child: _buildCurrencyDropdown(),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      // Budget Amount
+                      Expanded(
+                        flex: 3,
+                        child: _buildFormField(
+                          controller: _budgetController,
+                          label: 'Budget (Optional)',
+                          icon: Icons.account_balance_wallet,
+                          hint: 'e.g., 50000',
+                          validator: (value) {
+                            if (value != null && value.isNotEmpty) {
+                              final budget = double.tryParse(value);
+                              if (budget == null) {
+                                return 'Please enter a valid number';
+                              }
+                              if (budget < 0) {
+                                return 'Budget must be positive';
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
+
+                // Date Section
+                FadeSlideAnimation(
+                  delay: AppAnimations.staggerSmall * 5,
                   child: Row(
                     children: [
                       Expanded(
@@ -580,6 +647,111 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCurrencyDropdown() {
+    const currencies = [
+      'INR', // Indian Rupee
+      'USD', // US Dollar
+      'EUR', // Euro
+      'GBP', // British Pound
+      'AUD', // Australian Dollar
+      'CAD', // Canadian Dollar
+      'JPY', // Japanese Yen
+      'CNY', // Chinese Yuan
+      'AED', // UAE Dirham
+      'SGD', // Singapore Dollar
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label above the dropdown
+        Padding(
+          padding: const EdgeInsets.only(
+            left: AppTheme.spacingXs,
+            bottom: AppTheme.spacingSm,
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.currency_exchange, size: 20, color: context.primaryColor),
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                'Currency',
+                style: context.titleStyle.copyWith(
+                      color: context.textColor,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        // Dropdown field
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            boxShadow: AppTheme.shadowSm,
+          ),
+          child: DropdownButtonFormField<String>(
+            initialValue: _currency,
+            decoration: InputDecoration(
+              hintText: 'Select currency',
+              hintStyle: TextStyle(
+                color: AppTheme.neutral400,
+                fontSize: 14,
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(color: AppTheme.neutral200, width: 1.5),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(color: context.primaryColor, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd,
+                vertical: AppTheme.spacingMd,
+              ),
+            ),
+            items: currencies.map((String currency) {
+              return DropdownMenuItem<String>(
+                value: currency,
+                child: Text(
+                  currency,
+                  style: context.bodyStyle.copyWith(
+                        color: context.textColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              );
+            }).toList(),
+            onChanged: _isLoading
+                ? null
+                : (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _currency = newValue;
+                      });
+                    }
+                  },
+            style: context.bodyStyle.copyWith(
+                  color: context.textColor,
+                  fontSize: 16,
+                ),
+          ),
+        ),
+      ],
     );
   }
 }
