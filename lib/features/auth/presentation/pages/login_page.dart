@@ -8,6 +8,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/config/test_users_config.dart';
 import '../providers/auth_providers.dart';
 import 'signup_page.dart';
 
@@ -28,14 +29,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // Test users for easy login (TEMPORARY - Remove in production)
-  final List<Map<String, String>> _testUsers = [
-    {'name': 'Select Test User', 'email': '', 'password': ''},
-    {'name': 'Palkar Foods', 'email': 'palkarfoods224@gmail.com', 'password': 'Palkar@1234'},
-    {'name': 'Nithya', 'email': 'nithyavs@live.in', 'password': 'Nithya@1234'},
-    {'name': 'Test User 1', 'email': 'test1@example.com', 'password': 'Test@1234'},
-    {'name': 'Test User 2', 'email': 'test2@example.com', 'password': 'Test@1234'},
-  ];
+  // Test user dropdown state
   String _selectedTestUser = 'Select Test User';
 
   @override
@@ -57,6 +51,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
       curve: Curves.easeOutCubic,
     ));
     _animationController.forward();
+
+    // Load test users configuration
+    TestUsersConfig.loadConfig();
   }
 
   @override
@@ -77,11 +74,11 @@ class _LoginPageState extends ConsumerState<LoginPage>
       return;
     }
 
-    final user = _testUsers.firstWhere((u) => u['name'] == userName);
+    final user = TestUsersConfig.testUsers.firstWhere((u) => u['name'] == userName);
     setState(() {
       _selectedTestUser = userName;
       _emailController.text = user['email']!;
-      _passwordController.text = user['password']!;
+      _passwordController.text = TestUsersConfig.sharedPassword;
     });
   }
 
@@ -280,66 +277,68 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   ),
                                   const SizedBox(height: AppTheme.spacingXl),
 
-                                  // TEMPORARY: Test User Selector
-                                  Container(
-                                    padding: const EdgeInsets.all(AppTheme.spacingMd),
-                                    decoration: BoxDecoration(
-                                      color: Colors.amber.withValues(alpha: 0.1),
-                                      border: Border.all(color: Colors.amber),
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(Icons.bug_report, color: Colors.amber, size: 16),
-                                            const SizedBox(width: AppTheme.spacingXs),
-                                            Text(
-                                              'Testing Mode',
-                                              style: context.bodySmall.copyWith(
-                                                color: Colors.amber.shade900,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: AppTheme.spacingSm),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: AppTheme.spacingMd,
-                                            vertical: AppTheme.spacingSm,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                            border: Border.all(color: Colors.grey.shade300),
-                                          ),
-                                          child: Row(
+                                  // TEMPORARY: Test User Selector (only shown if enabled)
+                                  if (TestUsersConfig.enableTestUserDropdown) ...[
+                                    Container(
+                                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                                      decoration: BoxDecoration(
+                                        color: Colors.amber.withValues(alpha: 0.1),
+                                        border: Border.all(color: Colors.amber),
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
                                             children: [
-                                              const Icon(Icons.person, size: 20, color: Colors.grey),
-                                              const SizedBox(width: AppTheme.spacingSm),
-                                              Expanded(
-                                                child: DropdownButton<String>(
-                                                  value: _selectedTestUser,
-                                                  isExpanded: true,
-                                                  underline: const SizedBox(),
-                                                  items: _testUsers
-                                                      .map((user) => DropdownMenuItem<String>(
-                                                            value: user['name'],
-                                                            child: Text(user['name']!),
-                                                          ))
-                                                      .toList(),
-                                                  onChanged: authState.isLoading ? null : _onTestUserSelected,
+                                              Icon(Icons.bug_report, color: Colors.amber, size: 16),
+                                              const SizedBox(width: AppTheme.spacingXs),
+                                              Text(
+                                                'Testing Mode',
+                                                style: context.bodySmall.copyWith(
+                                                  color: Colors.amber.shade900,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(height: AppTheme.spacingSm),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AppTheme.spacingMd,
+                                              vertical: AppTheme.spacingSm,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                              border: Border.all(color: Colors.grey.shade300),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.person, size: 20, color: Colors.grey),
+                                                const SizedBox(width: AppTheme.spacingSm),
+                                                Expanded(
+                                                  child: DropdownButton<String>(
+                                                    value: _selectedTestUser,
+                                                    isExpanded: true,
+                                                    underline: const SizedBox(),
+                                                    items: TestUsersConfig.testUsers
+                                                        .map((user) => DropdownMenuItem<String>(
+                                                              value: user['name'],
+                                                              child: Text(user['name']!),
+                                                            ))
+                                                        .toList(),
+                                                    onChanged: authState.isLoading ? null : _onTestUserSelected,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingMd),
+                                    const SizedBox(height: AppTheme.spacingMd),
+                                  ],
 
                                   // Email Field
                                   TextFormField(
