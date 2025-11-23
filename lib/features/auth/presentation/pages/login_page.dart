@@ -31,6 +31,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // Test user dropdown state
   String _selectedTestUser = 'Select Test User';
+  bool _configLoaded = false;
 
   @override
   void initState() {
@@ -53,7 +54,16 @@ class _LoginPageState extends ConsumerState<LoginPage>
     _animationController.forward();
 
     // Load test users configuration
-    TestUsersConfig.loadConfig();
+    _loadTestConfig();
+  }
+
+  Future<void> _loadTestConfig() async {
+    await TestUsersConfig.loadConfig();
+    if (mounted) {
+      setState(() {
+        _configLoaded = true;
+      });
+    }
   }
 
   @override
@@ -277,8 +287,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   ),
                                   const SizedBox(height: AppTheme.spacingXl),
 
-                                  // TEMPORARY: Test User Selector (only shown if enabled)
-                                  if (TestUsersConfig.enableTestUserDropdown) ...[
+                                  // TEMPORARY: Test User Selector (only shown if enabled and config loaded)
+                                  if (_configLoaded && TestUsersConfig.enableTestUserDropdown) ...[
                                     Container(
                                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                                       decoration: BoxDecoration(
