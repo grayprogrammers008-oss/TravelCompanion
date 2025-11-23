@@ -36,6 +36,8 @@ class MockTripRepository implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) async {
     _createTripCalled = true;
     _lastCallParams = {
@@ -45,6 +47,8 @@ class MockTripRepository implements TripRepository {
       'startDate': startDate,
       'endDate': endDate,
       'coverImageUrl': coverImageUrl,
+      'budget': budget,
+      'currency': currency,
     };
 
     if (_exceptionToThrow != null) {
@@ -65,6 +69,9 @@ class MockTripRepository implements TripRepository {
     String? coverImageUrl,
     bool? isCompleted,
     DateTime? completedAt,
+    double? rating,
+    double? budget,
+    String? currency,
   }) async {
     throw UnimplementedError();
   }
@@ -226,6 +233,82 @@ void main() {
         expect(mockRepository.lastCallParams?['coverImageUrl'],
             equals('https://example.com/image.jpg'));
       });
+
+      test('should create trip with budget and currency', () async {
+        // Arrange
+        final tripWithBudget = testTrip.copyWith(
+          budget: 50000.0,
+          currency: 'INR',
+        );
+        mockRepository.setupCreateTrip(tripWithBudget);
+
+        // Act
+        final result = await useCase(
+          name: 'Summer Vacation',
+          budget: 50000.0,
+          currency: 'INR',
+        );
+
+        // Assert
+        expect(result.budget, equals(50000.0));
+        expect(result.currency, equals('INR'));
+        expect(mockRepository.wasCreateTripCalled, isTrue);
+        expect(mockRepository.lastCallParams?['budget'], equals(50000.0));
+        expect(mockRepository.lastCallParams?['currency'], equals('INR'));
+      });
+
+      test('should create trip with budget only (currency defaults to INR)', () async {
+        // Arrange
+        final tripWithBudget = testTrip.copyWith(
+          budget: 1000.0,
+        );
+        mockRepository.setupCreateTrip(tripWithBudget);
+
+        // Act
+        final result = await useCase(
+          name: 'Summer Vacation',
+          budget: 1000.0,
+        );
+
+        // Assert
+        expect(result.budget, equals(1000.0));
+        expect(mockRepository.wasCreateTripCalled, isTrue);
+        expect(mockRepository.lastCallParams?['budget'], equals(1000.0));
+      });
+
+      test('should create trip with zero budget', () async {
+        // Arrange
+        final tripWithZeroBudget = testTrip.copyWith(
+          budget: 0.0,
+        );
+        mockRepository.setupCreateTrip(tripWithZeroBudget);
+
+        // Act
+        final result = await useCase(
+          name: 'Summer Vacation',
+          budget: 0.0,
+        );
+
+        // Assert
+        expect(result.budget, equals(0.0));
+        expect(mockRepository.wasCreateTripCalled, isTrue);
+        expect(mockRepository.lastCallParams?['budget'], equals(0.0));
+      });
+
+      test('should create trip without budget (null budget)', () async {
+        // Arrange
+        mockRepository.setupCreateTrip(testTrip);
+
+        // Act
+        await useCase(
+          name: 'Summer Vacation',
+          budget: null,
+        );
+
+        // Assert
+        expect(mockRepository.wasCreateTripCalled, isTrue);
+        expect(mockRepository.lastCallParams?['budget'], isNull);
+      });
     });
 
     group('Validation Errors', () {
@@ -323,6 +406,23 @@ void main() {
         expect(mockRepository.wasCreateTripCalled, isTrue);
         expect(mockRepository.lastCallParams?['startDate'], isNull);
         expect(mockRepository.lastCallParams?['endDate'], equals(DateTime(2025, 6, 10)));
+      });
+
+      test('should throw exception when budget is negative', () async {
+        // Act & Assert
+        expect(
+          () => useCase(
+            name: 'Summer Vacation',
+            budget: -100.0,
+          ),
+          throwsA(isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Budget must be a positive number'),
+          )),
+        );
+
+        expect(mockRepository.wasCreateTripCalled, isFalse);
       });
     });
 
