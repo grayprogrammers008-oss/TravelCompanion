@@ -492,6 +492,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       color: context.textColor.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
               const SizedBox(height: 2),
               Text(
@@ -500,6 +502,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       color: context.textColor,
                       fontWeight: FontWeight.w600,
                     ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: 2),
@@ -509,6 +513,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                         color: context.textColor.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ],
             ],

@@ -69,6 +69,8 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
             'start_date': trip.startDate?.toIso8601String(),
             'end_date': trip.endDate?.toIso8601String(),
             'cover_image_url': trip.coverImageUrl,
+            'budget': trip.budget,
+            'currency': trip.currency,
             'created_by': SupabaseClientWrapper.currentUserId,
           })
           .select()
