@@ -11,7 +11,6 @@
 -- ============================================
 -- INSERT 15 SAMPLE HOSPITALS
 -- ============================================
-
 -- 1. Mount Sinai Hospital - New York, NY
 INSERT INTO hospitals (
   name, address, city, state, country, postal_code,
