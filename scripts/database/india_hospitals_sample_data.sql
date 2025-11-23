@@ -26,7 +26,6 @@ INSERT INTO hospitals (
   type, capacity, has_emergency_room, has_trauma_center, trauma_level, accepts_ambulance,
   is_24_7, opening_hours,
   services, specialties,
-  accepts_insurance, insurance_providers,
   rating, is_verified
 ) VALUES (
   'All India Institute of Medical Sciences (AIIMS)',
@@ -41,18 +40,16 @@ INSERT INTO hospitals (
   '+91-11-26588700',
   'https://www.aiims.edu',
   'aiims@aiims.ac.in',
-  'government',
+  'trauma_center',
   2478,
   TRUE,
   TRUE,
-  1,
+  'I',
   TRUE,
   TRUE,
-  '{"monday": "24 hours", "tuesday": "24 hours", "wednesday": "24 hours", "thursday": "24 hours", "friday": "24 hours", "saturday": "24 hours", "sunday": "24 hours"}'::JSON,
-  '["Emergency Care", "Cardiology", "Neurology", "Oncology", "Orthopedics", "Pediatrics", "Surgery", "ICU", "Radiology", "Laboratory"]'::JSON,
-  '["Cardiology", "Neurosurgery", "Oncology", "Trauma Care", "Cardiac Surgery", "Organ Transplant"]'::JSON,
-  TRUE,
-  '["CGHS", "ESI", "Ex-Servicemen", "Government Insurance"]'::JSON,
+  '{"monday": "24 hours", "tuesday": "24 hours", "wednesday": "24 hours", "thursday": "24 hours", "friday": "24 hours", "saturday": "24 hours", "sunday": "24 hours"}'::JSONB,
+  ARRAY['Emergency Care', 'Cardiology', 'Neurology', 'Oncology', 'Orthopedics', 'Pediatrics', 'Surgery', 'ICU', 'Radiology', 'Laboratory'],
+  ARRAY['Cardiology', 'Neurosurgery', 'Oncology', 'Trauma Care', 'Cardiac Surgery', 'Organ Transplant'],
   4.8,
   TRUE
 );
