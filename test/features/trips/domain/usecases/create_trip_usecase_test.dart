@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
 import 'package:travel_crew/features/trips/domain/usecases/create_trip_usecase.dart';
+import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
 import 'package:travel_crew/shared/models/trip_model.dart';
 
 // Manual Mock for TripRepository
@@ -120,6 +121,16 @@ class MockTripRepository implements TripRepository {
 
   @override
   Stream<List<TripWithMembers>> watchUserTrips() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<UserTravelStats> getUserStats() async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<UserTravelStats> watchUserStats() {
     throw UnimplementedError();
   }
 }
