@@ -14,6 +14,9 @@ import '../../domain/usecases/get_user_stats_usecase.dart';
 import '../../domain/usecases/mark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/unmark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/filter_trips_usecase.dart';
+import '../../domain/usecases/get_trip_cost_usecase.dart';
+import '../../domain/models/trip_cost_summary.dart';
+import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 // Remote Data Source Provider - Supabase (online-only mode)
@@ -66,6 +69,21 @@ final markTripAsCompletedUseCaseProvider = Provider<MarkTripAsCompletedUseCase>(
 final unmarkTripAsCompletedUseCaseProvider = Provider<UnmarkTripAsCompletedUseCase>((ref) {
   final repository = ref.watch(tripRepositoryProvider);
   return UnmarkTripAsCompletedUseCase(repository);
+});
+
+// Get Trip Cost Use Case Provider
+final getTripCostUseCaseProvider = Provider<GetTripCostUseCase>((ref) {
+  final expenseRepository = ref.watch(expenseRepositoryProvider);
+  return GetTripCostUseCase(expenseRepository);
+});
+
+// Trip Cost Summary Provider - FutureProvider for trip cost
+final tripCostSummaryProvider = FutureProvider.family<TripCostSummary, String>((
+  ref,
+  tripId,
+) async {
+  final useCase = ref.watch(getTripCostUseCaseProvider);
+  return await useCase(tripId);
 });
 
 // User Trips Provider - REAL-TIME stream of all trips for current user

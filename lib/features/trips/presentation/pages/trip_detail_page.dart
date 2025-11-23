@@ -298,6 +298,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   }
 
   Widget _buildInfoSection(BuildContext context, dynamic trip, dynamic themeData) {
+    final tripCostAsync = ref.watch(tripCostSummaryProvider(widget.tripId));
+
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -348,6 +350,31 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               value:
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
+
+          // Trip Cost
+          tripCostAsync.when(
+            data: (costSummary) {
+              if (costSummary.expenseCount > 0) {
+                return Column(
+                  children: [
+                    const Divider(height: AppTheme.spacingLg),
+                    _buildInfoRow(
+                      context,
+                      icon: Icons.account_balance_wallet,
+                      iconColor: Colors.green.shade700,
+                      iconBg: Colors.green.shade50,
+                      label: 'Trip Cost',
+                      value: '${costSummary.currency} ${costSummary.totalCost.toStringAsFixed(2)}',
+                      subtitle: '${costSummary.expenseCount} expense${costSummary.expenseCount > 1 ? 's' : ''}',
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
+            loading: () => const SizedBox.shrink(),
+            error: (error, _) => const SizedBox.shrink(),
+          ),
         ],
       ),
     );
@@ -360,6 +387,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     required Color iconBg,
     required String label,
     required String value,
+    String? subtitle,
   }) {
     return Row(
       children: [
@@ -391,6 +419,16 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       fontWeight: FontWeight.w600,
                     ),
               ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.textColor.withValues(alpha: 0.6),
+                        fontSize: 11,
+                      ),
+                ),
+              ],
             ],
           ),
         ),
