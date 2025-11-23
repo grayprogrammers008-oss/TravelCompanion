@@ -18,6 +18,10 @@ migrate_working_dir/
 .env.local
 .env.*.local
 
+# Firebase Service Account (contains private keys - DO NOT COMMIT)
+supabase/functions/.secrets/
+**/firebase-service-account.json
+
 # IntelliJ related
 *.iml
 *.ipr

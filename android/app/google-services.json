@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "814061636834",
+    "project_id": "travelcompanion-pro",
+    "storage_bucket": "travelcompanion-pro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814061636834:android:03fea67c6a55e1651662bb",
+        "android_client_info": {
+          "package_name": "com.pathio.travel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_ANZg0joCyIa9iefJ8qXrvdNvbg1kLJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
