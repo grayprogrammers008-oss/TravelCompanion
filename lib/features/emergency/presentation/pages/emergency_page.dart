@@ -163,58 +163,64 @@ class EmergencyPage extends ConsumerWidget {
                         ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.local_hospital,
-                          title: 'Medical',
-                          subtitle: 'Emergency',
-                          color: Colors.red,
-                          onTap: () {
-                            // Medical emergency action is handled by the button itself
-                          },
-                          child: const MedicalEmergencyButton(
-                            size: 60,
-                            showLabel: false,
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _QuickActionCard(
+                            icon: Icons.local_hospital,
+                            title: 'Medical',
+                            subtitle: 'Emergency',
+                            color: Colors.red,
+                            onTap: () {
+                              // Medical emergency action is handled by the button itself
+                            },
+                            child: const MedicalEmergencyButton(
+                              size: 60,
+                              showLabel: false,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.local_police,
-                          title: 'Police',
-                          subtitle: 'Call 911',
-                          color: Colors.blue,
-                          onTap: () => _callEmergencyNumber(context, '911'),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          child: _QuickActionCard(
+                            icon: Icons.local_police,
+                            title: 'Police',
+                            subtitle: 'Call 911',
+                            color: Colors.blue,
+                            onTap: () => _callEmergencyNumber(context, '911'),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.fire_truck,
-                          title: 'Fire',
-                          subtitle: 'Call 911',
-                          color: Colors.orange,
-                          onTap: () => _callEmergencyNumber(context, '911'),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _QuickActionCard(
+                            icon: Icons.fire_truck,
+                            title: 'Fire',
+                            subtitle: 'Call 911',
+                            color: Colors.orange,
+                            onTap: () => _callEmergencyNumber(context, '911'),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.location_on,
-                          title: 'Share',
-                          subtitle: 'Location',
-                          color: Colors.green,
-                          onTap: () => _shareLocation(context, ref),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          child: _QuickActionCard(
+                            icon: Icons.location_on,
+                            title: 'Share',
+                            subtitle: 'Location',
+                            color: Colors.green,
+                            onTap: () => _shareLocation(context, ref),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
