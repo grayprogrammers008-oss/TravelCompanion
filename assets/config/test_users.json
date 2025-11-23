@@ -1,28 +1,35 @@
 {
   "enableTestUserDropdown": true,
-  "sharedPassword": "",
   "testUsers": [
     {
       "name": "Select Test User",
-      "email": ""
+      "email": "",
+      "password": ""
     },
     {
       "name": "Palkar Foods",
-      "email": "palkarfoods224@gmail.com"
+      "email": "palkarfoods224@gmail.com",
+      "password": ""
     },
     {
       "name": "Nithya",
-      "email": "nithyavs@live.in"
+      "email": "nithyavs@live.in",
+      "password": ""
     }
   ],
   "_instructions": {
     "note": "This file is for development/testing only",
     "setup": [
-      "1. Fill in the 'sharedPassword' field with a password that all test users share",
-      "2. Add more test users to the 'testUsers' array as needed",
-      "3. Make sure all test users in your Supabase database have the same password",
+      "1. Fill in the 'password' field for each test user",
+      "2. Each user can have their own unique password",
+      "3. Add more test users to the 'testUsers' array as needed",
       "4. Set 'enableTestUserDropdown' to false to hide the dropdown in production"
     ],
-    "security": "Keep passwords simple for testing. Never use production passwords here."
+    "security": "Keep passwords simple for testing. Never use production passwords here.",
+    "example": {
+      "name": "Example User",
+      "email": "example@test.com",
+      "password": "YourPasswordHere"
+    }
   }
 }

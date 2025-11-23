@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 //
 // This class loads test user configuration from assets/config/test_users.json
 // The JSON file is committed to the repo with empty passwords.
-// Each developer fills in their local copy with the shared test password.
+// Each developer fills in their local copy with individual passwords for each user.
 
 class TestUsersConfig {
   static Map<String, dynamic>? _config;
@@ -23,27 +23,22 @@ class TestUsersConfig {
       // If file doesn't exist or has errors, use defaults
       _config = {
         'enableTestUserDropdown': false,
-        'sharedPassword': '',
         'testUsers': [
-          {'name': 'Select Test User', 'email': ''},
+          {'name': 'Select Test User', 'email': '', 'password': ''},
         ],
       };
       _isLoaded = true;
     }
   }
 
-  /// Shared password for all test users (loaded from JSON)
-  static String get sharedPassword {
-    return _config?['sharedPassword'] as String? ?? '';
-  }
-
-  /// List of test users (loaded from JSON)
+  /// List of test users with individual passwords (loaded from JSON)
   static List<Map<String, String>> get testUsers {
     final users = _config?['testUsers'] as List? ?? [];
     return users.map((user) {
       return {
         'name': user['name'] as String? ?? '',
         'email': user['email'] as String? ?? '',
+        'password': user['password'] as String? ?? '',
       };
     }).toList();
   }

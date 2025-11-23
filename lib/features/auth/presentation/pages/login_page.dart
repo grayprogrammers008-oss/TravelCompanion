@@ -78,7 +78,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
     setState(() {
       _selectedTestUser = userName;
       _emailController.text = user['email']!;
-      _passwordController.text = TestUsersConfig.sharedPassword;
+      _passwordController.text = user['password']!;
     });
   }
 
