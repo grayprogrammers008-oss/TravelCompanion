@@ -30,7 +30,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
   late Animation<Offset> _slideAnimation;
 
   // Test user dropdown state
-  String _selectedTestUser = 'Select Test User';
+  String? _selectedTestUser;
   bool _configLoaded = false;
 
   @override
@@ -62,6 +62,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
     if (mounted) {
       setState(() {
         _configLoaded = true;
+        // Set initial selected user to the first one in the list
+        if (TestUsersConfig.testUsers.isNotEmpty) {
+          _selectedTestUser = TestUsersConfig.testUsers.first['name'];
+        }
       });
     }
   }
@@ -75,14 +79,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
   }
 
   void _onTestUserSelected(String? userName) {
-    if (userName == null || userName == 'Select Test User') {
-      setState(() {
-        _selectedTestUser = 'Select Test User';
-        _emailController.clear();
-        _passwordController.clear();
-      });
-      return;
-    }
+    if (userName == null) return;
 
     final user = TestUsersConfig.testUsers.firstWhere((u) => u['name'] == userName);
     setState(() {
