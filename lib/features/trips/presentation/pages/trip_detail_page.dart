@@ -299,7 +299,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   }
 
   Widget _buildInfoSection(BuildContext context, dynamic trip, dynamic themeData) {
-    final tripCostAsync = ref.watch(tripCostSummaryProvider(widget.tripId));
+    final hasBudget = trip.trip.budget != null && trip.trip.budget! > 0;
+    final budget = trip.trip.budget ?? 0.0;
 
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -352,111 +353,19 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
 
-          // Budget vs Actual Cost Section
-          tripCostAsync.when(
-            data: (costSummary) {
-              final hasBudget = trip.trip.budget != null && trip.trip.budget! > 0;
-              final actualCost = costSummary.totalCost;
-              final budget = trip.trip.budget ?? 0.0;
-              final remaining = budget - actualCost;
-              final isOverBudget = hasBudget && actualCost > budget;
-              final isUnderBudget = hasBudget && actualCost < budget;
-
-              return Column(
-                children: [
-                  // Budget (if set)
-                  if (hasBudget) ...[
-                    const Divider(height: AppTheme.spacingLg),
-                    _buildInfoRow(
-                      context,
-                      icon: Icons.savings,
-                      iconColor: Colors.blue.shade700,
-                      iconBg: Colors.blue.shade50,
-                      label: 'Planned Budget',
-                      value: '${trip.trip.currency} ${budget.toStringAsFixed(2)}',
-                      subtitle: 'Your trip budget',
-                    ),
-                  ],
-
-                  // Actual Cost
-                  const Divider(height: AppTheme.spacingLg),
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.account_balance_wallet,
-                    iconColor: costSummary.expenseCount > 0
-                        ? (isOverBudget ? Colors.red.shade700 : Colors.green.shade700)
-                        : Colors.grey.shade600,
-                    iconBg: costSummary.expenseCount > 0
-                        ? (isOverBudget ? Colors.red.shade50 : Colors.green.shade50)
-                        : Colors.grey.shade100,
-                    label: 'Actual Cost',
-                    value: costSummary.expenseCount > 0
-                        ? '${costSummary.currency} ${actualCost.toStringAsFixed(2)}'
-                        : 'No expenses yet',
-                    subtitle: costSummary.expenseCount > 0
-                        ? '${costSummary.expenseCount} expense${costSummary.expenseCount > 1 ? 's' : ''}'
-                        : 'Add expenses to track costs',
-                  ),
-
-                  // Budget Status (if budget is set and there are expenses)
-                  if (hasBudget && costSummary.expenseCount > 0) ...[
-                    const Divider(height: AppTheme.spacingLg),
-                    _buildInfoRow(
-                      context,
-                      icon: isOverBudget ? Icons.warning : Icons.check_circle,
-                      iconColor: isOverBudget ? Colors.red.shade700 : Colors.green.shade700,
-                      iconBg: isOverBudget ? Colors.red.shade50 : Colors.green.shade50,
-                      label: 'Budget Status',
-                      value: isOverBudget
-                          ? '${trip.trip.currency} ${(-remaining).toStringAsFixed(2)} over budget'
-                          : isUnderBudget
-                              ? '${trip.trip.currency} ${remaining.toStringAsFixed(2)} remaining'
-                              : 'On budget',
-                      subtitle: isOverBudget
-                          ? 'You have exceeded your budget'
-                          : isUnderBudget
-                              ? 'You are under budget'
-                              : 'You are exactly on budget',
-                    ),
-                  ],
-                ],
-              );
-            },
-            loading: () {
-              return Column(
-                children: [
-                  const Divider(height: AppTheme.spacingLg),
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.account_balance_wallet,
-                    iconColor: Colors.grey.shade600,
-                    iconBg: Colors.grey.shade100,
-                    label: 'Loading Cost...',
-                    value: 'Please wait',
-                  ),
-                ],
-              );
-            },
-            error: (error, stackTrace) {
-              if (kDebugMode) {
-                debugPrint('❌ Error loading trip cost: $error');
-              }
-              return Column(
-                children: [
-                  const Divider(height: AppTheme.spacingLg),
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.error,
-                    iconColor: Colors.red.shade700,
-                    iconBg: Colors.red.shade50,
-                    label: 'Cost Error',
-                    value: 'Unable to load',
-                    subtitle: 'Tap to retry',
-                  ),
-                ],
-              );
-            },
-          ),
+          // Budget (if set)
+          if (hasBudget) ...[
+            const Divider(height: AppTheme.spacingLg),
+            _buildInfoRow(
+              context,
+              icon: Icons.savings,
+              iconColor: Colors.blue.shade700,
+              iconBg: Colors.blue.shade50,
+              label: 'Budget',
+              value: '${trip.trip.currency} ${budget.toStringAsFixed(2)}',
+              subtitle: 'Your trip budget',
+            ),
+          ],
         ],
       ),
     );
