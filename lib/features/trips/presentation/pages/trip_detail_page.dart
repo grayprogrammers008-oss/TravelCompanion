@@ -353,19 +353,19 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
 
-          // Budget (if set)
-          if (hasBudget) ...[
-            const Divider(height: AppTheme.spacingLg),
-            _buildInfoRow(
-              context,
-              icon: Icons.savings,
-              iconColor: Colors.blue.shade700,
-              iconBg: Colors.blue.shade50,
-              label: 'Budget',
-              value: '${trip.trip.currency} ${budget.toStringAsFixed(2)}',
-              subtitle: 'Your trip budget',
-            ),
-          ],
+          // Budget
+          const Divider(height: AppTheme.spacingLg),
+          _buildInfoRow(
+            context,
+            icon: hasBudget ? Icons.savings : Icons.savings_outlined,
+            iconColor: hasBudget ? Colors.blue.shade700 : Colors.grey.shade400,
+            iconBg: hasBudget ? Colors.blue.shade50 : Colors.grey.shade50,
+            label: 'Budget',
+            value: hasBudget
+                ? '${trip.trip.currency} ${budget.toStringAsFixed(2)}'
+                : 'No budget specified',
+            subtitle: hasBudget ? 'Your trip budget' : null,
+          ),
         ],
       ),
     );
