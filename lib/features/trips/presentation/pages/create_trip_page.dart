@@ -430,35 +430,29 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 // Budget Section
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 4,
-                  child: Row(
+                  child: Column(
                     children: [
                       // Currency Dropdown
-                      Expanded(
-                        flex: 2,
-                        child: _buildCurrencyDropdown(),
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
+                      _buildCurrencyDropdown(),
+                      const SizedBox(height: AppTheme.spacingMd),
                       // Budget Amount
-                      Expanded(
-                        flex: 3,
-                        child: _buildFormField(
-                          controller: _budgetController,
-                          label: 'Budget (Optional)',
-                          icon: Icons.account_balance_wallet,
-                          hint: 'e.g., 50000',
-                          validator: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              final budget = double.tryParse(value);
-                              if (budget == null) {
-                                return 'Please enter a valid number';
-                              }
-                              if (budget < 0) {
-                                return 'Budget must be positive';
-                              }
+                      _buildFormField(
+                        controller: _budgetController,
+                        label: 'Budget (Optional)',
+                        icon: Icons.account_balance_wallet,
+                        hint: 'e.g., 50000',
+                        validator: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            final budget = double.tryParse(value);
+                            if (budget == null) {
+                              return 'Please enter a valid number';
                             }
-                            return null;
-                          },
-                        ),
+                            if (budget < 0) {
+                              return 'Budget must be positive';
+                            }
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
