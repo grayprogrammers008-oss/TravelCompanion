@@ -13,18 +13,70 @@ import 'package:travel_crew/core/utils/extensions.dart';
 import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 
 /// Main page showing list of user's trips
-class TripsListPage extends ConsumerWidget {
+class TripsListPage extends ConsumerStatefulWidget {
   const TripsListPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TripsListPage> createState() => _TripsListPageState();
+}
+
+class _TripsListPageState extends ConsumerState<TripsListPage> {
+  final _searchController = TextEditingController();
+  bool _isSearching = false;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
+    final query = _searchController.text.toLowerCase().trim();
+    if (query.isEmpty) {
+      return trips;
+    }
+
+    return trips.where((tripWithMembers) {
+      final trip = tripWithMembers.trip;
+      final nameMatch = trip.name.toLowerCase().contains(query);
+      final destinationMatch = trip.destination?.toLowerCase().contains(query) ?? false;
+      final descriptionMatch = trip.description?.toLowerCase().contains(query) ?? false;
+      return nameMatch || destinationMatch || descriptionMatch;
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final tripsAsync = ref.watch(userTripsProvider);
     final themeData = context.appThemeData;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Trips'),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Search trips...',
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: InputBorder.none,
+                ),
+                onChanged: (_) => setState(() {}),
+              )
+            : const Text('My Trips'),
         actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) {
+                  _searchController.clear();
+                }
+              });
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: 'Trip History',
@@ -38,10 +90,14 @@ class TripsListPage extends ConsumerWidget {
       ),
       body: tripsAsync.when(
         data: (trips) {
+          final filteredTrips = _filterTrips(trips);
           if (trips.isEmpty) {
             return _buildEmptyState(context);
           }
-          return _buildTripsList(context, ref, trips);
+          if (filteredTrips.isEmpty && _searchController.text.isNotEmpty) {
+            return _buildNoSearchResults(context);
+          }
+          return _buildTripsList(context, ref, filteredTrips);
         },
         loading: () => const Center(
           child: AppLoadingIndicator(
@@ -121,6 +177,41 @@ class TripsListPage extends ConsumerWidget {
             onPressed: () => context.push(AppRoutes.createTrip),
             icon: const Icon(Icons.add),
             label: const Text('Create Trip'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoSearchResults(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off, size: 120, color: Colors.grey[300]),
+          const SizedBox(height: 24),
+          Text(
+            'No trips found',
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try a different search term',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: Colors.grey[500]),
+          ),
+          const SizedBox(height: 32),
+          FilledButton.icon(
+            onPressed: () {
+              setState(() {
+                _searchController.clear();
+              });
+            },
+            icon: const Icon(Icons.clear),
+            label: const Text('Clear Search'),
           ),
         ],
       ),
