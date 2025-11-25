@@ -322,10 +322,11 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _buildNoSearchResults(BuildContext context) {
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppTheme.spacingXl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
