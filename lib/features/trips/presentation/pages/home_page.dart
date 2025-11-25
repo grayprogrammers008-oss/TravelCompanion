@@ -27,6 +27,8 @@ class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  final _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -44,8 +46,24 @@ class _HomePageState extends ConsumerState<HomePage>
 
   @override
   void dispose() {
+    _searchController.dispose();
     _animationController.dispose();
     super.dispose();
+  }
+
+  List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
+    final query = _searchController.text.toLowerCase().trim();
+    if (query.isEmpty) {
+      return trips;
+    }
+
+    return trips.where((tripWithMembers) {
+      final trip = tripWithMembers.trip;
+      final nameMatch = trip.name.toLowerCase().contains(query);
+      final destinationMatch = trip.destination?.toLowerCase().contains(query) ?? false;
+      final descriptionMatch = trip.description?.toLowerCase().contains(query) ?? false;
+      return nameMatch || destinationMatch || descriptionMatch;
+    }).toList();
   }
 
   @override
@@ -66,6 +84,25 @@ class _HomePageState extends ConsumerState<HomePage>
             floating: false,
             pinned: true,
             backgroundColor: themeData.primaryColor,
+            actions: [
+              // Search Icon
+              IconButton(
+                icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.white),
+                onPressed: () {
+                  setState(() {
+                    _isSearching = !_isSearching;
+                    if (!_isSearching) {
+                      _searchController.clear();
+                    }
+                  });
+                },
+              ),
+              // Menu Icon
+              IconButton(
+                icon: const Icon(Icons.more_vert, color: Colors.white),
+                onPressed: () => _showProfileMenu(context, ref),
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(
@@ -93,51 +130,48 @@ class _HomePageState extends ConsumerState<HomePage>
                             ),
                             const SizedBox(width: AppTheme.spacingMd),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Welcome back,',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.9),
+                              child: _isSearching
+                                  ? TextField(
+                                      controller: _searchController,
+                                      autofocus: true,
+                                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                                      decoration: const InputDecoration(
+                                        hintText: 'Search trips...',
+                                        hintStyle: TextStyle(color: Colors.white70),
+                                        border: InputBorder.none,
+                                      ),
+                                      onChanged: (_) => setState(() {}),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Welcome back,',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.9),
+                                              ),
                                         ),
-                                  ),
-                                  Text(
-                                    currentUser.value?.fullName
-                                            ?.split(' ')
-                                            .first ??
-                                        'Traveler',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
+                                        Text(
+                                          currentUser.value?.fullName
+                                                  ?.split(' ')
+                                                  .first ??
+                                              'Traveler',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall
+                                              ?.copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Profile Button
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius:
-                                    BorderRadius.circular(AppTheme.radiusMd),
-                              ),
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.more_vert,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => _showProfileMenu(context, ref),
-                              ),
+                                      ],
+                                    ),
                             ),
                           ],
                         ),
@@ -152,6 +186,8 @@ class _HomePageState extends ConsumerState<HomePage>
           // Content
           userTripsAsync.when(
             data: (trips) {
+              final filteredTrips = _filterTrips(trips);
+
               if (trips.isEmpty) {
                 return SliverFillRemaining(
                   child: FadeTransition(
@@ -160,12 +196,19 @@ class _HomePageState extends ConsumerState<HomePage>
                   ),
                 );
               }
+
+              if (filteredTrips.isEmpty && _searchController.text.isNotEmpty) {
+                return SliverFillRemaining(
+                  child: _buildNoSearchResults(context),
+                );
+              }
+
               return SliverPadding(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final tripWithMembers = trips[index];
+                      final tripWithMembers = filteredTrips[index];
                       // Staggered animation for each card
                       return FadeSlideAnimation(
                         delay: AppAnimations.staggerMedium * index,
@@ -179,7 +222,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         ),
                       );
                     },
-                    childCount: trips.length,
+                    childCount: filteredTrips.length,
                   ),
                 ),
               );
@@ -247,6 +290,59 @@ class _HomePageState extends ConsumerState<HomePage>
       icon: Icons.explore,
       actionLabel: 'Create Your First Trip',
       onAction: () => context.push('/trips/create'),
+    );
+  }
+
+  Widget _buildNoSearchResults(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              decoration: BoxDecoration(
+                color: AppTheme.neutral100,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.search_off,
+                size: 64,
+                color: AppTheme.neutral400,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+            Text(
+              'No trips found',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: AppTheme.neutral900,
+                    fontWeight: FontWeight.w700,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacingXs),
+            Text(
+              'Try a different search term',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.neutral600,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacingXl),
+            GlossyButton(
+              label: 'Clear Search',
+              icon: Icons.clear,
+              onPressed: () {
+                setState(() {
+                  _searchController.clear();
+                  _isSearching = false;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
