@@ -321,56 +321,66 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _buildNoSearchResults(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                color: AppTheme.neutral100,
-                shape: BoxShape.circle,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingXl),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingLg),
+                      decoration: BoxDecoration(
+                        color: AppTheme.neutral100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.search_off,
+                        size: 60,
+                        color: AppTheme.neutral400,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Text(
+                      'No trips found',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: AppTheme.neutral900,
+                            fontWeight: FontWeight.w700,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    Text(
+                      'Try a different search term',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.neutral600,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    GlossyButton(
+                      label: 'Clear Search',
+                      icon: Icons.clear,
+                      onPressed: () {
+                        setState(() {
+                          _searchController.clear();
+                          _isSearching = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
-              child: Icon(
-                Icons.search_off,
-                size: 64,
-                color: AppTheme.neutral400,
-              ),
             ),
-            const SizedBox(height: AppTheme.spacingLg),
-            Text(
-              'No trips found',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppTheme.neutral900,
-                    fontWeight: FontWeight.w700,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppTheme.spacingXs),
-            Text(
-              'Try a different search term',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.neutral600,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppTheme.spacingXl),
-            GlossyButton(
-              label: 'Clear Search',
-              icon: Icons.clear,
-              onPressed: () {
-                setState(() {
-                  _searchController.clear();
-                  _isSearching = false;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
