@@ -324,59 +324,59 @@ class _HomePageState extends ConsumerState<HomePage>
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingLg,
+            vertical: AppTheme.spacingMd,
+          ),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: constraints.maxHeight,
+              minHeight: constraints.maxHeight - (AppTheme.spacingMd * 2),
             ),
-            child: IntrinsicHeight(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingXl),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingLg),
-                      decoration: BoxDecoration(
-                        color: AppTheme.neutral100,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.search_off,
-                        size: 60,
-                        color: AppTheme.neutral400,
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingMd),
-                    Text(
-                      'No trips found',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: AppTheme.neutral900,
-                            fontWeight: FontWeight.w700,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppTheme.spacingXs),
-                    Text(
-                      'Try a different search term',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.neutral600,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppTheme.spacingMd),
-                    GlossyButton(
-                      label: 'Clear Search',
-                      icon: Icons.clear,
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                          _isSearching = false;
-                        });
-                      },
-                    ),
-                  ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  decoration: BoxDecoration(
+                    color: AppTheme.neutral100,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.search_off,
+                    size: 48,
+                    color: AppTheme.neutral400,
+                  ),
                 ),
-              ),
+                const SizedBox(height: AppTheme.spacingSm),
+                Text(
+                  'No trips found',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppTheme.neutral900,
+                        fontWeight: FontWeight.w600,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTheme.spacingXs),
+                Text(
+                  'Try a different search term',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.neutral600,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                GlossyButton(
+                  label: 'Clear Search',
+                  icon: Icons.clear,
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _isSearching = false;
+                    });
+                  },
+                ),
+              ],
             ),
           ),
         );
