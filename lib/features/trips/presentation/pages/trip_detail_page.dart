@@ -560,17 +560,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                               ),
                             ],
                           ),
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: themeData.primaryColor,
-                            child: Text(
-                              (member.fullName ?? member.email ?? 'U')[0].toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
+                          child: UserAvatarWidget(
+                            imageUrl: member.avatarUrl,
+                            userName: member.fullName ?? member.email ?? 'U',
+                            size: 36,
+                            showBorder: false,
                           ),
                         ),
                       );
@@ -663,15 +657,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                           padding: const EdgeInsets.all(AppTheme.spacingMd),
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                backgroundColor: themeData.primaryColor,
-                                child: Text(
-                                  (entry.value.fullName ?? entry.value.email ?? 'U')[0].toUpperCase(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                              UserAvatarWidget(
+                                imageUrl: entry.value.avatarUrl,
+                                userName: entry.value.fullName ?? entry.value.email ?? 'U',
+                                size: 40,
+                                showBorder: false,
                               ),
                               const SizedBox(width: AppTheme.spacingMd),
                               Expanded(

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/widgets/destination_image.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
 /// Enhanced Settings Page with working toggles and preferences
@@ -67,10 +68,11 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.neutral900,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        child: SingleChildScrollView(
         child: Column(
           children: [
             // Profile Section
@@ -95,19 +97,11 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                     padding: const EdgeInsets.all(AppTheme.spacingLg),
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: context.primaryLight,
-                          child: Text(
-                            user?.email.isNotEmpty == true
-                                ? user!.email[0].toUpperCase()
-                                : '?',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: context.primaryColor,
-                            ),
-                          ),
+                        UserAvatarWidget(
+                          imageUrl: user?.avatarUrl,
+                          userName: user?.fullName ?? user?.email,
+                          size: 60,
+                          showBorder: true,
                         ),
                         const SizedBox(width: AppTheme.spacingMd),
                         Expanded(
@@ -157,6 +151,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildSwitchTile(
                   context,
                   icon: Icons.notifications_active,
+                  iconColor: Colors.orange,
                   title: 'Push Notifications',
                   subtitle: 'Receive notifications on this device',
                   value: _pushNotifications,
@@ -168,6 +163,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildSwitchTile(
                   context,
                   icon: Icons.email,
+                  iconColor: Colors.orange,
                   title: 'Email Notifications',
                   subtitle: 'Receive updates via email',
                   value: _emailNotifications,
@@ -195,6 +191,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildSwitchTile(
                   context,
                   icon: Icons.group_add,
+                  iconColor: Colors.orange,
                   title: 'Trip Invites',
                   value: _tripInvites,
                   onChanged: (value) {
@@ -205,6 +202,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildSwitchTile(
                   context,
                   icon: Icons.attach_money,
+                  iconColor: Colors.orange,
                   title: 'Expense Updates',
                   value: _expenseUpdates,
                   onChanged: (value) {
@@ -215,6 +213,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildSwitchTile(
                   context,
                   icon: Icons.event,
+                  iconColor: Colors.orange,
                   title: 'Itinerary Changes',
                   value: _itineraryChanges,
                   onChanged: (value) {
@@ -233,7 +232,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.color_lens,
-                  iconColor: context.accentColor,
+                  iconColor: Colors.purple,
                   title: 'Color Scheme',
                   subtitle: themeData.name,
                   onTap: () => context.push('/settings/theme'),
@@ -249,7 +248,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.language,
-                  iconColor: context.primaryColor,
+                  iconColor: Colors.blue,
                   title: 'Language',
                   subtitle: _language,
                   onTap: () => _showLanguageDialog(context),
@@ -257,7 +256,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.attach_money,
-                  iconColor: context.accentColor,
+                  iconColor: Colors.blue,
                   title: 'Currency',
                   subtitle: _currency,
                   onTap: () => _showCurrencyDialog(context),
@@ -273,7 +272,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.lock,
-                  iconColor: context.accentColor,
+                  iconColor: Colors.green,
                   title: 'Change Password',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -284,7 +283,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.security,
-                  iconColor: AppTheme.neutral600,
+                  iconColor: Colors.green,
                   title: 'Privacy & Security',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -295,6 +294,38 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
               ],
             ),
 
+            // Admin Section (TEMPORARILY visible to all - TODO: Add permission checks)
+            // NOTE: This should be restricted to admin users only in production
+            _buildSection(
+              context,
+              title: 'Admin',
+              items: [
+                _buildNavigationTile(
+                  context,
+                  icon: Icons.admin_panel_settings,
+                  iconColor: Colors.purple,
+                  title: 'Admin Panel',
+                  subtitle: 'User management and analytics',
+                  onTap: () => context.push('/settings/admin'),
+                ),
+              ],
+            ),
+
+            // TODO: Restore admin-only visibility with proper permission checks
+            // Consumer(
+            //   builder: (context, ref, child) {
+            //     final isAdminAsync = ref.watch(isAdminProvider);
+            //     return isAdminAsync.when(
+            //       data: (isAdmin) {
+            //         if (!isAdmin) return const SizedBox.shrink();
+            //         return _buildSection(...);
+            //       },
+            //       loading: () => const SizedBox.shrink(),
+            //       error: (_, __) => const SizedBox.shrink(),
+            //     );
+            //   },
+            // ),
+
             // About Section
             _buildSection(
               context,
@@ -303,14 +334,14 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.info,
-                  iconColor: AppTheme.info,
+                  iconColor: Colors.grey,
                   title: 'App Version',
                   subtitle: _appVersion,
                 ),
                 _buildNavigationTile(
                   context,
                   icon: Icons.description,
-                  iconColor: AppTheme.neutral600,
+                  iconColor: Colors.grey,
                   title: 'Open Source Licenses',
                   onTap: () {
                     showLicensePage(
@@ -323,7 +354,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.privacy_tip,
-                  iconColor: AppTheme.neutral600,
+                  iconColor: Colors.grey,
                   title: 'Privacy Policy',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -334,7 +365,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                 _buildNavigationTile(
                   context,
                   icon: Icons.gavel,
-                  iconColor: AppTheme.neutral600,
+                  iconColor: Colors.grey,
                   title: 'Terms of Service',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -399,6 +430,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
             const SizedBox(height: AppTheme.spacingXl),
           ],
         ),
+        ),
       ),
     );
   }
@@ -449,6 +481,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
   Widget _buildSwitchTile(
     BuildContext context, {
     required IconData icon,
+    required Color iconColor,
     required String title,
     String? subtitle,
     required bool value,
@@ -458,10 +491,10 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
       secondary: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: context.primaryLight,
+          color: iconColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
         ),
-        child: Icon(icon, color: context.primaryColor, size: 20),
+        child: Icon(icon, color: iconColor, size: 20),
       ),
       title: Text(
         title,

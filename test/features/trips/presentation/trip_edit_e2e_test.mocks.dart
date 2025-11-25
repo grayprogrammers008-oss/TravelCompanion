@@ -125,6 +125,7 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
     String? coverImageUrl,
     bool? isCompleted,
     DateTime? completedAt,
+    double? rating,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#updateTrip, [], {
@@ -137,6 +138,7 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
               #coverImageUrl: coverImageUrl,
               #isCompleted: isCompleted,
               #completedAt: completedAt,
+              #rating: rating,
             }),
             returnValue: _i5.Future<_i2.TripModel>.value(
               _FakeTripModel_0(
@@ -151,6 +153,7 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
                   #coverImageUrl: coverImageUrl,
                   #isCompleted: isCompleted,
                   #completedAt: completedAt,
+                  #rating: rating,
                 }),
               ),
             ),

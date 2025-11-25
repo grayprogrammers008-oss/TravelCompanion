@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
@@ -138,6 +139,151 @@ class _LoginPageState extends ConsumerState<LoginPage>
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _sendTestNotification() async {
+    try {
+      debugPrint('🧪 Sending test notification...');
+
+      // Create and initialize local notification plugin
+      final FlutterLocalNotificationsPlugin localNotifications =
+          FlutterLocalNotificationsPlugin();
+
+      // Initialize the plugin
+      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const iosSettings = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+      const initSettings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
+
+      await localNotifications.initialize(initSettings);
+      debugPrint('   ✅ Local notifications initialized');
+
+      // Create Android notification channel first
+      const androidChannel = AndroidNotificationChannel(
+        'test_channel',
+        'Test Notifications',
+        description: 'Test notification channel',
+        importance: Importance.high,
+        enableVibration: true,
+        playSound: true,
+      );
+
+      await localNotifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(androidChannel);
+      debugPrint('   ✅ Notification channel created');
+
+      // Android notification details
+      const androidDetails = AndroidNotificationDetails(
+        'test_channel',
+        'Test Notifications',
+        channelDescription: 'Test notification channel',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        enableVibration: true,
+        playSound: true,
+        ticker: 'Test notification',
+      );
+
+      // iOS notification details
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+
+      // Notification details
+      const details = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      // Show test notification
+      await localNotifications.show(
+        DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        '🎉 Test Notification',
+        'Firebase notifications are working! This is a test message from TravelCrew.',
+        details,
+      );
+
+      debugPrint('✅ Test notification sent successfully');
+
+      if (mounted) {
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('✅ Test notification sent! Check your notification tray.'),
+            backgroundColor: AppTheme.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+
+        // Show dialog with instructions
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('📬 Notification Sent!'),
+              content: const Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('The notification was sent successfully!'),
+                  SizedBox(height: 16),
+                  Text('To see it:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 8),
+                  Text('1. Swipe DOWN from the top-center of the screen'),
+                  SizedBox(height: 4),
+                  Text('2. Or press Command+L to lock and see it on lock screen'),
+                  SizedBox(height: 16),
+                  Text('iOS Simulator limitations:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 4),
+                  Text('• Banners appear briefly then auto-hide'),
+                  Text('• No sound/vibration'),
+                  Text('• Must check Notification Center manually'),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Got it!'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ Failed to send test notification: $e');
+      debugPrint('Stack trace: $stackTrace');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Failed: $e'),
+            backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -459,6 +605,26 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                     label: 'Sign In',
                                     onPressed: authState.isLoading ? null : _handleLogin,
                                     isLoading: authState.isLoading,
+                                  ),
+
+                                  const SizedBox(height: AppTheme.spacingMd),
+
+                                  // Test Notification Button (for development)
+                                  OutlinedButton.icon(
+                                    onPressed: authState.isLoading ? null : _sendTestNotification,
+                                    icon: const Icon(Icons.notifications_active, size: 18),
+                                    label: const Text('Test Notification'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: themeData.primaryColor,
+                                      side: BorderSide(color: themeData.primaryColor.withValues(alpha: 0.3)),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: AppTheme.spacingMd,
+                                        horizontal: AppTheme.spacingLg,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),

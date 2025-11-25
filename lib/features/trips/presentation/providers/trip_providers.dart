@@ -101,10 +101,7 @@ final userTripsProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref
 
   final repository = ref.watch(tripRepositoryProvider);
 
-  // Add a 5-second delay to show the packing animation
-  await Future.delayed(const Duration(seconds: 5));
-
-  // Then stream real-time updates
+  // Stream real-time updates
   await for (final trips in repository.watchUserTrips()) {
     yield trips;
   }

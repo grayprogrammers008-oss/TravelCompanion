@@ -118,8 +118,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       final repository = ref.read(authRepositoryProvider);
       await repository.updateProfile(avatarUrl: avatarUrl);
 
-      // Refresh user data
+      // Refresh user data and trips to update avatar everywhere
       ref.invalidate(currentUserProvider);
+      ref.invalidate(userTripsProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

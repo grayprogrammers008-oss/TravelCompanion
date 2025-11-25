@@ -2,13 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'core/network/supabase_client.dart';
 import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/theme/theme_access.dart';
+import 'core/services/notification_initialization.dart';
 import 'features/messaging/data/initialization/messaging_initialization.dart';
+
+/// Background message handler - must be top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  debugPrint('📬 [FCM] Background message received');
+  debugPrint('   Message ID: ${message.messageId}');
+  debugPrint('   Title: ${message.notification?.title}');
+  debugPrint('   Body: ${message.notification?.body}');
+  debugPrint('   Data: ${message.data}');
+}
 
 void main() async {
   // Catch any uncaught errors in the app
@@ -19,10 +33,24 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+    debugPrint('✅ Firebase initialized successfully');
+
+    // Register background message handler
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    debugPrint('✅ Background message handler registered');
+  } catch (e, stackTrace) {
+    debugPrint('❌ Failed to initialize Firebase: $e');
+    debugPrint('Stack trace: $stackTrace');
+    // Continue anyway - push notifications will be disabled
+  }
+
   // Set system UI overlay style for premium look
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: Color(0xFFF8FAFC), // AppTheme.neutral50
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
       systemNavigationBarColor: Colors.white,
@@ -59,6 +87,16 @@ void main() async {
     debugPrint('Stack trace: $stackTrace');
     debugPrint('⚠️  App requires internet connection to function');
     // Continue anyway - will show error screen in app
+  }
+
+  // Initialize FCM notification services
+  try {
+    await NotificationInitialization.initialize();
+    debugPrint('✅ Notification services initialized successfully');
+  } catch (e, stackTrace) {
+    debugPrint('❌ Failed to initialize notification services: $e');
+    debugPrint('Stack trace: $stackTrace');
+    // Continue anyway - notifications will be disabled
   }
 
   runApp(

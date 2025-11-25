@@ -6,10 +6,17 @@ import '../../../../core/constants/app_constants.dart';
 
 /// Service for handling profile photo uploads to Supabase Storage
 class ProfilePhotoService {
-  final SupabaseClient _client = SupabaseClientWrapper.client;
-  final ImagePicker _imagePicker = ImagePicker();
+  final SupabaseClient _client;
+  final ImagePicker _imagePicker;
 
   static const String bucketName = AppConstants.profileAvatarsBucket;
+
+  /// Create ProfilePhotoService with optional dependencies for testing
+  ProfilePhotoService({
+    SupabaseClient? client,
+    ImagePicker? imagePicker,
+  })  : _client = client ?? SupabaseClientWrapper.client,
+        _imagePicker = imagePicker ?? ImagePicker();
 
   /// Pick image from gallery
   Future<XFile?> pickImageFromGallery() async {

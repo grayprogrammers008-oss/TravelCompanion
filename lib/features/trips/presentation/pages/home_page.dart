@@ -124,6 +124,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           children: [
                             // User Avatar
                             UserAvatarWidget(
+                              imageUrl: currentUser.value?.avatarUrl,
                               userName: currentUser.value?.fullName,
                               size: 48,
                               showBorder: true,
@@ -548,7 +549,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
-                    color: context.primaryLight,
+                    color: context.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
                   child: Icon(
@@ -1045,7 +1046,8 @@ class TripCard extends StatelessWidget {
                   ),
                   child: ClipOval(
                     child: UserAvatarWidget(
-                      userName: member.email ?? member.fullName,
+                      imageUrl: member.avatarUrl,
+                      userName: member.fullName ?? member.email,
                       size: 28, // Slightly smaller to account for border
                       showBorder: false,
                     ),

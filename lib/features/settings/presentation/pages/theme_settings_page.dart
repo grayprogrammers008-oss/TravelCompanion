@@ -18,6 +18,7 @@ class ThemeSettingsPage extends ConsumerWidget {
       backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
         title: const Text('Theme Settings'),
+        foregroundColor: AppTheme.neutral900,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

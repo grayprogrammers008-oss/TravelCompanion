@@ -286,6 +286,39 @@ class UserAvatarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
+
+    // If imageUrl is provided, show the image
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: showBorder
+              ? Border.all(
+                  color: Colors.white,
+                  width: 2,
+                )
+              : null,
+          boxShadow: showBorder ? AppTheme.shadowMd : null,
+        ),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: imageUrl!,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => _buildGradientAvatar(themeData),
+            errorWidget: (context, url, error) =>
+                _buildGradientAvatar(themeData),
+          ),
+        ),
+      );
+    }
+
+    // Otherwise show gradient avatar with initials
+    return _buildGradientAvatar(themeData);
+  }
+
+  Widget _buildGradientAvatar(dynamic themeData) {
     return Container(
       width: size,
       height: size,
@@ -307,6 +340,7 @@ class UserAvatarWidget extends StatelessWidget {
             color: Colors.white,
             fontSize: size * 0.4,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
           ),
         ),
       ),

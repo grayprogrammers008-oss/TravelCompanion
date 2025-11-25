@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
+import '../../../../core/services/notification_initialization.dart';
 
 /// Implementation of authentication repository - Supabase only
 ///
@@ -37,6 +38,9 @@ class AuthRepositoryImpl implements AuthRepository {
         debugPrint('   User ID: ${userModel.id}');
       }
 
+      // Register FCM token after successful sign up
+      await NotificationInitialization.registerToken();
+
       return userModel.toEntity();
     } catch (e) {
       if (kDebugMode) {
@@ -66,6 +70,9 @@ class AuthRepositoryImpl implements AuthRepository {
         debugPrint('✅ Sign in successful!');
       }
 
+      // Register FCM token after successful sign in
+      await NotificationInitialization.registerToken();
+
       return userModel.toEntity();
     } catch (e) {
       if (kDebugMode) {
@@ -81,6 +88,9 @@ class AuthRepositoryImpl implements AuthRepository {
       if (kDebugMode) {
         debugPrint('👋 Signing out from Supabase');
       }
+
+      // Unregister FCM token before sign out
+      await NotificationInitialization.unregisterToken();
 
       await _remoteDataSource.signOut();
 

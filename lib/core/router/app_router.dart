@@ -25,6 +25,8 @@ import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/onboarding/presentation/providers/onboarding_provider.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/emergency/presentation/pages/emergency_page.dart';
+import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
+import '../../features/admin/presentation/pages/admin_user_detail_page.dart';
 import '../presentation/main_scaffold.dart';
 
 // Custom page builder that removes the white transition overlay
@@ -68,6 +70,8 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
+  static const String admin = '/settings/admin';
+  static const String adminUserDetail = '/settings/admin/users/:userId';
   static const String tripHistory = '/trip-history';
   static const String emergency = '/emergency';
   static const String onboarding = '/onboarding';
@@ -326,6 +330,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           key: state.pageKey,
           child: const ThemeSettingsPage(),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.admin,
+        name: 'admin',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const AdminDashboardPage(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminUserDetail,
+        name: 'adminUserDetail',
+        builder: (context, state) {
+          final userId = state.pathParameters['userId']!;
+          return AdminUserDetailPage(userId: userId);
+        },
       ),
       GoRoute(
         path: AppRoutes.tripHistory,

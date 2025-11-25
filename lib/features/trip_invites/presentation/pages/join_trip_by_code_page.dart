@@ -123,9 +123,10 @@ class _JoinTripByCodePageState extends ConsumerState<JoinTripByCodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.neutral50,
       appBar: AppBar(
         title: const Text('Join Trip by Code'),
-        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.neutral900,
         elevation: 0,
       ),
       body: SafeArea(
