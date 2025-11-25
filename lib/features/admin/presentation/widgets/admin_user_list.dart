@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
+import 'package:travel_crew/core/widgets/destination_image.dart';
 import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
 import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
 import 'package:travel_crew/features/admin/presentation/providers/admin_providers.dart';
@@ -263,37 +264,12 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
           padding: const EdgeInsets.all(AppTheme.spacingMd),
           child: Row(
             children: [
-              // Avatar
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: _getRoleColor(user.role),
-                child: user.avatarUrl != null
-                    ? ClipOval(
-                        child: Image.network(
-                          user.avatarUrl!,
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Text(
-                              user.initials,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          },
-                        ),
-                      )
-                    : Text(
-                        user.initials,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              // Avatar using UserAvatarWidget
+              UserAvatarWidget(
+                imageUrl: user.avatarUrl,
+                userName: user.displayName,
+                size: 56,
+                showBorder: false,
               ),
               const SizedBox(width: AppTheme.spacingMd),
 
@@ -464,16 +440,5 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
         ],
       ),
     );
-  }
-
-  Color _getRoleColor(UserRole role) {
-    switch (role) {
-      case UserRole.superAdmin:
-        return Colors.purple;
-      case UserRole.admin:
-        return Colors.blue;
-      case UserRole.user:
-        return Colors.grey;
-    }
   }
 }
