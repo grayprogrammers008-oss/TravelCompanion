@@ -130,48 +130,71 @@ class _HomePageState extends ConsumerState<HomePage>
                             ),
                             const SizedBox(width: AppTheme.spacingMd),
                             Expanded(
-                              child: _isSearching
-                                  ? TextField(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Welcome back,',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.9),
+                                        ),
+                                  ),
+                                  Text(
+                                    currentUser.value?.fullName
+                                            ?.split(' ')
+                                            .first ??
+                                        'Traveler',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (_isSearching) ...[
+                                    const SizedBox(height: AppTheme.spacingXs),
+                                    TextField(
                                       controller: _searchController,
                                       autofocus: true,
-                                      style: const TextStyle(color: Colors.white, fontSize: 18),
-                                      decoration: const InputDecoration(
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      decoration: InputDecoration(
                                         hintText: 'Search trips...',
-                                        hintStyle: TextStyle(color: Colors.white70),
-                                        border: InputBorder.none,
+                                        hintStyle: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.7),
+                                          fontSize: 16,
+                                        ),
+                                        filled: true,
+                                        fillColor: Colors.white.withValues(alpha: 0.2),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: AppTheme.spacingMd,
+                                          vertical: AppTheme.spacingSm,
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.search,
+                                          color: Colors.white70,
+                                          size: 20,
+                                        ),
                                       ),
                                       onChanged: (_) => setState(() {}),
-                                    )
-                                  : Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Welcome back,',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.9),
-                                              ),
-                                        ),
-                                        Text(
-                                          currentUser.value?.fullName
-                                                  ?.split(' ')
-                                                  .first ??
-                                              'Traveler',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall
-                                              ?.copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
                                     ),
+                                  ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
