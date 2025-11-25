@@ -4,9 +4,10 @@ import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/features/admin/presentation/widgets/admin_stats_overview.dart';
 import 'package:travel_crew/features/admin/presentation/widgets/admin_user_list.dart';
 import 'package:travel_crew/features/admin/presentation/widgets/admin_activity_log_list.dart';
+import 'package:travel_crew/features/admin/presentation/widgets/admin_feedback_list.dart';
 
 /// Admin Dashboard Page
-/// Main admin panel with three tabs: Overview, Users, Activity
+/// Main admin panel with four tabs: Overview, Users, Activity, Feedback
 class AdminDashboardPage extends ConsumerStatefulWidget {
   const AdminDashboardPage({super.key});
 
@@ -21,7 +22,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -59,6 +60,10 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage>
               icon: Icon(Icons.history),
               text: 'Activity',
             ),
+            Tab(
+              icon: Icon(Icons.feedback_outlined),
+              text: 'Feedback',
+            ),
           ],
         ),
       ),
@@ -73,6 +78,9 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage>
 
           // Activity Tab
           const AdminActivityLogList(),
+
+          // Feedback Tab
+          const AdminFeedbackList(),
         ],
       ),
     );
