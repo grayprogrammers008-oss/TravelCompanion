@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/widgets/destination_image.dart';
+import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
 import 'package:travel_crew/features/admin/presentation/providers/admin_trip_providers.dart';
 
 /// Admin Trip List Widget
