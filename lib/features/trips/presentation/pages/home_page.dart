@@ -80,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage>
           slivers: [
           // Premium App Bar with gradient
           SliverAppBar(
-            expandedHeight: 120,
+            expandedHeight: _isSearching ? 160 : 120,
             floating: false,
             pinned: true,
             backgroundColor: themeData.primaryColor,
@@ -161,37 +161,40 @@ class _HomePageState extends ConsumerState<HomePage>
                                   ),
                                   if (_isSearching) ...[
                                     const SizedBox(height: AppTheme.spacingXs),
-                                    TextField(
-                                      controller: _searchController,
-                                      autofocus: true,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                    SizedBox(
+                                      height: 42,
+                                      child: TextField(
+                                        controller: _searchController,
+                                        autofocus: true,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        decoration: InputDecoration(
+                                          hintText: 'Search trips...',
+                                          hintStyle: TextStyle(
+                                            color: Colors.white.withValues(alpha: 0.7),
+                                            fontSize: 14,
+                                          ),
+                                          filled: true,
+                                          fillColor: Colors.white.withValues(alpha: 0.2),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          contentPadding: const EdgeInsets.symmetric(
+                                            horizontal: AppTheme.spacingSm,
+                                            vertical: AppTheme.spacingXs,
+                                          ),
+                                          prefixIcon: const Icon(
+                                            Icons.search,
+                                            color: Colors.white70,
+                                            size: 18,
+                                          ),
+                                        ),
+                                        onChanged: (_) => setState(() {}),
                                       ),
-                                      decoration: InputDecoration(
-                                        hintText: 'Search trips...',
-                                        hintStyle: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.7),
-                                          fontSize: 16,
-                                        ),
-                                        filled: true,
-                                        fillColor: Colors.white.withValues(alpha: 0.2),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: AppTheme.spacingMd,
-                                          vertical: AppTheme.spacingSm,
-                                        ),
-                                        prefixIcon: const Icon(
-                                          Icons.search,
-                                          color: Colors.white70,
-                                          size: 20,
-                                        ),
-                                      ),
-                                      onChanged: (_) => setState(() {}),
                                     ),
                                   ],
                                 ],
