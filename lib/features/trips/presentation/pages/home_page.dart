@@ -820,7 +820,7 @@ class _HomePageState extends ConsumerState<HomePage>
       isDismissible: true,
       enableDrag: true,
       builder: (bottomSheetContext) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
+        builder: (modalContext, setModalState) => Container(
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -831,7 +831,7 @@ class _HomePageState extends ConsumerState<HomePage>
           child: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+                bottom: MediaQuery.of(modalContext).viewInsets.bottom,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -858,7 +858,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       children: [
                         Text(
                           'Filter Trips',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(modalContext).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.w700,
                               ),
                         ),
@@ -876,7 +876,7 @@ class _HomePageState extends ConsumerState<HomePage>
                               });
 
                               // Close modal and return cleared values
-                              Navigator.pop(context, {
+                              Navigator.pop(bottomSheetContext, {
                                 'minBudget': null,
                                 'maxBudget': null,
                                 'createdAfter': null,
@@ -901,7 +901,7 @@ class _HomePageState extends ConsumerState<HomePage>
                             const SizedBox(width: AppTheme.spacingXs),
                             Text(
                               'Budget Range',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(modalContext).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
@@ -967,7 +967,7 @@ class _HomePageState extends ConsumerState<HomePage>
                             const SizedBox(width: AppTheme.spacingXs),
                             Text(
                               'Date Created',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(modalContext).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
@@ -980,7 +980,7 @@ class _HomePageState extends ConsumerState<HomePage>
                               child: InkWell(
                                 onTap: () async {
                                   final date = await showDatePicker(
-                                    context: context,
+                                    context: modalContext,
                                     initialDate: tempCreatedAfter ?? DateTime.now(),
                                     firstDate: DateTime(2020),
                                     lastDate: DateTime.now(),
@@ -1041,7 +1041,7 @@ class _HomePageState extends ConsumerState<HomePage>
                               child: InkWell(
                                 onTap: () async {
                                   final date = await showDatePicker(
-                                    context: context,
+                                    context: modalContext,
                                     initialDate: tempCreatedBefore ?? DateTime.now(),
                                     firstDate: tempCreatedAfter ?? DateTime(2020),
                                     lastDate: DateTime.now(),
@@ -1113,7 +1113,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       child: ElevatedButton(
                         onPressed: () {
                           // Return filter values to the caller
-                          Navigator.pop(context, {
+                          Navigator.pop(bottomSheetContext, {
                             'minBudget': minBudgetController.text.isNotEmpty
                                 ? double.tryParse(minBudgetController.text)
                                 : null,
