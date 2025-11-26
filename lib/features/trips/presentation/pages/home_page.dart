@@ -1155,16 +1155,16 @@ class _HomePageState extends ConsumerState<HomePage>
 
     // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
     if (result != null && mounted) {
-      // Wait for the next frame to ensure navigation is fully complete
-      await Future.delayed(const Duration(milliseconds: 200));
+      // Use addPostFrameCallback to ensure navigation is fully complete
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
 
-      if (!mounted) return;
-
-      setState(() {
-        _minBudget = result['minBudget'] as double?;
-        _maxBudget = result['maxBudget'] as double?;
-        _createdAfter = result['createdAfter'] as DateTime?;
-        _createdBefore = result['createdBefore'] as DateTime?;
+        setState(() {
+          _minBudget = result['minBudget'] as double?;
+          _maxBudget = result['maxBudget'] as double?;
+          _createdAfter = result['createdAfter'] as DateTime?;
+          _createdBefore = result['createdBefore'] as DateTime?;
+        });
       });
     }
   }
