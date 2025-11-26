@@ -865,11 +865,12 @@ class _HomePageState extends ConsumerState<HomePage>
                         if (_hasActiveFilters)
                           TextButton(
                             onPressed: () {
-                              setState(() {
-                                _clearFilters();
-                                minBudgetController.clear();
-                                maxBudgetController.clear();
-                              });
+                              // Clear the main state
+                              _clearFilters();
+                              minBudgetController.clear();
+                              maxBudgetController.clear();
+
+                              // Update modal state
                               setModalState(() {
                                 tempCreatedAfter = null;
                                 tempCreatedBefore = null;
@@ -1100,17 +1101,24 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            _minBudget = minBudgetController.text.isNotEmpty
-                                ? double.tryParse(minBudgetController.text)
-                                : null;
-                            _maxBudget = maxBudgetController.text.isNotEmpty
-                                ? double.tryParse(maxBudgetController.text)
-                                : null;
-                            _createdAfter = tempCreatedAfter;
-                            _createdBefore = tempCreatedBefore;
-                          });
+                          // Close the bottom sheet first
                           Navigator.pop(context);
+
+                          // Update state after navigation completes
+                          Future.microtask(() {
+                            if (mounted) {
+                              setState(() {
+                                _minBudget = minBudgetController.text.isNotEmpty
+                                    ? double.tryParse(minBudgetController.text)
+                                    : null;
+                                _maxBudget = maxBudgetController.text.isNotEmpty
+                                    ? double.tryParse(maxBudgetController.text)
+                                    : null;
+                                _createdAfter = tempCreatedAfter;
+                                _createdBefore = tempCreatedBefore;
+                              });
+                            }
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
