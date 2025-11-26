@@ -1163,6 +1163,16 @@ class _HomePageState extends ConsumerState<HomePage>
 
     // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
     if (result != null && mounted) {
+      print('🔍 Waiting for next frame before applying filters');
+
+      // Wait for the next frame to ensure navigation is fully complete
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      if (!mounted) {
+        print('🔍 Widget disposed during wait, not applying filters');
+        return;
+      }
+
       print('🔍 Applying filters to state');
       setState(() {
         _minBudget = result['minBudget'] as double?;
