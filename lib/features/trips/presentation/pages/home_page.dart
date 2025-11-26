@@ -1112,8 +1112,10 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          print('🔍 Apply Filters button clicked');
+
                           // Return filter values to the caller
-                          Navigator.pop(bottomSheetContext, {
+                          final filterData = {
                             'minBudget': minBudgetController.text.isNotEmpty
                                 ? double.tryParse(minBudgetController.text)
                                 : null,
@@ -1122,7 +1124,12 @@ class _HomePageState extends ConsumerState<HomePage>
                                 : null,
                             'createdAfter': tempCreatedAfter,
                             'createdBefore': tempCreatedBefore,
-                          });
+                          };
+
+                          print('🔍 Filter data: $filterData');
+                          print('🔍 Closing modal with result');
+
+                          Navigator.pop(bottomSheetContext, filterData);
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
@@ -1151,14 +1158,21 @@ class _HomePageState extends ConsumerState<HomePage>
       maxBudgetController.dispose();
     });
 
+    print('🔍 Modal closed. Result: $result');
+    print('🔍 Mounted: $mounted');
+
     // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
     if (result != null && mounted) {
+      print('🔍 Applying filters to state');
       setState(() {
         _minBudget = result['minBudget'] as double?;
         _maxBudget = result['maxBudget'] as double?;
         _createdAfter = result['createdAfter'] as DateTime?;
         _createdBefore = result['createdBefore'] as DateTime?;
       });
+      print('🔍 Filters applied: min=$_minBudget, max=$_maxBudget, after=$_createdAfter, before=$_createdBefore');
+    } else {
+      print('🔍 Result is null or widget not mounted - filters not applied');
     }
   }
 
