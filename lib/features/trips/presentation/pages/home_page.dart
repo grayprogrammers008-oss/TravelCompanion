@@ -1112,8 +1112,6 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          print('🔍 Apply Filters button clicked');
-
                           // Return filter values to the caller
                           final filterData = {
                             'minBudget': minBudgetController.text.isNotEmpty
@@ -1125,9 +1123,6 @@ class _HomePageState extends ConsumerState<HomePage>
                             'createdAfter': tempCreatedAfter,
                             'createdBefore': tempCreatedBefore,
                           };
-
-                          print('🔍 Filter data: $filterData');
-                          print('🔍 Closing modal with result');
 
                           Navigator.pop(bottomSheetContext, filterData);
                         },
@@ -1158,31 +1153,19 @@ class _HomePageState extends ConsumerState<HomePage>
       maxBudgetController.dispose();
     });
 
-    print('🔍 Modal closed. Result: $result');
-    print('🔍 Mounted: $mounted');
-
     // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
     if (result != null && mounted) {
-      print('🔍 Waiting for next frame before applying filters');
-
       // Wait for the next frame to ensure navigation is fully complete
       await Future.delayed(const Duration(milliseconds: 200));
 
-      if (!mounted) {
-        print('🔍 Widget disposed during wait, not applying filters');
-        return;
-      }
+      if (!mounted) return;
 
-      print('🔍 Applying filters to state');
       setState(() {
         _minBudget = result['minBudget'] as double?;
         _maxBudget = result['maxBudget'] as double?;
         _createdAfter = result['createdAfter'] as DateTime?;
         _createdBefore = result['createdBefore'] as DateTime?;
       });
-      print('🔍 Filters applied: min=$_minBudget, max=$_maxBudget, after=$_createdAfter, before=$_createdBefore');
-    } else {
-      print('🔍 Result is null or widget not mounted - filters not applied');
     }
   }
 
