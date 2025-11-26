@@ -229,6 +229,9 @@ class AdminRemoteDataSource {
     String? status,
   }) async {
     try {
+      print('🔍 DEBUG: Calling get_all_trips_admin with params:');
+      print('  limit: $limit, offset: $offset, search: $search, status: $status');
+
       final response = await _supabase.rpc(
         'get_all_trips_admin',
         params: {
@@ -239,12 +242,18 @@ class AdminRemoteDataSource {
         },
       );
 
+      print('✅ DEBUG: Got response type: ${response.runtimeType}');
+      print('✅ DEBUG: Response: $response');
+
       final List<dynamic> data = response as List<dynamic>;
+      print('✅ DEBUG: Parsed ${data.length} trips');
 
       return data
           .map((json) => AdminTripModel.fromJson(json as Map<String, dynamic>))
           .toList();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ DEBUG: Error getting trips: $e');
+      print('❌ DEBUG: Stack trace: $stackTrace');
       throw Exception('Failed to get trips: $e');
     }
   }
