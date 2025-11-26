@@ -986,7 +986,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd,
+                                    horizontal: AppTheme.spacingSm,
                                     vertical: AppTheme.spacingMd,
                                   ),
                                   decoration: BoxDecoration(
@@ -995,8 +995,8 @@ class _HomePageState extends ConsumerState<HomePage>
                                   ),
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.calendar_month, size: 20),
-                                      const SizedBox(width: AppTheme.spacingSm),
+                                      const Icon(Icons.calendar_month, size: 18),
+                                      const SizedBox(width: AppTheme.spacingXs),
                                       Expanded(
                                         child: Text(
                                           tempCreatedAfter != null
@@ -1006,9 +1006,8 @@ class _HomePageState extends ConsumerState<HomePage>
                                             color: tempCreatedAfter != null
                                                 ? AppTheme.neutral900
                                                 : AppTheme.neutral500,
-                                            fontSize: 13,
+                                            fontSize: 12,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                         ),
                                       ),
@@ -1021,7 +1020,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                           },
                                           child: const Icon(
                                             Icons.clear,
-                                            size: 18,
+                                            size: 16,
                                             color: AppTheme.neutral600,
                                           ),
                                         ),
@@ -1048,7 +1047,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd,
+                                    horizontal: AppTheme.spacingSm,
                                     vertical: AppTheme.spacingMd,
                                   ),
                                   decoration: BoxDecoration(
@@ -1057,8 +1056,8 @@ class _HomePageState extends ConsumerState<HomePage>
                                   ),
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.calendar_month, size: 20),
-                                      const SizedBox(width: AppTheme.spacingSm),
+                                      const Icon(Icons.calendar_month, size: 18),
+                                      const SizedBox(width: AppTheme.spacingXs),
                                       Expanded(
                                         child: Text(
                                           tempCreatedBefore != null
@@ -1068,9 +1067,8 @@ class _HomePageState extends ConsumerState<HomePage>
                                             color: tempCreatedBefore != null
                                                 ? AppTheme.neutral900
                                                 : AppTheme.neutral500,
-                                            fontSize: 13,
+                                            fontSize: 12,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
                                         ),
                                       ),
@@ -1083,7 +1081,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                           },
                                           child: const Icon(
                                             Icons.clear,
-                                            size: 18,
+                                            size: 16,
                                             color: AppTheme.neutral600,
                                           ),
                                         ),
