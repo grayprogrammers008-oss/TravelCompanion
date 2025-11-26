@@ -1154,16 +1154,22 @@ class _HomePageState extends ConsumerState<HomePage>
     });
 
     // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
-    if (result != null && mounted) {
-      // Use addPostFrameCallback to ensure navigation is fully complete
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (result != null) {
+      // Store filter values in local variables
+      final minBudget = result['minBudget'] as double?;
+      final maxBudget = result['maxBudget'] as double?;
+      final createdAfter = result['createdAfter'] as DateTime?;
+      final createdBefore = result['createdBefore'] as DateTime?;
+
+      // Use Future.microtask to defer setState until after navigation completes
+      Future.microtask(() {
         if (!mounted) return;
 
         setState(() {
-          _minBudget = result['minBudget'] as double?;
-          _maxBudget = result['maxBudget'] as double?;
-          _createdAfter = result['createdAfter'] as DateTime?;
-          _createdBefore = result['createdBefore'] as DateTime?;
+          _minBudget = minBudget;
+          _maxBudget = maxBudget;
+          _createdAfter = createdAfter;
+          _createdBefore = createdBefore;
         });
       });
     }

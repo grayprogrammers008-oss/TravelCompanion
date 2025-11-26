@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../shared/models/trip_model.dart';
+import 'package:travel_crew/shared/models/trip_model.dart';
 import '../../data/datasources/trip_remote_datasource.dart';
 import '../../data/repositories/trip_repository_impl.dart';
 import '../../domain/repositories/trip_repository.dart';
