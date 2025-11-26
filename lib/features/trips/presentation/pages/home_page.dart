@@ -802,7 +802,7 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  void _showFilterSheet(BuildContext context) {
+  Future<void> _showFilterSheet(BuildContext context) async {
     final TextEditingController minBudgetController = TextEditingController(
       text: _minBudget?.toStringAsFixed(0) ?? '',
     );
@@ -813,7 +813,7 @@ class _HomePageState extends ConsumerState<HomePage>
     DateTime? tempCreatedAfter = _createdAfter;
     DateTime? tempCreatedBefore = _createdBefore;
 
-    showModalBottomSheet(
+    final result = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -865,8 +865,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         if (_hasActiveFilters)
                           TextButton(
                             onPressed: () {
-                              // Clear the main state
-                              _clearFilters();
+                              // Clear text controllers
                               minBudgetController.clear();
                               maxBudgetController.clear();
 
@@ -874,6 +873,14 @@ class _HomePageState extends ConsumerState<HomePage>
                               setModalState(() {
                                 tempCreatedAfter = null;
                                 tempCreatedBefore = null;
+                              });
+
+                              // Close modal and return cleared values
+                              Navigator.pop(context, {
+                                'minBudget': null,
+                                'maxBudget': null,
+                                'createdAfter': null,
+                                'createdBefore': null,
                               });
                             },
                             child: const Text('Clear All'),
@@ -1105,29 +1112,16 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Store values before closing
-                          final minBudget = minBudgetController.text.isNotEmpty
-                              ? double.tryParse(minBudgetController.text)
-                              : null;
-                          final maxBudget = maxBudgetController.text.isNotEmpty
-                              ? double.tryParse(maxBudgetController.text)
-                              : null;
-                          final createdAfter = tempCreatedAfter;
-                          final createdBefore = tempCreatedBefore;
-
-                          // Close the bottom sheet
-                          Navigator.pop(context);
-
-                          // Update state after the current frame completes
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (mounted) {
-                              setState(() {
-                                _minBudget = minBudget;
-                                _maxBudget = maxBudget;
-                                _createdAfter = createdAfter;
-                                _createdBefore = createdBefore;
-                              });
-                            }
+                          // Return filter values to the caller
+                          Navigator.pop(context, {
+                            'minBudget': minBudgetController.text.isNotEmpty
+                                ? double.tryParse(minBudgetController.text)
+                                : null,
+                            'maxBudget': maxBudgetController.text.isNotEmpty
+                                ? double.tryParse(maxBudgetController.text)
+                                : null,
+                            'createdAfter': tempCreatedAfter,
+                            'createdBefore': tempCreatedBefore,
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -1156,6 +1150,16 @@ class _HomePageState extends ConsumerState<HomePage>
       minBudgetController.dispose();
       maxBudgetController.dispose();
     });
+
+    // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
+    if (result != null && mounted) {
+      setState(() {
+        _minBudget = result['minBudget'] as double?;
+        _maxBudget = result['maxBudget'] as double?;
+        _createdAfter = result['createdAfter'] as DateTime?;
+        _createdBefore = result['createdBefore'] as DateTime?;
+      });
+    }
   }
 
   // Packing luggage animation
