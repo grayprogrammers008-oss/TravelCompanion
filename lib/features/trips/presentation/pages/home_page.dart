@@ -1106,7 +1106,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () async {
+                        onPressed: () {
                           // Store values before closing
                           final minBudget = minBudgetController.text.isNotEmpty
                               ? double.tryParse(minBudgetController.text)
@@ -1120,18 +1120,17 @@ class _HomePageState extends ConsumerState<HomePage>
                           // Close the bottom sheet
                           Navigator.pop(context);
 
-                          // Wait a bit for navigation to complete
-                          await Future.delayed(const Duration(milliseconds: 100));
-
-                          // Update state after sheet is closed
-                          if (mounted) {
-                            setState(() {
-                              _minBudget = minBudget;
-                              _maxBudget = maxBudget;
-                              _createdAfter = createdAfter;
-                              _createdBefore = createdBefore;
-                            });
-                          }
+                          // Update state after the current frame completes
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
+                              setState(() {
+                                _minBudget = minBudget;
+                                _maxBudget = maxBudget;
+                                _createdAfter = createdAfter;
+                                _createdBefore = createdBefore;
+                              });
+                            }
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
