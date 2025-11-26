@@ -1000,13 +1000,16 @@ class _HomePageState extends ConsumerState<HomePage>
                                       Expanded(
                                         child: Text(
                                           tempCreatedAfter != null
-                                              ? '${tempCreatedAfter!.day}/${tempCreatedAfter!.month}/${tempCreatedAfter!.year}'
+                                              ? '${tempCreatedAfter!.day.toString().padLeft(2, '0')}/${tempCreatedAfter!.month.toString().padLeft(2, '0')}/${tempCreatedAfter!.year}'
                                               : 'From Date',
                                           style: TextStyle(
                                             color: tempCreatedAfter != null
                                                 ? AppTheme.neutral900
                                                 : AppTheme.neutral500,
+                                            fontSize: 13,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
                                       if (tempCreatedAfter != null)
@@ -1059,13 +1062,16 @@ class _HomePageState extends ConsumerState<HomePage>
                                       Expanded(
                                         child: Text(
                                           tempCreatedBefore != null
-                                              ? '${tempCreatedBefore!.day}/${tempCreatedBefore!.month}/${tempCreatedBefore!.year}'
+                                              ? '${tempCreatedBefore!.day.toString().padLeft(2, '0')}/${tempCreatedBefore!.month.toString().padLeft(2, '0')}/${tempCreatedBefore!.year}'
                                               : 'To Date',
                                           style: TextStyle(
                                             color: tempCreatedBefore != null
                                                 ? AppTheme.neutral900
                                                 : AppTheme.neutral500,
+                                            fontSize: 13,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
                                       if (tempCreatedBefore != null)
@@ -1100,25 +1106,32 @@ class _HomePageState extends ConsumerState<HomePage>
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Close the bottom sheet first
+                        onPressed: () async {
+                          // Store values before closing
+                          final minBudget = minBudgetController.text.isNotEmpty
+                              ? double.tryParse(minBudgetController.text)
+                              : null;
+                          final maxBudget = maxBudgetController.text.isNotEmpty
+                              ? double.tryParse(maxBudgetController.text)
+                              : null;
+                          final createdAfter = tempCreatedAfter;
+                          final createdBefore = tempCreatedBefore;
+
+                          // Close the bottom sheet
                           Navigator.pop(context);
 
-                          // Update state after navigation completes
-                          Future.microtask(() {
-                            if (mounted) {
-                              setState(() {
-                                _minBudget = minBudgetController.text.isNotEmpty
-                                    ? double.tryParse(minBudgetController.text)
-                                    : null;
-                                _maxBudget = maxBudgetController.text.isNotEmpty
-                                    ? double.tryParse(maxBudgetController.text)
-                                    : null;
-                                _createdAfter = tempCreatedAfter;
-                                _createdBefore = tempCreatedBefore;
-                              });
-                            }
-                          });
+                          // Wait a bit for navigation to complete
+                          await Future.delayed(const Duration(milliseconds: 100));
+
+                          // Update state after sheet is closed
+                          if (mounted) {
+                            setState(() {
+                              _minBudget = minBudget;
+                              _maxBudget = maxBudget;
+                              _createdAfter = createdAfter;
+                              _createdBefore = createdBefore;
+                            });
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
