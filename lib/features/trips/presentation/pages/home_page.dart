@@ -813,6 +813,9 @@ class _HomePageState extends ConsumerState<HomePage>
     DateTime? tempCreatedAfter = _createdAfter;
     DateTime? tempCreatedBefore = _createdBefore;
 
+    // Store filter updates to apply AFTER modal closes
+    Map<String, dynamic>? pendingFilters;
+
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -875,13 +878,13 @@ class _HomePageState extends ConsumerState<HomePage>
                                 tempCreatedBefore = null;
                               });
 
-                              // Update parent widget state BEFORE closing modal
-                              setState(() {
-                                _minBudget = null;
-                                _maxBudget = null;
-                                _createdAfter = null;
-                                _createdBefore = null;
-                              });
+                              // Store cleared filters to apply AFTER modal closes
+                              pendingFilters = {
+                                'minBudget': null,
+                                'maxBudget': null,
+                                'createdAfter': null,
+                                'createdBefore': null,
+                              };
 
                               // Close modal
                               Navigator.pop(bottomSheetContext);
@@ -1115,17 +1118,17 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Update parent widget state BEFORE closing modal - this avoids setState timing issues!
-                          setState(() {
-                            _minBudget = minBudgetController.text.isNotEmpty
+                          // Store filter values to apply AFTER modal closes
+                          pendingFilters = {
+                            'minBudget': minBudgetController.text.isNotEmpty
                                 ? double.tryParse(minBudgetController.text)
-                                : null;
-                            _maxBudget = maxBudgetController.text.isNotEmpty
+                                : null,
+                            'maxBudget': maxBudgetController.text.isNotEmpty
                                 ? double.tryParse(maxBudgetController.text)
-                                : null;
-                            _createdAfter = tempCreatedAfter;
-                            _createdBefore = tempCreatedBefore;
-                          });
+                                : null,
+                            'createdAfter': tempCreatedAfter,
+                            'createdBefore': tempCreatedBefore,
+                          };
 
                           // Close modal
                           Navigator.pop(bottomSheetContext);
@@ -1156,6 +1159,16 @@ class _HomePageState extends ConsumerState<HomePage>
       minBudgetController.dispose();
       maxBudgetController.dispose();
     });
+
+    // Apply pending filters AFTER modal has fully closed
+    if (pendingFilters != null && mounted) {
+      setState(() {
+        _minBudget = pendingFilters!['minBudget'] as double?;
+        _maxBudget = pendingFilters!['maxBudget'] as double?;
+        _createdAfter = pendingFilters!['createdAfter'] as DateTime?;
+        _createdBefore = pendingFilters!['createdBefore'] as DateTime?;
+      });
+    }
   }
 
   // Packing luggage animation
