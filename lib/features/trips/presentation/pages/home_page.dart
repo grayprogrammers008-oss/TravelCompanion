@@ -16,12 +16,6 @@ import '../../../../shared/models/trip_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/trip_providers.dart';
 
-// Filter state providers - using Riverpod instead of widget state to avoid setState during navigation
-final minBudgetFilterProvider = StateProvider<double?>((ref) => null);
-final maxBudgetFilterProvider = StateProvider<double?>((ref) => null);
-final createdAfterFilterProvider = StateProvider<DateTime?>((ref) => null);
-final createdBeforeFilterProvider = StateProvider<DateTime?>((ref) => null);
-
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -35,6 +29,12 @@ class _HomePageState extends ConsumerState<HomePage>
   late Animation<double> _fadeAnimation;
   final _searchController = TextEditingController();
   bool _isSearching = false;
+
+  // Filter state variables
+  double? _minBudget;
+  double? _maxBudget;
+  DateTime? _createdAfter;
+  DateTime? _createdBefore;
 
   @override
   void initState() {
@@ -59,10 +59,6 @@ class _HomePageState extends ConsumerState<HomePage>
 
   List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
     final query = _searchController.text.toLowerCase().trim();
-    final minBudget = ref.read(minBudgetFilterProvider);
-    final maxBudget = ref.read(maxBudgetFilterProvider);
-    final createdAfter = ref.read(createdAfterFilterProvider);
-    final createdBefore = ref.read(createdBeforeFilterProvider);
 
     return trips.where((tripWithMembers) {
       final trip = tripWithMembers.trip;
@@ -78,19 +74,19 @@ class _HomePageState extends ConsumerState<HomePage>
       }
 
       // Budget filter
-      if (minBudget != null && trip.budget != null) {
-        if (trip.budget! < minBudget) return false;
+      if (_minBudget != null && trip.budget != null) {
+        if (trip.budget! < _minBudget!) return false;
       }
-      if (maxBudget != null && trip.budget != null) {
-        if (trip.budget! > maxBudget) return false;
+      if (_maxBudget != null && trip.budget != null) {
+        if (trip.budget! > _maxBudget!) return false;
       }
 
       // Date created filter
-      if (createdAfter != null && trip.createdAt != null) {
-        if (trip.createdAt!.isBefore(createdAfter)) return false;
+      if (_createdAfter != null && trip.createdAt != null) {
+        if (trip.createdAt!.isBefore(_createdAfter!)) return false;
       }
-      if (createdBefore != null && trip.createdAt != null) {
-        final endOfDay = DateTime(createdBefore.year, createdBefore.month, createdBefore.day, 23, 59, 59);
+      if (_createdBefore != null && trip.createdAt != null) {
+        final endOfDay = DateTime(_createdBefore!.year, _createdBefore!.month, _createdBefore!.day, 23, 59, 59);
         if (trip.createdAt!.isAfter(endOfDay)) return false;
       }
 
@@ -99,17 +95,19 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   bool get _hasActiveFilters {
-    return ref.read(minBudgetFilterProvider) != null ||
-           ref.read(maxBudgetFilterProvider) != null ||
-           ref.read(createdAfterFilterProvider) != null ||
-           ref.read(createdBeforeFilterProvider) != null;
+    return _minBudget != null ||
+           _maxBudget != null ||
+           _createdAfter != null ||
+           _createdBefore != null;
   }
 
   void _clearFilters() {
-    ref.read(minBudgetFilterProvider.notifier).state = null;
-    ref.read(maxBudgetFilterProvider.notifier).state = null;
-    ref.read(createdAfterFilterProvider.notifier).state = null;
-    ref.read(createdBeforeFilterProvider.notifier).state = null;
+    setState(() {
+      _minBudget = null;
+      _maxBudget = null;
+      _createdAfter = null;
+      _createdBefore = null;
+    });
   }
 
   @override
@@ -805,22 +803,17 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Future<void> _showFilterSheet(BuildContext context) async {
-    final minBudget = ref.read(minBudgetFilterProvider);
-    final maxBudget = ref.read(maxBudgetFilterProvider);
-    final createdAfter = ref.read(createdAfterFilterProvider);
-    final createdBefore = ref.read(createdBeforeFilterProvider);
-
     final TextEditingController minBudgetController = TextEditingController(
-      text: minBudget?.toStringAsFixed(0) ?? '',
+      text: _minBudget?.toStringAsFixed(0) ?? '',
     );
     final TextEditingController maxBudgetController = TextEditingController(
-      text: maxBudget?.toStringAsFixed(0) ?? '',
+      text: _maxBudget?.toStringAsFixed(0) ?? '',
     );
 
-    DateTime? tempCreatedAfter = createdAfter;
-    DateTime? tempCreatedBefore = createdBefore;
+    DateTime? tempCreatedAfter = _createdAfter;
+    DateTime? tempCreatedBefore = _createdBefore;
 
-    final result = await showModalBottomSheet<Map<String, dynamic>>(
+    await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -882,13 +875,16 @@ class _HomePageState extends ConsumerState<HomePage>
                                 tempCreatedBefore = null;
                               });
 
-                              // Close modal and return cleared values
-                              Navigator.pop(bottomSheetContext, {
-                                'minBudget': null,
-                                'maxBudget': null,
-                                'createdAfter': null,
-                                'createdBefore': null,
+                              // Update parent widget state BEFORE closing modal
+                              setState(() {
+                                _minBudget = null;
+                                _maxBudget = null;
+                                _createdAfter = null;
+                                _createdBefore = null;
                               });
+
+                              // Close modal
+                              Navigator.pop(bottomSheetContext);
                             },
                             child: const Text('Clear All'),
                           ),
@@ -1119,19 +1115,20 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Return filter values to the caller
-                          final filterData = {
-                            'minBudget': minBudgetController.text.isNotEmpty
+                          // Update parent widget state BEFORE closing modal - this avoids setState timing issues!
+                          setState(() {
+                            _minBudget = minBudgetController.text.isNotEmpty
                                 ? double.tryParse(minBudgetController.text)
-                                : null,
-                            'maxBudget': maxBudgetController.text.isNotEmpty
+                                : null;
+                            _maxBudget = maxBudgetController.text.isNotEmpty
                                 ? double.tryParse(maxBudgetController.text)
-                                : null,
-                            'createdAfter': tempCreatedAfter,
-                            'createdBefore': tempCreatedBefore,
-                          };
+                                : null;
+                            _createdAfter = tempCreatedAfter;
+                            _createdBefore = tempCreatedBefore;
+                          });
 
-                          Navigator.pop(bottomSheetContext, filterData);
+                          // Close modal
+                          Navigator.pop(bottomSheetContext);
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
@@ -1159,15 +1156,6 @@ class _HomePageState extends ConsumerState<HomePage>
       minBudgetController.dispose();
       maxBudgetController.dispose();
     });
-
-    // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
-    if (result != null) {
-      // Update providers directly - NO setState, NO timing issues!
-      ref.read(minBudgetFilterProvider.notifier).state = result['minBudget'] as double?;
-      ref.read(maxBudgetFilterProvider.notifier).state = result['maxBudget'] as double?;
-      ref.read(createdAfterFilterProvider.notifier).state = result['createdAfter'] as DateTime?;
-      ref.read(createdBeforeFilterProvider.notifier).state = result['createdBefore'] as DateTime?;
-    }
   }
 
   // Packing luggage animation
