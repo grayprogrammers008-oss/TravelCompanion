@@ -16,6 +16,12 @@ import '../../../../shared/models/trip_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/trip_providers.dart';
 
+// Filter state providers - using Riverpod instead of widget state to avoid setState during navigation
+final minBudgetFilterProvider = StateProvider<double?>((ref) => null);
+final maxBudgetFilterProvider = StateProvider<double?>((ref) => null);
+final createdAfterFilterProvider = StateProvider<DateTime?>((ref) => null);
+final createdBeforeFilterProvider = StateProvider<DateTime?>((ref) => null);
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -29,12 +35,6 @@ class _HomePageState extends ConsumerState<HomePage>
   late Animation<double> _fadeAnimation;
   final _searchController = TextEditingController();
   bool _isSearching = false;
-
-  // Filter state
-  double? _minBudget;
-  double? _maxBudget;
-  DateTime? _createdAfter;
-  DateTime? _createdBefore;
 
   @override
   void initState() {
@@ -59,6 +59,10 @@ class _HomePageState extends ConsumerState<HomePage>
 
   List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
     final query = _searchController.text.toLowerCase().trim();
+    final minBudget = ref.read(minBudgetFilterProvider);
+    final maxBudget = ref.read(maxBudgetFilterProvider);
+    final createdAfter = ref.read(createdAfterFilterProvider);
+    final createdBefore = ref.read(createdBeforeFilterProvider);
 
     return trips.where((tripWithMembers) {
       final trip = tripWithMembers.trip;
@@ -74,19 +78,19 @@ class _HomePageState extends ConsumerState<HomePage>
       }
 
       // Budget filter
-      if (_minBudget != null && trip.budget != null) {
-        if (trip.budget! < _minBudget!) return false;
+      if (minBudget != null && trip.budget != null) {
+        if (trip.budget! < minBudget) return false;
       }
-      if (_maxBudget != null && trip.budget != null) {
-        if (trip.budget! > _maxBudget!) return false;
+      if (maxBudget != null && trip.budget != null) {
+        if (trip.budget! > maxBudget) return false;
       }
 
       // Date created filter
-      if (_createdAfter != null && trip.createdAt != null) {
-        if (trip.createdAt!.isBefore(_createdAfter!)) return false;
+      if (createdAfter != null && trip.createdAt != null) {
+        if (trip.createdAt!.isBefore(createdAfter)) return false;
       }
-      if (_createdBefore != null && trip.createdAt != null) {
-        final endOfDay = DateTime(_createdBefore!.year, _createdBefore!.month, _createdBefore!.day, 23, 59, 59);
+      if (createdBefore != null && trip.createdAt != null) {
+        final endOfDay = DateTime(createdBefore.year, createdBefore.month, createdBefore.day, 23, 59, 59);
         if (trip.createdAt!.isAfter(endOfDay)) return false;
       }
 
@@ -95,19 +99,17 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   bool get _hasActiveFilters {
-    return _minBudget != null ||
-           _maxBudget != null ||
-           _createdAfter != null ||
-           _createdBefore != null;
+    return ref.read(minBudgetFilterProvider) != null ||
+           ref.read(maxBudgetFilterProvider) != null ||
+           ref.read(createdAfterFilterProvider) != null ||
+           ref.read(createdBeforeFilterProvider) != null;
   }
 
   void _clearFilters() {
-    setState(() {
-      _minBudget = null;
-      _maxBudget = null;
-      _createdAfter = null;
-      _createdBefore = null;
-    });
+    ref.read(minBudgetFilterProvider.notifier).state = null;
+    ref.read(maxBudgetFilterProvider.notifier).state = null;
+    ref.read(createdAfterFilterProvider.notifier).state = null;
+    ref.read(createdBeforeFilterProvider.notifier).state = null;
   }
 
   @override
@@ -803,15 +805,20 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Future<void> _showFilterSheet(BuildContext context) async {
+    final minBudget = ref.read(minBudgetFilterProvider);
+    final maxBudget = ref.read(maxBudgetFilterProvider);
+    final createdAfter = ref.read(createdAfterFilterProvider);
+    final createdBefore = ref.read(createdBeforeFilterProvider);
+
     final TextEditingController minBudgetController = TextEditingController(
-      text: _minBudget?.toStringAsFixed(0) ?? '',
+      text: minBudget?.toStringAsFixed(0) ?? '',
     );
     final TextEditingController maxBudgetController = TextEditingController(
-      text: _maxBudget?.toStringAsFixed(0) ?? '',
+      text: maxBudget?.toStringAsFixed(0) ?? '',
     );
 
-    DateTime? tempCreatedAfter = _createdAfter;
-    DateTime? tempCreatedBefore = _createdBefore;
+    DateTime? tempCreatedAfter = createdAfter;
+    DateTime? tempCreatedBefore = createdBefore;
 
     final result = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -1155,23 +1162,11 @@ class _HomePageState extends ConsumerState<HomePage>
 
     // Apply filters if result was returned (user clicked Apply, not Cancel/Dismiss)
     if (result != null) {
-      // Store filter values in local variables
-      final minBudget = result['minBudget'] as double?;
-      final maxBudget = result['maxBudget'] as double?;
-      final createdAfter = result['createdAfter'] as DateTime?;
-      final createdBefore = result['createdBefore'] as DateTime?;
-
-      // Use Future.microtask to defer setState until after navigation completes
-      Future.microtask(() {
-        if (!mounted) return;
-
-        setState(() {
-          _minBudget = minBudget;
-          _maxBudget = maxBudget;
-          _createdAfter = createdAfter;
-          _createdBefore = createdBefore;
-        });
-      });
+      // Update providers directly - NO setState, NO timing issues!
+      ref.read(minBudgetFilterProvider.notifier).state = result['minBudget'] as double?;
+      ref.read(maxBudgetFilterProvider.notifier).state = result['maxBudget'] as double?;
+      ref.read(createdAfterFilterProvider.notifier).state = result['createdAfter'] as DateTime?;
+      ref.read(createdBeforeFilterProvider.notifier).state = result['createdBefore'] as DateTime?;
     }
   }
 
