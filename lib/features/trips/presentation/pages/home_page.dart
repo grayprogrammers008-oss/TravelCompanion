@@ -1161,13 +1161,17 @@ class _HomePageState extends ConsumerState<HomePage>
     });
 
     // Apply pending filters AFTER modal has fully closed
-    if (pendingFilters != null && mounted) {
-      setState(() {
-        _minBudget = pendingFilters!['minBudget'] as double?;
-        _maxBudget = pendingFilters!['maxBudget'] as double?;
-        _createdAfter = pendingFilters!['createdAfter'] as DateTime?;
-        _createdBefore = pendingFilters!['createdBefore'] as DateTime?;
-      });
+    // Add small delay to ensure navigation animation is complete
+    if (pendingFilters != null) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (mounted) {
+        setState(() {
+          _minBudget = pendingFilters!['minBudget'] as double?;
+          _maxBudget = pendingFilters!['maxBudget'] as double?;
+          _createdAfter = pendingFilters!['createdAfter'] as DateTime?;
+          _createdBefore = pendingFilters!['createdBefore'] as DateTime?;
+        });
+      }
     }
   }
 
