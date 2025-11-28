@@ -11,7 +11,7 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../providers/itinerary_providers.dart';
 
-class ItineraryListPage extends ConsumerWidget {
+class ItineraryListPage extends ConsumerStatefulWidget {
   final String tripId;
 
   const ItineraryListPage({
@@ -20,9 +20,47 @@ class ItineraryListPage extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ItineraryListPage> createState() => _ItineraryListPageState();
+}
+
+class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
+  final _searchController = TextEditingController();
+  bool _isSearching = false;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Filter itinerary days based on search query
+  List<ItineraryDay> _filterDays(List<ItineraryDay> days) {
+    final query = _searchController.text.toLowerCase().trim();
+
+    if (query.isEmpty) {
+      return days;
+    }
+
+    // Filter days to only include items matching the search
+    return days.map((day) {
+      final filteredItems = day.items.where((item) {
+        final titleMatch = item.title.toLowerCase().contains(query);
+        final locationMatch = item.location?.toLowerCase().contains(query) ?? false;
+        final descriptionMatch = item.description?.toLowerCase().contains(query) ?? false;
+        return titleMatch || locationMatch || descriptionMatch;
+      }).toList();
+
+      return ItineraryDay(
+        dayNumber: day.dayNumber,
+        items: filteredItems,
+      );
+    }).where((day) => day.items.isNotEmpty).toList(); // Remove empty days
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeData = context.appThemeData;
-    final itineraryAsync = ref.watch(itineraryByDaysProvider(tripId));
+    final itineraryAsync = ref.watch(itineraryByDaysProvider(widget.tripId));
 
     // Listen for success/error messages
     ref.listen<ItineraryState>(itineraryControllerProvider, (previous, next) {
@@ -48,8 +86,74 @@ class ItineraryListPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Itinerary'),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                autocorrect: false,
+                enableSuggestions: false,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
+                ),
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                  hintText: 'Search activities...',
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 14,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withValues(alpha: 0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.white70,
+                    size: 18,
+                  ),
+                ),
+                onChanged: (_) => setState(() {}),
+              )
+            : const Text('Itinerary'),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) {
+                  _searchController.clear();
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: itineraryAsync.when(
         loading: () => const Center(
@@ -85,14 +189,22 @@ class ItineraryListPage extends ConsumerWidget {
             return _buildEmptyState(context);
           }
 
+          // Apply search filter
+          final filteredDays = _filterDays(days);
+
+          // Show "no results" if search returns nothing
+          if (filteredDays.isEmpty && _searchController.text.isNotEmpty) {
+            return _buildNoSearchResults(context);
+          }
+
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(itineraryByDaysProvider);
             },
             child: StaggeredListAnimation(
-              itemCount: days.length,
+              itemCount: filteredDays.length,
               itemBuilder: (context, index) {
-                final day = days[index];
+                final day = filteredDays[index];
                 return _buildDaySection(context, ref, day);
               },
             ),
@@ -133,41 +245,92 @@ class ItineraryListPage extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.event_note_outlined,
-              size: 120,
-              color: context.primaryColor.withValues(alpha: 0.3),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'No Activities Yet',
-              style: context.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.event_note_outlined,
+                size: 120,
+                color: context.primaryColor.withValues(alpha: 0.3),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Start planning your trip by adding activities to your itinerary',
-              style: context.bodyLarge.copyWith(
-                color: context.textColor.withValues(alpha: 0.6),
+              const SizedBox(height: 24),
+              Text(
+                'No Activities Yet',
+                style: context.headlineSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () => _navigateToAddItem(context),
-              icon: const Icon(Icons.add),
-              label: const Text('Add First Activity'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              const SizedBox(height: 12),
+              Text(
+                'Start planning your trip by adding activities to your itinerary',
+                style: context.bodyLarge.copyWith(
+                  color: context.textColor.withValues(alpha: 0.6),
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () => _navigateToAddItem(context),
+                icon: const Icon(Icons.add),
+                label: const Text('Add First Activity'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoSearchResults(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search_off,
+                size: 120,
+                color: context.textColor.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'No Activities Found',
+                style: context.headlineSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Try searching with different keywords',
+                style: context.bodyLarge.copyWith(
+                  color: context.textColor.withValues(alpha: 0.6),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _searchController.clear();
+                    _isSearching = false;
+                  });
+                },
+                icon: const Icon(Icons.clear),
+                label: const Text('Clear Search'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -384,17 +547,17 @@ class ItineraryListPage extends ConsumerWidget {
 
     // Call reorder use case
     ref.read(itineraryControllerProvider.notifier).reorderItems(
-          tripId: tripId,
+          tripId: widget.tripId,
           dayNumber: day.dayNumber,
           itemIds: itemIds,
         );
   }
 
   void _navigateToAddItem(BuildContext context) {
-    context.push('/trips/$tripId/itinerary/add');
+    context.push('/trips/${widget.tripId}/itinerary/add');
   }
 
   void _navigateToEditItem(BuildContext context, String itemId) {
-    context.push('/trips/$tripId/itinerary/$itemId/edit');
+    context.push('/trips/${widget.tripId}/itinerary/$itemId/edit');
   }
 }

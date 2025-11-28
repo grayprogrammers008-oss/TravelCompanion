@@ -73,12 +73,14 @@ class _HomePageState extends ConsumerState<HomePage>
         }
       }
 
-      // Budget filter
-      if (_minBudget != null && trip.budget != null) {
-        if (trip.budget! < _minBudget!) return false;
+      // Budget filter (treat null budget as 0)
+      if (_minBudget != null) {
+        final tripBudget = trip.budget ?? 0.0;
+        if (tripBudget < _minBudget!) return false;
       }
-      if (_maxBudget != null && trip.budget != null) {
-        if (trip.budget! > _maxBudget!) return false;
+      if (_maxBudget != null) {
+        final tripBudget = trip.budget ?? 0.0;
+        if (tripBudget > _maxBudget!) return false;
       }
 
       // Date created filter
@@ -291,7 +293,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 );
               }
 
-              if (filteredTrips.isEmpty && _searchController.text.isNotEmpty) {
+              if (filteredTrips.isEmpty && (_searchController.text.isNotEmpty || _hasActiveFilters)) {
                 return SliverFillRemaining(
                   child: _buildNoSearchResults(context),
                 );
@@ -426,7 +428,9 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 const SizedBox(height: AppTheme.spacingXs),
                 Text(
-                  'Try a different search term',
+                  _hasActiveFilters
+                      ? 'Try adjusting your filters or search terms'
+                      : 'Try a different search term',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppTheme.neutral600,
                       ),
@@ -434,12 +438,13 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 const SizedBox(height: AppTheme.spacingSm),
                 GlossyButton(
-                  label: 'Clear Search',
+                  label: _hasActiveFilters ? 'Clear Filters & Search' : 'Clear Search',
                   icon: Icons.clear,
                   onPressed: () {
                     setState(() {
                       _searchController.clear();
                       _isSearching = false;
+                      _clearFilters();
                     });
                   },
                 ),
@@ -813,10 +818,8 @@ class _HomePageState extends ConsumerState<HomePage>
     DateTime? tempCreatedAfter = _createdAfter;
     DateTime? tempCreatedBefore = _createdBefore;
 
-    // Store filter updates to apply AFTER modal closes
-    Map<String, dynamic>? pendingFilters;
-
-    await showModalBottomSheet<void>(
+    // Use return value to avoid timing issues
+    final result = await showModalBottomSheet<Map<String, dynamic>?>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -868,26 +871,14 @@ class _HomePageState extends ConsumerState<HomePage>
                         if (_hasActiveFilters)
                           TextButton(
                             onPressed: () {
-                              // Clear text controllers
-                              minBudgetController.clear();
-                              maxBudgetController.clear();
-
-                              // Update modal state
-                              setModalState(() {
-                                tempCreatedAfter = null;
-                                tempCreatedBefore = null;
-                              });
-
-                              // Store cleared filters to apply AFTER modal closes
-                              pendingFilters = {
+                              // Return cleared filters
+                              final clearedFilters = {
                                 'minBudget': null,
                                 'maxBudget': null,
                                 'createdAfter': null,
                                 'createdBefore': null,
                               };
-
-                              // Close modal
-                              Navigator.pop(bottomSheetContext);
+                              Navigator.pop(bottomSheetContext, clearedFilters);
                             },
                             child: const Text('Clear All'),
                           ),
@@ -1118,8 +1109,8 @@ class _HomePageState extends ConsumerState<HomePage>
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Store filter values to apply AFTER modal closes
-                          pendingFilters = {
+                          // Return filter values
+                          final filters = {
                             'minBudget': minBudgetController.text.isNotEmpty
                                 ? double.tryParse(minBudgetController.text)
                                 : null,
@@ -1129,9 +1120,7 @@ class _HomePageState extends ConsumerState<HomePage>
                             'createdAfter': tempCreatedAfter,
                             'createdBefore': tempCreatedBefore,
                           };
-
-                          // Close modal
-                          Navigator.pop(bottomSheetContext);
+                          Navigator.pop(bottomSheetContext, filters);
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
@@ -1155,23 +1144,32 @@ class _HomePageState extends ConsumerState<HomePage>
           ),
         ),
       ),
-    ).whenComplete(() {
-      minBudgetController.dispose();
-      maxBudgetController.dispose();
-    });
+    );
 
-    // Apply pending filters AFTER modal has fully closed
-    // Add small delay to ensure navigation animation is complete
-    if (pendingFilters != null) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (mounted) {
-        setState(() {
-          _minBudget = pendingFilters!['minBudget'] as double?;
-          _maxBudget = pendingFilters!['maxBudget'] as double?;
-          _createdAfter = pendingFilters!['createdAfter'] as DateTime?;
-          _createdBefore = pendingFilters!['createdBefore'] as DateTime?;
-        });
-      }
+    // Dispose controllers
+    minBudgetController.dispose();
+    maxBudgetController.dispose();
+
+    // Apply returned filters after navigation completes
+    if (result != null && mounted) {
+      // Use addPostFrameCallback to avoid setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _minBudget = result['minBudget'] as double?;
+            _maxBudget = result['maxBudget'] as double?;
+            _createdAfter = result['createdAfter'] as DateTime?;
+            _createdBefore = result['createdBefore'] as DateTime?;
+          });
+
+          // Debug: Log filter values
+          print('🔍 Filters applied:');
+          print('  Min Budget: $_minBudget');
+          print('  Max Budget: $_maxBudget');
+          print('  Created After: $_createdAfter');
+          print('  Created Before: $_createdBefore');
+        }
+      });
     }
   }
 
