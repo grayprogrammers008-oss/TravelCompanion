@@ -45,33 +45,33 @@ class AdminTripModel {
 
   factory AdminTripModel.fromJson(Map<String, dynamic> json) {
     return AdminTripModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String?,
-      destination: json['destination'] as String?,
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? 'Unnamed Trip',
+      description: json['description']?.toString(),
+      destination: json['destination']?.toString(),
       startDate: json['start_date'] != null
-          ? DateTime.parse(json['start_date'] as String)
+          ? DateTime.tryParse(json['start_date'].toString())
           : null,
       endDate: json['end_date'] != null
-          ? DateTime.parse(json['end_date'] as String)
+          ? DateTime.tryParse(json['end_date'].toString())
           : null,
-      coverImageUrl: json['cover_image_url'] as String?,
-      createdBy: json['created_by'] as String,
-      creatorName: json['creator_name'] as String,
-      creatorEmail: json['creator_email'] as String,
+      coverImageUrl: json['cover_image_url']?.toString(),
+      createdBy: json['created_by']?.toString() ?? '',
+      creatorName: json['creator_name']?.toString() ?? 'Unknown',
+      creatorEmail: json['creator_email']?.toString() ?? '',
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
+          ? DateTime.tryParse(json['created_at'].toString())
           : null,
       updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
+          ? DateTime.tryParse(json['updated_at'].toString())
           : null,
-      isCompleted: json['is_completed'] as bool? ?? false,
+      isCompleted: json['is_completed'] == true,
       completedAt: json['completed_at'] != null
-          ? DateTime.parse(json['completed_at'] as String)
+          ? DateTime.tryParse(json['completed_at'].toString())
           : null,
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       budget: (json['budget'] as num?)?.toDouble(),
-      currency: json['currency'] as String? ?? 'INR',
+      currency: json['currency']?.toString() ?? 'INR',
       memberCount: (json['member_count'] as num?)?.toInt() ?? 0,
       totalExpenses: (json['total_expenses'] as num?)?.toDouble(),
     );
