@@ -81,18 +81,20 @@ void main() {
 
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
-          if (trip.budget != null && trip.budget! < minBudget) {
+          // NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget) {
             return false;
           }
           return true;
         }).toList();
 
-        expect(filtered.length, 4); // trip1, trip2, trip3, trip5 (null budget passes)
-        expect(filtered.any((t) => t.trip.id == '1'), true);
-        expect(filtered.any((t) => t.trip.id == '2'), true);
-        expect(filtered.any((t) => t.trip.id == '3'), true);
-        expect(filtered.any((t) => t.trip.id == '4'), false); // Filtered out (10k < 30k)
-        expect(filtered.any((t) => t.trip.id == '5'), true); // Null budget passes
+        expect(filtered.length, 3); // trip1, trip2, trip3
+        expect(filtered.any((t) => t.trip.id == '1'), true);  // 50k >= 30k
+        expect(filtered.any((t) => t.trip.id == '2'), true);  // 30k >= 30k
+        expect(filtered.any((t) => t.trip.id == '3'), true);  // 80k >= 30k
+        expect(filtered.any((t) => t.trip.id == '4'), false); // 10k < 30k
+        expect(filtered.any((t) => t.trip.id == '5'), false); // null = 0 < 30k
       });
 
       test('Filter by maximum budget only', () {
@@ -100,18 +102,20 @@ void main() {
 
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
-          if (trip.budget != null && trip.budget! > maxBudget) {
+          // NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget > maxBudget) {
             return false;
           }
           return true;
         }).toList();
 
         expect(filtered.length, 4); // trip1, trip2, trip4, trip5
-        expect(filtered.any((t) => t.trip.id == '1'), true);
-        expect(filtered.any((t) => t.trip.id == '2'), true);
-        expect(filtered.any((t) => t.trip.id == '3'), false); // Filtered out
-        expect(filtered.any((t) => t.trip.id == '4'), true);
-        expect(filtered.any((t) => t.trip.id == '5'), true); // Null budget passes
+        expect(filtered.any((t) => t.trip.id == '1'), true);  // 50k <= 50k
+        expect(filtered.any((t) => t.trip.id == '2'), true);  // 30k <= 50k
+        expect(filtered.any((t) => t.trip.id == '3'), false); // 80k > 50k
+        expect(filtered.any((t) => t.trip.id == '4'), true);  // 10k <= 50k
+        expect(filtered.any((t) => t.trip.id == '5'), true);  // null = 0 <= 50k
       });
 
       test('Filter by budget range', () {
@@ -120,38 +124,55 @@ void main() {
 
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
-          if (trip.budget != null) {
-            if (trip.budget! < minBudget || trip.budget! > maxBudget) {
-              return false;
-            }
+          // NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget || tripBudget > maxBudget) {
+            return false;
           }
           return true;
         }).toList();
 
-        expect(filtered.length, 3); // trip1, trip2, trip5
-        expect(filtered.any((t) => t.trip.id == '1'), true);
-        expect(filtered.any((t) => t.trip.id == '2'), true);
-        expect(filtered.any((t) => t.trip.id == '3'), false); // > maxBudget
-        expect(filtered.any((t) => t.trip.id == '4'), false); // < minBudget
-        expect(filtered.any((t) => t.trip.id == '5'), true); // Null budget passes
+        expect(filtered.length, 2); // trip1, trip2 only
+        expect(filtered.any((t) => t.trip.id == '1'), true);  // 50k in range
+        expect(filtered.any((t) => t.trip.id == '2'), true);  // 30k in range
+        expect(filtered.any((t) => t.trip.id == '3'), false); // 80k > maxBudget
+        expect(filtered.any((t) => t.trip.id == '4'), false); // 10k < minBudget
+        expect(filtered.any((t) => t.trip.id == '5'), false); // null = 0 < minBudget
       });
 
-      test('Trips with null budget should pass all budget filters', () {
+      test('Trips with null budget should be treated as 0', () {
         final minBudget = 100000.0;
         final maxBudget = 200000.0;
 
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
-          if (trip.budget != null) {
-            if (trip.budget! < minBudget || trip.budget! > maxBudget) {
-              return false;
-            }
+          // NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget || tripBudget > maxBudget) {
+            return false;
           }
           return true;
         }).toList();
 
-        expect(filtered.length, 1); // Only trip5 with null budget
-        expect(filtered.first.trip.id, '5');
+        expect(filtered.length, 0); // No trips match (trip5 null = 0 < 100k)
+        expect(filtered.any((t) => t.trip.id == '5'), false);
+      });
+
+      test('Null budget (0) should pass when minBudget is 0', () {
+        final minBudget = 0.0;
+        final maxBudget = 50000.0;
+
+        final filtered = allTrips.where((tripWithMembers) {
+          final trip = tripWithMembers.trip;
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget || tripBudget > maxBudget) {
+            return false;
+          }
+          return true;
+        }).toList();
+
+        expect(filtered.length, 4); // trip1, trip2, trip4, trip5
+        expect(filtered.any((t) => t.trip.id == '5'), true); // null = 0 passes
       });
     });
 
@@ -250,11 +271,10 @@ void main() {
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
 
-          // Budget filter
-          if (trip.budget != null) {
-            if (trip.budget! < minBudget || trip.budget! > maxBudget) {
-              return false;
-            }
+          // Budget filter - NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget || tripBudget > maxBudget) {
+            return false;
           }
 
           // Date filter
@@ -266,12 +286,12 @@ void main() {
           return true;
         }).toList();
 
-        expect(filtered.length, 3); // trip1, trip2, trip5
-        expect(filtered.any((t) => t.trip.id == '1'), true); // 50k, Nov 1
-        expect(filtered.any((t) => t.trip.id == '2'), true); // 30k, Nov 15
+        expect(filtered.length, 2); // trip1, trip2 only
+        expect(filtered.any((t) => t.trip.id == '1'), true);  // 50k, Nov 1
+        expect(filtered.any((t) => t.trip.id == '2'), true);  // 30k, Nov 15
         expect(filtered.any((t) => t.trip.id == '3'), false); // 80k > maxBudget
         expect(filtered.any((t) => t.trip.id == '4'), false); // Oct 20 < createdAfter
-        expect(filtered.any((t) => t.trip.id == '5'), true); // null budget, Nov 10
+        expect(filtered.any((t) => t.trip.id == '5'), false); // null = 0 < minBudget
       });
 
       test('Strict budget and date range (no results)', () {
@@ -291,11 +311,10 @@ void main() {
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
 
-          // Budget filter
-          if (trip.budget != null) {
-            if (trip.budget! < minBudget || trip.budget! > maxBudget) {
-              return false;
-            }
+          // Budget filter - NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget || tripBudget > maxBudget) {
+            return false;
           }
 
           // Date filter
@@ -373,8 +392,9 @@ void main() {
             return false;
           }
 
-          // Budget filter
-          if (trip.budget != null && trip.budget! < minBudget) {
+          // Budget filter - NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget) {
             return false;
           }
 
@@ -383,12 +403,13 @@ void main() {
 
         // trip1 has "trip" in description ("beach trip")
         // trip4 and trip5 have "trip" in name
-        // After budget filter: trip1 (50k) and trip5 (null) pass
-        // trip4 (10k) is filtered out by minBudget
-        expect(filtered.length, 2);
-        expect(filtered.any((t) => t.trip.id == '1'), true); // Has "trip" in description, 50k passes
+        // After budget filter: trip1 (50k) passes
+        // trip4 (10k) filtered out by minBudget
+        // trip5 (null = 0) filtered out by minBudget
+        expect(filtered.length, 1);
+        expect(filtered.any((t) => t.trip.id == '1'), true);  // Has "trip" in description, 50k passes
         expect(filtered.any((t) => t.trip.id == '4'), false); // 10k < minBudget
-        expect(filtered.any((t) => t.trip.id == '5'), true); // null budget passes
+        expect(filtered.any((t) => t.trip.id == '5'), false); // null = 0 < minBudget
       });
     });
 
@@ -432,7 +453,7 @@ void main() {
         expect(filtered.length, 1); // Null date passes
       });
 
-      test('Zero budget is valid and different from null budget', () {
+      test('Zero budget should be treated same as null budget', () {
         final tripZeroBudget = TripModel(
           id: '7',
           name: 'Free Trip',
@@ -447,13 +468,15 @@ void main() {
 
         final filtered = testTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
-          if (trip.budget != null && trip.budget! < minBudget) {
+          // NEW LOGIC: Treat null budget as 0.0
+          final tripBudget = trip.budget ?? 0.0;
+          if (tripBudget < minBudget) {
             return false;
           }
           return true;
         }).toList();
 
-        expect(filtered.length, 0); // Zero budget is filtered out
+        expect(filtered.length, 0); // Zero budget (0 < 10000) is filtered out
       });
     });
   });
