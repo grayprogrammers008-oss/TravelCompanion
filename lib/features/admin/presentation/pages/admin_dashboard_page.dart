@@ -5,9 +5,12 @@ import 'package:travel_crew/features/admin/presentation/widgets/admin_stats_over
 import 'package:travel_crew/features/admin/presentation/widgets/admin_user_list.dart';
 import 'package:travel_crew/features/admin/presentation/widgets/admin_activity_log_list.dart';
 import 'package:travel_crew/features/admin/presentation/widgets/admin_trip_list.dart';
+import 'package:travel_crew/features/admin/presentation/widgets/admin_checklist_list.dart';
+import 'package:travel_crew/features/admin/presentation/widgets/admin_expense_list.dart';
+import 'package:travel_crew/features/admin/presentation/widgets/admin_config_list.dart';
 
 /// Admin Dashboard Page
-/// Main admin panel with four tabs: Overview, Users, Trips, Activity
+/// Main admin panel with seven tabs: Overview, Users, Trips, Checklists, Expenses, Config, Activity
 class AdminDashboardPage extends ConsumerStatefulWidget {
   const AdminDashboardPage({super.key});
 
@@ -22,7 +25,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 7, vsync: this);
   }
 
   @override
@@ -61,6 +64,18 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage>
               text: 'Trips',
             ),
             Tab(
+              icon: Icon(Icons.checklist_outlined),
+              text: 'Checklists',
+            ),
+            Tab(
+              icon: Icon(Icons.receipt_long_outlined),
+              text: 'Expenses',
+            ),
+            Tab(
+              icon: Icon(Icons.tune),
+              text: 'Config',
+            ),
+            Tab(
               icon: Icon(Icons.history),
               text: 'Activity',
             ),
@@ -78,6 +93,15 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage>
 
           // Trips Tab
           const AdminTripList(),
+
+          // Checklists Tab
+          const AdminChecklistList(),
+
+          // Expenses Tab
+          const AdminExpenseList(),
+
+          // Config Tab
+          const AdminConfigList(),
 
           // Activity Tab
           const AdminActivityLogList(),

@@ -29,12 +29,12 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
   }
 
   UserListParams get _currentParams => UserListParams(
-        limit: 50,
-        offset: _currentPage * 50,
-        search: _searchController.text.isEmpty ? null : _searchController.text,
-        role: _selectedRole,
-        status: _selectedStatus,
-      );
+    limit: 50,
+    offset: _currentPage * 50,
+    search: _searchController.text.isEmpty ? null : _searchController.text,
+    role: _selectedRole,
+    status: _selectedStatus,
+  );
 
   void _applyFilters() {
     setState(() {
@@ -87,11 +87,13 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                   // Role Filter
                   Expanded(
                     child: DropdownButtonFormField<UserRole?>(
-                      value: _selectedRole,
+                      initialValue: _selectedRole,
                       decoration: InputDecoration(
                         labelText: 'Role',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusMd,
+                          ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppTheme.spacingMd,
@@ -123,11 +125,13 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                   // Status Filter
                   Expanded(
                     child: DropdownButtonFormField<UserStatus?>(
-                      value: _selectedStatus,
+                      initialValue: _selectedStatus,
                       decoration: InputDecoration(
                         labelText: 'Status',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusMd,
+                          ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppTheme.spacingMd,
@@ -183,8 +187,8 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                       Text(
                         'Try adjusting your filters',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
@@ -207,18 +211,12 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                 ),
               );
             },
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red[400],
-                  ),
+                  Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
                   const SizedBox(height: AppTheme.spacingLg),
                   Text(
                     'Failed to load users',
@@ -227,9 +225,9 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                   const SizedBox(height: AppTheme.spacingSm),
                   Text(
                     error.toString(),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppTheme.spacingLg),
@@ -283,12 +281,8 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                         Expanded(
                           child: Text(
                             user.displayName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -299,9 +293,9 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                     const SizedBox(height: AppTheme.spacingXs),
                     Text(
                       user.email,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
@@ -309,10 +303,7 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                       children: [
                         _buildStatusChip(user.status),
                         const SizedBox(width: AppTheme.spacingSm),
-                        Text(
-                          '•',
-                          style: TextStyle(color: Colors.grey[400]),
-                        ),
+                        Text('•', style: TextStyle(color: Colors.grey[400])),
                         const SizedBox(width: AppTheme.spacingSm),
                         Icon(
                           Icons.flight_takeoff,
@@ -322,24 +313,16 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                         const SizedBox(width: 4),
                         Text(
                           '${user.tripsCount}',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                         const SizedBox(width: AppTheme.spacingSm),
-                        Icon(
-                          Icons.message,
-                          size: 16,
-                          color: Colors.grey[600],
-                        ),
+                        Icon(Icons.message, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
                           '${user.messagesCount}',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                       ],
                     ),
@@ -348,10 +331,7 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
               ),
 
               // Arrow
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400]),
             ],
           ),
         ),
@@ -423,10 +403,7 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 4),
           Text(

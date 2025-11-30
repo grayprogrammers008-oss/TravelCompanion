@@ -97,15 +97,22 @@ class _TripsListPageState extends ConsumerState<TripsListPage> {
           if (filteredTrips.isEmpty && _searchController.text.isNotEmpty) {
             return _buildNoSearchResults(context);
           }
-          return _buildTripsList(context, ref, filteredTrips);
+          return RefreshIndicator(
+            onRefresh: () async {
+              debugPrint('🔄 Pull to refresh triggered!');
+              ref.invalidate(userTripsProvider);
+              await ref.read(userTripsProvider.future);
+              debugPrint('✅ Refresh completed!');
+            },
+            child: _buildTripsList(context, ref, filteredTrips),
+          );
         },
         loading: () => const Center(
           child: AppLoadingIndicator(
             message: 'Loading your trips...',
           ),
         ),
-        error: (error, stack) =>
-            _buildErrorState(context, ref, error.toString()),
+        error: (error, stack) => _buildErrorState(context, ref, error.toString()),
       ),
       floatingActionButton: ScaleAnimation(
         duration: AppAnimations.slow,
@@ -262,15 +269,10 @@ class _TripsListPageState extends ConsumerState<TripsListPage> {
     WidgetRef ref,
     List<TripWithMembers> trips,
   ) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        ref.invalidate(userTripsProvider);
-        await ref.read(userTripsProvider.future);
-      },
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: trips.length,
-        itemBuilder: (context, index) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: trips.length,
+      itemBuilder: (context, index) {
           final tripWithMembers = trips[index];
           final trip = tripWithMembers.trip;
           final members = tripWithMembers.members;
@@ -372,8 +374,7 @@ class _TripsListPageState extends ConsumerState<TripsListPage> {
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildPlaceholderImage(BuildContext context) {

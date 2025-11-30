@@ -294,38 +294,6 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
               ],
             ),
 
-            // Admin Section (TEMPORARILY visible to all - TODO: Add permission checks)
-            // NOTE: This should be restricted to admin users only in production
-            _buildSection(
-              context,
-              title: 'Admin',
-              items: [
-                _buildNavigationTile(
-                  context,
-                  icon: Icons.admin_panel_settings,
-                  iconColor: Colors.purple,
-                  title: 'Admin Panel',
-                  subtitle: 'User management and analytics',
-                  onTap: () => context.push('/settings/admin'),
-                ),
-              ],
-            ),
-
-            // TODO: Restore admin-only visibility with proper permission checks
-            // Consumer(
-            //   builder: (context, ref, child) {
-            //     final isAdminAsync = ref.watch(isAdminProvider);
-            //     return isAdminAsync.when(
-            //       data: (isAdmin) {
-            //         if (!isAdmin) return const SizedBox.shrink();
-            //         return _buildSection(...);
-            //       },
-            //       loading: () => const SizedBox.shrink(),
-            //       error: (_, __) => const SizedBox.shrink(),
-            //     );
-            //   },
-            // ),
-
             // About Section
             _buildSection(
               context,

@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/widgets/destination_image.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
 import 'package:travel_crew/features/admin/presentation/providers/admin_trip_providers.dart';
+import 'package:travel_crew/features/admin/presentation/widgets/admin_edit_trip_dialog.dart';
 
 /// Admin Trip List Widget
 /// Displays all trips with search, filter, and management capabilities
@@ -142,6 +142,7 @@ class _AdminTripListState extends ConsumerState<AdminTripList> {
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(adminTripsProvider);
+                  await ref.read(adminTripsProvider(_currentParams).future);
                 },
                 child: ListView.builder(
                   padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -463,12 +464,9 @@ class _AdminTripListState extends ConsumerState<AdminTripList> {
   }
 
   void _editTrip(AdminTripModel trip) {
-    // TODO: Implement edit trip functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Edit trip: ${trip.name}'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
+    showDialog(
+      context: context,
+      builder: (context) => AdminEditTripDialog(trip: trip),
     );
   }
 

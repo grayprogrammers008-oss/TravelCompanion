@@ -122,10 +122,19 @@ class _HomePageState extends ConsumerState<HomePage>
       backgroundColor: AppTheme.neutral50,
       body: MeshGradientBackground(
         intensity: 0.5,
-        child: CustomScrollView(
-          slivers: [
-          // Premium App Bar with gradient
-          SliverAppBar(
+        child: RefreshIndicator(
+          displacement: 120, // Push indicator below the SliverAppBar
+          edgeOffset: 120, // Start detecting pull below the app bar
+          onRefresh: () async {
+            debugPrint('🔄 Pull to refresh triggered!');
+            ref.invalidate(userTripsProvider);
+            await ref.read(userTripsProvider.future);
+            debugPrint('✅ Refresh completed!');
+          },
+          child: CustomScrollView(
+            slivers: [
+              // Premium App Bar with gradient
+              SliverAppBar(
             expandedHeight: _isSearching ? 160 : 120,
             floating: false,
             pinned: true,
@@ -330,7 +339,8 @@ class _HomePageState extends ConsumerState<HomePage>
               child: _buildErrorState(context, error.toString(), ref, themeData),
             ),
           ),
-        ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: ScaleAnimation(
@@ -770,6 +780,30 @@ class _HomePageState extends ConsumerState<HomePage>
                   await Future.delayed(const Duration(milliseconds: 100));
                   if (parentContext.mounted) {
                     parentContext.push('/settings');
+                  }
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.admin_panel_settings,
+                    color: Colors.purple,
+                  ),
+                ),
+                title: const Text('Control Room'),
+                subtitle: const Text('User management & analytics'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  // Wait for bottom sheet to close before navigating
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    parentContext.push('/settings/admin');
                   }
                 },
               ),

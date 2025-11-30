@@ -2,6 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_crew/features/admin/data/models/admin_activity_log_model.dart';
 import 'package:travel_crew/features/admin/data/models/admin_dashboard_stats_model.dart';
 import 'package:travel_crew/features/admin/data/models/admin_user_model.dart';
+import 'package:travel_crew/features/admin/domain/entities/admin_checklist.dart';
+import 'package:travel_crew/features/admin/domain/entities/admin_expense.dart';
 import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
 import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
 import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
@@ -305,6 +307,250 @@ class AdminRemoteDataSource {
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to update trip: $e');
+    }
+  }
+
+  // ============================================================
+  // CHECKLIST MANAGEMENT METHODS
+  // ============================================================
+
+  /// Get all checklists with trip info and statistics (admin only)
+  Future<List<AdminChecklistModel>> getAllChecklists({
+    int limit = 50,
+    int offset = 0,
+    String? search,
+    String? status,
+    String? tripId,
+  }) async {
+    try {
+      print('🔍 DEBUG: Calling get_all_checklists_admin with params:');
+      print('  limit: $limit, offset: $offset, search: $search, status: $status, tripId: $tripId');
+
+      final response = await _supabase.rpc(
+        'get_all_checklists_admin',
+        params: {
+          'p_limit': limit,
+          'p_offset': offset,
+          if (search != null) 'p_search': search,
+          if (status != null) 'p_status': status,
+          if (tripId != null) 'p_trip_id': tripId,
+        },
+      );
+
+      print('✅ DEBUG: Got response type: ${response.runtimeType}');
+      print('✅ DEBUG: Response: $response');
+
+      final List<dynamic> data = response as List<dynamic>;
+      print('✅ DEBUG: Parsed ${data.length} checklists');
+
+      return data
+          .map((json) => AdminChecklistModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      print('❌ DEBUG: Error getting checklists: $e');
+      print('❌ DEBUG: Stack trace: $stackTrace');
+      throw Exception('Failed to get checklists: $e');
+    }
+  }
+
+  /// Get checklist statistics (admin only)
+  Future<AdminChecklistStatsModel> getChecklistStats() async {
+    try {
+      final response = await _supabase.rpc('get_admin_checklist_stats');
+
+      return AdminChecklistStatsModel.fromJson(
+        response as Map<String, dynamic>,
+      );
+    } catch (e) {
+      throw Exception('Failed to get checklist stats: $e');
+    }
+  }
+
+  /// Delete checklist (admin only)
+  Future<bool> deleteChecklist(String checklistId) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_delete_checklist',
+        params: {
+          'p_checklist_id': checklistId,
+        },
+      );
+
+      return response as bool? ?? false;
+    } catch (e) {
+      throw Exception('Failed to delete checklist: $e');
+    }
+  }
+
+  /// Update checklist (admin only)
+  Future<bool> updateChecklist(
+    String checklistId, {
+    String? name,
+  }) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_update_checklist',
+        params: {
+          'p_checklist_id': checklistId,
+          if (name != null) 'p_name': name,
+        },
+      );
+
+      return response as bool? ?? false;
+    } catch (e) {
+      throw Exception('Failed to update checklist: $e');
+    }
+  }
+
+  /// Bulk update checklist items (mark all as completed/pending)
+  Future<int> bulkUpdateChecklistItems(
+    String checklistId, {
+    required bool isCompleted,
+  }) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_bulk_update_checklist_items',
+        params: {
+          'p_checklist_id': checklistId,
+          'p_is_completed': isCompleted,
+        },
+      );
+
+      return (response as num?)?.toInt() ?? 0;
+    } catch (e) {
+      throw Exception('Failed to bulk update checklist items: $e');
+    }
+  }
+
+  // ============================================================
+  // EXPENSE MANAGEMENT METHODS
+  // ============================================================
+
+  /// Get all expenses with trip info and statistics (admin only)
+  Future<List<AdminExpenseModel>> getAllExpenses({
+    int limit = 50,
+    int offset = 0,
+    String? search,
+    String? category,
+    String? tripId,
+  }) async {
+    try {
+      print('🔍 DEBUG: Calling get_all_expenses_admin with params:');
+      print('  limit: $limit, offset: $offset, search: $search, category: $category, tripId: $tripId');
+
+      final response = await _supabase.rpc(
+        'get_all_expenses_admin',
+        params: {
+          'p_limit': limit,
+          'p_offset': offset,
+          if (search != null) 'p_search': search,
+          if (category != null) 'p_category': category,
+          if (tripId != null) 'p_trip_id': tripId,
+        },
+      );
+
+      print('✅ DEBUG: Got response type: ${response.runtimeType}');
+      print('✅ DEBUG: Response: $response');
+
+      final List<dynamic> data = response as List<dynamic>;
+      print('✅ DEBUG: Parsed ${data.length} expenses');
+
+      return data
+          .map((json) => AdminExpenseModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      print('❌ DEBUG: Error getting expenses: $e');
+      print('❌ DEBUG: Stack trace: $stackTrace');
+      throw Exception('Failed to get expenses: $e');
+    }
+  }
+
+  /// Get expense statistics (admin only)
+  Future<AdminExpenseStatsModel> getExpenseStats() async {
+    try {
+      final response = await _supabase.rpc('get_admin_expense_stats');
+
+      return AdminExpenseStatsModel.fromJson(
+        response as Map<String, dynamic>,
+      );
+    } catch (e) {
+      throw Exception('Failed to get expense stats: $e');
+    }
+  }
+
+  /// Delete expense (admin only)
+  Future<bool> deleteExpense(String expenseId) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_delete_expense',
+        params: {
+          'p_expense_id': expenseId,
+        },
+      );
+
+      return response as bool? ?? false;
+    } catch (e) {
+      throw Exception('Failed to delete expense: $e');
+    }
+  }
+
+  /// Update expense (admin only)
+  Future<bool> updateExpense(
+    String expenseId, {
+    String? title,
+    String? description,
+    double? amount,
+    String? currency,
+    String? category,
+  }) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_update_expense',
+        params: {
+          'p_expense_id': expenseId,
+          if (title != null) 'p_title': title,
+          if (description != null) 'p_description': description,
+          if (amount != null) 'p_amount': amount,
+          if (currency != null) 'p_currency': currency,
+          if (category != null) 'p_category': category,
+        },
+      );
+
+      return response as bool? ?? false;
+    } catch (e) {
+      throw Exception('Failed to update expense: $e');
+    }
+  }
+
+  /// Settle all splits for an expense (admin only)
+  Future<int> settleExpenseSplits(String expenseId) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_settle_expense_splits',
+        params: {
+          'p_expense_id': expenseId,
+        },
+      );
+
+      return (response as num?)?.toInt() ?? 0;
+    } catch (e) {
+      throw Exception('Failed to settle expense splits: $e');
+    }
+  }
+
+  /// Unsettle all splits for an expense (admin only)
+  Future<int> unsettleExpenseSplits(String expenseId) async {
+    try {
+      final response = await _supabase.rpc(
+        'admin_unsettle_expense_splits',
+        params: {
+          'p_expense_id': expenseId,
+        },
+      );
+
+      return (response as num?)?.toInt() ?? 0;
+    } catch (e) {
+      throw Exception('Failed to unsettle expense splits: $e');
     }
   }
 }
