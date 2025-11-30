@@ -7,12 +7,13 @@ import 'dart:async' as _i7;
 
 import 'package:geolocator/geolocator.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:travel_crew/core/services/location_service.dart' as _i9;
+import 'package:travel_crew/core/services/location_service.dart' as _i10;
 import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart'
     as _i6;
 import 'package:travel_crew/shared/models/emergency_alert_model.dart' as _i4;
 import 'package:travel_crew/shared/models/emergency_contact_model.dart' as _i2;
-import 'package:travel_crew/shared/models/hospital_model.dart' as _i8;
+import 'package:travel_crew/shared/models/emergency_number_model.dart' as _i8;
+import 'package:travel_crew/shared/models/hospital_model.dart' as _i9;
 import 'package:travel_crew/shared/models/location_share_model.dart' as _i3;
 
 // ignore_for_file: type=lint
@@ -60,6 +61,34 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
   MockEmergencyRemoteDataSource() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i7.Future<List<_i8.EmergencyNumberModel>> getEmergencyNumbers({
+    String? country = 'IN',
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getEmergencyNumbers, [], {#country: country}),
+            returnValue: _i7.Future<List<_i8.EmergencyNumberModel>>.value(
+              <_i8.EmergencyNumberModel>[],
+            ),
+          )
+          as _i7.Future<List<_i8.EmergencyNumberModel>>);
+
+  @override
+  _i7.Future<List<_i8.EmergencyNumberModel>> getEmergencyNumbersByType({
+    required _i8.EmergencyServiceType? serviceType,
+    String? country = 'IN',
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getEmergencyNumbersByType, [], {
+              #serviceType: serviceType,
+              #country: country,
+            }),
+            returnValue: _i7.Future<List<_i8.EmergencyNumberModel>>.value(
+              <_i8.EmergencyNumberModel>[],
+            ),
+          )
+          as _i7.Future<List<_i8.EmergencyNumberModel>>);
 
   @override
   _i7.Future<List<_i2.EmergencyContactModel>> getEmergencyContacts() =>
@@ -426,7 +455,7 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
           as _i7.Stream<List<_i4.EmergencyAlertModel>>);
 
   @override
-  _i7.Future<List<_i8.HospitalModel>> findNearestHospitals({
+  _i7.Future<List<_i9.HospitalModel>> findNearestHospitals({
     required double? latitude,
     required double? longitude,
     double? maxDistanceKm = 50.0,
@@ -443,14 +472,14 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #onlyEmergency: onlyEmergency,
               #only24_7: only24_7,
             }),
-            returnValue: _i7.Future<List<_i8.HospitalModel>>.value(
-              <_i8.HospitalModel>[],
+            returnValue: _i7.Future<List<_i9.HospitalModel>>.value(
+              <_i9.HospitalModel>[],
             ),
           )
-          as _i7.Future<List<_i8.HospitalModel>>);
+          as _i7.Future<List<_i9.HospitalModel>>);
 
   @override
-  _i7.Future<List<_i8.HospitalModel>> searchHospitals({
+  _i7.Future<List<_i9.HospitalModel>> searchHospitals({
     required String? searchTerm,
     String? city,
     String? state,
@@ -463,14 +492,14 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #state: state,
               #limit: limit,
             }),
-            returnValue: _i7.Future<List<_i8.HospitalModel>>.value(
-              <_i8.HospitalModel>[],
+            returnValue: _i7.Future<List<_i9.HospitalModel>>.value(
+              <_i9.HospitalModel>[],
             ),
           )
-          as _i7.Future<List<_i8.HospitalModel>>);
+          as _i7.Future<List<_i9.HospitalModel>>);
 
   @override
-  _i7.Future<_i8.HospitalModel?> getHospitalById({
+  _i7.Future<_i9.HospitalModel?> getHospitalById({
     required String? hospitalId,
     double? userLatitude,
     double? userLongitude,
@@ -481,12 +510,12 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #userLatitude: userLatitude,
               #userLongitude: userLongitude,
             }),
-            returnValue: _i7.Future<_i8.HospitalModel?>.value(),
+            returnValue: _i7.Future<_i9.HospitalModel?>.value(),
           )
-          as _i7.Future<_i8.HospitalModel?>);
+          as _i7.Future<_i9.HospitalModel?>);
 
   @override
-  _i7.Future<List<_i8.HospitalModel>> getHospitalsByLocation({
+  _i7.Future<List<_i9.HospitalModel>> getHospitalsByLocation({
     String? city,
     String? state,
     int? limit = 50,
@@ -497,17 +526,17 @@ class MockEmergencyRemoteDataSource extends _i1.Mock
               #state: state,
               #limit: limit,
             }),
-            returnValue: _i7.Future<List<_i8.HospitalModel>>.value(
-              <_i8.HospitalModel>[],
+            returnValue: _i7.Future<List<_i9.HospitalModel>>.value(
+              <_i9.HospitalModel>[],
             ),
           )
-          as _i7.Future<List<_i8.HospitalModel>>);
+          as _i7.Future<List<_i9.HospitalModel>>);
 }
 
 /// A class which mocks [LocationService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLocationService extends _i1.Mock implements _i9.LocationService {
+class MockLocationService extends _i1.Mock implements _i10.LocationService {
   MockLocationService() {
     _i1.throwOnMissingStub(this);
   }

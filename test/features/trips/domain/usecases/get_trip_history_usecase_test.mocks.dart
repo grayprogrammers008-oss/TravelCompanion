@@ -65,6 +65,8 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
+    double? budget,
+    String? currency,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createTrip, [], {
@@ -74,6 +76,8 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
               #startDate: startDate,
               #endDate: endDate,
               #coverImageUrl: coverImageUrl,
+              #budget: budget,
+              #currency: currency,
             }),
             returnValue: _i5.Future<_i2.TripModel>.value(
               _FakeTripModel_0(
@@ -85,6 +89,8 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
                   #startDate: startDate,
                   #endDate: endDate,
                   #coverImageUrl: coverImageUrl,
+                  #budget: budget,
+                  #currency: currency,
                 }),
               ),
             ),
@@ -126,6 +132,8 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
+    double? budget,
+    String? currency,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#updateTrip, [], {
@@ -139,6 +147,8 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
               #isCompleted: isCompleted,
               #completedAt: completedAt,
               #rating: rating,
+              #budget: budget,
+              #currency: currency,
             }),
             returnValue: _i5.Future<_i2.TripModel>.value(
               _FakeTripModel_0(
@@ -154,6 +164,8 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
                   #isCompleted: isCompleted,
                   #completedAt: completedAt,
                   #rating: rating,
+                  #budget: budget,
+                  #currency: currency,
                 }),
               ),
             ),
