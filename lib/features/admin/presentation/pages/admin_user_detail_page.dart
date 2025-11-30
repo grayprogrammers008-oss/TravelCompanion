@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/widgets/destination_image.dart';
 import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
@@ -12,10 +11,7 @@ import 'package:travel_crew/features/admin/presentation/providers/admin_provider
 class AdminUserDetailPage extends ConsumerStatefulWidget {
   final String userId;
 
-  const AdminUserDetailPage({
-    super.key,
-    required this.userId,
-  });
+  const AdminUserDetailPage({super.key, required this.userId});
 
   @override
   ConsumerState<AdminUserDetailPage> createState() =>
@@ -228,9 +224,7 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
           final userIndex = users.indexWhere((u) => u.id == widget.userId);
 
           if (userIndex == -1) {
-            return const Center(
-              child: Text('User not found'),
-            );
+            return const Center(child: Text('User not found'));
           }
 
           final user = users[userIndex];
@@ -246,24 +240,21 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
                     padding: const EdgeInsets.all(AppTheme.spacingLg),
                     child: Column(
                       children: [
-                        // Avatar using UserAvatarWidget
+                        // Avatar using UserAvatarWidget with cache busting
                         UserAvatarWidget(
                           imageUrl: user.avatarUrl,
                           userName: user.displayName,
                           size: 100,
                           showBorder: true,
+                          cacheKey: '${user.id}_${user.updatedAt.millisecondsSinceEpoch}',
                         ),
                         const SizedBox(height: AppTheme.spacingLg),
 
                         // Name
                         Text(
                           user.displayName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppTheme.spacingXs),
@@ -271,10 +262,8 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
                         // Email
                         Text(
                           user.email,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Colors.grey[600]),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppTheme.spacingMd),
@@ -305,7 +294,9 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
                       _buildInfoRow('Created', _formatDate(user.createdAt)),
                       const Divider(height: 1),
                       _buildInfoRow(
-                          'Last Login', _formatDate(user.lastLoginAt)),
+                        'Last Login',
+                        _formatDate(user.lastLoginAt),
+                      ),
                       const Divider(height: 1),
                       _buildInfoRow('Login Count', '${user.loginCount}'),
                       const Divider(height: 1),
@@ -372,12 +363,8 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
                       children: [
                         Text(
                           'Change Role',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: AppTheme.spacingMd),
                         Wrap(
@@ -385,18 +372,24 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
                           runSpacing: AppTheme.spacingSm,
                           children: UserRole.values.map((role) {
                             final isSelected = user.role == role;
-                            final primaryColor = Theme.of(context).colorScheme.primary;
+                            final primaryColor = Theme.of(
+                              context,
+                            ).colorScheme.primary;
 
                             return ChoiceChip(
                               label: Text(role.displayName),
                               selected: isSelected,
-                              selectedColor: primaryColor.withValues(alpha: 0.15),
+                              selectedColor: primaryColor.withValues(
+                                alpha: 0.15,
+                              ),
                               backgroundColor: Colors.white,
                               labelStyle: TextStyle(
                                 color: isSelected
                                     ? primaryColor
                                     : AppTheme.neutral700,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
                                 fontSize: 14,
                               ),
                               checkmarkColor: primaryColor,
@@ -405,7 +398,9 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
                                 vertical: AppTheme.spacingMd,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusMd,
+                                ),
                                 side: BorderSide(
                                   color: isSelected
                                       ? primaryColor
@@ -459,26 +454,18 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
 
                 if (_isProcessing) ...[
                   const SizedBox(height: AppTheme.spacingMd),
-                  const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  const Center(child: CircularProgressIndicator()),
                 ],
               ],
             ),
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: AppTheme.spacingLg),
               Text(
                 'Failed to load user',
@@ -500,9 +487,9 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -515,17 +502,17 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
           ),
           const SizedBox(width: AppTheme.spacingMd),
           Expanded(
             child: Text(
               value ?? 'N/A',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               textAlign: TextAlign.end,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -546,16 +533,16 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
             const SizedBox(height: AppTheme.spacingSm),
             Text(
               value,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppTheme.spacingXs),
             Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             ),
           ],
         ),
@@ -627,10 +614,7 @@ class _AdminUserDetailPageState extends ConsumerState<AdminUserDetailPage> {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 4),
           Text(

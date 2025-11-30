@@ -268,6 +268,7 @@ class _AdminUserListState extends ConsumerState<AdminUserList> {
                 userName: user.displayName,
                 size: 56,
                 showBorder: false,
+                cacheKey: '${user.id}_${user.updatedAt.millisecondsSinceEpoch}',
               ),
               const SizedBox(width: AppTheme.spacingMd),
 

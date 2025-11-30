@@ -274,6 +274,7 @@ class UserAvatarWidget extends StatelessWidget {
   final String? userName;
   final double size;
   final bool showBorder;
+  final String? cacheKey;
 
   const UserAvatarWidget({
     super.key,
@@ -281,6 +282,7 @@ class UserAvatarWidget extends StatelessWidget {
     this.userName,
     this.size = 40,
     this.showBorder = false,
+    this.cacheKey,
   });
 
   @override
@@ -305,7 +307,11 @@ class UserAvatarWidget extends StatelessWidget {
         child: ClipOval(
           child: CachedNetworkImage(
             imageUrl: imageUrl!,
+            cacheKey: cacheKey ?? imageUrl,
             fit: BoxFit.cover,
+            // Force re-fetch from network, don't use stale cache
+            maxHeightDiskCache: 500,
+            maxWidthDiskCache: 500,
             placeholder: (context, url) => _buildGradientAvatar(themeData),
             errorWidget: (context, url, error) =>
                 _buildGradientAvatar(themeData),
