@@ -8,9 +8,6 @@ import '../theme/app_theme.dart';
 /// countries, and other travel destinations.
 class PlaceSearchDelegate extends SearchDelegate<Place?> {
   final PlaceSearchService _searchService;
-  List<Place> _suggestions = [];
-  bool _isLoading = false;
-  String _lastSearchedQuery = '';
 
   PlaceSearchDelegate({PlaceSearchService? searchService})
       : _searchService = searchService ?? PlaceSearchService(),
@@ -48,9 +45,6 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
           icon: const Icon(Icons.clear),
           onPressed: () {
             query = '';
-            _suggestions = [];
-            _lastSearchedQuery = '';
-            _isLoading = false;
             showSuggestions(context);
           },
         ),
@@ -67,92 +61,109 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return _buildSearchResults(context);
+    return _buildSearchBody(context);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query.length < 2) {
-      _suggestions = [];
-      _lastSearchedQuery = '';
-      _isLoading = false;
+      return _buildEmptyState(context);
+    }
+    return _buildSearchBody(context);
+  }
+
+  Widget _buildSearchBody(BuildContext context) {
+    if (query.length < 2) {
       return _buildEmptyState(context);
     }
 
-    final currentQuery = query;
-
-    // Only trigger new search if query has actually changed
-    if (_lastSearchedQuery != currentQuery) {
-      // Clear suggestions and show loading for new query
-      _suggestions = [];
-      _isLoading = true;
-
-      // Trigger debounced search
-      _searchService.searchPlacesDebounced(currentQuery, (places) {
-        // Only update if the query hasn't changed since we started the search
-        if (query == currentQuery) {
-          _suggestions = places;
-          _lastSearchedQuery = currentQuery;
-          _isLoading = false;
-          // Rebuild suggestions
-          if (context.mounted) {
-            showSuggestions(context);
-          }
+    // Use FutureBuilder to properly handle async search
+    return FutureBuilder<List<Place>>(
+      future: _searchService.searchPlaces(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(AppTheme.spacingXl),
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
-      });
-    }
 
-    return _buildSearchResults(context);
-  }
-
-  Widget _buildSearchResults(BuildContext context) {
-    if (_isLoading && _suggestions.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppTheme.spacingXl),
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    if (_suggestions.isEmpty && query.length >= 2) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingXl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.search_off,
-                size: 64,
-                color: AppTheme.neutral400,
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: AppTheme.neutral400,
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Text(
+                    'Search failed',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: AppTheme.neutral600,
+                        ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingXs),
+                  Text(
+                    'Please try again',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppTheme.neutral500,
+                        ),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppTheme.spacingMd),
-              Text(
-                'No places found',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.neutral600,
-                    ),
-              ),
-              const SizedBox(height: AppTheme.spacingXs),
-              Text(
-                'Try a different search term',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.neutral500,
-                    ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+            ),
+          );
+        }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
-      itemCount: _suggestions.length,
-      itemBuilder: (context, index) {
-        final place = _suggestions[index];
-        return _buildPlaceListTile(context, place);
+        final places = snapshot.data ?? [];
+
+        if (places.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: AppTheme.neutral400,
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Text(
+                    'No places found',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: AppTheme.neutral600,
+                        ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingXs),
+                  Text(
+                    'Try a different search term',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppTheme.neutral500,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+          itemCount: places.length,
+          itemBuilder: (context, index) {
+            final place = places[index];
+            return _buildPlaceListTile(context, place);
+          },
+        );
       },
     );
   }
