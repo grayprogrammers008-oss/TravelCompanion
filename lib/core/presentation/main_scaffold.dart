@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/home/presentation/pages/dashboard_page.dart';
 import '../../features/trips/presentation/pages/home_page.dart';
 import '../../features/expenses/presentation/pages/expenses_home_page.dart';
 
-/// Main scaffold with bottom navigation
+/// Main scaffold with bottom navigation - 3 tabs: Dashboard, Trips, Expenses
 class MainScaffold extends StatefulWidget {
   final Widget child;
   final int currentIndex;
@@ -22,9 +23,12 @@ class _MainScaffoldState extends State<MainScaffold> {
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
-        context.go('/home');
+        context.go('/dashboard');
         break;
       case 1:
+        context.go('/trips');
+        break;
+      case 2:
         context.go('/expenses');
         break;
     }
@@ -37,11 +41,18 @@ class _MainScaffoldState extends State<MainScaffold> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.flight_takeoff),
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.flight_takeoff_outlined),
+            activeIcon: Icon(Icons.flight_takeoff),
             label: 'Trips',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
+            icon: Icon(Icons.receipt_long_outlined),
+            activeIcon: Icon(Icons.receipt_long),
             label: 'Expenses',
           ),
         ],
@@ -52,13 +63,23 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 }
 
-/// Shell route for home tab
-class HomeShell extends StatelessWidget {
-  const HomeShell({super.key});
+/// Shell route for dashboard tab (Home)
+class DashboardShell extends StatelessWidget {
+  const DashboardShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 0, child: HomePage());
+    return const MainScaffold(currentIndex: 0, child: DashboardPage());
+  }
+}
+
+/// Shell route for trips tab
+class TripsShell extends StatelessWidget {
+  const TripsShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MainScaffold(currentIndex: 1, child: HomePage());
   }
 }
 
@@ -68,6 +89,9 @@ class ExpensesShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 1, child: ExpensesHomePage());
+    return const MainScaffold(currentIndex: 2, child: ExpensesHomePage());
   }
 }
+
+// Legacy alias for backward compatibility
+typedef HomeShell = DashboardShell;

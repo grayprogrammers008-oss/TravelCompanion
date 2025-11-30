@@ -49,7 +49,9 @@ class AppRoutes {
   static const String login = '/';
   static const String signup = '/signup';
   static const String resetPassword = '/auth/reset-password';
-  static const String home = '/home';
+  static const String dashboard = '/dashboard';
+  static const String home = '/home'; // Legacy - redirects to dashboard
+  static const String trips = '/trips';
   static const String expenses = '/expenses';
   static const String tripDetail = '/trips/:tripId';
   static const String createTrip = '/trips/create';
@@ -114,14 +116,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         return AppRoutes.onboarding;
       }
 
-      // If authenticated, completed onboarding, and on onboarding page, go to home
+      // If authenticated, completed onboarding, and on onboarding page, go to dashboard
       if (isAuthenticated && !needsOnboarding && isOnboardingRoute) {
-        return AppRoutes.home;
+        return AppRoutes.dashboard;
       }
 
-      // If authenticated and on login/signup, redirect to home
+      // If authenticated and on login/signup, redirect to dashboard
       if (isAuthenticated && (isLoginRoute || isSignupRoute)) {
-        return AppRoutes.home;
+        return AppRoutes.dashboard;
       }
 
       return null; // No redirect needed
@@ -148,11 +150,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
+        path: AppRoutes.dashboard,
+        name: 'dashboard',
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
-          child: const HomeShell(),
+          child: const DashboardShell(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.home,
+        name: 'home',
+        redirect: (context, state) => AppRoutes.dashboard, // Legacy redirect
+      ),
+      GoRoute(
+        path: AppRoutes.trips,
+        name: 'trips',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const TripsShell(),
         ),
       ),
       GoRoute(
