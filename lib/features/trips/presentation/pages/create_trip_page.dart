@@ -145,10 +145,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   }
 
   Future<void> _selectStartDate() async {
+    final isEditMode = widget.tripId != null;
     final picked = await showDatePicker(
       context: context,
       initialDate: _startDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      // Allow past dates when editing existing trips
+      firstDate: isEditMode
+          ? DateTime(2020) // Allow dates from 2020 onwards for editing
+          : DateTime.now(), // Only future dates for new trips
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
     if (picked != null) {
@@ -157,10 +161,15 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   }
 
   Future<void> _selectEndDate() async {
+    final isEditMode = widget.tripId != null;
     final picked = await showDatePicker(
       context: context,
       initialDate: _endDate ?? _startDate ?? DateTime.now(),
-      firstDate: _startDate ?? DateTime.now(),
+      // End date must be >= start date, or >= now for new trips
+      firstDate: _startDate ??
+          (isEditMode
+              ? DateTime(2020) // Allow past dates when editing
+              : DateTime.now()), // Only future dates for new trips
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
     if (picked != null) {
