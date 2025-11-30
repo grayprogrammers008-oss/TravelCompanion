@@ -928,9 +928,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ),
           ),
         ),
-        // Horizontal scrollable action buttons
+        // Horizontal scrollable circular action buttons
         SizedBox(
-          height: 72,
+          height: 76,
           child: ListView(
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
@@ -952,7 +952,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               _buildActionButton(
                 context,
                 icon: Icons.checklist,
-                label: 'Checklists',
+                label: 'Checklist',
                 color: AppTheme.warning,
                 onTap: () => context.push('/trips/${trip.id}/checklists'),
               ),
@@ -975,7 +975,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               ),
               _buildActionButton(
                 context,
-                icon: Icons.flight_takeoff,
+                icon: Icons.add_circle_outline,
                 label: 'New Trip',
                 color: AppTheme.neutral600,
                 onTap: () => context.push('/trips/create'),
@@ -1009,45 +1009,49 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     required VoidCallback onTap,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(right: AppTheme.spacingSm),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          child: Container(
-            width: 64,
-            padding: const EdgeInsets.symmetric(
-              vertical: AppTheme.spacingSm,
-              horizontal: AppTheme.spacingXs,
-            ),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
+      padding: const EdgeInsets.only(right: AppTheme.spacingMd),
+      child: GestureDetector(
+        onTap: onTap,
+        child: SizedBox(
+          width: 56,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Circular icon button
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
                   color: color,
-                  size: 24,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: AppTheme.neutral700,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 22,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 6),
+              // Label below
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.neutral700,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
       ),
