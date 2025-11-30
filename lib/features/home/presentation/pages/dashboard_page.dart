@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/theme_extensions.dart';
@@ -518,6 +519,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   Widget _buildExpensesSummarySection(BuildContext context, TripWithMembers tripWithMembers) {
     final trip = tripWithMembers.trip;
     final expensesAsync = ref.watch(tripExpensesProvider(trip.id));
+    final balancesAsync = ref.watch(tripBalancesProvider(trip.id));
+    final currentUserId = SupabaseClientWrapper.currentUserId;
 
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -568,80 +571,90 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 0,
                 (sum, e) => sum + e.expense.amount,
               );
-              final budget = trip.budget ?? 0;
-              final percentage = budget > 0 ? (totalSpent / budget).clamp(0.0, 1.0) : 0.0;
 
               return Column(
                 children: [
-                  // Budget progress
+                  // Total spent row
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Total Spent',
-                            style: TextStyle(
-                              color: AppTheme.neutral500,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            '${trip.currency} ${totalSpent.toStringAsFixed(0)}',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.neutral900,
-                                ),
-                          ),
-                        ],
-                      ),
-                      if (budget > 0)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Budget',
+                              'Total Spent',
                               style: TextStyle(
                                 color: AppTheme.neutral500,
                                 fontSize: 12,
                               ),
                             ),
                             Text(
-                              '${trip.currency} ${budget.toStringAsFixed(0)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.neutral700,
-                                fontSize: 16,
-                              ),
+                              '${trip.currency} ${totalSpent.toStringAsFixed(0)}',
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.neutral900,
+                                  ),
                             ),
                           ],
                         ),
+                      ),
                     ],
                   ),
-                  if (budget > 0) ...[
-                    const SizedBox(height: AppTheme.spacingMd),
-                    // Progress bar
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                      child: LinearProgressIndicator(
-                        value: percentage,
-                        backgroundColor: AppTheme.neutral200,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          percentage > 0.9 ? AppTheme.error : AppTheme.success,
+                  const SizedBox(height: AppTheme.spacingMd),
+                  // Balance summary section
+                  balancesAsync.when(
+                    data: (balances) {
+                      // Find current user's balance
+                      final userBalance = balances.where(
+                        (b) => b.userId == currentUserId,
+                      ).firstOrNull;
+
+                      if (userBalance == null) {
+                        return _buildBalanceCard(
+                          context,
+                          isSettled: true,
+                          amount: 0,
+                          currency: trip.currency,
+                        );
+                      }
+
+                      final balance = userBalance.balance;
+                      // Positive balance = others owe you
+                      // Negative balance = you owe others
+                      return _buildBalanceCard(
+                        context,
+                        isSettled: balance == 0,
+                        amount: balance.abs(),
+                        currency: trip.currency,
+                        youAreOwed: balance > 0,
+                      );
+                    },
+                    loading: () => Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: AppTheme.neutral100,
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      ),
+                      child: const Center(
+                        child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
-                        minHeight: 8,
                       ),
                     ),
-                    const SizedBox(height: AppTheme.spacingXs),
-                    Text(
-                      '${(percentage * 100).toStringAsFixed(0)}% of budget used',
-                      style: TextStyle(
-                        color: AppTheme.neutral500,
-                        fontSize: 12,
+                    error: (_, __) => Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: AppTheme.neutral100,
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      ),
+                      child: Text(
+                        'Unable to load balance',
+                        style: TextStyle(color: AppTheme.neutral500),
                       ),
                     ),
-                  ],
+                  ),
                   const SizedBox(height: AppTheme.spacingMd),
                   // Quick add expense button
                   SizedBox(
@@ -666,6 +679,105 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ),
             error: (_, __) => const Center(
               child: Text('Failed to load expenses'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build a balance summary card showing You Owe / You're Owed / Settled
+  Widget _buildBalanceCard(
+    BuildContext context, {
+    required bool isSettled,
+    required double amount,
+    required String currency,
+    bool youAreOwed = false,
+  }) {
+    if (isSettled) {
+      return Container(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          color: AppTheme.success.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXs),
+              decoration: BoxDecoration(
+                color: AppTheme.success.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_circle,
+                color: AppTheme.success,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            Text(
+              'All settled up!',
+              style: TextStyle(
+                color: AppTheme.success,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final isOwed = youAreOwed;
+    final color = isOwed ? AppTheme.success : AppTheme.error;
+    final icon = isOwed ? Icons.arrow_downward : Icons.arrow_upward;
+    final label = isOwed ? "You're owed" : 'You owe';
+
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacingXs),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingSm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  '$currency ${amount.toStringAsFixed(0)}',
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
