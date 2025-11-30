@@ -10,6 +10,7 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
   final PlaceSearchService _searchService;
   List<Place> _suggestions = [];
   bool _isLoading = false;
+  String _lastSearchedQuery = '';
 
   PlaceSearchDelegate({PlaceSearchService? searchService})
       : _searchService = searchService ?? PlaceSearchService(),
@@ -48,6 +49,8 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
           onPressed: () {
             query = '';
             _suggestions = [];
+            _lastSearchedQuery = '';
+            _isLoading = false;
             showSuggestions(context);
           },
         ),
@@ -70,20 +73,32 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query.length < 2) {
+      _suggestions = [];
+      _lastSearchedQuery = '';
       return _buildEmptyState(context);
     }
 
+    final currentQuery = query;
+
+    // Clear suggestions if query has changed to avoid showing stale results
+    if (_lastSearchedQuery != currentQuery) {
+      _suggestions = [];
+      _isLoading = true;
+    }
+
     // Trigger debounced search
-    _searchService.searchPlacesDebounced(query, (places) {
-      _suggestions = places;
-      _isLoading = false;
-      // Rebuild suggestions
-      if (context.mounted) {
-        showSuggestions(context);
+    _searchService.searchPlacesDebounced(currentQuery, (places) {
+      // Only update if the query hasn't changed since we started the search
+      if (query == currentQuery) {
+        _suggestions = places;
+        _lastSearchedQuery = currentQuery;
+        _isLoading = false;
+        // Rebuild suggestions
+        if (context.mounted) {
+          showSuggestions(context);
+        }
       }
     });
-
-    _isLoading = true;
 
     return _buildSearchResults(context);
   }
