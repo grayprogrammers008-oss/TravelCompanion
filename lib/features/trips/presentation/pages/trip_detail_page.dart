@@ -362,7 +362,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             iconBg: hasBudget ? Colors.blue.shade50 : Colors.grey.shade50,
             label: 'Budget',
             value: hasBudget
-                ? '${trip.trip.currency} ${budget.toStringAsFixed(2)}'
+                ? '${trip.trip.currency} ${_formatCurrency(budget)}'
                 : 'No budget specified',
             subtitle: hasBudget ? 'Your trip budget' : null,
           ),
@@ -431,6 +431,18 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
       ],
     );
+  }
+
+  /// Formats currency to show whole numbers without decimals (50000)
+  /// or 2 decimal places when there are cents (50000.50)
+  String _formatCurrency(double amount) {
+    if (amount == amount.truncateToDouble()) {
+      // Whole number - no decimals
+      return amount.toStringAsFixed(0);
+    } else {
+      // Has decimal part - show 2 decimal places
+      return amount.toStringAsFixed(2);
+    }
   }
 
   Widget _buildDescriptionCard(BuildContext context, String description) {
