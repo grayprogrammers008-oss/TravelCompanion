@@ -59,6 +59,18 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     }
   }
 
+  /// Format currency to show whole numbers without decimals (50000)
+  /// or with 2 decimal places when needed (50000.50)
+  String _formatCurrency(double amount) {
+    if (amount == amount.truncateToDouble()) {
+      // Whole number - no decimals
+      return amount.toStringAsFixed(0);
+    } else {
+      // Has decimal part - show 2 decimal places
+      return amount.toStringAsFixed(2);
+    }
+  }
+
   Future<void> _loadTripData() async {
     setState(() => _isLoading = true);
 
@@ -99,7 +111,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           _nameController.text = trip.trip.name;
           _descriptionController.text = trip.trip.description ?? '';
           _destinationController.text = trip.trip.destination ?? '';
-          _budgetController.text = trip.trip.budget?.toString() ?? '';
+          // Format budget properly - show whole numbers without decimals
+          _budgetController.text = trip.trip.budget != null
+              ? _formatCurrency(trip.trip.budget!)
+              : '';
           _currency = trip.trip.currency;
           _startDate = trip.trip.startDate;
           _endDate = trip.trip.endDate;
