@@ -9,6 +9,7 @@ import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../shared/models/itinerary_model.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/itinerary_providers.dart';
 
 class ItineraryListPage extends ConsumerStatefulWidget {
@@ -31,6 +32,34 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Calculate today's day number based on trip start date
+  /// Returns null if trip hasn't started yet or has ended
+  int? _getTodaysDayNumber(DateTime? tripStartDate, DateTime? tripEndDate) {
+    if (tripStartDate == null) return null;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startDay = DateTime(tripStartDate.year, tripStartDate.month, tripStartDate.day);
+
+    // Check if trip has started
+    if (today.isBefore(startDay)) return null;
+
+    // Check if trip has ended (if end date is set)
+    if (tripEndDate != null) {
+      final endDay = DateTime(tripEndDate.year, tripEndDate.month, tripEndDate.day);
+      if (today.isAfter(endDay)) return null;
+    }
+
+    // Calculate day number (1-based)
+    return today.difference(startDay).inDays + 1;
+  }
+
+  /// Get the actual date for a day number
+  DateTime? _getDateForDay(int dayNumber, DateTime? tripStartDate) {
+    if (tripStartDate == null) return null;
+    return tripStartDate.add(Duration(days: dayNumber - 1));
   }
 
   /// Filter itinerary days based on search query
@@ -61,6 +90,18 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
     final itineraryAsync = ref.watch(itineraryByDaysProvider(widget.tripId));
+    final tripAsync = ref.watch(tripProvider(widget.tripId));
+
+    // Get today's day number from trip data
+    final todaysDayNumber = tripAsync.whenOrNull(
+      data: (tripWithMembers) => _getTodaysDayNumber(
+        tripWithMembers.trip.startDate,
+        tripWithMembers.trip.endDate,
+      ),
+    );
+    final tripStartDate = tripAsync.whenOrNull(
+      data: (tripWithMembers) => tripWithMembers.trip.startDate,
+    );
 
     // Listen for success/error messages
     ref.listen<ItineraryState>(itineraryControllerProvider, (previous, next) {
@@ -205,7 +246,9 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
               itemCount: filteredDays.length,
               itemBuilder: (context, index) {
                 final day = filteredDays[index];
-                return _buildDaySection(context, ref, day);
+                final isToday = todaysDayNumber != null && day.dayNumber == todaysDayNumber;
+                final dayDate = _getDateForDay(day.dayNumber, tripStartDate);
+                return _buildDaySection(context, ref, day, isToday: isToday, dayDate: dayDate);
               },
             ),
           );
@@ -336,9 +379,29 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     );
   }
 
-  Widget _buildDaySection(BuildContext context, WidgetRef ref, ItineraryDay day) {
+  Widget _buildDaySection(
+    BuildContext context,
+    WidgetRef ref,
+    ItineraryDay day, {
+    bool isToday = false,
+    DateTime? dayDate,
+  }) {
+    // Colors for today highlighting
+    final todayColor = Colors.orange;
+    final headerColor = isToday ? todayColor : context.primaryColor;
+    final headerBgColor = isToday
+        ? todayColor.withValues(alpha: 0.15)
+        : context.primaryColor.withValues(alpha: 0.1);
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: isToday
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: todayColor, width: 2),
+            )
+          : null,
+      elevation: isToday ? 4 : 1,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -347,7 +410,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: context.primaryColor.withValues(alpha: 0.1),
+              color: headerBgColor,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -356,23 +419,61 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             child: Row(
               children: [
                 Icon(
-                  Icons.calendar_today,
+                  isToday ? Icons.today : Icons.calendar_today,
                   size: 20,
-                  color: context.primaryColor,
+                  color: headerColor,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Day ${day.dayNumber}',
-                  style: context.titleLarge.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: context.primaryColor,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Day ${day.dayNumber}',
+                            style: context.titleLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: headerColor,
+                            ),
+                          ),
+                          if (isToday) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: todayColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'TODAY',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      if (dayDate != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          DateFormat('EEEE, MMM d').format(dayDate),
+                          style: context.bodySmall.copyWith(
+                            color: headerColor.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                const Spacer(),
                 Text(
                   '${day.items.length} ${day.items.length == 1 ? 'activity' : 'activities'}',
                   style: context.bodyMedium.copyWith(
-                    color: context.primaryColor,
+                    color: headerColor,
                   ),
                 ),
               ],
