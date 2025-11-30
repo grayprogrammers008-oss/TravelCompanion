@@ -163,64 +163,60 @@ class EmergencyPage extends ConsumerWidget {
                         ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.local_hospital,
-                            title: 'Medical',
-                            subtitle: 'Emergency',
-                            color: Colors.red,
-                            onTap: () {
-                              // Medical emergency action is handled by the button itself
-                            },
-                            child: const MedicalEmergencyButton(
-                              size: 60,
-                              showLabel: false,
-                            ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _QuickActionCard(
+                          icon: Icons.local_hospital,
+                          title: 'Medical',
+                          subtitle: 'Emergency',
+                          color: Colors.red,
+                          onTap: () {
+                            // Medical emergency action is handled by the button itself
+                          },
+                          child: const MedicalEmergencyButton(
+                            size: 60,
+                            showLabel: false,
                           ),
                         ),
-                        const SizedBox(width: AppTheme.spacingMd),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.local_police,
-                            title: 'Police',
-                            subtitle: 'Call 100',
-                            color: Colors.blue,
-                            onTap: () => _callEmergencyNumber(context, '100'),
-                          ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _QuickActionCard(
+                          icon: Icons.local_police,
+                          title: 'Police',
+                          subtitle: 'Call 100',
+                          color: Colors.blue,
+                          onTap: () => _callEmergencyNumber(context, '100'),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.fire_truck,
-                            title: 'Fire',
-                            subtitle: 'Call 101',
-                            color: Colors.orange,
-                            onTap: () => _callEmergencyNumber(context, '101'),
-                          ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _QuickActionCard(
+                          icon: Icons.fire_truck,
+                          title: 'Fire',
+                          subtitle: 'Call 101',
+                          color: Colors.orange,
+                          onTap: () => _callEmergencyNumber(context, '101'),
                         ),
-                        const SizedBox(width: AppTheme.spacingMd),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.location_on,
-                            title: 'Share',
-                            subtitle: 'Location',
-                            color: Colors.green,
-                            onTap: () => _shareLocation(context, ref),
-                          ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _QuickActionCard(
+                          icon: Icons.location_on,
+                          title: 'Share',
+                          subtitle: 'Location',
+                          color: Colors.green,
+                          onTap: () => _shareLocation(context, ref),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -308,7 +304,7 @@ class EmergencyPage extends ConsumerWidget {
                 description:
                     'Quick dial buttons for police (100), fire (101), and medical emergencies (102). Unified emergency: 112.',
               ),
-              const SizedBox(height: AppTheme.spacingLg),
+              const SizedBox(height: AppTheme.spacingMd),
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
@@ -317,6 +313,7 @@ class EmergencyPage extends ConsumerWidget {
                   border: Border.all(color: Colors.red.shade200),
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(Icons.warning, color: Colors.red.shade700, size: 20),
                     const SizedBox(width: AppTheme.spacingMd),
@@ -520,7 +517,7 @@ class _QuickActionCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -530,46 +527,46 @@ class _QuickActionCard extends StatelessWidget {
             width: 2,
           ),
         ),
-        child: child ??
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingSm),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  ),
-                  child: Icon(
+        child: child != null
+            ? Center(
+                child: SizedBox(
+                  height: 60,
+                  child: Center(child: child),
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
                     icon,
-                    size: 28,
+                    size: 32,
                     color: color,
                   ),
-                ),
-                const SizedBox(height: AppTheme.spacingSm),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                        fontSize: 11,
-                      ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+                  const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                          fontSize: 13,
+                        ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontSize: 10,
+                        ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
       ),
     );
   }

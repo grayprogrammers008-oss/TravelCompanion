@@ -1,0 +1,3593 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T11:57:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1375751934,
+  "lat": 25.5679611,
+  "lon": 91.8807062,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Main road, Near Shillong cantonment Board Office/ Near Lady Hydari Park, Laban, Lachumiere",
+    "addr:postcode": "793001",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "contact:phone": "0364 - 2223889",
+    "description": "District Hospital",
+    "emergency": "yes",
+    "name": "Civil Hospital Shillong",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2332670639,
+  "lat": 25.0180855,
+  "lon": 90.0245386,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sherpur General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856859,
+  "lat": 25.1014026,
+  "lon": 91.3039972,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856867,
+  "lat": 25.0854567,
+  "lon": 91.7554136,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Companygonj Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856875,
+  "lat": 25.0900950,
+  "lon": 90.5134661,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dhobaura Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856879,
+  "lat": 25.0429618,
+  "lon": 91.5678367,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dowarbazar Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856882,
+  "lat": 25.1279521,
+  "lon": 90.6780243,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Durgapur Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856889,
+  "lat": 25.1179719,
+  "lon": 90.3387211,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Haluaghat Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856892,
+  "lat": 25.1361745,
+  "lon": 92.1265808,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Jaintapur Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856895,
+  "lat": 25.1824850,
+  "lon": 90.0659935,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "উপজেলা স্বাস্থ্য কমপ্লেক্স, ঝিনাইগাতী",
+    "name:bn": "উপজেলা স্বাস্থ্য কমপ্লেক্স, ঝিনাইগাতী",
+    "name:en": "Upazila Health Complex, Jhinaigati"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856898,
+  "lat": 25.0741780,
+  "lon": 90.8931413,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kalmakanda Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856901,
+  "lat": 25.0120631,
+  "lon": 92.2558595,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Kanaighat Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856909,
+  "lat": 25.0934153,
+  "lon": 90.1888860,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Nalitabari Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856927,
+  "lat": 25.0651231,
+  "lon": 91.4106470,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sunamganj General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856931,
+  "lat": 25.0979172,
+  "lon": 91.1854831,
+  "tags": {
+    "addr:district": "Sunamganj",
+    "addr:union": "Borodol",
+    "addr:ward": "6",
+    "amenity": "hospital",
+    "building": "yes",
+    "damage": "no",
+    "description": "it's not any damaged yet.",
+    "name": "Tahirpur Upazila Health Complex",
+    "source": "survey",
+    "source:date": "2018-07-22",
+    "source:name": "logic_undp",
+    "source_ref": "https://www.openstreetmap.org/user/aHaSaN/diary",
+    "type": "institutional"
+  }
+},
+{
+  "type": "node",
+  "id": 3702053369,
+  "lat": 25.1063120,
+  "lon": 90.6728523,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Health & Family Wlfare Center"
+  }
+},
+{
+  "type": "node",
+  "id": 4869717739,
+  "lat": 25.7556131,
+  "lon": 91.8856792,
+  "tags": {
+    "addr:street": "Umsning Nongthymmai",
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Bethany Hospital Outreach OPD Services",
+    "operator": "Bethany"
+  }
+},
+{
+  "type": "node",
+  "id": 4871891718,
+  "lat": 25.9095430,
+  "lon": 91.8768375,
+  "tags": {
+    "addr:district": "Ri Bhoi",
+    "addr:full": "Near Post Office Nongpoh, Nongpoh Proper, G.S Road",
+    "addr:postcode": "793102",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Umling",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Nongpoh Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6768847372,
+  "lat": 25.1451949,
+  "lon": 90.3244779,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Joyrumkura Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6908213058,
+  "lat": 25.5771305,
+  "lon": 91.8662676,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Jhalupara, Upper Mawprem",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "R.P. Chest Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909772443,
+  "lat": 25.5147491,
+  "lon": 90.2037942,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near Der Mile Petrol Pump, Der Mile, Tetengkol Araimile road",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Tura Civil Hospital(DH)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909772449,
+  "lat": 25.5848940,
+  "lon": 91.8751504,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Jaiaw Main Road, Jaiaw Main Road, Shillong",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "name": "Dr. H. Gordon Robert Hospital (Khasi-Jaintia Presbyterian)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6911715919,
+  "lat": 25.5195842,
+  "lon": 91.2681726,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Mawiaban, Nongstoin",
+    "addr:postcode": "793119",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Nongstoin District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913054744,
+  "lat": 26.0354260,
+  "lon": 89.9644138,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Jhagrarpar Pt-I, Near BSNL Tower",
+    "addr:postcode": "783325",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Dhubri (Pt)",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Dhubri",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288170,
+  "lat": 26.0750630,
+  "lon": 89.9629453,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "G.T.B. Road, Gauripur",
+    "addr:postcode": "783331",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Gauripur Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6969705853,
+  "lat": 25.5608599,
+  "lon": 91.9113780,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Near Holy Child Road & Meghalaya Transport Commissioner Office, Demthring, Lum Sohra, Sawlad",
+    "addr:postcode": "793021",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "contact:phone": "0364 - 2537211",
+    "healthcare": "hospital",
+    "name": "Supercare Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6969819078,
+  "lat": 25.5658671,
+  "lon": 91.9112432,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Near State Bank of India & St. John's School, Pohkseh, Shillong, Pohkseh Road",
+    "addr:postcode": "793014",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "contact:phone": "0364 - 2535061",
+    "healthcare": "hospital",
+    "name": "The Children's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660278,
+  "lat": 25.5179517,
+  "lon": 90.1704141,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near Dakopgre Catholic Church, Walbakgre, Tura Walbakgre Road",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "name": "Holy Cross Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660279,
+  "lat": 25.5563930,
+  "lon": 91.2290792,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Nearing Shillong-Tura bypass road, Mawiawban, Nongstoin-Riangdo road",
+    "addr:postcode": "793119",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Nongstoin",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Nongstoin Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660288,
+  "lat": 25.1987267,
+  "lon": 90.6309637,
+  "tags": {
+    "addr:district": "South Garo Hills",
+    "addr:full": "Near District Medical & Health Office, Asim Chiring, Baghmara",
+    "addr:postcode": "794102",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Baghmara",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Capt. Williamson Memorial Hospital, Baghmara",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660298,
+  "lat": 25.5604660,
+  "lon": 91.6307355,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Near old Shillong-Nongstoin road, Lum Iew, Mairang",
+    "addr:postcode": "793120",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mairang",
+    "amenity": "hospital",
+    "name": "Holy Cross Private Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660307,
+  "lat": 25.4440110,
+  "lon": 92.1989030,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Near Thomas Jones Synod College, Moosalynkat",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Thadlaskein",
+    "amenity": "hospital",
+    "name": "Dr. Norman Tunnel Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660313,
+  "lat": 25.5146550,
+  "lon": 90.2199530,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near District Medical & Health Officer's office, Lower Babupara, Lower Babupara Road",
+    "addr:postcode": "794001",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Tura Maternity and Child Hospital(SDH)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660337,
+  "lat": 25.5541791,
+  "lon": 91.6330915,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Sangshong, Mairang",
+    "addr:postcode": "793120",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mairang",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Tirot Sing Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660375,
+  "lat": 25.4679450,
+  "lon": 92.2609880,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Ialong Village, Jowai Khliehriat Road",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Thadlaskein",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Jowai Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660381,
+  "lat": 25.5146304,
+  "lon": 90.6046435,
+  "tags": {
+    "addr:district": "East Garo Hills",
+    "addr:full": "Near PWD Road/Opp. Children Park, Medical Colony, Williamnagar",
+    "addr:postcode": "794111",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Samanda",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Williamnagar Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660404,
+  "lat": 25.5762376,
+  "lon": 91.8666306,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawprem, Garikhana",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Reid Provincial Chest Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731689,
+  "lat": 25.9629778,
+  "lon": 91.0542472,
+  "tags": {
+    "addr:district": "Goalpara",
+    "addr:full": "Dhupdhara, Rangjuli",
+    "addr:postcode": "783123",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Rangjuli",
+    "amenity": "hospital",
+    "name": "Bikali Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731765,
+  "lat": 25.7212060,
+  "lon": 89.9047078,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Hatsingimari, Near DC&#39; Office",
+    "addr:postcode": "783135",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Mankachar",
+    "amenity": "hospital",
+    "name": "Civil Hospital, Hatsingimari",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731799,
+  "lat": 26.0112846,
+  "lon": 91.2996591,
+  "tags": {
+    "addr:district": "Kamrup",
+    "addr:full": "Near Bamunigaon Camp on the side of N.H-37",
+    "addr:postcode": "781141",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Bamunigaon Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731818,
+  "lat": 25.5848910,
+  "lon": 89.8823100,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Jhawdanga, Near Junior College, Jhawdanga",
+    "addr:postcode": "783131",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Mankachar",
+    "amenity": "hospital",
+    "name": "Jhowdanga hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731838,
+  "lat": 25.9829392,
+  "lon": 90.7895475,
+  "tags": {
+    "addr:district": "Goalpara",
+    "addr:full": "Rangjuli, Near NH 37, Dudhnoi Sector, Near Dudhnoi river",
+    "addr:postcode": "783124",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "description": "First Referral Unit",
+    "name": "Dudhnoi (F.R.U)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731877,
+  "lat": 26.0796899,
+  "lon": 89.8715609,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Dhepdhepi (Debattar Hasdaha Pt-V), Near Dhepdhepi Bazar",
+    "addr:postcode": "783334",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Golokganj (Pt)",
+    "amenity": "hospital",
+    "name": "Dhevdevi hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517041,
+  "lat": 25.2873638,
+  "lon": 92.0968584,
+  "tags": {
+    "addr:city": "Shillong",
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Umlarem, Meghalaya",
+    "addr:housenumber": "Amlarem",
+    "addr:postcode": "793109",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Rasongsli Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517042,
+  "lat": 25.5825070,
+  "lon": 91.9217576,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawarliang, Shillong, Meghalaya",
+    "addr:postcode": "793006",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "CAPF Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517043,
+  "lat": 25.5928210,
+  "lon": 91.9427560,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawdiangdiang, Meghalaya",
+    "addr:postcode": "793018",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Regional Cancer Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517044,
+  "lat": 25.5958462,
+  "lon": 91.9474231,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawdiangdiang, Meghalaya",
+    "addr:postcode": "793018",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Ayurvedic & Homoeopathy Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517045,
+  "lat": 25.5880190,
+  "lon": 91.9138360,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Nongmynsong, Shillong, Meghalaya",
+    "addr:postcode": "793019",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Nigrimes Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517046,
+  "lat": 25.5905520,
+  "lon": 91.9106550,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Pynthorumkhrah, Shillong, Meghalaya",
+    "addr:postcode": "793019",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Composite Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517049,
+  "lat": 25.6789181,
+  "lon": 91.9094552,
+  "tags": {
+    "addr:district": "Ri-Bhoi",
+    "addr:full": "Sumer Village, Meghalaya",
+    "addr:postcode": "793122",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "ICAR Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517055,
+  "lat": 25.4362133,
+  "lon": 92.2052507,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Jowai, Meghalaya",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517063,
+  "lat": 25.4682013,
+  "lon": 92.2876219,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "HynniewMer, Meghalaya",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Nazareth Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517076,
+  "lat": 25.4692031,
+  "lon": 92.2391729,
+  "tags": {
+    "addr:city": "Jowai",
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Jowai, Meghalaya",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "addr:street": "Sabahmuswang Elaka",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Woodland  WK Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517077,
+  "lat": 25.5752156,
+  "lon": 91.8714508,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Upper Mawprem, Garikhana, Shillong, Meghalaya",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Jiban Ram Goenka Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517078,
+  "lat": 25.5721912,
+  "lon": 91.8867398,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Secretariat Hills, Shillong, Meghalaya",
+    "addr:postcode": "793001",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "CHGS Wellness Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517079,
+  "lat": 25.5647415,
+  "lon": 91.9031082,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Nongrimbah, Shillong, Meghalaya",
+    "addr:postcode": "793014",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "John Roberts Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580173,
+  "lat": 25.5165354,
+  "lon": 90.1671545,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Tura, Meghalaya",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Danak Samguri Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580175,
+  "lat": 25.4940162,
+  "lon": 89.9432399,
+  "tags": {
+    "addr:district": "South West Garo Hills",
+    "addr:full": "Betasing, Meghalaya",
+    "addr:postcode": "794115",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Civil Hospital, Ampati",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580176,
+  "lat": 25.6520385,
+  "lon": 90.3347324,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Jengjal, Meghalaya",
+    "addr:postcode": "794109",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Adventis Mission Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580179,
+  "lat": 25.4979800,
+  "lon": 90.6186450,
+  "tags": {
+    "addr:district": "East Garo Hills",
+    "addr:full": "Sampalgre, Meghalaya",
+    "addr:postcode": "794111",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Sampalgre Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580180,
+  "lat": 25.5201568,
+  "lon": 90.1767347,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Tura, Meghalaya",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Maternity and Child Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580181,
+  "lat": 25.5227112,
+  "lon": 90.1823500,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Tura, Meghalaya",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "CRPF Composite Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580182,
+  "lat": 25.9128990,
+  "lon": 90.6286950,
+  "tags": {
+    "addr:district": "North Garo Hills",
+    "addr:full": "Gangdobi Road, Mendipathar, Meghalaya",
+    "addr:postcode": "794112",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Gangdobi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580191,
+  "lat": 25.5212405,
+  "lon": 90.2171856,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Lower Wadanang, Tura, Meghalaya",
+    "addr:postcode": "794001",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "T.B. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580192,
+  "lat": 25.5079447,
+  "lon": 91.2738426,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Shnong , Nongstoin, Meghalaya",
+    "addr:postcode": "793119",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "T.B. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580193,
+  "lat": 25.9165611,
+  "lon": 90.6493529,
+  "tags": {
+    "addr:district": "North Garo Hills",
+    "addr:full": "Salpara, Mendipathar, Meghalaya",
+    "addr:postcode": "794112",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580194,
+  "lat": 25.9474414,
+  "lon": 90.6056206,
+  "tags": {
+    "addr:district": "North Garo Hills",
+    "addr:full": "Khaldang Agitok, Meghalaya",
+    "addr:postcode": "794108",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Khaldang Rongsrek Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9862740828,
+  "lat": 25.1776696,
+  "lon": 89.8705623,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bakshiganj General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10895824519,
+  "lat": 25.5711799,
+  "lon": 91.8720444,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Military Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11353484755,
+  "lat": 25.5156079,
+  "lon": 90.1858984,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "District PHE Lab, Tura"
+  }
+},
+{
+  "type": "node",
+  "id": 11357651010,
+  "lat": 25.5150175,
+  "lon": 90.2038069,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Tura Civil Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11934315725,
+  "lat": 25.5182853,
+  "lon": 90.2189168,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Tura Christian Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12273223045,
+  "lat": 25.1099111,
+  "lon": 90.3363830,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Haluaghat Eye Care Center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12462035169,
+  "lat": 25.1699082,
+  "lon": 91.6919619,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ichamati Community Health Center"
+  }
+},
+{
+  "type": "node",
+  "id": 12736483095,
+  "lat": 25.0277882,
+  "lon": 90.0144816,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Uttara Specialized Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12736505877,
+  "lat": 25.0268917,
+  "lon": 90.0146166,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Doctors Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738830238,
+  "lat": 25.0185451,
+  "lon": 90.0134567,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Popular pathological laboratoryHospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738860734,
+  "lat": 25.0219632,
+  "lon": 90.0157594,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Zaman Modern Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738871010,
+  "lat": 25.0189248,
+  "lon": 90.0131406,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Firuza Mortuz Hospital And Diagnostic Center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738893677,
+  "lat": 25.0157490,
+  "lon": 90.0156549,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Uttara General Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738895163,
+  "lat": 25.0191378,
+  "lon": 90.0139950,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bangladesh Phermacy, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12741228036,
+  "lat": 25.0232645,
+  "lon": 90.0145059,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur ibnasina general pvt hospital, Hospital department"
+  }
+},
+{
+  "type": "node",
+  "id": 12741301636,
+  "lat": 25.0635795,
+  "lon": 90.0290780,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Alhaj Abdul Sattar Homeopathic Medical College and Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12741307253,
+  "lat": 25.0326863,
+  "lon": 90.0165747,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Diagnostic Centre, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12752254153,
+  "lat": 25.1163026,
+  "lon": 90.0807413,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Union Health Complex, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12757255971,
+  "lat": 25.0931291,
+  "lon": 90.1882810,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mithun Medicare Centre, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12757279985,
+  "lat": 25.0931887,
+  "lon": 90.1892466,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nalitabari Upozila Health Complex, Government hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12757300859,
+  "lat": 25.0915026,
+  "lon": 90.1950058,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Eye Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12762177422,
+  "lat": 25.0916643,
+  "lon": 90.1903673,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Garden - Nalitabari Animal Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12762182620,
+  "lat": 25.0133285,
+  "lon": 90.0166180,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Diabetic Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12762205720,
+  "lat": 25.0071146,
+  "lon": 90.0216287,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Haji Guest House, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12791480600,
+  "lat": 25.0856684,
+  "lon": 90.1897446,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nalitabari Diabetic Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12791487113,
+  "lat": 25.0604908,
+  "lon": 90.1781986,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Yogania Union Health and Family Welfare Center, Yogania Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12791531409,
+  "lat": 25.0827658,
+  "lon": 90.1891950,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Surjer Hashi Clinic, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12797714664,
+  "lat": 25.1205203,
+  "lon": 90.0504752,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "AK Medicine Centre, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12809375710,
+  "lat": 25.2008996,
+  "lon": 90.1850064,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Christian Mission Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12809391003,
+  "lat": 25.1947343,
+  "lon": 90.1966266,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Islamic Mission Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814080989,
+  "lat": 25.0183574,
+  "lon": 90.0250620,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "250-bed District Headquarters Hospital, Government hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814097953,
+  "lat": 25.0186218,
+  "lon": 90.0281222,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hazi Nimayullah Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814108045,
+  "lat": 25.0171542,
+  "lon": 90.0265797,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Al-Baraka Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814126073,
+  "lat": 25.0187208,
+  "lon": 90.0222823,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Akota Specialized Pvt., Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814135224,
+  "lat": 25.0195264,
+  "lon": 90.0184604,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nirapad General Hospital and Diagnostic Center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814136948,
+  "lat": 25.0190074,
+  "lon": 90.0216320,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Ever Care Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819248911,
+  "lat": 25.0500270,
+  "lon": 90.0888184,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819282525,
+  "lat": 25.0192025,
+  "lon": 90.0223092,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ekota And Bondhon General Pvt Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819283352,
+  "lat": 25.0191492,
+  "lon": 90.0227460,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Amzad diagnostic center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819300542,
+  "lat": 25.0187667,
+  "lon": 90.0279849,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Darus Shifa Islamia General Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12830097349,
+  "lat": 25.0219400,
+  "lon": 90.0179250,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "MCWC Sherpur, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12830113345,
+  "lat": 25.0218481,
+  "lon": 90.0178343,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Civil Surgeon Office, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12830141848,
+  "lat": 25.0216667,
+  "lon": 90.0176887,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Matrisadan Hospital, Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 278820821,
+  "center": {
+    "lat": 25.5662011,
+    "lon": 91.9011296
+  },
+  "nodes": [
+    2831233750,
+    2831233752,
+    2831233749,
+    2831233751,
+    2831233748,
+    2831233750
+  ],
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Nongrim Hills, Nongrim Hills, Shillong, Opposite Nagaland House",
+    "addr:postcode": "793003",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Bethany Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 353057753,
+  "center": {
+    "lat": 25.1088768,
+    "lon": 90.6735831
+  },
+  "nodes": [
+    3588377855,
+    3588377848,
+    3588377850,
+    3588377843,
+    3588377842,
+    3588377837,
+    3588377836,
+    3588377854,
+    3588377855
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "name": "Broadbank Clinic Quatere"
+  }
+},
+{
+  "type": "way",
+  "id": 356065605,
+  "center": {
+    "lat": 25.1236486,
+    "lon": 90.6746811
+  },
+  "nodes": [
+    3615454065,
+    3615454068,
+    3615454056,
+    3615454053,
+    3615454065
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "health_facility_type": "health care center",
+    "name": "Super Diagnostic & Health Care Center"
+  }
+},
+{
+  "type": "way",
+  "id": 494668025,
+  "center": {
+    "lat": 25.9003255,
+    "lon": 91.8779190
+  },
+  "nodes": [
+    4864034346,
+    4864034347,
+    4864034348,
+    4864034349,
+    4864034350,
+    4864034351,
+    4864034352,
+    4864034353,
+    4864034354,
+    4864034355,
+    4864034356,
+    4864034357,
+    4864034358,
+    4864034359,
+    4864034360,
+    4864034361,
+    4864034346
+  ],
+  "tags": {
+    "addr:city": "Shillong",
+    "addr:postcode": "793102",
+    "addr:street": "Pahamsyiem",
+    "amenity": "hospital",
+    "name": "Bethany Hospital Outreach"
+  }
+},
+{
+  "type": "way",
+  "id": 556878346,
+  "center": {
+    "lat": 25.2322960,
+    "lon": 91.8097623
+  },
+  "nodes": [
+    5371424009,
+    5371424238,
+    5371424237,
+    5371424007,
+    5371424016,
+    5371424017,
+    5371424004,
+    5371424015,
+    5371424014,
+    5371424005,
+    5371424006,
+    5371424236,
+    5371424239,
+    5371424008,
+    5371424019,
+    5371424018,
+    5371424011,
+    5371424013,
+    5371424012,
+    5371424010,
+    5371424009
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878347,
+  "center": {
+    "lat": 25.2319673,
+    "lon": 91.8101421
+  },
+  "nodes": [
+    5371424223,
+    5371424222,
+    5371424221,
+    5371424020,
+    5371424223
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878348,
+  "center": {
+    "lat": 25.2320497,
+    "lon": 91.8098787
+  },
+  "nodes": [
+    5371424227,
+    5371424226,
+    5371424225,
+    5371424224,
+    5371424227
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878349,
+  "center": {
+    "lat": 25.2320766,
+    "lon": 91.8100169
+  },
+  "nodes": [
+    5371424231,
+    5371424230,
+    5371424229,
+    5371424228,
+    5371424231
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878350,
+  "center": {
+    "lat": 25.2322175,
+    "lon": 91.8101042
+  },
+  "nodes": [
+    5371424235,
+    5371424234,
+    5371424233,
+    5371424232,
+    5371424235
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 558368063,
+  "center": {
+    "lat": 25.0856259,
+    "lon": 91.7565772
+  },
+  "nodes": [
+    5384483318,
+    5384483317,
+    5384483316,
+    5384483315,
+    5384483318
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 558368065,
+  "center": {
+    "lat": 25.0853996,
+    "lon": 91.7566595
+  },
+  "nodes": [
+    5384484129,
+    5384484131,
+    5384484123,
+    5384483320,
+    5384484129
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 558368067,
+  "center": {
+    "lat": 25.0854159,
+    "lon": 91.7564805
+  },
+  "nodes": [
+    5384484124,
+    5384484132,
+    5384484134,
+    5384484126,
+    5384484124
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 558368069,
+  "center": {
+    "lat": 25.0853957,
+    "lon": 91.7566201
+  },
+  "nodes": [
+    5384484127,
+    5384484135,
+    5384484136,
+    5384484128,
+    5384484142,
+    5384484133,
+    5384484146,
+    5384484145,
+    5384484130,
+    5384484140,
+    5384484139,
+    5384483319,
+    5384484144,
+    5384484122,
+    5384484137,
+    5384484138,
+    5384484121,
+    5384484143,
+    5384484125,
+    5384484141,
+    5384484127
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Companygonj Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 624256836,
+  "center": {
+    "lat": 25.5716954,
+    "lon": 89.8322059
+  },
+  "nodes": [
+    2332856915,
+    5894868896,
+    5894868897,
+    5894868898,
+    5894868899,
+    5894868900,
+    2332856915
+  ],
+  "tags": {
+    "addr:district": "Kurigram",
+    "addr:union": "Roumari",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;paediatrics;emergency;vaccination;maternity;otolaryngology",
+    "name": "Raumari Upazila Health Complex",
+    "source": "local knowledge;gps",
+    "source:date": "2018-05-08",
+    "source:name": "logic_undp",
+    "source_ref": "https://bit.ly/2NBTrkT"
+  }
+},
+{
+  "type": "way",
+  "id": 721576505,
+  "center": {
+    "lat": 25.1444880,
+    "lon": 90.3247201
+  },
+  "nodes": [
+    6769084634,
+    6769084635,
+    6769084636,
+    6769084637,
+    6769084638,
+    6769084639,
+    6769084640,
+    6769084641,
+    6769084634
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Joyrumkurra Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 723080799,
+  "center": {
+    "lat": 25.0900573,
+    "lon": 90.5132497
+  },
+  "nodes": [
+    6782365569,
+    6782365570,
+    6782365571,
+    6782365572,
+    6782365569
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dhobaura Upazila Health Complex",
+    "operator": "DGHS",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "way",
+  "id": 764111388,
+  "center": {
+    "lat": 25.5185173,
+    "lon": 90.2187483
+  },
+  "nodes": [
+    7138660364,
+    7138659306,
+    7138659307,
+    7138659304,
+    7138659302,
+    7138659311,
+    7138659312,
+    7138659313,
+    7138659310,
+    7138659303,
+    7138659309,
+    7138659308,
+    7138660364
+  ],
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near Tura Baptist Church, AB Mission Compound, Upper Chandmari Road",
+    "addr:postcode": "794001",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Tura Christian Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 936394796,
+  "center": {
+    "lat": 25.2954212,
+    "lon": 91.5785797
+  },
+  "nodes": [
+    8676764364,
+    8676764365,
+    8676764366,
+    8676764367,
+    8676764368,
+    8676764369,
+    8676764370,
+    8676764371,
+    8676764372,
+    8676764373,
+    8676764374,
+    8676764375,
+    8676764376,
+    8676764377,
+    8676764378,
+    8676764379,
+    8676764380,
+    8676764381,
+    8676764382,
+    8676764383,
+    8676764384,
+    8676764385,
+    8676764386,
+    8676764387,
+    8676764388,
+    8676764364
+  ],
+  "tags": {
+    "addr:city": "Mawsynram",
+    "addr:postcode": "793113",
+    "addr:street": "Dongrum",
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1075303043,
+  "center": {
+    "lat": 25.1015364,
+    "lon": 91.3034775
+  },
+  "nodes": [
+    9862038148,
+    9862038149,
+    9862038150,
+    9862038151,
+    9862038152,
+    9862038153,
+    9862038154,
+    9862038155,
+    9862038156,
+    9862038157,
+    5339341438,
+    5339341435,
+    5339341473,
+    9862038158,
+    9862038148
+  ],
+  "tags": {
+    "addr:city": "Bishwamvarpur",
+    "addr:street": "Hospitalroad",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Bishwamvarpur Upazila Health Complex",
+    "operator": "Upazila Health"
+  }
+},
+{
+  "type": "way",
+  "id": 1075303059,
+  "center": {
+    "lat": 25.1014827,
+    "lon": 91.3035204
+  },
+  "nodes": [
+    9862045565,
+    9862045566,
+    9862045567,
+    9862045568,
+    9862045569,
+    9862045570,
+    9862045571,
+    9862045565
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "layer": "1",
+    "name": "Bishwamvpur Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 1076141160,
+  "center": {
+    "lat": 25.1775732,
+    "lon": 89.8703883
+  },
+  "nodes": [
+    9868745801,
+    9868745802,
+    9868745803,
+    9868745804,
+    9868745801
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1093202023,
+  "center": {
+    "lat": 25.0893799,
+    "lon": 91.9799013
+  },
+  "nodes": [
+    10011876593,
+    10011876594,
+    10011876595,
+    10011876596,
+    10011876597,
+    10011876598,
+    10011876599,
+    10011876600,
+    10011876601,
+    10011876593
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gowainghat Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 1224938013,
+  "center": {
+    "lat": 25.4996233,
+    "lon": 90.6906146
+  },
+  "nodes": [
+    11359595597,
+    11359595598,
+    11359595599,
+    11359595600,
+    11359595597
+  ],
+  "tags": {
+    "addr:city": "NENGKHRA AWE",
+    "addr:district": "EAST GARO HILLS MEGHALAYA",
+    "addr:postcode": "794111",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "NENGKHRA AWE  SUB_CENTRE"
+  }
+},
+{
+  "type": "relation",
+  "id": 3714419,
+  "center": {
+    "lat": 25.5707418,
+    "lon": 91.8732736
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 279320537,
+      "role": "outer"
+    },
+    {
+      "type": "way",
+      "ref": 279320543,
+      "role": "inner"
+    }
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 3717774,
+  "center": {
+    "lat": 25.5837155,
+    "lon": 91.8843218
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 279506760,
+      "role": "inner"
+    },
+    {
+      "type": "way",
+      "ref": 279506763,
+      "role": "outer"
+    }
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "node",
+  "id": 1375751934,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Main road, Near Shillong cantonment Board Office/ Near Lady Hydari Park, Laban, Lachumiere",
+    "addr:postcode": "793001",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "contact:phone": "0364 - 2223889",
+    "description": "District Hospital",
+    "emergency": "yes",
+    "name": "Civil Hospital Shillong",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2332670639,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sherpur General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856859,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856867,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Companygonj Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856875,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dhobaura Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856879,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dowarbazar Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856882,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Durgapur Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856889,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Haluaghat Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856892,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Jaintapur Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856895,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "উপজেলা স্বাস্থ্য কমপ্লেক্স, ঝিনাইগাতী",
+    "name:bn": "উপজেলা স্বাস্থ্য কমপ্লেক্স, ঝিনাইগাতী",
+    "name:en": "Upazila Health Complex, Jhinaigati"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856898,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kalmakanda Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856901,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Kanaighat Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856909,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Nalitabari Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856927,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sunamganj General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332856931,
+  "tags": {
+    "addr:district": "Sunamganj",
+    "addr:union": "Borodol",
+    "addr:ward": "6",
+    "amenity": "hospital",
+    "building": "yes",
+    "damage": "no",
+    "description": "it's not any damaged yet.",
+    "name": "Tahirpur Upazila Health Complex",
+    "source": "survey",
+    "source:date": "2018-07-22",
+    "source:name": "logic_undp",
+    "source_ref": "https://www.openstreetmap.org/user/aHaSaN/diary",
+    "type": "institutional"
+  }
+},
+{
+  "type": "node",
+  "id": 3702053369,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Health & Family Wlfare Center"
+  }
+},
+{
+  "type": "node",
+  "id": 4869717739,
+  "tags": {
+    "addr:street": "Umsning Nongthymmai",
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Bethany Hospital Outreach OPD Services",
+    "operator": "Bethany"
+  }
+},
+{
+  "type": "node",
+  "id": 4871891718,
+  "tags": {
+    "addr:district": "Ri Bhoi",
+    "addr:full": "Near Post Office Nongpoh, Nongpoh Proper, G.S Road",
+    "addr:postcode": "793102",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Umling",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Nongpoh Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6768847372,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Joyrumkura Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6908213058,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Jhalupara, Upper Mawprem",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "R.P. Chest Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909772443,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near Der Mile Petrol Pump, Der Mile, Tetengkol Araimile road",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Tura Civil Hospital(DH)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909772449,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Jaiaw Main Road, Jaiaw Main Road, Shillong",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "name": "Dr. H. Gordon Robert Hospital (Khasi-Jaintia Presbyterian)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6911715919,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Mawiaban, Nongstoin",
+    "addr:postcode": "793119",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Nongstoin District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913054744,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Jhagrarpar Pt-I, Near BSNL Tower",
+    "addr:postcode": "783325",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Dhubri (Pt)",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Dhubri",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288170,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "G.T.B. Road, Gauripur",
+    "addr:postcode": "783331",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Gauripur Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6969705853,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Near Holy Child Road & Meghalaya Transport Commissioner Office, Demthring, Lum Sohra, Sawlad",
+    "addr:postcode": "793021",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "contact:phone": "0364 - 2537211",
+    "healthcare": "hospital",
+    "name": "Supercare Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6969819078,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Near State Bank of India & St. John's School, Pohkseh, Shillong, Pohkseh Road",
+    "addr:postcode": "793014",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "contact:phone": "0364 - 2535061",
+    "healthcare": "hospital",
+    "name": "The Children's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660278,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near Dakopgre Catholic Church, Walbakgre, Tura Walbakgre Road",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "name": "Holy Cross Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660279,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Nearing Shillong-Tura bypass road, Mawiawban, Nongstoin-Riangdo road",
+    "addr:postcode": "793119",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Nongstoin",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Nongstoin Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660288,
+  "tags": {
+    "addr:district": "South Garo Hills",
+    "addr:full": "Near District Medical & Health Office, Asim Chiring, Baghmara",
+    "addr:postcode": "794102",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Baghmara",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Capt. Williamson Memorial Hospital, Baghmara",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660298,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Near old Shillong-Nongstoin road, Lum Iew, Mairang",
+    "addr:postcode": "793120",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mairang",
+    "amenity": "hospital",
+    "name": "Holy Cross Private Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660307,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Near Thomas Jones Synod College, Moosalynkat",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Thadlaskein",
+    "amenity": "hospital",
+    "name": "Dr. Norman Tunnel Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660313,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near District Medical & Health Officer's office, Lower Babupara, Lower Babupara Road",
+    "addr:postcode": "794001",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Tura Maternity and Child Hospital(SDH)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660337,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Sangshong, Mairang",
+    "addr:postcode": "793120",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mairang",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Tirot Sing Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660375,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Ialong Village, Jowai Khliehriat Road",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Thadlaskein",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Jowai Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660381,
+  "tags": {
+    "addr:district": "East Garo Hills",
+    "addr:full": "Near PWD Road/Opp. Children Park, Medical Colony, Williamnagar",
+    "addr:postcode": "794111",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Samanda",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Williamnagar Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138660404,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawprem, Garikhana",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Reid Provincial Chest Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731689,
+  "tags": {
+    "addr:district": "Goalpara",
+    "addr:full": "Dhupdhara, Rangjuli",
+    "addr:postcode": "783123",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Rangjuli",
+    "amenity": "hospital",
+    "name": "Bikali Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731765,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Hatsingimari, Near DC&#39; Office",
+    "addr:postcode": "783135",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Mankachar",
+    "amenity": "hospital",
+    "name": "Civil Hospital, Hatsingimari",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731799,
+  "tags": {
+    "addr:district": "Kamrup",
+    "addr:full": "Near Bamunigaon Camp on the side of N.H-37",
+    "addr:postcode": "781141",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Bamunigaon Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731818,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Jhawdanga, Near Junior College, Jhawdanga",
+    "addr:postcode": "783131",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Mankachar",
+    "amenity": "hospital",
+    "name": "Jhowdanga hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731838,
+  "tags": {
+    "addr:district": "Goalpara",
+    "addr:full": "Rangjuli, Near NH 37, Dudhnoi Sector, Near Dudhnoi river",
+    "addr:postcode": "783124",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "description": "First Referral Unit",
+    "name": "Dudhnoi (F.R.U)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150731877,
+  "tags": {
+    "addr:district": "Dhubri",
+    "addr:full": "Dhepdhepi (Debattar Hasdaha Pt-V), Near Dhepdhepi Bazar",
+    "addr:postcode": "783334",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Golokganj (Pt)",
+    "amenity": "hospital",
+    "name": "Dhevdevi hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517041,
+  "tags": {
+    "addr:city": "Shillong",
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Umlarem, Meghalaya",
+    "addr:housenumber": "Amlarem",
+    "addr:postcode": "793109",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Rasongsli Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517042,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawarliang, Shillong, Meghalaya",
+    "addr:postcode": "793006",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "CAPF Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517043,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawdiangdiang, Meghalaya",
+    "addr:postcode": "793018",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Regional Cancer Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517044,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Mawdiangdiang, Meghalaya",
+    "addr:postcode": "793018",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Ayurvedic & Homoeopathy Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517045,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Nongmynsong, Shillong, Meghalaya",
+    "addr:postcode": "793019",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Nigrimes Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517046,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Pynthorumkhrah, Shillong, Meghalaya",
+    "addr:postcode": "793019",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Composite Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517049,
+  "tags": {
+    "addr:district": "Ri-Bhoi",
+    "addr:full": "Sumer Village, Meghalaya",
+    "addr:postcode": "793122",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "ICAR Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517055,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Jowai, Meghalaya",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517063,
+  "tags": {
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "HynniewMer, Meghalaya",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Nazareth Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517076,
+  "tags": {
+    "addr:city": "Jowai",
+    "addr:district": "West Jaintia Hills",
+    "addr:full": "Jowai, Meghalaya",
+    "addr:postcode": "793150",
+    "addr:state": "Meghalaya",
+    "addr:street": "Sabahmuswang Elaka",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Woodland  WK Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517077,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Upper Mawprem, Garikhana, Shillong, Meghalaya",
+    "addr:postcode": "793002",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Jiban Ram Goenka Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517078,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Secretariat Hills, Shillong, Meghalaya",
+    "addr:postcode": "793001",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "CHGS Wellness Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7577517079,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Nongrimbah, Shillong, Meghalaya",
+    "addr:postcode": "793014",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "John Roberts Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580173,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Tura, Meghalaya",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Danak Samguri Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580175,
+  "tags": {
+    "addr:district": "South West Garo Hills",
+    "addr:full": "Betasing, Meghalaya",
+    "addr:postcode": "794115",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Civil Hospital, Ampati",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580176,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Jengjal, Meghalaya",
+    "addr:postcode": "794109",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Adventis Mission Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580179,
+  "tags": {
+    "addr:district": "East Garo Hills",
+    "addr:full": "Sampalgre, Meghalaya",
+    "addr:postcode": "794111",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Sampalgre Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580180,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Tura, Meghalaya",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Maternity and Child Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580181,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Tura, Meghalaya",
+    "addr:postcode": "794101",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "CRPF Composite Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580182,
+  "tags": {
+    "addr:district": "North Garo Hills",
+    "addr:full": "Gangdobi Road, Mendipathar, Meghalaya",
+    "addr:postcode": "794112",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Gangdobi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580191,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Lower Wadanang, Tura, Meghalaya",
+    "addr:postcode": "794001",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "T.B. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580192,
+  "tags": {
+    "addr:district": "West Khasi Hills",
+    "addr:full": "Shnong , Nongstoin, Meghalaya",
+    "addr:postcode": "793119",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "T.B. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580193,
+  "tags": {
+    "addr:district": "North Garo Hills",
+    "addr:full": "Salpara, Mendipathar, Meghalaya",
+    "addr:postcode": "794112",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7579580194,
+  "tags": {
+    "addr:district": "North Garo Hills",
+    "addr:full": "Khaldang Agitok, Meghalaya",
+    "addr:postcode": "794108",
+    "addr:state": "Meghalaya",
+    "amenity": "hospital",
+    "name": "Khaldang Rongsrek Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9862740828,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bakshiganj General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10895824519,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Military Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11353484755,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "District PHE Lab, Tura"
+  }
+},
+{
+  "type": "node",
+  "id": 11357651010,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Tura Civil Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11934315725,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Tura Christian Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12273223045,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Haluaghat Eye Care Center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12462035169,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ichamati Community Health Center"
+  }
+},
+{
+  "type": "node",
+  "id": 12736483095,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Uttara Specialized Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12736505877,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Doctors Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738830238,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Popular pathological laboratoryHospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738860734,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Zaman Modern Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738871010,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Firuza Mortuz Hospital And Diagnostic Center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738893677,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Uttara General Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12738895163,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bangladesh Phermacy, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12741228036,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur ibnasina general pvt hospital, Hospital department"
+  }
+},
+{
+  "type": "node",
+  "id": 12741301636,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Alhaj Abdul Sattar Homeopathic Medical College and Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12741307253,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Diagnostic Centre, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12752254153,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Union Health Complex, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12757255971,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mithun Medicare Centre, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12757279985,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nalitabari Upozila Health Complex, Government hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12757300859,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Eye Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12762177422,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Garden - Nalitabari Animal Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12762182620,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Diabetic Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12762205720,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Haji Guest House, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12791480600,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nalitabari Diabetic Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12791487113,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Yogania Union Health and Family Welfare Center, Yogania Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12791531409,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Surjer Hashi Clinic, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12797714664,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "AK Medicine Centre, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12809375710,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Christian Mission Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12809391003,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Islamic Mission Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814080989,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "250-bed District Headquarters Hospital, Government hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814097953,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hazi Nimayullah Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814108045,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Al-Baraka Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814126073,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Akota Specialized Pvt., Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814135224,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nirapad General Hospital and Diagnostic Center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12814136948,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sherpur Ever Care Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819248911,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819282525,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ekota And Bondhon General Pvt Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819283352,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Amzad diagnostic center, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12819300542,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Darus Shifa Islamia General Hospital, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12830097349,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "MCWC Sherpur, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12830113345,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Civil Surgeon Office, Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12830141848,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Matrisadan Hospital, Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 278820821,
+  "tags": {
+    "addr:district": "East Khasi Hills",
+    "addr:full": "Nongrim Hills, Nongrim Hills, Shillong, Opposite Nagaland House",
+    "addr:postcode": "793003",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Mylliem",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Bethany Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 353057753,
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "name": "Broadbank Clinic Quatere"
+  }
+},
+{
+  "type": "way",
+  "id": 356065605,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "health_facility_type": "health care center",
+    "name": "Super Diagnostic & Health Care Center"
+  }
+},
+{
+  "type": "way",
+  "id": 494668025,
+  "tags": {
+    "addr:city": "Shillong",
+    "addr:postcode": "793102",
+    "addr:street": "Pahamsyiem",
+    "amenity": "hospital",
+    "name": "Bethany Hospital Outreach"
+  }
+},
+{
+  "type": "way",
+  "id": 556878346,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878347,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878348,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878349,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 556878350,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 558368063,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 558368065,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 558368067,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 558368069,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Companygonj Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 624256836,
+  "tags": {
+    "addr:district": "Kurigram",
+    "addr:union": "Roumari",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;paediatrics;emergency;vaccination;maternity;otolaryngology",
+    "name": "Raumari Upazila Health Complex",
+    "source": "local knowledge;gps",
+    "source:date": "2018-05-08",
+    "source:name": "logic_undp",
+    "source_ref": "https://bit.ly/2NBTrkT"
+  }
+},
+{
+  "type": "way",
+  "id": 721576505,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Joyrumkurra Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 723080799,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dhobaura Upazila Health Complex",
+    "operator": "DGHS",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "way",
+  "id": 764111388,
+  "tags": {
+    "addr:district": "West Garo Hills",
+    "addr:full": "Near Tura Baptist Church, AB Mission Compound, Upper Chandmari Road",
+    "addr:postcode": "794001",
+    "addr:state": "Meghalaya",
+    "addr:subdistrict": "Rongram",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Tura Christian Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 936394796,
+  "tags": {
+    "addr:city": "Mawsynram",
+    "addr:postcode": "793113",
+    "addr:street": "Dongrum",
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1075303043,
+  "tags": {
+    "addr:city": "Bishwamvarpur",
+    "addr:street": "Hospitalroad",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Bishwamvarpur Upazila Health Complex",
+    "operator": "Upazila Health"
+  }
+},
+{
+  "type": "way",
+  "id": 1075303059,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "layer": "1",
+    "name": "Bishwamvpur Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 1076141160,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1093202023,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gowainghat Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 1224938013,
+  "tags": {
+    "addr:city": "NENGKHRA AWE",
+    "addr:district": "EAST GARO HILLS MEGHALAYA",
+    "addr:postcode": "794111",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "NENGKHRA AWE  SUB_CENTRE"
+  }
+},
+{
+  "type": "relation",
+  "id": 3714419,
+  "tags": {
+    "amenity": "hospital",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 3717774,
+  "tags": {
+    "amenity": "hospital",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}

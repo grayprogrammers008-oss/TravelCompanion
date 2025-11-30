@@ -317,29 +317,31 @@ class CompactSOSButton extends ConsumerWidget {
             Text('Emergency SOS'),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'This will send an emergency alert to all your emergency contacts.',
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(8),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'This will send an emergency alert to all your emergency contacts.',
               ),
-              child: const Text(
-                'Only use in real emergencies!',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+              const SizedBox(height: AppTheme.spacingMd),
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'Only use in real emergencies!',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(

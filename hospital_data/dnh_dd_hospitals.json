@@ -1,0 +1,5195 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T12:54:57Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 2681796081,
+  "lat": 20.1238561,
+  "lon": 72.9162902,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shree seva Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2681819585,
+  "lat": 20.1237560,
+  "lon": 72.9197059,
+  "tags": {
+    "addr:city": "Talasari",
+    "addr:postcode": "401606",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Krishna Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4143907730,
+  "lat": 20.0537154,
+  "lon": 72.8549730,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6908093951,
+  "lat": 20.2712521,
+  "lon": 73.0014588,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Opposite Development Credit Bank, Naroli Road",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Vardhaman Hospital, Dadra and Nagar Haveli",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908097586,
+  "lat": 20.2762270,
+  "lon": 73.0040934,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Behind Primary School, Zanda Chowk",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:mobile": "2641393",
+    "name": "Mukta General Hospital and Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908097595,
+  "lat": 20.2790952,
+  "lon": 73.0046191,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Daffodil Building, Iti Road, Amli Junction, Near Sai Mandir, Amli",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Marigold Child Care Hospital and Nicu",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120520,
+  "lat": 20.4083876,
+  "lon": 72.8323187,
+  "tags": {
+    "addr:city": "Moti Daman",
+    "addr:district": "Daman",
+    "addr:full": "Fort Area, Community HealthCenter, Moti Daman",
+    "addr:postcode": "396220",
+    "addr:state": "Daman and Diu",
+    "addr:street": "Fort Area",
+    "addr:subdistrict": "Daman",
+    "amenity": "hospital",
+    "contact:phone": "2602230470",
+    "description": "Community Health Centre, commonly known as Government Hospital",
+    "emergency": "yes",
+    "fax": "2602230570",
+    "healthcare": "hospital",
+    "locality": "Moti Daman",
+    "name": "Government Hospital (CHC)",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120525,
+  "lat": 20.4238558,
+  "lon": 72.8436805,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Duntha road, damandaman union territory",
+    "addr:postcode": "369210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Atmaram Jog Memorial Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120535,
+  "lat": 20.4089821,
+  "lon": 72.8824908,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Main road, Dabhel, Nani damandaman",
+    "addr:postcode": "396115",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "fax": "112242373",
+    "name": "Hansa clinic and hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120536,
+  "lat": 20.2794977,
+  "lon": 73.0080128,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Kilvani Road, Amli",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Yogi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120537,
+  "lat": 20.2875913,
+  "lon": 73.0008298,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Daffodil Blg, Iti Road, Amli Juction, Near Sai Mandir",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Dr.Nikams Sri Sai Marigold Child Care Hospital and N I C U",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120550,
+  "lat": 20.2724089,
+  "lon": 73.0034114,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Solanki Complex Opp Town Hall",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Darshan Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120555,
+  "lat": 20.2753075,
+  "lon": 73.0081457,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Kilvani Naka Umarkul Road",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Chaitanya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120556,
+  "lat": 20.2715006,
+  "lon": 73.0084687,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "1st Floor, Shree Rangkrupa, Opposite English School, P.W.D.Road",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:mobile": "2602642709",
+    "name": "Prayosha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120557,
+  "lat": 20.2706703,
+  "lon": 73.0078961,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:phone": "2642940",
+    "description": "Civil Hospital",
+    "email": "svbch.sil@gmail.com",
+    "fax": "2602642961",
+    "name": "Shri Vinoba Bhave Civil Hospital",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "http://www.vbch.dnh.nic.in/",
+    "wikidata": "Q60752217",
+    "wikipedia": "en:Shri Vinoba Bhave Civil Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120568,
+  "lat": 20.2737915,
+  "lon": 72.9404157,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Bhumika City Centre, M G Road, Near Jain Temple",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Shri Shreeji Hospital - Silvassa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120573,
+  "lat": 20.2718252,
+  "lon": 73.0020931,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Naroli Road, Near D C Bank, Opposite Hotel Natraj",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Hari Om Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120574,
+  "lat": 20.2734505,
+  "lon": 73.0064718,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "1st Floor, Perin Complex, Opposite Bal Bhavan Kilvani Naka",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:mobile": "9377243095",
+    "name": "Shree Sainath Hospital, Dadra and Nagar Haveli",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120579,
+  "lat": 20.2683278,
+  "lon": 73.0055813,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Opp Sbi, Near Adiwasi Bhavan, Tokarkhada",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Sai Krishhna Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968395484,
+  "lat": 20.3767918,
+  "lon": 72.9206777,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Behind Gunjan Cinema, Near Upsana Lions English School, G.I.Dc, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr. Pant Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6969611588,
+  "lat": 20.3828686,
+  "lon": 72.9038814,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Panchamurt Near Jayshree Theater Daman Road Chala . Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Urmil Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6970413504,
+  "lat": 20.3751069,
+  "lon": 72.9200524,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nagarseth Chambers Near Gunjan Cinema Koparli Road G I D C Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6970453400,
+  "lat": 20.1941107,
+  "lon": 72.7497509,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Town, Opp Police Line",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mamta Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6970488765,
+  "lat": 20.3750239,
+  "lon": 72.9200095,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Abhyankars Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6974819070,
+  "lat": 20.3759643,
+  "lon": 72.9177564,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "N.H. No.8 Service Road, Towards , Near Hotal Pappion",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Jeevandip Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975007923,
+  "lat": 20.6115116,
+  "lon": 72.9330772,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Devasya ,Opp Tarankund,Bechar Road, Vaisad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mrunal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975042863,
+  "lat": 20.5126305,
+  "lon": 72.9453188,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Char Rasta, N.H 8, Killa",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nadkarnis Hospital and Test Tube Baby Center",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975283286,
+  "lat": 20.1555883,
+  "lon": 72.7889031,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Solsumba, Tal.Umbergaon",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Renuka Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975531500,
+  "lat": 20.3839498,
+  "lon": 72.9120507,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Plot No. 41-42, Near Azad Wegh Bridge, Near N.H. No.8",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Aayush Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975657332,
+  "lat": 20.2690839,
+  "lon": 72.8787772,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bhilad Plaza, Bhilad",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shreeji Hospital, Bhilad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976102858,
+  "lat": 20.6112667,
+  "lon": 72.9287154,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite S.T. depot. Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shrimad Rajchandra Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976102863,
+  "lat": 20.5917435,
+  "lon": 72.9454985,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "9, 1st Floor, D.N. Shopping Centre, Valsad",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "check_date": "2025-05-22",
+    "healthcare": "hospital",
+    "name": "Amardeep Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976136398,
+  "lat": 20.1572451,
+  "lon": 72.7844265,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Plot No 1/4, Gidc Colony, Uia Hall, Umbergaon",
+    "addr:postcode": "396171",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Curewell Medical and Eye Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976489586,
+  "lat": 20.5412373,
+  "lon": 73.1674245,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite Shinde Petrol Pump",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vallari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976489901,
+  "lat": 20.6112342,
+  "lon": 72.9274097,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "A-8 Ridhi Sidhi Opp Vasant Talkies",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr. Sunil K Choksi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6977523013,
+  "lat": 20.4142812,
+  "lon": 73.1231520,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vapi Road, Nanapondha, Kaprada",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Astha Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6977802711,
+  "lat": 20.3817272,
+  "lon": 72.9213479,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Housing Sector, Gidc",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Haria Lg Rotary Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6978088925,
+  "lat": 20.5883277,
+  "lon": 72.9485321,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Parag Baug, Dharampur Road",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Krupa Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6980252855,
+  "lat": 20.5170380,
+  "lon": 72.9514973,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "N.H.No.8, Killa-Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Pardi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6980252883,
+  "lat": 20.6100574,
+  "lon": 72.9269953,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opp Avadai High School , Halar Road",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Amit Hospital Multispecality and Hearcare Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981307632,
+  "lat": 20.6093300,
+  "lon": 72.9265836,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Avi Arcade, Ground & First Floor Halar Road",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vidhi Nursing Home And Intensive Care Unit",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981676403,
+  "lat": 20.6289236,
+  "lon": 73.0966745,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Nava Road, Gandhi Nagar Soc., Gujarat State Highway 701, Khergam",
+    "addr:postcode": "396040",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nihar Hospital, Navsari",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981711738,
+  "lat": 20.6171878,
+  "lon": 72.9251915,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Lala Lajpatrai Road",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Kasturba Vaidyakiya Rahat Mandal",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981829546,
+  "lat": 20.3814003,
+  "lon": 72.9056329,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Farhin Party Plot, Old Custom Road ,Near Gold Coin Circle, Chala Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Aadit Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6982092096,
+  "lat": 20.3759970,
+  "lon": 72.9175083,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Corner Point 1st, Flr, Opp, Vaishali Cinema Koparli Road , Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shivam Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6982197115,
+  "lat": 20.5944190,
+  "lon": 72.9220265,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Valsad",
+    "addr:postcode": "396580",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Valsad Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983606896,
+  "lat": 20.5395959,
+  "lon": 73.1778127,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Valod Faliya",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Ashray Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983633178,
+  "lat": 20.5383526,
+  "lon": 73.1695676,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Reo Cross Road",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Sainath Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983663156,
+  "lat": 20.3828045,
+  "lon": 72.9038022,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vruj Boomi Complex, Near Jayshree Cinema, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shreyansi Children And Priya Critical Care Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983680726,
+  "lat": 20.3860592,
+  "lon": 72.9010355,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st Floor, The Emperor Opposite Sadar Bhiladwala Bank (Chala Branch) Vapi Daman Road, Chala-Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shifa Orthopadic Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983693521,
+  "lat": 20.6113660,
+  "lon": 72.9287454,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd Floor,D.N.Shopping Centre",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Snigdha Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986249264,
+  "lat": 20.6145995,
+  "lon": 72.9252827,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Luhar Tekra",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Navjeevan Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986279353,
+  "lat": 20.5383451,
+  "lon": 73.1684221,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "OppositeShinde Petrol Pump, Bus Stand Road",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Janani Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986279393,
+  "lat": 20.3748253,
+  "lon": 72.9159218,
+  "tags": {
+    "addr:district": "Patan",
+    "addr:full": "Pandya Complex, Opposite Bus Stand",
+    "addr:postcode": "384265",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Pooja Ent Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986434685,
+  "lat": 20.3838454,
+  "lon": 72.9033892,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "B/H-Mohid Towers, Near Jaishree Talkies,Daman Road, Chala, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Ashirvad Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986574762,
+  "lat": 20.5038779,
+  "lon": 72.9445779,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "N.H.No.8, Dambu Zampa, Killa - Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mohanlal Dayal Prasutigruh and General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6987246246,
+  "lat": 20.5402232,
+  "lon": 73.1792443,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Saidam Complex B Opp Shindhe Petrol Pump , Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Child Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988217179,
+  "lat": 20.5106006,
+  "lon": 72.9432602,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Mehta Hospital N.H 8 Killa Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mehta Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988434127,
+  "lat": 20.5388462,
+  "lon": 73.1670946,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dharampur(Med)",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dharampur State Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988437898,
+  "lat": 20.3828297,
+  "lon": 72.9037962,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Panchamrut, 2nd Floor, Near Jayshree Talkies, Vapi-Daman Road, Chala",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shraddha Hospital and Iccu",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988713359,
+  "lat": 20.5926213,
+  "lon": 72.9403031,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "18, Manibaug Society, Dharampur Road, Abrama, Valasad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shaafi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990645024,
+  "lat": 20.6919349,
+  "lon": 72.9496211,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dungri (R.S.)",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vaidya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6991205962,
+  "lat": 20.6090099,
+  "lon": 72.9265608,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opp Doctor House",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr Mahaskar General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6991283111,
+  "lat": 20.3744506,
+  "lon": 72.9116732,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Garnet Seven Jewels, Near Bhavsar Petrol Pump, Silvassa Road , Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Asharamkrupa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993821666,
+  "lat": 20.3855501,
+  "lon": 72.9012220,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Anjan Shalaka, Besiders Hdfc Banc, Daman Road, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Parvarish Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993975139,
+  "lat": 20.5107764,
+  "lon": 72.9436721,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st Floor, Vipul Complex, N H 8, Killa Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Drushti Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150264726,
+  "lat": 20.3048491,
+  "lon": 73.1300979,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Randha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150264728,
+  "lat": 20.1282334,
+  "lon": 73.0741343,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Khanvel, Khutli Dudhani Road, Rudana",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Sub-District Hospital, Khanvel",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165794752,
+  "lat": 20.3149619,
+  "lon": 72.9102982,
+  "tags": {
+    "addr:district": "VALSAD",
+    "addr:full": "Near Primary School, valvada",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "addr:subdistrict": "Umbergaon",
+    "amenity": "hospital",
+    "name": "Government Hospital Valvada -T",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165794792,
+  "lat": 20.3896424,
+  "lon": 72.8900410,
+  "tags": {
+    "addr:district": "VALSAD",
+    "addr:full": "Chala, Vapi City",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "addr:subdistrict": "Pardi",
+    "amenity": "hospital",
+    "name": "Government Hospital Vapi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247937,
+  "lat": 20.5141740,
+  "lon": 72.9454250,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "National Hwy 848-B, Balakhadi, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Pooja Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247940,
+  "lat": 20.5095930,
+  "lon": 72.9443790,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "City Survey No 1524, Near Old Mamlatdar Office, National Highway No 8, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Angel Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247943,
+  "lat": 20.5947220,
+  "lon": 72.9352656,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Sai Leela Mall, Shiv Commercial Complex, Above Axis Bank, Dharampur Road, Abrama",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Hospital & Skin Care Clinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247946,
+  "lat": 20.5890360,
+  "lon": 72.9595190,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Atak PaRoadi",
+    "addr:postcode": "396055",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Krishna Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247948,
+  "lat": 20.3481960,
+  "lon": 72.9338570,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Silvassa Road, Oposite M.R.K Shopping Chanod, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "ESIC Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247952,
+  "lat": 20.6098496,
+  "lon": 72.9266934,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Pragji Tower, Opposite Avabai High School, Dharampur, Government Colony",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr. Manilal N Patel ENT Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247955,
+  "lat": 20.3918120,
+  "lon": 72.8949950,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Above Suryavanshi Megastore, Opposite Pramukh Residency, Chala, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mamta Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247956,
+  "lat": 20.6088930,
+  "lon": 72.9270049,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Taluka Panchayat Road, Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Zenith Doctor House",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247958,
+  "lat": 20.1559791,
+  "lon": 72.7864744,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Railway Station Road, GIDC Colony, Solsumba",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "America Millenium Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247959,
+  "lat": 20.3757794,
+  "lon": 72.9154795,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Anukul Society, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sahara Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247960,
+  "lat": 20.6076735,
+  "lon": 72.9283317,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247962,
+  "lat": 20.1551590,
+  "lon": 72.7856360,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Railway Station Road, GIDC Umbergaon, Umargam",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Ambe Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247963,
+  "lat": 20.3731363,
+  "lon": 72.9134076,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st Floor, K.P. Tower 103, Silvassa Road, Behind Central Bank Of India, Opposite PWD Rest House, Railway Station Signal, Anukul Society, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Gurukrupa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247965,
+  "lat": 20.4998510,
+  "lon": 72.9428640,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "3Road Floor, Rudra Arcade, Near New Mamlatdar Office, Damani Zapa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shubham Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247966,
+  "lat": 20.6152040,
+  "lon": 72.9328160,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nilkanth Shop & Care, Opposite Power House (GEB), Kapadia Chawl Bechar Road, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Orchid Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247973,
+  "lat": 20.6121400,
+  "lon": 72.9269820,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Government Polytechnic College Road, Nana Taiwad, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dina Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247978,
+  "lat": 20.5199297,
+  "lon": 72.9499536,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1, Abhinav Complex, National Highway No 8, Near PaRoadi Club",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vakil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247981,
+  "lat": 20.5121220,
+  "lon": 72.9452080,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bus Stand, National Highway 48, Next to Nadkarni Hospital and Test Tube Baby Center, Valsadi Zampa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Anu Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247982,
+  "lat": 20.6266210,
+  "lon": 73.1002880,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Gujarat State Highway 181, Khergam",
+    "addr:postcode": "396040",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Chhaydo Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247986,
+  "lat": 20.3725860,
+  "lon": 72.9141350,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Silvasa Road, Kanchan Nagar, Vapi East, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjivani Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247992,
+  "lat": 20.2929200,
+  "lon": 72.8686010,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Rotary Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247993,
+  "lat": 20.6110950,
+  "lon": 72.9277230,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dharampur, Nana Taiwad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Chinmay Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247995,
+  "lat": 20.6083860,
+  "lon": 72.9263270,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Taluka Panchayat Road, Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "VaRoadhman Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247998,
+  "lat": 20.3776560,
+  "lon": 72.9270380,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vapi - Koparli Road, Housing Sector, GIDC, Chharwada",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shreeji Dental Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247999,
+  "lat": 20.6078360,
+  "lon": 72.9279830,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Noble Medicare",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248001,
+  "lat": 20.3736160,
+  "lon": 72.9212020,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Gunjan Road, Behind Hotel Galaxy, GIDC Housing BoaRoad Colony, Vapi East, GIDC, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Surya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248004,
+  "lat": 20.6153980,
+  "lon": 72.9261680,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite Geeta Sadan, Luhar Tekra, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Lotus Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248005,
+  "lat": 20.1971170,
+  "lon": 72.7509380,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Road, Mahadev Nagar Building, 1st Floor, Umbergaon, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Rudra Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248010,
+  "lat": 20.6125740,
+  "lon": 72.9282110,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Station Road, Ramwadi, Ramji Tekra, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Het Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248011,
+  "lat": 20.5344770,
+  "lon": 73.1519680,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nagariya",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Arch Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248013,
+  "lat": 20.1725911,
+  "lon": 72.7647578,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Ambe Complex, 1st Floor, Near Gokul Cycle Store, Gandhiwadi, Umbergaon Station Road",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Om Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248014,
+  "lat": 20.2924102,
+  "lon": 72.8634926,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mutaba Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248015,
+  "lat": 20.5322645,
+  "lon": 73.1788195,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Gujarat State Highway 5, Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjivani Hospital Hathikhana Dharampur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248016,
+  "lat": 20.6277210,
+  "lon": 73.0942280,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Dharampur Road, Khergam",
+    "addr:postcode": "396040",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Aastha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248018,
+  "lat": 20.5145227,
+  "lon": 72.9446557,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd Floor, Kavan Arcade, Opposite Centre Point, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Netradant Eye Hospital and Dental Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248023,
+  "lat": 20.3727170,
+  "lon": 72.9168040,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "F-7, F-9 & G-6, Koparli Road, City Centre, Opposite Ashadham School, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Jayam Orthopaedic Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248024,
+  "lat": 20.5853822,
+  "lon": 73.0003259,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Jujwa",
+    "addr:postcode": "396055",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Government Hospital, Jujwa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248026,
+  "lat": 20.3538640,
+  "lon": 72.9291140,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Chandralok Building Chanod, Silvasa Road, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shalby Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248028,
+  "lat": 20.6889490,
+  "lon": 72.9232300,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dharasana",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248030,
+  "lat": 20.5391460,
+  "lon": 73.1681880,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite Government Hospital, B-2, AkshaRoadham Complex, Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sai Krishna Maternity & Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248032,
+  "lat": 20.6084807,
+  "lon": 72.9277550,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Surgicare Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248035,
+  "lat": 20.3744570,
+  "lon": 72.9113997,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bus Stand, Near Zanda Chowk, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Minaxi Piles Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248038,
+  "lat": 20.1518503,
+  "lon": 72.7938906,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Talasari Road, Near Swapna Lok, Umargam",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjeevani Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248039,
+  "lat": 20.3758700,
+  "lon": 72.9220780,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Koparli Road, Bhanu Darshan Co-operative Housing Society, Gunjan Road, Housing Sector, GIDC, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Thosar Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248041,
+  "lat": 20.4910830,
+  "lon": 73.0049830,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "National Highway No 8, Killa, Char Rasta, Vapi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nadkarni Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248043,
+  "lat": 20.1983441,
+  "lon": 72.7501329,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Archna Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248046,
+  "lat": 20.1932216,
+  "lon": 72.8213111,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Railway Station, Zanda Chowk, Sanjan Road, Sanjan",
+    "addr:postcode": "396150",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shraddha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248047,
+  "lat": 20.4621380,
+  "lon": 72.9173870,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Shanti Nagar Road, Udvada",
+    "addr:postcode": "396185",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shanti Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248048,
+  "lat": 20.6112920,
+  "lon": 72.9322410,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Moghabhai Hall, Opposite S.T. Depot, Second Floor, GoveRoadhan Complex, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Abhishek Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248051,
+  "lat": 20.1728177,
+  "lon": 72.7646657,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Devdham, Umargam",
+    "addr:postcode": "396171",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mittal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248052,
+  "lat": 20.4136190,
+  "lon": 73.1262510,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nana Pondha",
+    "addr:postcode": "396126",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Government Hospital, Nana Pondha",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248053,
+  "lat": 20.2924640,
+  "lon": 72.8634090,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam INA",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Daksha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248056,
+  "lat": 20.2798978,
+  "lon": 72.8805732,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam INA",
+    "addr:postcode": "396155",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Kikalawala Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248059,
+  "lat": 20.1987960,
+  "lon": 72.7500290,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Road, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248060,
+  "lat": 20.5122550,
+  "lon": 72.9452360,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near HP Petrol Pump, Valsadi Zampa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Kalrav Children's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248063,
+  "lat": 20.5883470,
+  "lon": 72.9616180,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st & 2nd Floor Kuber Siddhi, Near RTO Office, Atak PaRoadi",
+    "addr:postcode": "396007",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Krupa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248067,
+  "lat": 20.6894500,
+  "lon": 72.9510490,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dungri Road, Dungri",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Prakashbhai Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248072,
+  "lat": 20.6111060,
+  "lon": 72.9321580,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd Floor White House, Near To Valsad Bus Depot, Bechar, Valsad",
+    "addr:postcode": "395125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nadkarni's 21st Century Hospital and Test Tube Baby Center",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248075,
+  "lat": 20.3770680,
+  "lon": 72.9180920,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "CM 8/16, NH 48, Next to Nexa Showroom and Aakar Motors, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Rainbow Superspeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248076,
+  "lat": 20.6052810,
+  "lon": 72.9323230,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Western Railway Colony",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Western Railway Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248079,
+  "lat": 20.3763637,
+  "lon": 72.9109449,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "High School, Silvasa Road, Near RGAS, Vapi East, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dixit Hospital and Harshai IVF Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248080,
+  "lat": 20.5946900,
+  "lon": 72.9352240,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Sai Leela Mall, Shiv Commercial Complex, Above Axis Bank, Dharampur Road, Abrama",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Viraljyot Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248081,
+  "lat": 20.3736440,
+  "lon": 72.9108400,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Geeta Nagar Road, Near Railway Station, City Point, Near Mohan Hospital, Vapi East, Gita Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mohan Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248084,
+  "lat": 20.4687150,
+  "lon": 72.9193030,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Motiwada",
+    "addr:postcode": "396185",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Wave Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248088,
+  "lat": 20.6114440,
+  "lon": 72.9325730,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Kapadia Chal, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Yogini Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248089,
+  "lat": 20.6846870,
+  "lon": 72.9586500,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dungri",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Refferal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248092,
+  "lat": 20.2895850,
+  "lon": 72.8644060,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bhilad - Sangiram - Fansa Road, Sarigam",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Basrehi Kadaura",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248093,
+  "lat": 20.5191490,
+  "lon": 72.9543320,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Mahalaxmi Sadan, Surti Falia, Gujarat State Highway 186, Kumbharwad, Damani Zapa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sparsh Women's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248095,
+  "lat": 20.2807990,
+  "lon": 72.8893540,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Deheli, Sanjan Road, Bhilad",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shri Shreeji Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248096,
+  "lat": 20.5127370,
+  "lon": 72.9444060,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Abhinav Park, Above Thosar Eye Hospital, Kansarwad, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Adi Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248098,
+  "lat": 20.2758300,
+  "lon": 72.8864640,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd/3Road floor, Bhilad Plaza, Umargam, Bhilad",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248099,
+  "lat": 20.5124560,
+  "lon": 72.9468531,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "National Highway 848-B, Valsadi Zampa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Jyoti Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248101,
+  "lat": 20.3709390,
+  "lon": 72.9224570,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "CM 50, Natraj Complex National Highway No. 8, Phase 2, GIDC, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "21st Century Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248102,
+  "lat": 20.5946461,
+  "lon": 72.9352247,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Sai Leela Mall, Shiv Commercial Complex, Above Axis Bank, Dharampur Road, Abrama",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanskar Gynaec Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248108,
+  "lat": 20.5377060,
+  "lon": 73.1696980,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Jail Road, Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shrimad Rajchandra Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248110,
+  "lat": 20.6111273,
+  "lon": 72.9275579,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Riddhi-Siddhi A, 1st Floor, Opposite K.B Mall, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Upadhyaya Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248113,
+  "lat": 20.3776430,
+  "lon": 72.9322970,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "372, Vapi - Koparli Roadd, Khodiyar Nagar, GIDC, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Samvedna Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248116,
+  "lat": 20.1573361,
+  "lon": 72.7845330,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "GIDC Colony, Umargam",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maheshwari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248120,
+  "lat": 20.1544470,
+  "lon": 72.7887762,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Station Road, Mehta Park Colony, GIDC Umbergaon, Solsumba",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mahavir Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248121,
+  "lat": 20.3745106,
+  "lon": 72.9172947,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "F-1, F-2, D-2 & 3-B, City Centre, Koparli Road, Opposite Ashadham School, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nitya Children and Neonatal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248122,
+  "lat": 20.6198040,
+  "lon": 72.9258020,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dispensary Road, Dhimmar Sheri, Mota Taiwad, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Municipal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248123,
+  "lat": 20.1952420,
+  "lon": 72.8162120,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sanjan - Umbergaon Road, Near Charasta, Sanjan",
+    "addr:postcode": "396150",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjana Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248135,
+  "lat": 20.1728610,
+  "lon": 72.7650550,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Gandhiwadi, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjeevani Hospital Gandhiwadi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193592,
+  "lat": 20.4200190,
+  "lon": 72.8344040,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dilip Nagar",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Ashok Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193594,
+  "lat": 20.4202291,
+  "lon": 72.8360459,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dilip Nagar",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Ashwini Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193597,
+  "lat": 20.4236534,
+  "lon": 72.8445141,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dunetha Road, Dunetha",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Care N Cure Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193599,
+  "lat": 20.4188733,
+  "lon": 72.8384599,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dunetha",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Life Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193600,
+  "lat": 20.4221041,
+  "lon": 72.8414362,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Anuradha Complex, Mashal Chowk, Nani Daman",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Pooja Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193605,
+  "lat": 20.4160210,
+  "lon": 72.8347210,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Wadi Falia, Nani Daman",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Sai Sarvoday Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195189,
+  "lat": 20.3233705,
+  "lon": 72.9726645,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Demni Road, Dadra",
+    "addr:postcode": "396193",
+    "addr:state": "Dadra and Nagar Haveli and Daman and Diu",
+    "amenity": "hospital",
+    "name": "J. K. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195190,
+  "lat": 20.2733042,
+  "lon": 72.9955333,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Jas Luxuria, Naroli Road, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "True Care Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195192,
+  "lat": 20.2835473,
+  "lon": 72.9975725,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Soubhagya Inn, Silvassa - Vapi Road, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Shayona Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195193,
+  "lat": 20.2760129,
+  "lon": 73.0025144,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Krishna Complex, Silvassa - Vapi Road, Opposite Silvassa Police Station, Bavisa Faliya, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Shree Jalaramkrupa General & Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195194,
+  "lat": 20.2740171,
+  "lon": 73.0102375,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Umarkui Road, Kilvani Road, Naka, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Chaitanya Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195195,
+  "lat": 20.2786840,
+  "lon": 73.0016210,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Silvassa - Vapi Road, Amli Industrial Estate, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "City Heart Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195199,
+  "lat": 20.2857590,
+  "lon": 72.9969310,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Yogi Complex, Silvassa - Vapi Road, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Sanskar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195200,
+  "lat": 20.2765600,
+  "lon": 72.9412477,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Silvassa - Bhilad Road, Naroli",
+    "addr:postcode": "396235",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Krishna Kunj Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7656428201,
+  "lat": 20.1246070,
+  "lon": 72.9163750,
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Umbergaon Road, Talasari",
+    "addr:postcode": "401606",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Shree Seva Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7656428228,
+  "lat": 20.1237327,
+  "lon": 72.9128849,
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Umbargaon Road, Talasari",
+    "addr:postcode": "401606",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Sanjeevani Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7983839934,
+  "lat": 20.3918459,
+  "lon": 72.8338506,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dholar",
+    "addr:postcode": "396220",
+    "addr:state": "Daman & Diu",
+    "amenity": "hospital",
+    "name": "Government Hospital, Dholar",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8849668301,
+  "lat": 20.1824680,
+  "lon": 72.7554990,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Water Tank"
+  }
+},
+{
+  "type": "node",
+  "id": 10831203799,
+  "lat": 20.3793096,
+  "lon": 72.9916975,
+  "tags": {
+    "addr:city": "vapi",
+    "addr:housenumber": "789",
+    "addr:postcode": "396191",
+    "addr:street": "suthar faliya, near hanuman temple;Koparli Village",
+    "amenity": "hospital",
+    "description": "Alopacia (complete absence of hair or a spot where normally it grows) Hair Treatment available here.",
+    "healthcare": "hospital",
+    "healthcare:speciality": "alopacia_hair_treatment",
+    "name": "Madhav niwas koparli",
+    "operator": "Dr.Chandu bhai",
+    "operator:type": "private"
+  }
+},
+{
+  "type": "way",
+  "id": 262514307,
+  "center": {
+    "lat": 20.1238889,
+    "lon": 72.9184935
+  },
+  "nodes": [
+    2681819691,
+    2681819692,
+    2681819693,
+    2681819694,
+    2681819691
+  ],
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Girgaon Dolharpada, Thakarpada",
+    "addr:postcode": "401606",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Suvidha clinic & medical",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 262563322,
+  "center": {
+    "lat": 20.1117710,
+    "lon": 72.9085792
+  },
+  "nodes": [
+    2682215001,
+    2682215003,
+    2682214999,
+    2682214997,
+    2682214995,
+    2682214939,
+    2682214943,
+    2682215001
+  ],
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Near National Higway No. 8",
+    "addr:postcode": "401606",
+    "addr:state": "Maharashtra",
+    "addr:subdistrict": "Talasari",
+    "amenity": "hospital",
+    "description": "Rural Hospital",
+    "emergency": "yes",
+    "name": "Talasari, Rural Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 265740272,
+  "center": {
+    "lat": 20.0927497,
+    "lon": 73.0021222
+  },
+  "nodes": [
+    2713549559,
+    2713549560,
+    2713549561,
+    2713549562,
+    2713549559
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Dr.Vijay Doke,Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 276945962,
+  "center": {
+    "lat": 20.1021364,
+    "lon": 72.9165159
+  },
+  "nodes": [
+    2814992259,
+    2814992260,
+    2814992261,
+    2814992262,
+    2814992263,
+    2814992264,
+    2814992265,
+    2814992266,
+    2814992267,
+    2682232616,
+    2814992259
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dayanad Hospital Vadoli"
+  }
+},
+{
+  "type": "way",
+  "id": 283764291,
+  "center": {
+    "lat": 20.0935446,
+    "lon": 73.0097490
+  },
+  "nodes": [
+    2875975642,
+    2875975645,
+    2875975647,
+    2875975658,
+    2875975662,
+    2875975660,
+    2875975659,
+    2875975661,
+    2875975665,
+    2875975667,
+    2875975657,
+    2875975649,
+    2875975642
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Udhava Govrmant Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 481399251,
+  "center": {
+    "lat": 20.2717735,
+    "lon": 73.0078163
+  },
+  "nodes": [
+    4743381921,
+    4743381922,
+    4743381923,
+    4743381924,
+    4743381921
+  ],
+  "tags": {
+    "addr:city": "silvassa",
+    "addr:postcode": "396230",
+    "amenity": "hospital",
+    "name": "Prayosha Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 489942777,
+  "center": {
+    "lat": 20.1937982,
+    "lon": 72.9163486
+  },
+  "nodes": [
+    4821402639,
+    4821402640,
+    4821402641,
+    4821402642,
+    4821402643,
+    4821402639
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Animal & bird Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 588364287,
+  "center": {
+    "lat": 20.4330358,
+    "lon": 72.8315319
+  },
+  "nodes": [
+    5619504362,
+    5619504363,
+    5619504364,
+    5619504365,
+    5619504362
+  ],
+  "tags": {
+    "addr:district": "Daman",
+    "addr:postcode": "396210",
+    "addr:state": "Daman & Diu",
+    "addr:street": "Marwad (Nani Daman), Devka Road",
+    "addr:subdistrict": "Daman",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 767470916,
+  "center": {
+    "lat": 20.2752937,
+    "lon": 72.8841715
+  },
+  "nodes": [
+    7165769136,
+    7165769133,
+    7165769134,
+    7165769135,
+    7165769136
+  ],
+  "tags": {
+    "addr:district": "VALSAD",
+    "addr:full": "Near Bhilad Railway Station, Bhilad Town, Bhilad Charrasta",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "addr:subdistrict": "Umbergaon",
+    "amenity": "hospital",
+    "name": "Government TB Hospital , Bhilad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2681796081,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shree seva Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2681819585,
+  "tags": {
+    "addr:city": "Talasari",
+    "addr:postcode": "401606",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Krishna Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4143907730,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6908093951,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Opposite Development Credit Bank, Naroli Road",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Vardhaman Hospital, Dadra and Nagar Haveli",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908097586,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Behind Primary School, Zanda Chowk",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:mobile": "2641393",
+    "name": "Mukta General Hospital and Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908097595,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Daffodil Building, Iti Road, Amli Junction, Near Sai Mandir, Amli",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Marigold Child Care Hospital and Nicu",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120520,
+  "tags": {
+    "addr:city": "Moti Daman",
+    "addr:district": "Daman",
+    "addr:full": "Fort Area, Community HealthCenter, Moti Daman",
+    "addr:postcode": "396220",
+    "addr:state": "Daman and Diu",
+    "addr:street": "Fort Area",
+    "addr:subdistrict": "Daman",
+    "amenity": "hospital",
+    "contact:phone": "2602230470",
+    "description": "Community Health Centre, commonly known as Government Hospital",
+    "emergency": "yes",
+    "fax": "2602230570",
+    "healthcare": "hospital",
+    "locality": "Moti Daman",
+    "name": "Government Hospital (CHC)",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120525,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Duntha road, damandaman union territory",
+    "addr:postcode": "369210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Atmaram Jog Memorial Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120535,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Main road, Dabhel, Nani damandaman",
+    "addr:postcode": "396115",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "fax": "112242373",
+    "name": "Hansa clinic and hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120536,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Kilvani Road, Amli",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Yogi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120537,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Daffodil Blg, Iti Road, Amli Juction, Near Sai Mandir",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Dr.Nikams Sri Sai Marigold Child Care Hospital and N I C U",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120550,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Solanki Complex Opp Town Hall",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Darshan Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120555,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Kilvani Naka Umarkul Road",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Chaitanya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120556,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "1st Floor, Shree Rangkrupa, Opposite English School, P.W.D.Road",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:mobile": "2602642709",
+    "name": "Prayosha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120557,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:phone": "2642940",
+    "description": "Civil Hospital",
+    "email": "svbch.sil@gmail.com",
+    "fax": "2602642961",
+    "name": "Shri Vinoba Bhave Civil Hospital",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "http://www.vbch.dnh.nic.in/",
+    "wikidata": "Q60752217",
+    "wikipedia": "en:Shri Vinoba Bhave Civil Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120568,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Bhumika City Centre, M G Road, Near Jain Temple",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Shri Shreeji Hospital - Silvassa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120573,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Naroli Road, Near D C Bank, Opposite Hotel Natraj",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Hari Om Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120574,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "1st Floor, Perin Complex, Opposite Bal Bhavan Kilvani Naka",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "contact:mobile": "9377243095",
+    "name": "Shree Sainath Hospital, Dadra and Nagar Haveli",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120579,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Opp Sbi, Near Adiwasi Bhavan, Tokarkhada",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Sai Krishhna Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968395484,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Behind Gunjan Cinema, Near Upsana Lions English School, G.I.Dc, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr. Pant Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6969611588,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Panchamurt Near Jayshree Theater Daman Road Chala . Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Urmil Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6970413504,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nagarseth Chambers Near Gunjan Cinema Koparli Road G I D C Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6970453400,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Town, Opp Police Line",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mamta Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6970488765,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Abhyankars Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6974819070,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "N.H. No.8 Service Road, Towards , Near Hotal Pappion",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Jeevandip Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975007923,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Devasya ,Opp Tarankund,Bechar Road, Vaisad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mrunal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975042863,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Char Rasta, N.H 8, Killa",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nadkarnis Hospital and Test Tube Baby Center",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975283286,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Solsumba, Tal.Umbergaon",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Renuka Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975531500,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Plot No. 41-42, Near Azad Wegh Bridge, Near N.H. No.8",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Aayush Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6975657332,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bhilad Plaza, Bhilad",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shreeji Hospital, Bhilad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976102858,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite S.T. depot. Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shrimad Rajchandra Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976102863,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "9, 1st Floor, D.N. Shopping Centre, Valsad",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "check_date": "2025-05-22",
+    "healthcare": "hospital",
+    "name": "Amardeep Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976136398,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Plot No 1/4, Gidc Colony, Uia Hall, Umbergaon",
+    "addr:postcode": "396171",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Curewell Medical and Eye Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976489586,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite Shinde Petrol Pump",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vallari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6976489901,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "A-8 Ridhi Sidhi Opp Vasant Talkies",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr. Sunil K Choksi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6977523013,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vapi Road, Nanapondha, Kaprada",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Astha Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6977802711,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Housing Sector, Gidc",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Haria Lg Rotary Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6978088925,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Parag Baug, Dharampur Road",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Krupa Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6980252855,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "N.H.No.8, Killa-Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Pardi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6980252883,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opp Avadai High School , Halar Road",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Amit Hospital Multispecality and Hearcare Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981307632,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Avi Arcade, Ground & First Floor Halar Road",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vidhi Nursing Home And Intensive Care Unit",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981676403,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Nava Road, Gandhi Nagar Soc., Gujarat State Highway 701, Khergam",
+    "addr:postcode": "396040",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nihar Hospital, Navsari",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981711738,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Lala Lajpatrai Road",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Kasturba Vaidyakiya Rahat Mandal",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6981829546,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Farhin Party Plot, Old Custom Road ,Near Gold Coin Circle, Chala Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Aadit Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6982092096,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Corner Point 1st, Flr, Opp, Vaishali Cinema Koparli Road , Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shivam Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6982197115,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Valsad",
+    "addr:postcode": "396580",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Valsad Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983606896,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Valod Faliya",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Ashray Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983633178,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Reo Cross Road",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Sainath Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983663156,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vruj Boomi Complex, Near Jayshree Cinema, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shreyansi Children And Priya Critical Care Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983680726,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st Floor, The Emperor Opposite Sadar Bhiladwala Bank (Chala Branch) Vapi Daman Road, Chala-Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shifa Orthopadic Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6983693521,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd Floor,D.N.Shopping Centre",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Snigdha Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986249264,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Luhar Tekra",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Navjeevan Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986279353,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "OppositeShinde Petrol Pump, Bus Stand Road",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Janani Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986279393,
+  "tags": {
+    "addr:district": "Patan",
+    "addr:full": "Pandya Complex, Opposite Bus Stand",
+    "addr:postcode": "384265",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Pooja Ent Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986434685,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "B/H-Mohid Towers, Near Jaishree Talkies,Daman Road, Chala, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Ashirvad Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986574762,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "N.H.No.8, Dambu Zampa, Killa - Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mohanlal Dayal Prasutigruh and General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6987246246,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Saidam Complex B Opp Shindhe Petrol Pump , Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Child Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988217179,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Mehta Hospital N.H 8 Killa Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mehta Hospital, Valsad",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988434127,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dharampur(Med)",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dharampur State Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988437898,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Panchamrut, 2nd Floor, Near Jayshree Talkies, Vapi-Daman Road, Chala",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shraddha Hospital and Iccu",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988713359,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "18, Manibaug Society, Dharampur Road, Abrama, Valasad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shaafi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990645024,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dungri (R.S.)",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vaidya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6991205962,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opp Doctor House",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr Mahaskar General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6991283111,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Garnet Seven Jewels, Near Bhavsar Petrol Pump, Silvassa Road , Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Asharamkrupa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993821666,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Anjan Shalaka, Besiders Hdfc Banc, Daman Road, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Parvarish Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993975139,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st Floor, Vipul Complex, N H 8, Killa Pardi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Drushti Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150264726,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Randha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150264728,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Khanvel, Khutli Dudhani Road, Rudana",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Sub-District Hospital, Khanvel",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165794752,
+  "tags": {
+    "addr:district": "VALSAD",
+    "addr:full": "Near Primary School, valvada",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "addr:subdistrict": "Umbergaon",
+    "amenity": "hospital",
+    "name": "Government Hospital Valvada -T",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165794792,
+  "tags": {
+    "addr:district": "VALSAD",
+    "addr:full": "Chala, Vapi City",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "addr:subdistrict": "Pardi",
+    "amenity": "hospital",
+    "name": "Government Hospital Vapi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247937,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "National Hwy 848-B, Balakhadi, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Pooja Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247940,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "City Survey No 1524, Near Old Mamlatdar Office, National Highway No 8, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Angel Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247943,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Sai Leela Mall, Shiv Commercial Complex, Above Axis Bank, Dharampur Road, Abrama",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shree Hospital & Skin Care Clinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247946,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Atak PaRoadi",
+    "addr:postcode": "396055",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Krishna Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247948,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Silvassa Road, Oposite M.R.K Shopping Chanod, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "ESIC Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247952,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Pragji Tower, Opposite Avabai High School, Dharampur, Government Colony",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dr. Manilal N Patel ENT Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247955,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Above Suryavanshi Megastore, Opposite Pramukh Residency, Chala, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mamta Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247956,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Taluka Panchayat Road, Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Zenith Doctor House",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247958,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Railway Station Road, GIDC Colony, Solsumba",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "America Millenium Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247959,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Anukul Society, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sahara Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247960,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247962,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Railway Station Road, GIDC Umbergaon, Umargam",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Ambe Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247963,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st Floor, K.P. Tower 103, Silvassa Road, Behind Central Bank Of India, Opposite PWD Rest House, Railway Station Signal, Anukul Society, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Gurukrupa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247965,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "3Road Floor, Rudra Arcade, Near New Mamlatdar Office, Damani Zapa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shubham Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247966,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nilkanth Shop & Care, Opposite Power House (GEB), Kapadia Chawl Bechar Road, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Orchid Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247973,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Government Polytechnic College Road, Nana Taiwad, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dina Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247978,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1, Abhinav Complex, National Highway No 8, Near PaRoadi Club",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Vakil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247981,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bus Stand, National Highway 48, Next to Nadkarni Hospital and Test Tube Baby Center, Valsadi Zampa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Anu Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247982,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Gujarat State Highway 181, Khergam",
+    "addr:postcode": "396040",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Chhaydo Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247986,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Silvasa Road, Kanchan Nagar, Vapi East, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjivani Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247992,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Rotary Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247993,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dharampur, Nana Taiwad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Chinmay Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247995,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Taluka Panchayat Road, Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "VaRoadhman Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247998,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Vapi - Koparli Road, Housing Sector, GIDC, Chharwada",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shreeji Dental Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285247999,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Noble Medicare",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248001,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Gunjan Road, Behind Hotel Galaxy, GIDC Housing BoaRoad Colony, Vapi East, GIDC, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Surya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248004,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite Geeta Sadan, Luhar Tekra, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Lotus Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248005,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Road, Mahadev Nagar Building, 1st Floor, Umbergaon, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Rudra Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248010,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Station Road, Ramwadi, Ramji Tekra, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Het Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248011,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nagariya",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Arch Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248013,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Ambe Complex, 1st Floor, Near Gokul Cycle Store, Gandhiwadi, Umbergaon Station Road",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Om Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248014,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mutaba Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248015,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Gujarat State Highway 5, Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjivani Hospital Hathikhana Dharampur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248016,
+  "tags": {
+    "addr:district": "Navsari",
+    "addr:full": "Dharampur Road, Khergam",
+    "addr:postcode": "396040",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Aastha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248018,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd Floor, Kavan Arcade, Opposite Centre Point, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Netradant Eye Hospital and Dental Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248023,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "F-7, F-9 & G-6, Koparli Road, City Centre, Opposite Ashadham School, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Jayam Orthopaedic Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248024,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Jujwa",
+    "addr:postcode": "396055",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Government Hospital, Jujwa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248026,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Chandralok Building Chanod, Silvasa Road, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shalby Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248028,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dharasana",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248030,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Opposite Government Hospital, B-2, AkshaRoadham Complex, Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sai Krishna Maternity & Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248032,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Irrigation Colony, Kapadia Chal",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Surgicare Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248035,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bus Stand, Near Zanda Chowk, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Minaxi Piles Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248038,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Talasari Road, Near Swapna Lok, Umargam",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjeevani Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248039,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Koparli Road, Bhanu Darshan Co-operative Housing Society, Gunjan Road, Housing Sector, GIDC, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Thosar Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248041,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "National Highway No 8, Killa, Char Rasta, Vapi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nadkarni Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248043,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Archna Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248046,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Railway Station, Zanda Chowk, Sanjan Road, Sanjan",
+    "addr:postcode": "396150",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shraddha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248047,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Shanti Nagar Road, Udvada",
+    "addr:postcode": "396185",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shanti Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248048,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Moghabhai Hall, Opposite S.T. Depot, Second Floor, GoveRoadhan Complex, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Abhishek Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248051,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Devdham, Umargam",
+    "addr:postcode": "396171",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mittal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248052,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Nana Pondha",
+    "addr:postcode": "396126",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Government Hospital, Nana Pondha",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248053,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam INA",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Daksha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248056,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sarigam INA",
+    "addr:postcode": "396155",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Kikalawala Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248059,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Umbergaon Road, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248060,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near HP Petrol Pump, Valsadi Zampa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Kalrav Children's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248063,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "1st & 2nd Floor Kuber Siddhi, Near RTO Office, Atak PaRoadi",
+    "addr:postcode": "396007",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Krupa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248067,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dungri Road, Dungri",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Prakashbhai Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248072,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd Floor White House, Near To Valsad Bus Depot, Bechar, Valsad",
+    "addr:postcode": "395125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nadkarni's 21st Century Hospital and Test Tube Baby Center",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248075,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "CM 8/16, NH 48, Next to Nexa Showroom and Aakar Motors, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Rainbow Superspeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248076,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Western Railway Colony",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Western Railway Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248079,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "High School, Silvasa Road, Near RGAS, Vapi East, Imran Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Dixit Hospital and Harshai IVF Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248080,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Sai Leela Mall, Shiv Commercial Complex, Above Axis Bank, Dharampur Road, Abrama",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Viraljyot Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248081,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Geeta Nagar Road, Near Railway Station, City Point, Near Mohan Hospital, Vapi East, Gita Nagar, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mohan Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248084,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Motiwada",
+    "addr:postcode": "396185",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Wave Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248088,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Kapadia Chal, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Yogini Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248089,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dungri",
+    "addr:postcode": "396375",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Refferal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248092,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Bhilad - Sangiram - Fansa Road, Sarigam",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Basrehi Kadaura",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248093,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Mahalaxmi Sadan, Surti Falia, Gujarat State Highway 186, Kumbharwad, Damani Zapa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sparsh Women's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248095,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Deheli, Sanjan Road, Bhilad",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shri Shreeji Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248096,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Abhinav Park, Above Thosar Eye Hospital, Kansarwad, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Adi Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248098,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "2nd/3Road floor, Bhilad Plaza, Umargam, Bhilad",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maa Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248099,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "National Highway 848-B, Valsadi Zampa, Killa-paRoadi",
+    "addr:postcode": "396125",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Jyoti Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248101,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "CM 50, Natraj Complex National Highway No. 8, Phase 2, GIDC, Vapi",
+    "addr:postcode": "396195",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "21st Century Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248102,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Near Sai Leela Mall, Shiv Commercial Complex, Above Axis Bank, Dharampur Road, Abrama",
+    "addr:postcode": "396002",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanskar Gynaec Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248108,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Jail Road, Dharampur",
+    "addr:postcode": "396050",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Shrimad Rajchandra Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248110,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Riddhi-Siddhi A, 1st Floor, Opposite K.B Mall, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Upadhyaya Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248113,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "372, Vapi - Koparli Roadd, Khodiyar Nagar, GIDC, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Samvedna Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248116,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "GIDC Colony, Umargam",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Maheshwari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248120,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Station Road, Mehta Park Colony, GIDC Umbergaon, Solsumba",
+    "addr:postcode": "396165",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Mahavir Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248121,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "F-1, F-2, D-2 & 3-B, City Centre, Koparli Road, Opposite Ashadham School, Vapi",
+    "addr:postcode": "396191",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Nitya Children and Neonatal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248122,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Dispensary Road, Dhimmar Sheri, Mota Taiwad, Valsad",
+    "addr:postcode": "396001",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Municipal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248123,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Sanjan - Umbergaon Road, Near Charasta, Sanjan",
+    "addr:postcode": "396150",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjana Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7285248135,
+  "tags": {
+    "addr:district": "Valsad",
+    "addr:full": "Gandhiwadi, Umargam",
+    "addr:postcode": "396170",
+    "addr:state": "Gujarat",
+    "amenity": "hospital",
+    "name": "Sanjeevani Hospital Gandhiwadi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193592,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dilip Nagar",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Ashok Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193594,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dilip Nagar",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Ashwini Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193597,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dunetha Road, Dunetha",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Care N Cure Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193599,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dunetha",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Life Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193600,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Anuradha Complex, Mashal Chowk, Nani Daman",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Pooja Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622193605,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Wadi Falia, Nani Daman",
+    "addr:postcode": "396210",
+    "addr:state": "Daman and Diu",
+    "amenity": "hospital",
+    "name": "Sai Sarvoday Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195189,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Demni Road, Dadra",
+    "addr:postcode": "396193",
+    "addr:state": "Dadra and Nagar Haveli and Daman and Diu",
+    "amenity": "hospital",
+    "name": "J. K. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195190,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Jas Luxuria, Naroli Road, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "True Care Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195192,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Soubhagya Inn, Silvassa - Vapi Road, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Shayona Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195193,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Krishna Complex, Silvassa - Vapi Road, Opposite Silvassa Police Station, Bavisa Faliya, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Shree Jalaramkrupa General & Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195194,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Umarkui Road, Kilvani Road, Naka, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Chaitanya Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195195,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Silvassa - Vapi Road, Amli Industrial Estate, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "City Heart Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195199,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Yogi Complex, Silvassa - Vapi Road, Silvassa",
+    "addr:postcode": "396230",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Sanskar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7622195200,
+  "tags": {
+    "addr:district": "Dadra and Nagar Haveli",
+    "addr:full": "Silvassa - Bhilad Road, Naroli",
+    "addr:postcode": "396235",
+    "addr:state": "Dadra and Nagar Haveli",
+    "amenity": "hospital",
+    "name": "Krishna Kunj Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7656428201,
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Umbergaon Road, Talasari",
+    "addr:postcode": "401606",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Shree Seva Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7656428228,
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Umbargaon Road, Talasari",
+    "addr:postcode": "401606",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Sanjeevani Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7983839934,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:full": "Dholar",
+    "addr:postcode": "396220",
+    "addr:state": "Daman & Diu",
+    "amenity": "hospital",
+    "name": "Government Hospital, Dholar",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8849668301,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Water Tank"
+  }
+},
+{
+  "type": "node",
+  "id": 10831203799,
+  "tags": {
+    "addr:city": "vapi",
+    "addr:housenumber": "789",
+    "addr:postcode": "396191",
+    "addr:street": "suthar faliya, near hanuman temple;Koparli Village",
+    "amenity": "hospital",
+    "description": "Alopacia (complete absence of hair or a spot where normally it grows) Hair Treatment available here.",
+    "healthcare": "hospital",
+    "healthcare:speciality": "alopacia_hair_treatment",
+    "name": "Madhav niwas koparli",
+    "operator": "Dr.Chandu bhai",
+    "operator:type": "private"
+  }
+},
+{
+  "type": "way",
+  "id": 262514307,
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Girgaon Dolharpada, Thakarpada",
+    "addr:postcode": "401606",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Suvidha clinic & medical",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 262563322,
+  "tags": {
+    "addr:district": "Palghar",
+    "addr:full": "Near National Higway No. 8",
+    "addr:postcode": "401606",
+    "addr:state": "Maharashtra",
+    "addr:subdistrict": "Talasari",
+    "amenity": "hospital",
+    "description": "Rural Hospital",
+    "emergency": "yes",
+    "name": "Talasari, Rural Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 265740272,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Dr.Vijay Doke,Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 276945962,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dayanad Hospital Vadoli"
+  }
+},
+{
+  "type": "way",
+  "id": 283764291,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Udhava Govrmant Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 481399251,
+  "tags": {
+    "addr:city": "silvassa",
+    "addr:postcode": "396230",
+    "amenity": "hospital",
+    "name": "Prayosha Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 489942777,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Animal & bird Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 588364287,
+  "tags": {
+    "addr:district": "Daman",
+    "addr:postcode": "396210",
+    "addr:state": "Daman & Diu",
+    "addr:street": "Marwad (Nani Daman), Devka Road",
+    "addr:subdistrict": "Daman",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 767470916,
+  "tags": {
+    "addr:district": "VALSAD",
+    "addr:full": "Near Bhilad Railway Station, Bhilad Town, Bhilad Charrasta",
+    "addr:postcode": "396105",
+    "addr:state": "Gujarat",
+    "addr:subdistrict": "Umbergaon",
+    "amenity": "hospital",
+    "name": "Government TB Hospital , Bhilad",
+    "source": "OpenGovernmentData"
+  }
+}
+
+  ]
+}

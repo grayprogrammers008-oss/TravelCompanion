@@ -1074,11 +1074,28 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
 
       // Convert response to list of HospitalModel
       final List<dynamic> data = response as List<dynamic>;
-      return data
-          .map((json) => HospitalModel.fromJson(json as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
+      debugPrint('Received ${data.length} hospitals from database');
+
+      final hospitals = <HospitalModel>[];
+      for (var i = 0; i < data.length; i++) {
+        try {
+          final json = data[i] as Map<String, dynamic>;
+          debugPrint('Hospital $i JSON keys: ${json.keys.toList()}');
+          debugPrint('Hospital $i data: $json');
+          final hospital = HospitalModel.fromJson(json);
+          hospitals.add(hospital);
+        } catch (e, stack) {
+          debugPrint('Error parsing hospital $i: $e');
+          debugPrint('Stack trace: $stack');
+          debugPrint('Raw data: ${data[i]}');
+          // Continue to next hospital instead of failing completely
+        }
+      }
+
+      return hospitals;
+    } catch (e, stack) {
       debugPrint('Error finding nearest hospitals: $e');
+      debugPrint('Stack trace: $stack');
       rethrow;
     }
   }

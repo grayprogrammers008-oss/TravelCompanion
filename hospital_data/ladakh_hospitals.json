@@ -1,0 +1,6104 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T11:22:57Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 485594432,
+  "lat": 34.5491569,
+  "lon": 77.5529759,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 485617329,
+  "lat": 34.0329113,
+  "lon": 78.1680282,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 773641430,
+  "lat": 32.4432860,
+  "lon": 76.5409532,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ayurvedic Hospital, Bharmour"
+  }
+},
+{
+  "type": "node",
+  "id": 775411497,
+  "lat": 33.0811597,
+  "lon": 76.4071944,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ayurvedic Health Centre, Kilar"
+  }
+},
+{
+  "type": "node",
+  "id": 810046393,
+  "lat": 32.6840914,
+  "lon": 76.6958958,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ayurvedic Health Centre, Triloknath"
+  }
+},
+{
+  "type": "node",
+  "id": 971650089,
+  "lat": 32.9081188,
+  "lon": 77.5773924,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Army Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 1227498529,
+  "lat": 32.2391459,
+  "lon": 76.3248242,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Men Tsee Khang"
+  }
+},
+{
+  "type": "node",
+  "id": 2027805349,
+  "lat": 34.2355862,
+  "lon": 77.3999574,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Sub Center (Hospital)"
+  }
+},
+{
+  "type": "node",
+  "id": 2505542244,
+  "lat": 32.2370911,
+  "lon": 76.3242626,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Lobsang Dolma Khangsar Memorial Clinic",
+    "opening_hours": "We-Mo 09:00-13:00, 13:30-17:00"
+  }
+},
+{
+  "type": "node",
+  "id": 2592452175,
+  "lat": 34.1084243,
+  "lon": 77.5912051,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Tibetian Health Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 2882855811,
+  "lat": 33.8642746,
+  "lon": 75.2786722,
+  "tags": {
+    "amenity": "hospital",
+    "name": "primary health center"
+  }
+},
+{
+  "type": "node",
+  "id": 2973877903,
+  "lat": 34.8480733,
+  "lon": 76.8317834,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ayushman Arogya Mandir - Public Health Center Turtuk",
+    "operator": "Department of Public Health Service",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "node",
+  "id": 2973880789,
+  "lat": 34.5777687,
+  "lon": 77.4764945,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3041244957,
+  "lat": 32.2449885,
+  "lon": 77.1886231,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mission Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3042955724,
+  "lat": 32.2387613,
+  "lon": 77.1877726,
+  "tags": {
+    "addr:block": "Naggar",
+    "addr:district": "Kullu",
+    "addr:full": "VO MANALI DISTT KULLU",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1902253385",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital, Manali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 3042985801,
+  "lat": 32.2453333,
+  "lon": 77.1893096,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr Behl's Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3045063823,
+  "lat": 32.5617529,
+  "lon": 76.1304628,
+  "tags": {
+    "amenity": "hospital",
+    "name": "T B Hosptial"
+  }
+},
+{
+  "type": "node",
+  "id": 3045673672,
+  "lat": 32.2804026,
+  "lon": 75.7850415,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Lifeline Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3045682651,
+  "lat": 32.2836101,
+  "lon": 75.8504383,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Jassur",
+    "addr:postcode": "176201",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Saxena Hospital, Jassur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 3045696250,
+  "lat": 32.3068426,
+  "lon": 75.8943791,
+  "tags": {
+    "addr:block": "Gangath",
+    "addr:district": "Kangra",
+    "addr:full": "Chaugan Bus Stand Nurpur, Nurpur",
+    "addr:postcode": "176202",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1893220036",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Nurpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 3155760193,
+  "lat": 32.3316212,
+  "lon": 78.0075773,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4369053859,
+  "lat": 34.4302684,
+  "lon": 75.7543850,
+  "tags": {
+    "amenity": "hospital",
+    "note": "This is a large hospital, and seems to contain many buildings, I'm not sure what buildings are part of the hospital, and what not so I added it as a single node. Please improve."
+  }
+},
+{
+  "type": "node",
+  "id": 5634368320,
+  "lat": 33.0236145,
+  "lon": 75.3668280,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Primary Health Centre Sudhmahadev"
+  }
+},
+{
+  "type": "node",
+  "id": 6349331840,
+  "lat": 35.2896696,
+  "lon": 75.6201578,
+  "tags": {
+    "addr:city": "سکردو",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "عبداللہ ہسپتال",
+    "name:en": "Abdullah Hospital",
+    "name:ur": "عبداللہ ہسپتال"
+  }
+},
+{
+  "type": "node",
+  "id": 6902109426,
+  "lat": 33.1427505,
+  "lon": 75.5503178,
+  "tags": {
+    "addr:city": "Doda",
+    "addr:district": "DODA",
+    "addr:full": "District Hospital, Doda",
+    "addr:postcode": "182202",
+    "addr:state": "Jammu and Kashmir",
+    "amenity": "hospital",
+    "contact:helpline": "01996 233689",
+    "contact:mobile": "9419168144",
+    "contact:phone": "1996233689",
+    "healthcare": "hospital",
+    "name": "Disst Hospital Doda",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909848284,
+  "lat": 33.1443798,
+  "lon": 75.5436511,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Doda",
+    "addr:postcode": "182145",
+    "addr:state": "Jammu and Kashmir",
+    "amenity": "hospital",
+    "name": "District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986550290,
+  "lat": 32.5549410,
+  "lon": 76.1232698,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Near Bus Stand",
+    "addr:postcode": "176310",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sukhmani Hospital, Chamba",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988130931,
+  "lat": 32.4294899,
+  "lon": 76.0132335,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Shahpur-Chowari Road, Near Radha Krishna Temple, Chowari",
+    "addr:postcode": "176302",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Chowari",
+    "operator:type": "government",
+    "pincode": "176302",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988196933,
+  "lat": 32.2150749,
+  "lon": 76.3246675,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Ram Nagar",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sai Mahima Hospital, Dharamshala",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988234519,
+  "lat": 32.5312043,
+  "lon": 75.9639291,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Subhash Chowk Road, Opp. SDM Court, Dalhousie",
+    "addr:postcode": "176304",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1899242125",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Dalhousi",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988324616,
+  "lat": 32.5682040,
+  "lon": 76.1206493,
+  "tags": {
+    "addr:block": "Pukhari",
+    "addr:district": "Chamba",
+    "addr:full": "Sultanpur-Sarol Road, Near New Balu Bridge, Chamba",
+    "addr:postcode": "176312",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1899225170",
+    "description": "District Hospital",
+    "health_facility:type": "Ayurveda",
+    "name": "District Ayurvedic Hospital, Chamba",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990475910,
+  "lat": 32.2189168,
+  "lon": 76.1743471,
+  "tags": {
+    "addr:block": "Shahpur",
+    "addr:district": "Kangra",
+    "addr:full": "39 Miles Harnera Road, Shahpur",
+    "addr:postcode": "176206",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1892238038",
+    "name": "Civil Hospital, Shahpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990660867,
+  "lat": 32.8336840,
+  "lon": 76.1564219,
+  "tags": {
+    "addr:block": "Tissa",
+    "addr:district": "Chamba",
+    "addr:full": "Tissa",
+    "addr:postcode": "176316",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Tissa",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990737720,
+  "lat": 32.4647815,
+  "lon": 75.9228310,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Kakira Kamlari",
+    "addr:postcode": "176313",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Swami Shri Hari Giri Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993971554,
+  "lat": 32.2137428,
+  "lon": 76.3202351,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Dharamshala",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "District Ayurvedic Hospital, Dharamshala",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7007152171,
+  "lat": 32.5586870,
+  "lon": 76.1221057,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Chamba",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Regional Hospital, Chamba",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7007287760,
+  "lat": 32.2458867,
+  "lon": 77.1859744,
+  "tags": {
+    "addr:district": "Kullu",
+    "addr:full": "Manali",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital, Manali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7016099611,
+  "lat": 32.4416926,
+  "lon": 76.5378052,
+  "tags": {
+    "addr:block": "Bharmaur",
+    "addr:district": "Chamba",
+    "addr:full": "Main Bazaar, Beside SBI, Bharmour",
+    "addr:postcode": "176315",
+    "addr:state": "Himachal Pradesh",
+    "addr:subdistrict": "Brahmaur",
+    "amenity": "hospital",
+    "contact:phone": "1899225044",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Bharmour",
+    "operator:type": "government",
+    "pincode": "176315",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7016122145,
+  "lat": 32.2845329,
+  "lon": 75.8602779,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Near Vatika Hotel, Nurpur Road, Bodh, Jassur",
+    "addr:postcode": "173201",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Vijay Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051154507,
+  "lat": 32.2660620,
+  "lon": 75.6352582,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "near New Horizon Public School, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Kanwar Hospital, Gurdaspur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051154531,
+  "lat": 32.2757709,
+  "lon": 75.6442479,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Indera colony Road, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Surjit Eye Singh Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051212499,
+  "lat": 32.2673376,
+  "lon": 75.6575573,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Pathankot-Amritsar Highway,Saili road",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7053504633,
+  "lat": 32.2640231,
+  "lon": 75.6503451,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Model Town, Dhangu Road, Patankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Balaji Hospital, Patankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7063256116,
+  "lat": 32.2732126,
+  "lon": 75.6599383,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Dalhousie Road, adjoining Shri Ram Market,Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 3000",
+    "name": "Raswan Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7063256255,
+  "lat": 32.2728888,
+  "lon": 75.6721289,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Dalhousie Road, Opp. HDFC Bank,Dhangu Road",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 8006",
+    "name": "Sukh Sadan Hospital and Trauma Centre",
+    "source": "OpenGovernmentData",
+    "website": "http://www.sukhsadanhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7063256380,
+  "lat": 32.2334804,
+  "lon": 75.5532266,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Kotli Muglan",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chauhan Multispeciality and Trauma Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7063714801,
+  "lat": 32.2562731,
+  "lon": 75.5806676,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "NH54, Sarna",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "M.S Memorial Janjua Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7068409630,
+  "lat": 32.2742762,
+  "lon": 75.6434950,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Indira Colony Rd, behind Kapoor Maternity Home",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 223 4040",
+    "name": "Sandhu Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7071644066,
+  "lat": 32.2654787,
+  "lon": 75.6513135,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Saingarh Chowk, Dhangu Road, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "099153 73344",
+    "name": "Ansh Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7074159627,
+  "lat": 32.2553890,
+  "lon": 75.6506163,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Dhangu Rd, Friends Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 5955",
+    "name": "Tilak Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079089676,
+  "lat": 32.2806789,
+  "lon": 75.6595122,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Behind Swimming Pool, Dev Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 6949",
+    "name": "Rajpal Neuro Psychiatric and De-Addiction Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079092897,
+  "lat": 32.2650544,
+  "lon": 75.6793370,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Near Radha Soami Satsang Beas, Jalandhar - Dalhousie Bypass",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 2728",
+    "name": "Kalyani Hospital, Gurdaspur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079092902,
+  "lat": 32.2759579,
+  "lon": 75.6632957,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Mission Road, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 223 4701",
+    "name": "Jaswal Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079092937,
+  "lat": 32.2733203,
+  "lon": 75.6599490,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Dalhousie Road, adjoining Shri Ram Market, Ramlila Ground",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 4783",
+    "name": "Gupta Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103908018,
+  "lat": 32.2698217,
+  "lon": 75.6533349,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Near Dr. KD Singh Eye Hospital, Patel Chowk",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 5700",
+    "name": "Ravi Paediatric Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106065651,
+  "lat": 32.2735977,
+  "lon": 75.6372624,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "opposite State Bank of India, Amroodan Walia Chugian, Shastri Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sharma Hospital, Pathankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106065656,
+  "lat": 32.2694993,
+  "lon": 75.6573367,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Saili Rd, Friends Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 6275",
+    "name": "Satyam Hospital,Pathankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140654382,
+  "lat": 32.4556939,
+  "lon": 75.2692725,
+  "tags": {
+    "addr:district": "KATHUA",
+    "addr:full": "Near Post Office, Hiranagar",
+    "addr:postcode": "184142",
+    "addr:state": "Jammu & Kashmir",
+    "addr:subdistrict": "Hiranagar",
+    "amenity": "hospital",
+    "description": "Government hospital",
+    "name": "Hiranagar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140654444,
+  "lat": 32.6411178,
+  "lon": 75.3356667,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Near Panchayat House, Ramkote",
+    "addr:postcode": "184205",
+    "addr:state": "Jammu & Kashmir",
+    "addr:subdistrict": "Billawar",
+    "amenity": "hospital",
+    "description": "Government Medical hospital",
+    "name": "Government Medical hospital Ramkote",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140654452,
+  "lat": 33.6982602,
+  "lon": 75.2867092,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Near Bus Stand, Shangus",
+    "addr:postcode": "192202",
+    "addr:state": "Jammu & Kashmir",
+    "addr:subdistrict": "Shangus",
+    "amenity": "hospital",
+    "description": "Sub District hospital",
+    "name": "Sub District hospital, Shangus",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150766758,
+  "lat": 32.2918700,
+  "lon": 75.3787258,
+  "tags": {
+    "addr:block": "NAROT JAIMAL SINGH",
+    "addr:district": "Pathankot",
+    "addr:full": "Bamial",
+    "addr:postcode": "145027",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "description": "Government Hospital",
+    "name": "Government Hospital Bamial",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150766789,
+  "lat": 32.2821410,
+  "lon": 75.6528720,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot, Shahpur Road",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "addr:subdistrict": "Pathankot",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "DH Pathankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165541952,
+  "lat": 32.3261529,
+  "lon": 76.5577852,
+  "tags": {
+    "addr:block": "Bharmaur",
+    "addr:district": "Chamba",
+    "addr:full": "Near HPSEB Sub Station, Kuleth, Hinsa",
+    "addr:postcode": "176309",
+    "addr:state": "Himachal Pradesh",
+    "addr:subdistrict": "Brahmaur",
+    "amenity": "hospital",
+    "name": "Government Hospital, Holi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165541964,
+  "lat": 32.5453230,
+  "lon": 75.9405768,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Pathankot-Chamba Road, Near NHPC Ed Office, Dalhousie, Banikhet",
+    "addr:postcode": "176303",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Banikhet",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165541996,
+  "lat": 32.4557696,
+  "lon": 75.9345389,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Kakira School Road, Near Post Office, Kakira",
+    "addr:postcode": "176313",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Government Hospital, Kakira",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165542027,
+  "lat": 32.4786262,
+  "lon": 76.2916356,
+  "tags": {
+    "addr:block": "Choori",
+    "addr:district": "Chamba",
+    "addr:full": "MDR52, Dharwala, Churi",
+    "addr:postcode": "176311",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Hospital, Churi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726840,
+  "lat": 32.2255890,
+  "lon": 76.3226930,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Gangchen Kyishong, Dharamshala",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Delek Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726845,
+  "lat": 32.2191370,
+  "lon": 76.3266180,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Dharmsala Road, Ram Nagar, Ramnagar",
+    "addr:postcode": "232101",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Shukla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726848,
+  "lat": 32.7413773,
+  "lon": 76.6340673,
+  "tags": {
+    "addr:district": "Lahaul and Spiti",
+    "addr:full": "Margaraon",
+    "addr:postcode": "175142",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Lady Wellington Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726853,
+  "lat": 32.5642672,
+  "lon": 76.1137162,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Sultanpur - Sarol Road, Chowgan Mohalla, Chamba",
+    "addr:postcode": "176312",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Rana Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726856,
+  "lat": 32.2137130,
+  "lon": 75.9137450,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Raja Ka Talab",
+    "addr:postcode": "176051",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sukhamni Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726857,
+  "lat": 32.5541530,
+  "lon": 75.9500090,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Vaikunth Nagar, Banikhet",
+    "addr:postcode": "176303",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Ashirwad Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726862,
+  "lat": 32.7253958,
+  "lon": 76.0906670,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Surangani",
+    "addr:postcode": "176317",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "NHPC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726864,
+  "lat": 32.5389060,
+  "lon": 75.9877860,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Dhupguri, Dalhousie",
+    "addr:postcode": "176304",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Arpana Charitable Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726866,
+  "lat": 32.2182348,
+  "lon": 75.9101435,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Talawa, Kangra, Pong Dam Fatehpur Jassur Road, Jawali",
+    "addr:postcode": "176202",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sukhmani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726871,
+  "lat": 32.2170373,
+  "lon": 76.3245945,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Ram Nagar, Mant Khas",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Shukla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726875,
+  "lat": 32.2145370,
+  "lon": 75.9134290,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Raja Ka Talab",
+    "addr:postcode": "176051",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Jeeevan Jyoti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726878,
+  "lat": 32.6048378,
+  "lon": 75.9115836,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Samleu Uperla",
+    "addr:postcode": "176325",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "NHPC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726888,
+  "lat": 32.2074685,
+  "lon": 75.9113552,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Jassur Dhameta Road, Nurpur",
+    "addr:postcode": "176051",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Surya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726891,
+  "lat": 32.2807145,
+  "lon": 75.8501415,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Jassur",
+    "addr:postcode": "176201",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "JVR Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637784304,
+  "lat": 32.2191370,
+  "lon": 76.3266180,
+  "tags": {
+    "addr:district": "Ramnagar",
+    "addr:full": "Dharmsala Road, Ram Nagar, Ramnagar",
+    "addr:postcode": "232101",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Shukla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637784305,
+  "lat": 32.3001020,
+  "lon": 75.8852720,
+  "tags": {
+    "addr:district": "Nurpur",
+    "addr:full": "Nurpur",
+    "addr:postcode": "176202",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Nurpur Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637784308,
+  "lat": 32.2291288,
+  "lon": 78.0677159,
+  "tags": {
+    "addr:district": "Lahaul and Spiti",
+    "addr:full": "Kaza Khas",
+    "addr:postcode": "172114",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7642218118,
+  "lat": 32.2418408,
+  "lon": 77.1877903,
+  "tags": {
+    "addr:district": "Kullu",
+    "addr:full": "Gompa Road, Manali",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Manu Diagnostic Centre and Hospital",
+    "source": "Local Knowledge",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 7668544162,
+  "lat": 34.2566698,
+  "lon": 75.4137597,
+  "tags": {
+    "addr:district": "Ganderbal",
+    "addr:full": "Baltal",
+    "addr:postcode": "191203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Base Camp Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961115,
+  "lat": 33.3093870,
+  "lon": 75.7739402,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Akhyar Abad",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Chenab Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961120,
+  "lat": 33.6859800,
+  "lon": 75.2222538,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Achabal",
+    "addr:postcode": "192201",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Achabal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961126,
+  "lat": 33.5729894,
+  "lon": 75.2223760,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Dooru, Verinag Anantnag Road, Doru Shahabad",
+    "addr:postcode": "192211",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961136,
+  "lat": 33.7895060,
+  "lon": 75.2439016,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Opp. SBI, Seer Hamdan",
+    "addr:postcode": "192129",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961141,
+  "lat": 33.3188920,
+  "lon": 75.7600700,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Kishtwar",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Tuberculosis Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961145,
+  "lat": 33.3117862,
+  "lon": 75.7659660,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Indra Nagar",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "DTC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961149,
+  "lat": 33.4899758,
+  "lon": 75.8543014,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Suid Dachhan, Ikhala Road",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961169,
+  "lat": 33.4772825,
+  "lon": 75.9145534,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Kibber Nallah Road",
+    "addr:postcode": "182205",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hosiptal",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961171,
+  "lat": 33.5877690,
+  "lon": 75.2995260,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Kokernag",
+    "addr:postcode": "192202",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961173,
+  "lat": 33.0297410,
+  "lon": 75.9132270,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Gandoh Neeli Bhalessa",
+    "addr:postcode": "182203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961174,
+  "lat": 32.9944120,
+  "lon": 75.6977162,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Forest Block Doda",
+    "addr:postcode": "182222",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "New Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961179,
+  "lat": 33.6490939,
+  "lon": 75.7053657,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Marwa",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Nowpachi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961184,
+  "lat": 33.7363880,
+  "lon": 75.3089320,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Deethu",
+    "addr:postcode": "192201",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961188,
+  "lat": 33.1414050,
+  "lon": 75.5831290,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Ghat",
+    "addr:postcode": "182202",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Medical College and Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961193,
+  "lat": 34.0123308,
+  "lon": 75.3175330,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Chandanwari, Pahalgam",
+    "addr:postcode": "192126",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142093,
+  "lat": 32.6607490,
+  "lon": 75.4077520,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Lakhrri",
+    "addr:postcode": "184203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Drab General Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142103,
+  "lat": 32.3684658,
+  "lon": 75.5217060,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Urliwand",
+    "addr:postcode": "184101",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Mahatma Gandhi Civil Hospital",
+    "name:etymology:wikidata": "Q1001",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142106,
+  "lat": 33.1180530,
+  "lon": 75.3258420,
+  "tags": {
+    "addr:district": "Ramban",
+    "addr:full": "Doda Road, Batote",
+    "addr:postcode": "182143",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Accidental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142117,
+  "lat": 32.5119843,
+  "lon": 75.8032069,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Basoli",
+    "addr:postcode": "184201",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142123,
+  "lat": 32.7729617,
+  "lon": 75.7975392,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Lawang",
+    "addr:postcode": "184206",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142127,
+  "lat": 32.6610575,
+  "lon": 75.4078113,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Lakhrri",
+    "addr:postcode": "184203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Drab General Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142129,
+  "lat": 32.4554076,
+  "lon": 75.2692311,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Hiranagar",
+    "addr:postcode": "184142",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142142,
+  "lat": 32.3976714,
+  "lon": 75.5104666,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Kalibari",
+    "addr:postcode": "184104",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "A.K.Gupta Hospital and Reserch Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142143,
+  "lat": 32.3718590,
+  "lon": 75.5273830,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Urliwand, Kathua",
+    "addr:postcode": "184101",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Jasrotia Super Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142147,
+  "lat": 32.3750730,
+  "lon": 75.5573430,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Kathua",
+    "addr:postcode": "184102",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669453392,
+  "lat": 32.5101821,
+  "lon": 75.2127878,
+  "tags": {
+    "addr:district": "Samba",
+    "addr:full": "Ghagwal",
+    "addr:postcode": "184141",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Accidental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758195,
+  "lat": 32.2736330,
+  "lon": 75.6769160,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "City Ortho Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758196,
+  "lat": 32.2734760,
+  "lon": 75.6604333,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sanjeevani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758197,
+  "lat": 32.2752167,
+  "lon": 75.6463739,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Indira Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Punnet Mahajan Physio Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758198,
+  "lat": 32.2694875,
+  "lon": 75.6571751,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chaitanya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758199,
+  "lat": 32.2757880,
+  "lon": 75.6561490,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Jeevan Jyoti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758201,
+  "lat": 32.3123216,
+  "lon": 75.6006577,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Arya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758204,
+  "lat": 32.2585050,
+  "lon": 75.6666590,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Krishna Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758206,
+  "lat": 32.2677037,
+  "lon": 75.6054216,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bharoli",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Bawa Lal Dyal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758208,
+  "lat": 32.2731876,
+  "lon": 75.6574819,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Jashwanth Hospital and Heart Foundation",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758211,
+  "lat": 32.2691310,
+  "lon": 75.6807760,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sri Sai Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758215,
+  "lat": 32.3782377,
+  "lon": 75.6768627,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145029",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Neuropathy Treatment Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758219,
+  "lat": 32.2736262,
+  "lon": 75.6772520,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "North Central Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758220,
+  "lat": 32.2811434,
+  "lon": 75.5634356,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Kalesar",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Bhatia Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758222,
+  "lat": 32.3177280,
+  "lon": 75.6090010,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "City Lifeline Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758224,
+  "lat": 32.2666611,
+  "lon": 75.6517001,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Jodhamal Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Mahesh Mahajan Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758228,
+  "lat": 32.2740370,
+  "lon": 75.6532822,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Baba Ayurvedic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758230,
+  "lat": 32.2763250,
+  "lon": 75.6540340,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Bengali Clinic and Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758231,
+  "lat": 32.2992000,
+  "lon": 75.6447610,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khanpur, Gosainpur",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Asia Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758233,
+  "lat": 32.2584350,
+  "lon": 75.6505870,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sunder Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sri Nangali Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758234,
+  "lat": 32.2749940,
+  "lon": 75.6886555,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Simbal Chowk, Mamun",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Aarogya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758235,
+  "lat": 32.2712074,
+  "lon": 75.6664949,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Ishwar Nagar, Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Ajay Heart Care and Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758237,
+  "lat": 32.2740770,
+  "lon": 75.6435050,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Indira Colony, Shastri Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "K.K. Memorial Prashar Mother and Child Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758241,
+  "lat": 32.3136960,
+  "lon": 75.6029700,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Agnihotri Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758242,
+  "lat": 32.2761632,
+  "lon": 75.6649810,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Gandothra Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758247,
+  "lat": 32.2738833,
+  "lon": 75.6594075,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Ramlila Ground",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Neel Kanth Medical and Heart Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758248,
+  "lat": 32.2733951,
+  "lon": 75.6599777,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Ramlila Ground",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Saini Bone and Joint Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758249,
+  "lat": 32.2866064,
+  "lon": 75.6509557,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khanpur",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "V.C Hospital and Research Institute",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758250,
+  "lat": 32.2592767,
+  "lon": 75.5816828,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sarna",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Randeep Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758252,
+  "lat": 32.2457040,
+  "lon": 75.5657021,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Jaswali",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Har-Sewak Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758255,
+  "lat": 32.3794090,
+  "lon": 75.6721450,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145029",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ranjit Sagar Dam Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758256,
+  "lat": 32.2761240,
+  "lon": 75.6948430,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Mamun",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Amandeep Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758257,
+  "lat": 32.2686150,
+  "lon": 75.6526140,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Kukreja Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758259,
+  "lat": 32.2786960,
+  "lon": 75.6511460,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sahibzadian, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Global Paralysis Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758260,
+  "lat": 32.2596233,
+  "lon": 75.6631415,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Navchetan Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758261,
+  "lat": 32.2745960,
+  "lon": 75.6818510,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Simbal Chowk, Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Galaxy Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758262,
+  "lat": 32.2590911,
+  "lon": 75.6505005,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sunder Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Max Cure Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758264,
+  "lat": 32.3122450,
+  "lon": 75.6067440,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Adrash Colony, Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Santhosh Sohal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758266,
+  "lat": 32.2718423,
+  "lon": 75.5927989,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Budha Nagar, Malikpur",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "SKR Hospital and Trauma Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758269,
+  "lat": 32.3120977,
+  "lon": 75.6008513,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Jyoti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758273,
+  "lat": 32.2706900,
+  "lon": 75.6558516,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "KDH Neuro and Cardiac Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758275,
+  "lat": 32.2686828,
+  "lon": 75.6554607,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Shrinath Kidney Lifeline Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758276,
+  "lat": 32.2700519,
+  "lon": 75.6533794,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Chowk",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. K.D's Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758277,
+  "lat": 32.2694380,
+  "lon": 75.6556380,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Gupta ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758278,
+  "lat": 32.2584938,
+  "lon": 75.4277524,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145026",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sai Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758282,
+  "lat": 32.2629980,
+  "lon": 75.6452730,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pur Colony, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "G.K Paramedical and Clinical Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758283,
+  "lat": 32.2704631,
+  "lon": 75.6743678,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khushi Nagar, Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Swasthik Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758284,
+  "lat": 32.2759326,
+  "lon": 75.6562208,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Shimla Pahari, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sukiran ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758287,
+  "lat": 32.2732850,
+  "lon": 75.6786100,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chikitsa Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758288,
+  "lat": 32.2757750,
+  "lon": 75.6652380,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Shant Vihar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Shriram Mission Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758289,
+  "lat": 32.2631113,
+  "lon": 75.5860049,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sarna",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Bhatia Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758290,
+  "lat": 32.2684792,
+  "lon": 75.6555885,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "City Lifeline Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758291,
+  "lat": 32.2712350,
+  "lon": 75.5992100,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Randhawal Hospital and Trauma Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758292,
+  "lat": 32.2855780,
+  "lon": 75.6512254,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khanpur",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "JMC Hospital and Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758293,
+  "lat": 32.2744693,
+  "lon": 75.6843151,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Simbal Chowk, Mamun",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Raj Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758294,
+  "lat": 32.3177135,
+  "lon": 75.6021419,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Puri Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758296,
+  "lat": 32.2740450,
+  "lon": 75.6737200,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. M.C.K Astha Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7934984131,
+  "lat": 35.0916728,
+  "lon": 76.0036765,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Govt. Hospital, Madhupur"
+  }
+},
+{
+  "type": "node",
+  "id": 8186326552,
+  "lat": 32.3901836,
+  "lon": 75.5251452,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Kathua",
+    "addr:postcode": "184104",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "District Hospital,Kathua",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9880707193,
+  "lat": 34.3168761,
+  "lon": 77.0854540,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11122077009,
+  "lat": 35.6825496,
+  "lon": 75.8163752,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dispensary"
+  }
+},
+{
+  "type": "node",
+  "id": 12465668386,
+  "lat": 34.5540558,
+  "lon": 76.1318099,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Army hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12821572597,
+  "lat": 33.1393548,
+  "lon": 75.9522810,
+  "tags": {
+    "addr:city": "patnazi",
+    "addr:district": "Kishtwar",
+    "addr:postcode": "182204",
+    "addr:street": "Chilli 2 Gan",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 13284205271,
+  "lat": 35.2504106,
+  "lon": 76.2008561,
+  "tags": {
+    "addr:city": "Daghoni",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "سول ہسپتال ڈاغونی",
+    "name:en": "Civil Hospital Daghoni"
+  }
+},
+{
+  "type": "way",
+  "id": 27761109,
+  "center": {
+    "lat": 34.1539449,
+    "lon": 77.5804754
+  },
+  "nodes": [
+    1705643291,
+    2284300754,
+    1705643293,
+    304834432,
+    1705643289,
+    1705643280,
+    1705643278,
+    304834434,
+    2284300753,
+    3717461824,
+    3717462425,
+    3717461823,
+    2284300752,
+    304834436,
+    1705643253,
+    1705643271,
+    1705643291
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sonam Norboo Memorial Hospital",
+    "name:etymology:wikidata": "Q56220353",
+    "phone": "01982252014"
+  }
+},
+{
+  "type": "way",
+  "id": 158343131,
+  "center": {
+    "lat": 34.1614283,
+    "lon": 77.5664560
+  },
+  "nodes": [
+    1868755909,
+    1705643488,
+    1705643479,
+    1705643464,
+    2299950054,
+    2299950056,
+    2299950058,
+    1705643407,
+    1705643422,
+    2299950060,
+    1705643439,
+    1868755900,
+    1868755906,
+    1868755909
+  ],
+  "tags": {
+    "addr:city": "Leh",
+    "addr:city:ks": "لیہہ",
+    "addr:city:ur": "لیہہ",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "landuse": "military",
+    "name": "Army Hospital Leh",
+    "name:ur": "آرمی ہسپتال لیہہ"
+  }
+},
+{
+  "type": "way",
+  "id": 194167809,
+  "center": {
+    "lat": 32.2127839,
+    "lon": 76.3193839
+  },
+  "nodes": [
+    2045041283,
+    3067019489,
+    10878354521,
+    2506336496,
+    2360238511,
+    3067019520,
+    2045041346,
+    2045041348,
+    2045041350,
+    2360190378,
+    2045041334,
+    2045041283
+  ],
+  "tags": {
+    "addr:block": "Shahpur",
+    "addr:district": "Kangra",
+    "addr:full": "Dharamshala Road, Near IPH Office, Dharamshala",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1892227595",
+    "description": "Referral Hospital",
+    "email": "zhdharamshala@gmail.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Zonal Hospital, Dharamshala",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "http://www.zhdharamshala.in/"
+  }
+},
+{
+  "type": "way",
+  "id": 253298994,
+  "center": {
+    "lat": 34.1049202,
+    "lon": 77.6123908
+  },
+  "nodes": [
+    2592468861,
+    2592468862,
+    2592468863,
+    2592468864,
+    2592468865,
+    2592468861
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mahabodhi Charitable Hospital Devachan"
+  }
+},
+{
+  "type": "way",
+  "id": 255801154,
+  "center": {
+    "lat": 35.3225961,
+    "lon": 75.5341778
+  },
+  "nodes": [
+    2614895282,
+    2614895283,
+    2614895284,
+    2614895285,
+    2614895286,
+    2614895287,
+    2614895282
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Benazir Bhotto Shaheed Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 302432572,
+  "center": {
+    "lat": 32.5587958,
+    "lon": 76.1227811
+  },
+  "nodes": [
+    3066912300,
+    3066912301,
+    3066912299,
+    3066912298,
+    3066912300
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "District Civil Hosptial"
+  }
+},
+{
+  "type": "way",
+  "id": 308598507,
+  "center": {
+    "lat": 32.2168506,
+    "lon": 76.3233493
+  },
+  "nodes": [
+    3138637049,
+    3138637047,
+    3138637048,
+    3138637046,
+    3138637051,
+    3138637054,
+    3138637049
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sai Mahima Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 383029510,
+  "center": {
+    "lat": 32.5718848,
+    "lon": 77.0234445
+  },
+  "nodes": [
+    5022309640,
+    3862321919,
+    3862321917,
+    3862321894,
+    5022309640
+  ],
+  "tags": {
+    "addr:block": "Gondhla",
+    "addr:district": "Lahul & Spiti",
+    "addr:full": "Keylong",
+    "addr:postcode": "175132",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "building": "yes",
+    "contact:phone": "1900222211",
+    "name": "District Hospital, Keylong",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 398887698,
+  "center": {
+    "lat": 35.6712755,
+    "lon": 75.4506235
+  },
+  "nodes": [
+    4016232972,
+    4016232993,
+    4016232982,
+    4016232968,
+    4016232972
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 398910304,
+  "center": {
+    "lat": 35.6555381,
+    "lon": 75.4672358
+  },
+  "nodes": [
+    4016452440,
+    4016452441,
+    4016452438,
+    4016452433,
+    4016452440
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Govt Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 398920988,
+  "center": {
+    "lat": 35.7150979,
+    "lon": 75.5171318
+  },
+  "nodes": [
+    4016564240,
+    4016564232,
+    4016564229,
+    4016564239,
+    4016564240
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Government Health Center"
+  }
+},
+{
+  "type": "way",
+  "id": 401181534,
+  "center": {
+    "lat": 35.2969305,
+    "lon": 75.5973804
+  },
+  "nodes": [
+    4036300419,
+    4036300417,
+    4036300262,
+    4036300263,
+    4036300419
+  ],
+  "tags": {
+    "addr:city": "سکردو",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "عبداللہ ہسپتال",
+    "name:en": "Abdullah Hospital",
+    "name:ur": "عبداللہ ہسپتال"
+  }
+},
+{
+  "type": "way",
+  "id": 402140625,
+  "center": {
+    "lat": 35.5053688,
+    "lon": 75.6117926
+  },
+  "nodes": [
+    4045649612,
+    4045649628,
+    4045649620,
+    4045649605,
+    4104195007,
+    4104195009,
+    4045649612
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Vaterinary Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 403434758,
+  "center": {
+    "lat": 35.1459918,
+    "lon": 75.9539687
+  },
+  "nodes": [
+    4057813843,
+    4057813832,
+    4057813816,
+    4057813684,
+    4057813792,
+    4057813685,
+    4057813624,
+    4057813644,
+    4057813655,
+    4057813669,
+    4057813659,
+    4057813668,
+    4057813675,
+    4057813679,
+    4057813843
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Marafie Hospital Sirling"
+  }
+},
+{
+  "type": "way",
+  "id": 404035483,
+  "center": {
+    "lat": 35.2501775,
+    "lon": 76.2002706
+  },
+  "nodes": [
+    4063133110,
+    4063133116,
+    4063133108,
+    4063133113,
+    4063132878,
+    4063132868,
+    4063133110
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Civil Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 408507459,
+  "center": {
+    "lat": 35.5053139,
+    "lon": 75.6117244
+  },
+  "nodes": [
+    4104195006,
+    4104195008,
+    4104195005,
+    4104195004,
+    4104195006
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Vaterinary Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 423190955,
+  "center": {
+    "lat": 34.1088626,
+    "lon": 77.5936060
+  },
+  "nodes": [
+    4228710868,
+    4228710869,
+    4228710870,
+    4228710871,
+    4228710868
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dispensary",
+    "operator": "Tibetan Children's Village"
+  }
+},
+{
+  "type": "way",
+  "id": 423191172,
+  "center": {
+    "lat": 34.1091981,
+    "lon": 77.5938833
+  },
+  "nodes": [
+    4228713384,
+    4228713385,
+    4228713386,
+    4228713387,
+    4228713384
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Optical clinic",
+    "operator": "Tibetan Children's Village"
+  }
+},
+{
+  "type": "way",
+  "id": 526446602,
+  "center": {
+    "lat": 32.4621343,
+    "lon": 75.9322301
+  },
+  "nodes": [
+    5119370672,
+    5119370673,
+    5119370674,
+    5119370675,
+    5119370676,
+    5119370677,
+    5119370678,
+    5119370679,
+    5119370680,
+    5119370681,
+    5119370682,
+    5119370683,
+    5119370684,
+    5119370685,
+    5119370686,
+    5119370687,
+    5119370688,
+    5119370689,
+    5119370690,
+    5119370672
+  ],
+  "tags": {
+    "addr:city": "Bakloh",
+    "addr:postcode": "176301",
+    "addr:street": "Kakira to Bakloh via Kaluganj",
+    "amenity": "hospital",
+    "name": "Military Hospital",
+    "operator": "Military"
+  }
+},
+{
+  "type": "way",
+  "id": 526478601,
+  "center": {
+    "lat": 32.4650264,
+    "lon": 75.9225161
+  },
+  "nodes": [
+    5119617723,
+    5119617724,
+    5119617725,
+    5119617726,
+    5119617727,
+    5119617728,
+    5119617729,
+    5119617723
+  ],
+  "tags": {
+    "addr:city": "Karira",
+    "addr:postcode": "176101",
+    "addr:street": "Link Road 1/4 to SH28",
+    "amenity": "hospital",
+    "name": "Shree Swami Harigiri Charitable Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 677846489,
+  "center": {
+    "lat": 35.2901333,
+    "lon": 75.6594403
+  },
+  "nodes": [
+    6346972754,
+    6346972755,
+    6346972756,
+    6346972757,
+    6346972758,
+    10794142552,
+    10794142553,
+    10794142554,
+    10794142555,
+    6346972759,
+    12178417866,
+    6346972760,
+    6346972761,
+    6346972762,
+    6346972763,
+    12118908298,
+    6346972765,
+    6346972766,
+    6346972767,
+    6346972768,
+    6346972769,
+    6346972754
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DHQ Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 694112847,
+  "center": {
+    "lat": 33.2422611,
+    "lon": 75.2391962
+  },
+  "nodes": [
+    6516767905,
+    6516767904,
+    6516767903,
+    6516767902,
+    6516767901,
+    6516767900,
+    6516767899,
+    6516767898,
+    6516767897,
+    6516767905
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 736464405,
+  "center": {
+    "lat": 32.3903972,
+    "lon": 75.5250764
+  },
+  "nodes": [
+    6895197028,
+    6895197025,
+    6895197023,
+    6895197024,
+    6895197022,
+    6895197020,
+    6895197019,
+    6895197021,
+    6895197014,
+    6895197012,
+    6895197011,
+    6895197013,
+    6895197004,
+    6895197003,
+    6895197026,
+    6895197027,
+    6895197005,
+    6895197006,
+    6895197009,
+    6895197008,
+    6895197007,
+    6895197010,
+    6895197017,
+    6895197016,
+    6895197015,
+    6895197018,
+    6895197028
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 767444918,
+  "center": {
+    "lat": 33.0811519,
+    "lon": 76.4069061
+  },
+  "nodes": [
+    7165541946,
+    7165541348,
+    7165541349,
+    10218921174,
+    10218921173,
+    7165541350,
+    7165541946
+  ],
+  "tags": {
+    "addr:block": "Killar",
+    "addr:district": "Chamba",
+    "addr:full": "Killar-Tehsil Pangi",
+    "addr:postcode": "176323",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "building": "yes",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital, Killar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 843836689,
+  "center": {
+    "lat": 33.3854719,
+    "lon": 79.7284166
+  },
+  "nodes": [
+    7871638764,
+    7871638765,
+    7871638766,
+    7871638767,
+    7871638764
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "日土县人民医院"
+  }
+},
+{
+  "type": "way",
+  "id": 900573232,
+  "center": {
+    "lat": 32.2450022,
+    "lon": 77.1885293
+  },
+  "nodes": [
+    8365900208,
+    796867272,
+    8365900207,
+    8365900212,
+    8365900206,
+    8365900205,
+    8365900176,
+    8365900204,
+    8365900208
+  ],
+  "tags": {
+    "addr:district": "Kullu",
+    "addr:full": "Manali",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Lady Willingdon Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1086530835,
+  "center": {
+    "lat": 34.8034284,
+    "lon": 77.0341775
+  },
+  "nodes": [
+    9955651605,
+    9955651604,
+    9955651603,
+    9955651602,
+    9955651605
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1116132420,
+  "center": {
+    "lat": 33.4703165,
+    "lon": 76.8771636
+  },
+  "nodes": [
+    10208522724,
+    10208522725,
+    10208522726,
+    10208522727,
+    10208522724
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1174246078,
+  "center": {
+    "lat": 35.3082295,
+    "lon": 75.5706036
+  },
+  "nodes": [
+    10911021376,
+    10911021375,
+    10911021374,
+    10911021373,
+    10911021372,
+    10911021371,
+    10911021370,
+    10911021369,
+    10911021368,
+    10911021367,
+    10911021366,
+    10911021365,
+    10911021364,
+    10911021363,
+    10911021362,
+    10911021361,
+    10911021360,
+    10911021359,
+    10911021358,
+    10911021357,
+    10911021356,
+    10911021355,
+    10911021354,
+    10911021353,
+    10911021352,
+    10911021351,
+    10911021350,
+    10911021349,
+    10911021348,
+    10911021347,
+    10911021346,
+    10911021345,
+    10911021344,
+    10911021343,
+    10911021342,
+    10911021341,
+    10911021340,
+    10911021339,
+    10911021338,
+    10911021337,
+    10911021336,
+    10911021335,
+    10911021334,
+    10911021333,
+    10911021332,
+    10911021331,
+    10911021330,
+    10911021329,
+    10911021328,
+    10911021327,
+    10911021326,
+    10911021325,
+    10911021324,
+    10911021323,
+    10911021322,
+    10911021321,
+    10911021320,
+    10911021319,
+    10911021318,
+    10911021317,
+    10911021316,
+    10911021315,
+    10911021314,
+    10911021313,
+    10911021312,
+    10911021311,
+    10911021310,
+    10911021309,
+    10911021308,
+    10911021376
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1334492669,
+  "center": {
+    "lat": 34.5211421,
+    "lon": 76.1404251
+  },
+  "nodes": [
+    12345826408,
+    12465646341,
+    12345826410,
+    12345826411,
+    12345826412,
+    12345826408
+  ],
+  "tags": {
+    "addr:district": "Kargil",
+    "addr:postcode": "194103",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "District Hospital Kargil",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1412272096,
+  "center": {
+    "lat": 34.5593439,
+    "lon": 76.1246854
+  },
+  "nodes": [
+    12977972021,
+    12977968469,
+    12465670012,
+    12977968471,
+    12465670013,
+    13009727412,
+    13009727411,
+    13009727410,
+    13009727409,
+    12465670017,
+    12977972162,
+    12977968463,
+    12977972092,
+    12977972005,
+    12977972185,
+    12977972075,
+    12977968499,
+    12977972144,
+    12977972002,
+    12977972119,
+    12977972022,
+    12465670007,
+    12465670008,
+    12465670009,
+    12977972076,
+    12977972137,
+    12465670010,
+    12465670011,
+    12977972084,
+    12977972021
+  ],
+  "tags": {
+    "addr:district": "KARGIL",
+    "addr:full": "District Hospital, Kargil Ladakh",
+    "addr:postcode": "194103",
+    "amenity": "hospital",
+    "contact:mobile": "9419888523",
+    "contact:phone": "1985232213",
+    "healthcare": "hospital",
+    "name": "Old Kargil District Hospital",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1450151871,
+  "center": {
+    "lat": 34.9322659,
+    "lon": 76.6261556
+  },
+  "nodes": [
+    13300730209,
+    13300730210,
+    13300730211,
+    13300730212,
+    13300730209
+  ],
+  "tags": {
+    "addr:city": "سکسا",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "سکسا ہسپتال",
+    "source": "P&DD GB"
+  }
+},
+{
+  "type": "way",
+  "id": 1450151872,
+  "center": {
+    "lat": 34.9996637,
+    "lon": 76.5212411
+  },
+  "nodes": [
+    13300730213,
+    13300730214,
+    13300730215,
+    13300730216,
+    13300730217,
+    13300730218,
+    13300730219,
+    13300730220,
+    13300730221,
+    13300730222,
+    13300730223,
+    13300730224,
+    13300730225,
+    13300730226,
+    13300730227,
+    13300730228,
+    13300730229,
+    13300730213
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "امیر آباد ہسپتال"
+  }
+},
+{
+  "type": "way",
+  "id": 1450151874,
+  "center": {
+    "lat": 35.1396048,
+    "lon": 76.7203521
+  },
+  "nodes": [
+    13300730245,
+    13300730246,
+    13300730247,
+    13300730248,
+    13300730249,
+    13300730250,
+    13300730251,
+    13300730252,
+    13300730253,
+    13300730254,
+    13300730255,
+    13300730256,
+    13300730257,
+    13300730245
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Saith Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 485594432,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 485617329,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 773641430,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ayurvedic Hospital, Bharmour"
+  }
+},
+{
+  "type": "node",
+  "id": 775411497,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ayurvedic Health Centre, Kilar"
+  }
+},
+{
+  "type": "node",
+  "id": 810046393,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ayurvedic Health Centre, Triloknath"
+  }
+},
+{
+  "type": "node",
+  "id": 971650089,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Army Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 1227498529,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Men Tsee Khang"
+  }
+},
+{
+  "type": "node",
+  "id": 2027805349,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Sub Center (Hospital)"
+  }
+},
+{
+  "type": "node",
+  "id": 2505542244,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Lobsang Dolma Khangsar Memorial Clinic",
+    "opening_hours": "We-Mo 09:00-13:00, 13:30-17:00"
+  }
+},
+{
+  "type": "node",
+  "id": 2592452175,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Tibetian Health Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 2882855811,
+  "tags": {
+    "amenity": "hospital",
+    "name": "primary health center"
+  }
+},
+{
+  "type": "node",
+  "id": 2973877903,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ayushman Arogya Mandir - Public Health Center Turtuk",
+    "operator": "Department of Public Health Service",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "node",
+  "id": 2973880789,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3041244957,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mission Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3042955724,
+  "tags": {
+    "addr:block": "Naggar",
+    "addr:district": "Kullu",
+    "addr:full": "VO MANALI DISTT KULLU",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1902253385",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital, Manali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 3042985801,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr Behl's Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3045063823,
+  "tags": {
+    "amenity": "hospital",
+    "name": "T B Hosptial"
+  }
+},
+{
+  "type": "node",
+  "id": 3045673672,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Lifeline Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3045682651,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Jassur",
+    "addr:postcode": "176201",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Saxena Hospital, Jassur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 3045696250,
+  "tags": {
+    "addr:block": "Gangath",
+    "addr:district": "Kangra",
+    "addr:full": "Chaugan Bus Stand Nurpur, Nurpur",
+    "addr:postcode": "176202",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1893220036",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Nurpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 3155760193,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4369053859,
+  "tags": {
+    "amenity": "hospital",
+    "note": "This is a large hospital, and seems to contain many buildings, I'm not sure what buildings are part of the hospital, and what not so I added it as a single node. Please improve."
+  }
+},
+{
+  "type": "node",
+  "id": 5634368320,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Primary Health Centre Sudhmahadev"
+  }
+},
+{
+  "type": "node",
+  "id": 6349331840,
+  "tags": {
+    "addr:city": "سکردو",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "عبداللہ ہسپتال",
+    "name:en": "Abdullah Hospital",
+    "name:ur": "عبداللہ ہسپتال"
+  }
+},
+{
+  "type": "node",
+  "id": 6902109426,
+  "tags": {
+    "addr:city": "Doda",
+    "addr:district": "DODA",
+    "addr:full": "District Hospital, Doda",
+    "addr:postcode": "182202",
+    "addr:state": "Jammu and Kashmir",
+    "amenity": "hospital",
+    "contact:helpline": "01996 233689",
+    "contact:mobile": "9419168144",
+    "contact:phone": "1996233689",
+    "healthcare": "hospital",
+    "name": "Disst Hospital Doda",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909848284,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Doda",
+    "addr:postcode": "182145",
+    "addr:state": "Jammu and Kashmir",
+    "amenity": "hospital",
+    "name": "District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6986550290,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Near Bus Stand",
+    "addr:postcode": "176310",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sukhmani Hospital, Chamba",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988130931,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Shahpur-Chowari Road, Near Radha Krishna Temple, Chowari",
+    "addr:postcode": "176302",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Chowari",
+    "operator:type": "government",
+    "pincode": "176302",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988196933,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Ram Nagar",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sai Mahima Hospital, Dharamshala",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988234519,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Subhash Chowk Road, Opp. SDM Court, Dalhousie",
+    "addr:postcode": "176304",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1899242125",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Dalhousi",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6988324616,
+  "tags": {
+    "addr:block": "Pukhari",
+    "addr:district": "Chamba",
+    "addr:full": "Sultanpur-Sarol Road, Near New Balu Bridge, Chamba",
+    "addr:postcode": "176312",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1899225170",
+    "description": "District Hospital",
+    "health_facility:type": "Ayurveda",
+    "name": "District Ayurvedic Hospital, Chamba",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990475910,
+  "tags": {
+    "addr:block": "Shahpur",
+    "addr:district": "Kangra",
+    "addr:full": "39 Miles Harnera Road, Shahpur",
+    "addr:postcode": "176206",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1892238038",
+    "name": "Civil Hospital, Shahpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990660867,
+  "tags": {
+    "addr:block": "Tissa",
+    "addr:district": "Chamba",
+    "addr:full": "Tissa",
+    "addr:postcode": "176316",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Tissa",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6990737720,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Kakira Kamlari",
+    "addr:postcode": "176313",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Swami Shri Hari Giri Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993971554,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Dharamshala",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "District Ayurvedic Hospital, Dharamshala",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7007152171,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Chamba",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Regional Hospital, Chamba",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7007287760,
+  "tags": {
+    "addr:district": "Kullu",
+    "addr:full": "Manali",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital, Manali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7016099611,
+  "tags": {
+    "addr:block": "Bharmaur",
+    "addr:district": "Chamba",
+    "addr:full": "Main Bazaar, Beside SBI, Bharmour",
+    "addr:postcode": "176315",
+    "addr:state": "Himachal Pradesh",
+    "addr:subdistrict": "Brahmaur",
+    "amenity": "hospital",
+    "contact:phone": "1899225044",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Bharmour",
+    "operator:type": "government",
+    "pincode": "176315",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7016122145,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Near Vatika Hotel, Nurpur Road, Bodh, Jassur",
+    "addr:postcode": "173201",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Vijay Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051154507,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "near New Horizon Public School, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Kanwar Hospital, Gurdaspur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051154531,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Indera colony Road, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Surjit Eye Singh Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051212499,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Pathankot-Amritsar Highway,Saili road",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7053504633,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Model Town, Dhangu Road, Patankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Balaji Hospital, Patankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7063256116,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Dalhousie Road, adjoining Shri Ram Market,Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 3000",
+    "name": "Raswan Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7063256255,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Dalhousie Road, Opp. HDFC Bank,Dhangu Road",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 8006",
+    "name": "Sukh Sadan Hospital and Trauma Centre",
+    "source": "OpenGovernmentData",
+    "website": "http://www.sukhsadanhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7063256380,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Kotli Muglan",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chauhan Multispeciality and Trauma Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7063714801,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "NH54, Sarna",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "M.S Memorial Janjua Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7068409630,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Indira Colony Rd, behind Kapoor Maternity Home",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 223 4040",
+    "name": "Sandhu Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7071644066,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Saingarh Chowk, Dhangu Road, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "099153 73344",
+    "name": "Ansh Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7074159627,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Dhangu Rd, Friends Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 5955",
+    "name": "Tilak Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079089676,
+  "tags": {
+    "addr:district": "Gurdaspur",
+    "addr:full": "Behind Swimming Pool, Dev Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 6949",
+    "name": "Rajpal Neuro Psychiatric and De-Addiction Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079092897,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Near Radha Soami Satsang Beas, Jalandhar - Dalhousie Bypass",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 2728",
+    "name": "Kalyani Hospital, Gurdaspur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079092902,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Mission Road, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 223 4701",
+    "name": "Jaswal Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7079092937,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Dalhousie Road, adjoining Shri Ram Market, Ramlila Ground",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 222 4783",
+    "name": "Gupta Children Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103908018,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Near Dr. KD Singh Eye Hospital, Patel Chowk",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 5700",
+    "name": "Ravi Paediatric Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106065651,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "opposite State Bank of India, Amroodan Walia Chugian, Shastri Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sharma Hospital, Pathankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106065656,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Saili Rd, Friends Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0186 225 6275",
+    "name": "Satyam Hospital,Pathankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140654382,
+  "tags": {
+    "addr:district": "KATHUA",
+    "addr:full": "Near Post Office, Hiranagar",
+    "addr:postcode": "184142",
+    "addr:state": "Jammu & Kashmir",
+    "addr:subdistrict": "Hiranagar",
+    "amenity": "hospital",
+    "description": "Government hospital",
+    "name": "Hiranagar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140654444,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Near Panchayat House, Ramkote",
+    "addr:postcode": "184205",
+    "addr:state": "Jammu & Kashmir",
+    "addr:subdistrict": "Billawar",
+    "amenity": "hospital",
+    "description": "Government Medical hospital",
+    "name": "Government Medical hospital Ramkote",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140654452,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Near Bus Stand, Shangus",
+    "addr:postcode": "192202",
+    "addr:state": "Jammu & Kashmir",
+    "addr:subdistrict": "Shangus",
+    "amenity": "hospital",
+    "description": "Sub District hospital",
+    "name": "Sub District hospital, Shangus",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150766758,
+  "tags": {
+    "addr:block": "NAROT JAIMAL SINGH",
+    "addr:district": "Pathankot",
+    "addr:full": "Bamial",
+    "addr:postcode": "145027",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "description": "Government Hospital",
+    "name": "Government Hospital Bamial",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150766789,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot, Shahpur Road",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "addr:subdistrict": "Pathankot",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "DH Pathankot",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165541952,
+  "tags": {
+    "addr:block": "Bharmaur",
+    "addr:district": "Chamba",
+    "addr:full": "Near HPSEB Sub Station, Kuleth, Hinsa",
+    "addr:postcode": "176309",
+    "addr:state": "Himachal Pradesh",
+    "addr:subdistrict": "Brahmaur",
+    "amenity": "hospital",
+    "name": "Government Hospital, Holi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165541964,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Pathankot-Chamba Road, Near NHPC Ed Office, Dalhousie, Banikhet",
+    "addr:postcode": "176303",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "description": "Civil Hospital",
+    "name": "Civil Hospital, Banikhet",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165541996,
+  "tags": {
+    "addr:block": "Samote",
+    "addr:district": "Chamba",
+    "addr:full": "Kakira School Road, Near Post Office, Kakira",
+    "addr:postcode": "176313",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Government Hospital, Kakira",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7165542027,
+  "tags": {
+    "addr:block": "Choori",
+    "addr:district": "Chamba",
+    "addr:full": "MDR52, Dharwala, Churi",
+    "addr:postcode": "176311",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Hospital, Churi",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726840,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Gangchen Kyishong, Dharamshala",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Delek Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726845,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Dharmsala Road, Ram Nagar, Ramnagar",
+    "addr:postcode": "232101",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Shukla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726848,
+  "tags": {
+    "addr:district": "Lahaul and Spiti",
+    "addr:full": "Margaraon",
+    "addr:postcode": "175142",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Lady Wellington Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726853,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Sultanpur - Sarol Road, Chowgan Mohalla, Chamba",
+    "addr:postcode": "176312",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Rana Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726856,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Raja Ka Talab",
+    "addr:postcode": "176051",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sukhamni Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726857,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Vaikunth Nagar, Banikhet",
+    "addr:postcode": "176303",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Ashirwad Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726862,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Surangani",
+    "addr:postcode": "176317",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "NHPC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726864,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Dhupguri, Dalhousie",
+    "addr:postcode": "176304",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Arpana Charitable Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726866,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Talawa, Kangra, Pong Dam Fatehpur Jassur Road, Jawali",
+    "addr:postcode": "176202",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Sukhmani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726871,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Ram Nagar, Mant Khas",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Shukla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726875,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Raja Ka Talab",
+    "addr:postcode": "176051",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Jeeevan Jyoti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726878,
+  "tags": {
+    "addr:district": "Chamba",
+    "addr:full": "Samleu Uperla",
+    "addr:postcode": "176325",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "NHPC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726888,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Jassur Dhameta Road, Nurpur",
+    "addr:postcode": "176051",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Surya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637726891,
+  "tags": {
+    "addr:district": "Kangra",
+    "addr:full": "Jassur",
+    "addr:postcode": "176201",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "JVR Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637784304,
+  "tags": {
+    "addr:district": "Ramnagar",
+    "addr:full": "Dharmsala Road, Ram Nagar, Ramnagar",
+    "addr:postcode": "232101",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Shukla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637784305,
+  "tags": {
+    "addr:district": "Nurpur",
+    "addr:full": "Nurpur",
+    "addr:postcode": "176202",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Nurpur Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7637784308,
+  "tags": {
+    "addr:district": "Lahaul and Spiti",
+    "addr:full": "Kaza Khas",
+    "addr:postcode": "172114",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7642218118,
+  "tags": {
+    "addr:district": "Kullu",
+    "addr:full": "Gompa Road, Manali",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Manu Diagnostic Centre and Hospital",
+    "source": "Local Knowledge",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 7668544162,
+  "tags": {
+    "addr:district": "Ganderbal",
+    "addr:full": "Baltal",
+    "addr:postcode": "191203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Base Camp Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961115,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Akhyar Abad",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Chenab Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961120,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Achabal",
+    "addr:postcode": "192201",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Achabal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961126,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Dooru, Verinag Anantnag Road, Doru Shahabad",
+    "addr:postcode": "192211",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961136,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Opp. SBI, Seer Hamdan",
+    "addr:postcode": "192129",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961141,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Kishtwar",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Tuberculosis Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961145,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Indra Nagar",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "DTC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961149,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Suid Dachhan, Ikhala Road",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961169,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Kibber Nallah Road",
+    "addr:postcode": "182205",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hosiptal",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961171,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Kokernag",
+    "addr:postcode": "192202",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961173,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Gandoh Neeli Bhalessa",
+    "addr:postcode": "182203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961174,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Forest Block Doda",
+    "addr:postcode": "182222",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "New Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961179,
+  "tags": {
+    "addr:district": "Kishtwar",
+    "addr:full": "Marwa",
+    "addr:postcode": "182204",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Nowpachi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961184,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Deethu",
+    "addr:postcode": "192201",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961188,
+  "tags": {
+    "addr:district": "Doda",
+    "addr:full": "Ghat",
+    "addr:postcode": "182202",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Medical College and Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7668961193,
+  "tags": {
+    "addr:district": "Anantnag",
+    "addr:full": "Chandanwari, Pahalgam",
+    "addr:postcode": "192126",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142093,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Lakhrri",
+    "addr:postcode": "184203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Drab General Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142103,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Urliwand",
+    "addr:postcode": "184101",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Mahatma Gandhi Civil Hospital",
+    "name:etymology:wikidata": "Q1001",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142106,
+  "tags": {
+    "addr:district": "Ramban",
+    "addr:full": "Doda Road, Batote",
+    "addr:postcode": "182143",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Accidental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142117,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Basoli",
+    "addr:postcode": "184201",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142123,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Lawang",
+    "addr:postcode": "184206",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142127,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Lakhrri",
+    "addr:postcode": "184203",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Drab General Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142129,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Hiranagar",
+    "addr:postcode": "184142",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Sub District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142142,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Kalibari",
+    "addr:postcode": "184104",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "A.K.Gupta Hospital and Reserch Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142143,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Urliwand, Kathua",
+    "addr:postcode": "184101",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Jasrotia Super Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669142147,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Kathua",
+    "addr:postcode": "184102",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7669453392,
+  "tags": {
+    "addr:district": "Samba",
+    "addr:full": "Ghagwal",
+    "addr:postcode": "184141",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "Government Accidental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758195,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "City Ortho Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758196,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sanjeevani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758197,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Indira Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Punnet Mahajan Physio Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758198,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chaitanya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758199,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Jeevan Jyoti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758201,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Arya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758204,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Krishna Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758206,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bharoli",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Bawa Lal Dyal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758208,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Jashwanth Hospital and Heart Foundation",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758211,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sri Sai Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758215,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145029",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Neuropathy Treatment Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758219,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "North Central Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758220,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Kalesar",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Bhatia Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758222,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "City Lifeline Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758224,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Jodhamal Colony",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Mahesh Mahajan Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758228,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Baba Ayurvedic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758230,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Bengali Clinic and Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758231,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khanpur, Gosainpur",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Asia Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758233,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sunder Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sri Nangali Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758234,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Simbal Chowk, Mamun",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Aarogya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758235,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Ishwar Nagar, Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Ajay Heart Care and Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758237,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Indira Colony, Shastri Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "K.K. Memorial Prashar Mother and Child Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758241,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Agnihotri Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758242,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Gandothra Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758247,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Ramlila Ground",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Neel Kanth Medical and Heart Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758248,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Ramlila Ground",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Saini Bone and Joint Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758249,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khanpur",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "V.C Hospital and Research Institute",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758250,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sarna",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Randeep Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758252,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Jaswali",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Har-Sewak Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758255,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145029",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ranjit Sagar Dam Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758256,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Mamun",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Amandeep Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758257,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Kukreja Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758259,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sahibzadian, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Global Paralysis Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758260,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Navchetan Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758261,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Simbal Chowk, Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Galaxy Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758262,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sunder Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Max Cure Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758264,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Adrash Colony, Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Santhosh Sohal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758266,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Budha Nagar, Malikpur",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "SKR Hospital and Trauma Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758269,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Jyoti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758273,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "KDH Neuro and Cardiac Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758275,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Shrinath Kidney Lifeline Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758276,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Chowk",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. K.D's Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758277,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Gupta ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758278,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145026",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sai Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758282,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pur Colony, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "G.K Paramedical and Clinical Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758283,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khushi Nagar, Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Swasthik Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758284,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Shimla Pahari, Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Sukiran ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758287,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Bhadroya",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chikitsa Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758288,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Shant Vihar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Shriram Mission Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758289,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sarna",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Bhatia Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758290,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Patel Nagar",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "City Lifeline Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758291,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Pathankot",
+    "addr:postcode": "145025",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Randhawal Hospital and Trauma Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758292,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Khanpur",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "JMC Hospital and Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758293,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Simbal Chowk, Mamun",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Raj Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758294,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:full": "Sujanpur",
+    "addr:postcode": "145023",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Puri Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7852758296,
+  "tags": {
+    "addr:district": "Pathankot",
+    "addr:postcode": "145001",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. M.C.K Astha Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7934984131,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Govt. Hospital, Madhupur"
+  }
+},
+{
+  "type": "node",
+  "id": 8186326552,
+  "tags": {
+    "addr:district": "Kathua",
+    "addr:full": "Kathua",
+    "addr:postcode": "184104",
+    "addr:state": "Jammu & Kashmir",
+    "amenity": "hospital",
+    "name": "District Hospital,Kathua",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9880707193,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11122077009,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dispensary"
+  }
+},
+{
+  "type": "node",
+  "id": 12465668386,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Army hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12821572597,
+  "tags": {
+    "addr:city": "patnazi",
+    "addr:district": "Kishtwar",
+    "addr:postcode": "182204",
+    "addr:street": "Chilli 2 Gan",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 13284205271,
+  "tags": {
+    "addr:city": "Daghoni",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "سول ہسپتال ڈاغونی",
+    "name:en": "Civil Hospital Daghoni"
+  }
+},
+{
+  "type": "way",
+  "id": 27761109,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sonam Norboo Memorial Hospital",
+    "name:etymology:wikidata": "Q56220353",
+    "phone": "01982252014"
+  }
+},
+{
+  "type": "way",
+  "id": 158343131,
+  "tags": {
+    "addr:city": "Leh",
+    "addr:city:ks": "لیہہ",
+    "addr:city:ur": "لیہہ",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "landuse": "military",
+    "name": "Army Hospital Leh",
+    "name:ur": "آرمی ہسپتال لیہہ"
+  }
+},
+{
+  "type": "way",
+  "id": 194167809,
+  "tags": {
+    "addr:block": "Shahpur",
+    "addr:district": "Kangra",
+    "addr:full": "Dharamshala Road, Near IPH Office, Dharamshala",
+    "addr:postcode": "176215",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "contact:phone": "1892227595",
+    "description": "Referral Hospital",
+    "email": "zhdharamshala@gmail.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Zonal Hospital, Dharamshala",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "http://www.zhdharamshala.in/"
+  }
+},
+{
+  "type": "way",
+  "id": 253298994,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mahabodhi Charitable Hospital Devachan"
+  }
+},
+{
+  "type": "way",
+  "id": 255801154,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Benazir Bhotto Shaheed Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 302432572,
+  "tags": {
+    "amenity": "hospital",
+    "name": "District Civil Hosptial"
+  }
+},
+{
+  "type": "way",
+  "id": 308598507,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sai Mahima Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 383029510,
+  "tags": {
+    "addr:block": "Gondhla",
+    "addr:district": "Lahul & Spiti",
+    "addr:full": "Keylong",
+    "addr:postcode": "175132",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "building": "yes",
+    "contact:phone": "1900222211",
+    "name": "District Hospital, Keylong",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 398887698,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 398910304,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Govt Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 398920988,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Government Health Center"
+  }
+},
+{
+  "type": "way",
+  "id": 401181534,
+  "tags": {
+    "addr:city": "سکردو",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "عبداللہ ہسپتال",
+    "name:en": "Abdullah Hospital",
+    "name:ur": "عبداللہ ہسپتال"
+  }
+},
+{
+  "type": "way",
+  "id": 402140625,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Vaterinary Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 403434758,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Marafie Hospital Sirling"
+  }
+},
+{
+  "type": "way",
+  "id": 404035483,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Civil Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 408507459,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Vaterinary Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 423190955,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dispensary",
+    "operator": "Tibetan Children's Village"
+  }
+},
+{
+  "type": "way",
+  "id": 423191172,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Optical clinic",
+    "operator": "Tibetan Children's Village"
+  }
+},
+{
+  "type": "way",
+  "id": 526446602,
+  "tags": {
+    "addr:city": "Bakloh",
+    "addr:postcode": "176301",
+    "addr:street": "Kakira to Bakloh via Kaluganj",
+    "amenity": "hospital",
+    "name": "Military Hospital",
+    "operator": "Military"
+  }
+},
+{
+  "type": "way",
+  "id": 526478601,
+  "tags": {
+    "addr:city": "Karira",
+    "addr:postcode": "176101",
+    "addr:street": "Link Road 1/4 to SH28",
+    "amenity": "hospital",
+    "name": "Shree Swami Harigiri Charitable Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 677846489,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DHQ Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 694112847,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 736464405,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 767444918,
+  "tags": {
+    "addr:block": "Killar",
+    "addr:district": "Chamba",
+    "addr:full": "Killar-Tehsil Pangi",
+    "addr:postcode": "176323",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "building": "yes",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital, Killar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 843836689,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "日土县人民医院"
+  }
+},
+{
+  "type": "way",
+  "id": 900573232,
+  "tags": {
+    "addr:district": "Kullu",
+    "addr:full": "Manali",
+    "addr:postcode": "175131",
+    "addr:state": "Himachal Pradesh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Lady Willingdon Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1086530835,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1116132420,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1174246078,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1334492669,
+  "tags": {
+    "addr:district": "Kargil",
+    "addr:postcode": "194103",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "District Hospital Kargil",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1412272096,
+  "tags": {
+    "addr:district": "KARGIL",
+    "addr:full": "District Hospital, Kargil Ladakh",
+    "addr:postcode": "194103",
+    "amenity": "hospital",
+    "contact:mobile": "9419888523",
+    "contact:phone": "1985232213",
+    "healthcare": "hospital",
+    "name": "Old Kargil District Hospital",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1450151871,
+  "tags": {
+    "addr:city": "سکسا",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "سکسا ہسپتال",
+    "source": "P&DD GB"
+  }
+},
+{
+  "type": "way",
+  "id": 1450151872,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "امیر آباد ہسپتال"
+  }
+},
+{
+  "type": "way",
+  "id": 1450151874,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Saith Hospital"
+  }
+}
+
+  ]
+}

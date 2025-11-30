@@ -1,0 +1,4962 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T11:22:57Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 441046459,
+  "lat": 30.7611013,
+  "lon": 76.7762212,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:street": "Madhya Marg",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "emergency",
+    "name": "PGI Emergency"
+  }
+},
+{
+  "type": "node",
+  "id": 1041037638,
+  "lat": 30.7245237,
+  "lon": 76.7689883,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KD Cosmetic Surgery Centre,Sector 34-A"
+  }
+},
+{
+  "type": "node",
+  "id": 1832737201,
+  "lat": 30.7614305,
+  "lon": 76.7749653,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector-12",
+    "addr:postcode": "160012",
+    "addr:state": "Chandigarh",
+    "addr:street": "Madhya Marg",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "PGI Chandigarh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2457764868,
+  "lat": 30.6775899,
+  "lon": 76.7984320,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dispesary"
+  }
+},
+{
+  "type": "node",
+  "id": 3404982354,
+  "lat": 30.7478631,
+  "lon": 76.7489881,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:full": "# 846 Sector 38-A",
+    "addr:housenumber": "846",
+    "addr:postcode": "160014",
+    "addr:state": "Chandigarh",
+    "addr:street": "Site 846, Sector 38",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Santokh Hospital",
+    "operator": "Dr KS santokh",
+    "phone": "+918558866846",
+    "source": "OpenGovernmentData",
+    "website": "https://www.santokhhospital.com/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4355006891,
+  "lat": 30.7491743,
+  "lon": 76.7740258,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "H.No. 2040, Sector 15-C",
+    "addr:postcode": "160015",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dharam Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4620527290,
+  "lat": 30.7387705,
+  "lon": 76.7145575,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name:en": "Max health care"
+  }
+},
+{
+  "type": "node",
+  "id": 4631274982,
+  "lat": 30.7475350,
+  "lon": 76.7659780,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bharat Vikas Parishad Charitable Medical Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4701474502,
+  "lat": 30.7122719,
+  "lon": 76.7702748,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Site No: 1 & 2, Sec-33-C,Near Terrced Garden",
+    "addr:postcode": "160020",
+    "addr:state": "Chandigarh",
+    "addr:street": "33 sector",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Land Mark Hospital(Langol View Charitable Clinic and Maternity Home)",
+    "name:en": "Landmark Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4948021823,
+  "lat": 30.7639495,
+  "lon": 76.7800519,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ophthalmology",
+    "name": "Advance Eye Center",
+    "name:en": "Advance Eye Center"
+  }
+},
+{
+  "type": "node",
+  "id": 5516394084,
+  "lat": 30.7034681,
+  "lon": 76.7100817,
+  "tags": {
+    "addr:city": "Mohali",
+    "addr:housenumber": "sco 10",
+    "addr:postcode": "160071",
+    "addr:street": "sector 71",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "clinic;dermatology",
+    "name": "bodysculpt",
+    "operator": "dr dhingra",
+    "phone": "+91 9878650039"
+  }
+},
+{
+  "type": "node",
+  "id": 6612985317,
+  "lat": 30.7329698,
+  "lon": 76.7714736,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Pet Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6896428448,
+  "lat": 30.7067472,
+  "lon": 76.7083199,
+  "tags": {
+    "addr:city": "Mohali",
+    "addr:district": "S.A.S Nagar (Mohali)",
+    "addr:full": "IVY Hospital, Sector-71",
+    "addr:postcode": "160071",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:helpline": "0172 7170121",
+    "contact:mobile": "7508699443",
+    "contact:phone": "01727170121;01725242120;01725044333",
+    "email": "headbloodbank@ivyhospital.com;bloodbank@ivyhospital.com",
+    "fax": "1727170000",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;blood",
+    "name": "Ivy Health and Life Sciences Private Limited",
+    "opening_hours": "24/7",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://ivyhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6907693413,
+  "lat": 30.7583074,
+  "lon": 76.7843183,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "# 11, Sector-11A, Chandigarh",
+    "addr:postcode": "160011",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "fax": "2744397",
+    "healthcare": "hospital",
+    "name": "Rameshwara Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065242,
+  "lat": 30.7287476,
+  "lon": 76.7898551,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "3314, Near Gurudwara Sahib, Sec-19-D",
+    "addr:postcode": "160019",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Oxford Heart and Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065247,
+  "lat": 30.7228358,
+  "lon": 76.7703393,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco No.47 - 49,Sector - 34A, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "fax": "2660689",
+    "healthcare": "hospital",
+    "name": "Mukat Hospital and Heart Institute",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065252,
+  "lat": 30.7218259,
+  "lon": 76.7669463,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco-341-42, Sector-34A, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nins Brain and Spine Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065257,
+  "lat": 30.7193760,
+  "lon": 76.7578912,
+  "tags": {
+    "addr:district": "Puducherry",
+    "addr:full": "No-90,Vazhuthavur Main Road,V.V.P Nagar",
+    "addr:postcode": "605009",
+    "addr:state": "Puducherry",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ashwini Maternity Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065262,
+  "lat": 30.7239380,
+  "lon": 76.7656857,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector: 34/A, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Inscol Tertiary Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065267,
+  "lat": 30.7635999,
+  "lon": 76.7483211,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "3026, Sec-21 D",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Deep Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065272,
+  "lat": 30.7324319,
+  "lon": 76.7716616,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "CHC, Sector - 22",
+    "addr:landmark": "Opposite Nehru Park",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector -22",
+    "amenity": "hospital",
+    "contact:phone": "1722773711",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital-Sector 22",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065278,
+  "lat": 30.7107483,
+  "lon": 76.7541911,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Site No.1 and 2, Sector 44-C",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "contact:phone": "9988808880",
+    "email": "info@chaitanyahospital.org",
+    "healthcare": "hospital",
+    "healthcare:speciality": "Obstetrics;Gynaecology",
+    "name": "Chaitanya Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.chaitanyahospital.org/"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065283,
+  "lat": 30.7420224,
+  "lon": 76.7909159,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S C O 166-167-168-169, Madhya Marg, Sector-9-C",
+    "addr:postcode": "160009",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Grewal Eye Institute",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908090589,
+  "lat": 30.7128525,
+  "lon": 76.8424183,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Civil Hospital Manimajra",
+    "addr:landmark": "Near Fun Republic Manimajra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "addr:street": "Old Ropar Road",
+    "amenity": "hospital",
+    "contact:phone": "1722751004",
+    "description": "civil hospital",
+    "healthcare": "hospital",
+    "locality": "Near Motor Market",
+    "name": "Civil hospital, Manimajra",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100816,
+  "lat": 30.7279522,
+  "lon": 76.7594992,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Koti No. 201, Sector 35 - A",
+    "addr:postcode": "160015",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Abhilasha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111123,
+  "lat": 30.7174644,
+  "lon": 76.8329890,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "801, Mani Majra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Arya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111137,
+  "lat": 30.6999404,
+  "lon": 76.7671408,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "150, Sector 40B",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Dabur Dhanwantry Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111147,
+  "lat": 30.6920860,
+  "lon": 76.7330030,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Phase IX, Sector - 63, SAS Nagar, Mohali",
+    "addr:postcode": "160062",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare:speciality": "multispecialty",
+    "name": "Silver Oaks Hospitals",
+    "opening_hours": "24/7",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.silveroakshospital.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111148,
+  "lat": 30.7163080,
+  "lon": 76.7777958,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S.C.O. 66, Sector-20 C, Tribune Road",
+    "addr:postcode": "160020",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Arthoscopy and Spinal Endoscopy Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111153,
+  "lat": 30.7198176,
+  "lon": 76.7686281,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco No. 226-227,Sector-34-A",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Virdi Eye Hospital(Virk Hospital)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111159,
+  "lat": 30.7237708,
+  "lon": 76.7604969,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "#2103, Sector, 35-C, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "fax": "2661789",
+    "name": "Mangnum Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111164,
+  "lat": 30.7301782,
+  "lon": 76.7603199,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "# 140, Sector-35-A, Near Kisan Bhavan",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Grover Eye Laser and E.N.T Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111174,
+  "lat": 30.7176996,
+  "lon": 76.7693818,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "182, 33A, Sector 33, A, Chandigarh",
+    "addr:postcode": "160020",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bedi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111179,
+  "lat": 30.6727602,
+  "lon": 76.8536299,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco 855A, Nac, Manimajra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gupta Eye Hospital, Chandigarh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111185,
+  "lat": 30.7643681,
+  "lon": 76.7762778,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Postgraduate Institute of Medical Education andResearch, Sector-12",
+    "addr:landmark": "Opposite Panjab Universty",
+    "addr:postcode": "160012",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector-12",
+    "amenity": "hospital",
+    "contact:phone": "0172-2755220",
+    "description": "Medical Colleges Hospital",
+    "healthcare": "hospital",
+    "name": "Postgraduate Institute of Medical Education and Research (PGIMER)",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "https://pgimer.edu.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111195,
+  "lat": 30.7342210,
+  "lon": 76.7525804,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S.C.O. 166, Sector-37-C, First Floor, Chandigarh",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Neeraj Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111200,
+  "lat": 30.7029628,
+  "lon": 76.7620003,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Site No.2,Sec-46D, Chandigarh",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Kapoor's Kidney and Urostone Centre Pvt.Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111214,
+  "lat": 30.7216968,
+  "lon": 76.7669718,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco- 343 - 345, Sector 34- A, Opposite Gurudwara Sector 34",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Omni Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111219,
+  "lat": 30.7104462,
+  "lon": 76.8429682,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco - 831, Nac, Manimajra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Tricity Hospital Pvt. Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6991401840,
+  "lat": 30.6890990,
+  "lon": 76.8533550,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:district": "Panchkula",
+    "addr:full": "1187, Sector 11, Near Main Bus Stand",
+    "addr:postcode": "134112",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "email": "aduashriram@rediffmail.com",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Shri Ram Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://shriramclinic.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6991515853,
+  "lat": 30.6987397,
+  "lon": 76.8357741,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Site No.3, Sector-17,Near Gowri Shankar Mandir",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Institute Of Reproduction and Child Cares",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993910947,
+  "lat": 30.7019895,
+  "lon": 76.8394330,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "# 873, Sector - 8",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Singla Orthopaedic Centre / Ortho Nava Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993933619,
+  "lat": 30.6815459,
+  "lon": 76.8485981,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:district": "Panchkula",
+    "addr:full": "Sco-138, Sector-14",
+    "addr:housenumber": "138",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "addr:street": "Sector 14",
+    "amenity": "hospital",
+    "email": "info@raffelshospital.com",
+    "healthcare": "hospital",
+    "name": "Raffels Hospital",
+    "phone": "0172-258730003",
+    "source": "OpenGovernmentData",
+    "website": "https://www.raffelshospital.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6994262713,
+  "lat": 30.6821064,
+  "lon": 76.8374790,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "# 1034, Sector - 15",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gokul Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6994503285,
+  "lat": 30.6855562,
+  "lon": 76.8406920,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Behind Raghunath Mandir, Nursing Home Site No1,Sector-15",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Orthomax Bone and Joint Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6998001050,
+  "lat": 30.6885420,
+  "lon": 76.8503791,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "208, Sector-10",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chakravarty Polyclinics",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://chakravartynursinghome.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6998022893,
+  "lat": 30.6882191,
+  "lon": 76.8500331,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "SCO-26, Sector-11",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "email": "agdrishtiag@gmail.com",
+    "healthcare": "hospital",
+    "healthcare:speciality": "Eye Care",
+    "name": "Drishti Eye Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://drishtieyehospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7001618746,
+  "lat": 30.6747627,
+  "lon": 76.8513863,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "# 1303- P, Sector-21, New Grain Market Road",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Aarogya Hospital, Panchkula",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7003170268,
+  "lat": 30.6958386,
+  "lon": 76.8381751,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "SCO 8, Sector 16",
+    "addr:postcode": "134108",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "email": "phoenixhospital@gmail.com",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Phoenix Hospital, Panchkula",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.phoenixhospitalindia.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7003235215,
+  "lat": 30.7158261,
+  "lon": 76.8389341,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Nursing Home Site No.-1,Adjoining Gh-34, Sector-5, (Mansadevi Complex)",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Happy Family Maternitys Children Hospital Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051329437,
+  "lat": 30.6913534,
+  "lon": 76.7234401,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar,",
+    "addr:full": "Sector 69, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "062837 05192",
+    "email": "info@grecianhospital.com",
+    "name": "Grecian Hospital",
+    "phone": "062837 05192",
+    "source": "OpenGovernmentData",
+    "website": "https://www.grecianhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7051329443,
+  "lat": 30.6949448,
+  "lon": 76.7214158,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 69, Chandighar Sohana Highway, Opposite Pearl Showroom",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 221 7575",
+    "email": "help@aceheartinstitute.com",
+    "name": "Shivalik Hospital and ACE Heart & Vascular Institute",
+    "phone": "0172 221 6868",
+    "source": "OpenGovernmentData",
+    "website": "https://aceheartinstitute.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7053641550,
+  "lat": 30.7229080,
+  "lon": 76.7447786,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "SCO-49,Sector 42-C,Near Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Kaushal Hospital, Chandigarh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7053752809,
+  "lat": 30.6613553,
+  "lon": 76.8184454,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "NH-21, Zirakpur- Chandigarh Highway, Under Flyover, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "email": "hospital@jpsingla.com; hr@jpsingla.com",
+    "name": "JP Hospital, Zirakpur",
+    "operator:type": "private",
+    "phone": "84277 76095, 176 2331900, 331901",
+    "source": "OpenGovernmentData",
+    "website": "https://jphospitals.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 7054108274,
+  "lat": 30.6963019,
+  "lon": 76.7166442,
+  "tags": {
+    "addr:district": "Rupnagar",
+    "addr:full": "sector 70,opp.Regional Spinal Injury Centre",
+    "addr:postcode": "160071",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Amar Hospital, Rupnagar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7059003996,
+  "lat": 30.7089593,
+  "lon": 76.7224681,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "SCF 98-100, Near Chawla Chowk, Phase 3B-2, Sector 60",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "01762 512 666",
+    "email": "dr.raman@indushospital.in",
+    "healthcare": "hospital",
+    "name": "Indus Hospital,S.A.S Nagar",
+    "source": "OpenGovernmentData",
+    "website": "https://www.indushospital.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 7062624282,
+  "lat": 30.7083398,
+  "lon": 76.7240842,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "1, Phase 7, Sector 61",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "098145 01415",
+    "email": "admin@chawlanursinghome.com",
+    "healthcare": "hospital",
+    "name": "Chawla Nursing Home",
+    "source": "OpenGovernmentData",
+    "website": "https://www.chawlanursinghome.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 7103822719,
+  "lat": 30.7068665,
+  "lon": 76.7262127,
+  "tags": {
+    "addr:district": "Rupnagar",
+    "addr:full": "Phase - 7, H.No, 35, Mohali Stadium Rd, Sector 61",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "099148 74442",
+    "healthcare": "hospital",
+    "name": "J P Eye Hospital, Rupnagar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103863139,
+  "lat": 30.7399592,
+  "lon": 76.7141873,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Chandigarh Rd, near Civil Hospital, Phase 6, Sector 56",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 521 2000",
+    "healthcare": "hospital",
+    "name": "Max Super Speciality Hospital-Mohali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103863154,
+  "lat": 30.6602892,
+  "lon": 76.8189102,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "Ambala Chandigarh Expy, Godown Area, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "01762 509 993",
+    "name": "Ujjawal Eye Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103863173,
+  "lat": 30.7281801,
+  "lon": 76.7222806,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sco-18, First Floor, Phase-1, Mohali, Near Post Office and, above Aman Scanners",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Adityaj Hospital And Laboratory",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103944974,
+  "lat": 30.7268339,
+  "lon": 76.7209649,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 55, Phase 1, Sector 58",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "085560 82078",
+    "name": "Singla Medicare Clinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7104053286,
+  "lat": 30.6609356,
+  "lon": 76.8290502,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "SCO 21, Kalgidhar Enclave, Opposite K-Area, Baltana, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "01762 509 503",
+    "healthcare": "hospital",
+    "name": "Chaitanya Public Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7105995457,
+  "lat": 30.7113143,
+  "lon": 76.7191090,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "1799-1800, Phase 3B-2, Mohali",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 227 3402",
+    "healthcare": "hospital",
+    "name": "Liberty Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106035566,
+  "lat": 30.7292572,
+  "lon": 76.7221481,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "Opp. Old DC Office, Sector 55, Phase 1",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 522 2000",
+    "name": "Indus Super Speciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106398572,
+  "lat": 30.7129964,
+  "lon": 76.7182980,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "SCF-16, Phase 3B2, Sector 60",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Sodhi's Health Care, Multispeciality Hospital- Mohali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7111403693,
+  "lat": 30.7232383,
+  "lon": 76.8122966,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:landmark": "Behind Sabji Mandi",
+    "addr:postcode": "160019",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector 26",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Police Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7111403701,
+  "lat": 30.6967430,
+  "lon": 76.7879640,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "addr:street": "Ramdarbar",
+    "amenity": "hospital",
+    "description": "General Hospital",
+    "healthcare": "hospital",
+    "locality": "Industrial Area",
+    "name": "ESIC Hospital Ramdarbar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7111403705,
+  "lat": 30.6779880,
+  "lon": 76.8072810,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:landmark": "Airport Chowk",
+    "addr:postcode": "160003",
+    "addr:state": "Chandigarh",
+    "addr:street": "Industrial Area Phase II",
+    "amenity": "hospital",
+    "contact:phone": "1722655752",
+    "name": "Composite Hospital I.T.B.P",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153345512,
+  "lat": 30.7393128,
+  "lon": 76.7138728,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Opposite Govternment Girls College/Adjoing Max Super Specialty Hospital, Sector 56",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "addr:subdistrict": "SAS Nagar (Mohali)",
+    "amenity": "hospital",
+    "contact:phone": "0172-2271295",
+    "description": "District Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital SAS Nagar (Mohali)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206523,
+  "lat": 30.7001359,
+  "lon": 76.7875764,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "48, Phase-2, Industrial Area Phase I, Chandigarh,",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Cloudnine Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206527,
+  "lat": 30.7245070,
+  "lon": 76.7324640,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Plot No.6, Phase 3 A, Sector 53, Chandigarh",
+    "addr:postcode": "160059",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Babe Ke Hospital And IMT",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206529,
+  "lat": 30.7421389,
+  "lon": 76.7356685,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector 40A, Ground Floor, Chandigarh",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nirmal Dr. Bhasin Jannee Fertility Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206532,
+  "lat": 30.7276054,
+  "lon": 76.7694571,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO 2463-2464, 2nd Floor, JW Marriott Hotel Aroma Lane, 22C, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Ashok Sharma's Cornea Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206533,
+  "lat": 30.7127888,
+  "lon": 76.7774089,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "473, 32A, Sector 32, Chandigarh",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Chandan Trikha Homeopathic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206534,
+  "lat": 30.7314168,
+  "lon": 76.7725000,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "2413 c, sco, Sector 22, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206535,
+  "lat": 30.7266382,
+  "lon": 76.7523250,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "1151, 36 C, Near Park, Sector 36, Chandigarh",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Pandhi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206543,
+  "lat": 30.7352490,
+  "lon": 76.8006280,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "1550, Sector 7-C, Chandigarh",
+    "addr:postcode": "160019",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Priyanka Sharma Gynaecologist",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206547,
+  "lat": 30.7417091,
+  "lon": 76.7942557,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO 10, 11, Madhya Marg, Sector 8C, Sector 9, Chandigarh",
+    "addr:postcode": "160009",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chd City Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206548,
+  "lat": 30.7255395,
+  "lon": 76.7622902,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Dr.P.N.Chhuttani Memorial IMA Complex, 35B, Sector 35, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Guru Nanak Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206560,
+  "lat": 30.7525838,
+  "lon": 76.7173534,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Near Dilshad confectionery, Maloya, Chandigarh",
+    "addr:postcode": "160025",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Kaushal Clinic & Clinical Lab",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206562,
+  "lat": 30.7606212,
+  "lon": 76.7820366,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO 11, Sector 11D, Sector 11, Chandigarh",
+    "addr:postcode": "160011",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fortis Medcentre Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206566,
+  "lat": 30.7401940,
+  "lon": 76.7826290,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S.C.O 52 - 53 - 54, Bridge Market, 17C, Sector 17, Chandigarh",
+    "addr:postcode": "160017",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chhuttani Medical Centre - Psychiatrist & De-addiction Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206571,
+  "lat": 30.7264061,
+  "lon": 76.7732467,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "House No- 2125, Near Tulasi Das Library, Sector 21C, Chandigarh",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ARV Othopaedic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206572,
+  "lat": 30.7091481,
+  "lon": 76.8027108,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Plot No-115, Near Hometel Hotel, Phase 1, Chandigarh",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Eden Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206590,
+  "lat": 30.7313883,
+  "lon": 76.7849987,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "House No, 1204, Sector 18-C, Sector 18, Chandigarh",
+    "addr:postcode": "160018",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mamta Child Health Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206592,
+  "lat": 30.7134331,
+  "lon": 76.7687413,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO No. 23, Sector, 33D, Sector 33, Chandigarh",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Sarhind Orthopaedic Multispeciality Medical Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7611240842,
+  "lat": 30.6634302,
+  "lon": 76.8780496,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "#624, Sector 26, Panchkula Extension, Panchkula",
+    "addr:postcode": "134116",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "name": "AM Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603965,
+  "lat": 30.6835144,
+  "lon": 76.7239832,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Kumbra, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Universal Institute & Charitable Hospiital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603981,
+  "lat": 30.6816510,
+  "lon": 76.7436280,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 65, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chahal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603990,
+  "lat": 30.7132075,
+  "lon": 76.7174706,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 60, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Amritpal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603995,
+  "lat": 30.7076598,
+  "lon": 76.7236138,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gopal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603996,
+  "lat": 30.6842940,
+  "lon": 76.7426798,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Grand Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603999,
+  "lat": 30.6916662,
+  "lon": 76.7212330,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Trauma and Emergency Critical Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604009,
+  "lat": 30.6795410,
+  "lon": 76.7249470,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Trehan Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604010,
+  "lat": 30.6915470,
+  "lon": 76.7164210,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Mayo Healthcare Super Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604013,
+  "lat": 30.6813262,
+  "lon": 76.7444450,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "I- Med Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604016,
+  "lat": 30.7197223,
+  "lon": 76.7056832,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Harmony Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604021,
+  "lat": 30.7197017,
+  "lon": 76.7135743,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 59, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dhingra Hospital and Surgical Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604024,
+  "lat": 30.6799460,
+  "lon": 76.7455550,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604025,
+  "lat": 30.6899841,
+  "lon": 76.7104702,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Virendra Dhanlhar Mayo Health Care Super Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731926,
+  "lat": 30.6366880,
+  "lon": 76.8145320,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Ashirwad Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731928,
+  "lat": 30.6638500,
+  "lon": 76.8289030,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Panchkula",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sethi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731929,
+  "lat": 30.6516050,
+  "lon": 76.8228040,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "S.S Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731930,
+  "lat": 30.6508669,
+  "lon": 76.8132014,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "AKS Colony, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dashmesh Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731931,
+  "lat": 30.6575377,
+  "lon": 76.8222204,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Arya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731932,
+  "lat": 30.6161316,
+  "lon": 76.8618749,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Mubarakpur, Sanauli",
+    "addr:postcode": "140507",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Charitable Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731934,
+  "lat": 30.6435549,
+  "lon": 76.8142945,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. R.C.P. Singh Memorial Charitable Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731940,
+  "lat": 30.6481430,
+  "lon": 76.8131531,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Life Line Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731941,
+  "lat": 30.6472720,
+  "lon": 76.8047550,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Trinity Hospital & Medical Research Institute",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731946,
+  "lat": 30.6382847,
+  "lon": 76.8158255,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "134112",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731949,
+  "lat": 30.6677070,
+  "lon": 76.8531900,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 20, Panchkula",
+    "addr:postcode": "134117",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Amcare Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731951,
+  "lat": 30.6392258,
+  "lon": 76.8157820,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Doctor Square Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731957,
+  "lat": 30.6545228,
+  "lon": 76.8215102,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Preet Colony, Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Tara Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731964,
+  "lat": 30.6428025,
+  "lon": 76.8260174,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Swastik Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731965,
+  "lat": 30.6477784,
+  "lon": 76.8129324,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Osmed Healthcare Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731966,
+  "lat": 30.6552113,
+  "lon": 76.8449387,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Dhakoli, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Blessings Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731968,
+  "lat": 30.6168631,
+  "lon": 76.8552082,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Mubarakpur",
+    "addr:postcode": "140507",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Gavean Joti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731971,
+  "lat": 30.6477440,
+  "lon": 76.8129400,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Divine Physiotherapy and Neuro Rehabilitation Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731976,
+  "lat": 30.6725440,
+  "lon": 76.8559230,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Panchkula",
+    "addr:postcode": "134116",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Netra Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731979,
+  "lat": 30.6658174,
+  "lon": 76.8553252,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Panchkula",
+    "addr:postcode": "134117",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Jai Shree Shyam Skin Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731982,
+  "lat": 30.6629365,
+  "lon": 76.8182021,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Matsya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731984,
+  "lat": 30.6391360,
+  "lon": 76.8169428,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Amcare Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731989,
+  "lat": 30.6579782,
+  "lon": 76.8166108,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Saini Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731995,
+  "lat": 30.6535126,
+  "lon": 76.8450721,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Dhakoli, Zirakpur",
+    "addr:postcode": "160104",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mom and Me Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731998,
+  "lat": 30.6482730,
+  "lon": 76.8124699,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Vishwas Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731999,
+  "lat": 30.6391081,
+  "lon": 76.8160794,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "V Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732000,
+  "lat": 30.6454414,
+  "lon": 76.8227729,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Advamed Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732002,
+  "lat": 30.6660564,
+  "lon": 76.8253081,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Vision Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732003,
+  "lat": 30.6521200,
+  "lon": 76.8223652,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Preet Colony, Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dhuper Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732005,
+  "lat": 30.6686656,
+  "lon": 76.8134805,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "140604",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Life Line Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732006,
+  "lat": 30.6521662,
+  "lon": 76.8185704,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Santosh Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 10272516167,
+  "lat": 30.6729094,
+  "lon": 76.8509970,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "508-A",
+    "addr:street": "Sector 12A",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Malik Multi-Speciality Hospital",
+    "phone": "0172-582524"
+  }
+},
+{
+  "type": "node",
+  "id": 10810944121,
+  "lat": 30.6533309,
+  "lon": 76.7349821,
+  "tags": {
+    "addr:city": "Sahibzada Ajit Singh Nagar",
+    "addr:housenumber": "956",
+    "addr:postcode": "160055",
+    "addr:street": "Sector 82 JLPL",
+    "amenity": "hospital",
+    "description": "Yukti Herbs is a leading brand in the natural health and wellness industry, renowned for its exceptional line of herbal products. The company's philosophy is deeply rooted in the ancient Indian Ayurvedic system of medicine",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ayurveda",
+    "name": "Yukti Herbs",
+    "phone": "08283865637",
+    "website": "https://www.yuktiherbs.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 12597187787,
+  "lat": 30.7033952,
+  "lon": 76.7775151,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "CHANDIGARH",
+    "addr:housenumber": "PQ3H+835, 31D, Sector 31, Chandigarh, 160030",
+    "addr:postcode": "160030",
+    "addr:street": "Chandi Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Air Force Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12597209820,
+  "lat": 30.7042318,
+  "lon": 76.7751977,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "CHANDIGARH",
+    "addr:housenumber": "32C, Sector 32, Chandigarh, 160047",
+    "addr:postcode": "160047",
+    "addr:street": "Chandi Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mental Health Institute"
+  }
+},
+{
+  "type": "way",
+  "id": 113779330,
+  "center": {
+    "lat": 30.7652264,
+    "lon": 76.7755769
+  },
+  "nodes": [
+    1289912844,
+    1289913787,
+    1289913019,
+    1289913624,
+    1289913174,
+    1289913762,
+    1289913286,
+    1289913895,
+    1289913412,
+    1289914021,
+    1289913841,
+    1289913111,
+    1289912844
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Superintended Hospital Engineer Building"
+  }
+},
+{
+  "type": "way",
+  "id": 129023343,
+  "center": {
+    "lat": 30.7066283,
+    "lon": 76.7083186
+  },
+  "nodes": [
+    1424396438,
+    1424396457,
+    1424396365,
+    1424396344,
+    1424396438
+  ],
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "3376, Lakhnaur Pind Road, Sector 71",
+    "addr:postcode": "160071",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 717 0000",
+    "name": "Ivy Health and Life Sciences Pvt. Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 129453616,
+  "center": {
+    "lat": 30.7091114,
+    "lon": 76.7806946
+  },
+  "nodes": [
+    1428254586,
+    1428254707,
+    1428254795,
+    1428254817,
+    1428254839,
+    1428254881,
+    1428254915,
+    1428254984,
+    1428255078,
+    1428254910,
+    1428254835,
+    1428254585,
+    1428254586
+  ],
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector-32, Chandigarh",
+    "addr:landmark": "Opposite CSIO",
+    "addr:postcode": "160030",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector-32",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "email": "dpgmch-chd@gmch.gov.in",
+    "emergency": "yes",
+    "fax": "0172-2609360",
+    "healthcare": "hospital",
+    "name": "GMCH SECTOR 32",
+    "name:en": "Government Medical College Hospital",
+    "operator:type": "government",
+    "phone": "0172-2601023",
+    "source": "OpenGovernmentData",
+    "start_date": "1991",
+    "website": "https://gmch.gov.in/",
+    "wikidata": "Q5513730",
+    "wikipedia": "en:Government Medical College and Hospital, Chandigarh"
+  }
+},
+{
+  "type": "way",
+  "id": 129453735,
+  "center": {
+    "lat": 30.7085336,
+    "lon": 76.7774620
+  },
+  "nodes": [
+    1428254750,
+    1428254971,
+    1428254894,
+    1428254863,
+    1428254836,
+    1428254816,
+    1428254621,
+    1428254750
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 129782458,
+  "center": {
+    "lat": 30.7508141,
+    "lon": 76.7809469
+  },
+  "nodes": [
+    1431135635,
+    1431135624,
+    1431135628,
+    1431135613,
+    1431135627,
+    1431135640,
+    1431135642,
+    1431135635
+  ],
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:landmark": "Near Rose Garden",
+    "addr:postcode": "160016",
+    "addr:state": "Chandigarh",
+    "addr:street": "GMSH-16",
+    "amenity": "hospital",
+    "contact:phone": "1722768119",
+    "description": "District Hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "GMSH Sector-16",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 129877132,
+  "center": {
+    "lat": 30.7048486,
+    "lon": 76.8556829
+  },
+  "nodes": [
+    1432156379,
+    1432156366,
+    1432156408,
+    1432156411,
+    1432156415,
+    1432156421,
+    1432156379
+  ],
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Sector 6, Panchkula",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "addr:street": "Sector 6",
+    "addr:subdistrict": "Kalka",
+    "amenity": "hospital",
+    "contact:phone": "0172-567540",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital Panchkula",
+    "name:en": "General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 130274562,
+  "center": {
+    "lat": 30.7131303,
+    "lon": 76.8539277
+  },
+  "nodes": [
+    1435330457,
+    1435330452,
+    1435330448,
+    1435330478,
+    1435330495,
+    1435330525,
+    1435330517,
+    1435330503,
+    1435330486,
+    1435330481,
+    1435330466,
+    1435330457
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Command Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 130282368,
+  "center": {
+    "lat": 30.6745437,
+    "lon": 76.8647690
+  },
+  "nodes": [
+    1435398933,
+    1435398923,
+    1435398954,
+    1435398964,
+    1435398933
+  ],
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Sector 21",
+    "addr:postcode": "134112",
+    "addr:state": "Haryana",
+    "addr:street": "Sector 21",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Alchemist Hospital, Panchkula",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.alchemisthospitals.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 155001233,
+  "center": {
+    "lat": 30.7633931,
+    "lon": 76.7810046
+  },
+  "nodes": [
+    1674486600,
+    1674486605,
+    1674486621,
+    1674486613,
+    1674486617,
+    1674486592,
+    1674486585,
+    1674486575,
+    1674486563,
+    1674486571,
+    1674486566,
+    1674486590,
+    1674486600
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Cancer Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 155001235,
+  "center": {
+    "lat": 30.7628956,
+    "lon": 76.7808619
+  },
+  "nodes": [
+    1674486518,
+    1674486553,
+    1674486597,
+    1674486546,
+    1674486541,
+    1674486533,
+    1674486556,
+    1674486552,
+    1674486532,
+    1674486540,
+    1674486544,
+    1674486569,
+    1674486525,
+    1674486501,
+    1674486529,
+    1674486517,
+    1674486512,
+    1674486475,
+    1674486476,
+    1674486463,
+    1674486468,
+    1674486480,
+    1674486484,
+    1674486528,
+    1674486524,
+    1674486537,
+    1674486518
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "New OPD"
+  }
+},
+{
+  "type": "way",
+  "id": 784590327,
+  "center": {
+    "lat": 30.6711057,
+    "lon": 76.8866364
+  },
+  "nodes": [
+    7329787513,
+    7329787514,
+    7329787515,
+    7329787516,
+    7329787513
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 25",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Oscar Medical Center",
+    "phone": "+91-9053893331"
+  }
+},
+{
+  "type": "way",
+  "id": 1058106342,
+  "center": {
+    "lat": 30.6609913,
+    "lon": 76.8822538
+  },
+  "nodes": [
+    9722478345,
+    9722478346,
+    9722478347,
+    9722478348,
+    9722478345
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "H-1",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 26",
+    "amenity": "hospital",
+    "contact:email": "info@ojashospital.co.in",
+    "contact:phone": "+91 172 4500000",
+    "contact:website": "https://ojashospital.co.in/",
+    "healthcare": "hospital",
+    "name": "Ojas Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1059472337,
+  "center": {
+    "lat": 30.6614893,
+    "lon": 76.8824307
+  },
+  "nodes": [
+    9734219977,
+    9734219978,
+    9734219979,
+    9734219980,
+    9734219981,
+    9734219982,
+    9734219983,
+    9734219984,
+    9734219977
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 26",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Poly Clinic"
+  }
+},
+{
+  "type": "way",
+  "id": 1097915747,
+  "center": {
+    "lat": 30.6568319,
+    "lon": 76.8837957
+  },
+  "nodes": [
+    10053158739,
+    10053158740,
+    10053158741,
+    10053158742,
+    10053158739
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "518",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 27",
+    "amenity": "hospital",
+    "contact:facebook": "https://www.facebook.com/Omhospital27/",
+    "healthcare": "hospital",
+    "name": "Om Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1099801803,
+  "center": {
+    "lat": 30.6932939,
+    "lon": 76.8832473
+  },
+  "nodes": [
+    10068219379,
+    10068219380,
+    10068219381,
+    10068219382,
+    10068219383,
+    10068219384,
+    10068219379
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134109",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Paras Hospital",
+    "website": "https://www.parashospitals.com/india/paras-hospitals-panchkula"
+  }
+},
+{
+  "type": "way",
+  "id": 1153423420,
+  "center": {
+    "lat": 30.7347446,
+    "lon": 76.7178481
+  },
+  "nodes": [
+    10727334768,
+    10727334769,
+    10727334770,
+    10727334771,
+    10727334772,
+    10727334768
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "RHTC Palsora"
+  }
+},
+{
+  "type": "way",
+  "id": 1194654675,
+  "center": {
+    "lat": 30.6577464,
+    "lon": 76.8769937
+  },
+  "nodes": [
+    11088452427,
+    11088452428,
+    11088452429,
+    11088452430,
+    11088452427
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134116",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "nephrology",
+    "name": "Bright Kidney Care Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1207648642,
+  "center": {
+    "lat": 30.6835610,
+    "lon": 76.8658817
+  },
+  "nodes": [
+    11189621841,
+    11189621842,
+    11189621843,
+    11189621844,
+    11189621841
+  ],
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "342",
+    "addr:place": "Sector 21",
+    "amenity": "hospital",
+    "building": "hospital",
+    "name": "Prolife Hospital",
+    "phone": "+91-172-2930738;+91-9417277728"
+  }
+},
+{
+  "type": "way",
+  "id": 1360772601,
+  "center": {
+    "lat": 30.7042635,
+    "lon": 76.7751486
+  },
+  "nodes": [
+    12597198051,
+    12597198052,
+    12597198053,
+    12597198054,
+    12597198051
+  ],
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "CHANDIGARH",
+    "addr:housenumber": "32C, Sector 32, Chandigarh, 160047",
+    "addr:postcode": "160047",
+    "addr:street": "Chandi Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mental Health Institute"
+  }
+},
+{
+  "type": "relation",
+  "id": 2082640,
+  "center": {
+    "lat": 30.7608716,
+    "lon": 76.7763660
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 155001410,
+      "role": "outer"
+    },
+    {
+      "type": "way",
+      "ref": 155001470,
+      "role": "inner"
+    },
+    {
+      "type": "way",
+      "ref": 155001467,
+      "role": "inner"
+    },
+    {
+      "type": "way",
+      "ref": 155001464,
+      "role": "inner"
+    },
+    {
+      "type": "way",
+      "ref": 155001460,
+      "role": "inner"
+    }
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Nehru Hospital",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "node",
+  "id": 441046459,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:street": "Madhya Marg",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "emergency",
+    "name": "PGI Emergency"
+  }
+},
+{
+  "type": "node",
+  "id": 1041037638,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KD Cosmetic Surgery Centre,Sector 34-A"
+  }
+},
+{
+  "type": "node",
+  "id": 1832737201,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector-12",
+    "addr:postcode": "160012",
+    "addr:state": "Chandigarh",
+    "addr:street": "Madhya Marg",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "PGI Chandigarh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2457764868,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dispesary"
+  }
+},
+{
+  "type": "node",
+  "id": 3404982354,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:full": "# 846 Sector 38-A",
+    "addr:housenumber": "846",
+    "addr:postcode": "160014",
+    "addr:state": "Chandigarh",
+    "addr:street": "Site 846, Sector 38",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Santokh Hospital",
+    "operator": "Dr KS santokh",
+    "phone": "+918558866846",
+    "source": "OpenGovernmentData",
+    "website": "https://www.santokhhospital.com/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4355006891,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "H.No. 2040, Sector 15-C",
+    "addr:postcode": "160015",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dharam Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4620527290,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name:en": "Max health care"
+  }
+},
+{
+  "type": "node",
+  "id": 4631274982,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bharat Vikas Parishad Charitable Medical Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4701474502,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Site No: 1 & 2, Sec-33-C,Near Terrced Garden",
+    "addr:postcode": "160020",
+    "addr:state": "Chandigarh",
+    "addr:street": "33 sector",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Land Mark Hospital(Langol View Charitable Clinic and Maternity Home)",
+    "name:en": "Landmark Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4948021823,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ophthalmology",
+    "name": "Advance Eye Center",
+    "name:en": "Advance Eye Center"
+  }
+},
+{
+  "type": "node",
+  "id": 5516394084,
+  "tags": {
+    "addr:city": "Mohali",
+    "addr:housenumber": "sco 10",
+    "addr:postcode": "160071",
+    "addr:street": "sector 71",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "clinic;dermatology",
+    "name": "bodysculpt",
+    "operator": "dr dhingra",
+    "phone": "+91 9878650039"
+  }
+},
+{
+  "type": "node",
+  "id": 6612985317,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Pet Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6896428448,
+  "tags": {
+    "addr:city": "Mohali",
+    "addr:district": "S.A.S Nagar (Mohali)",
+    "addr:full": "IVY Hospital, Sector-71",
+    "addr:postcode": "160071",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:helpline": "0172 7170121",
+    "contact:mobile": "7508699443",
+    "contact:phone": "01727170121;01725242120;01725044333",
+    "email": "headbloodbank@ivyhospital.com;bloodbank@ivyhospital.com",
+    "fax": "1727170000",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;blood",
+    "name": "Ivy Health and Life Sciences Private Limited",
+    "opening_hours": "24/7",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://ivyhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6907693413,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "# 11, Sector-11A, Chandigarh",
+    "addr:postcode": "160011",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "fax": "2744397",
+    "healthcare": "hospital",
+    "name": "Rameshwara Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065242,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "3314, Near Gurudwara Sahib, Sec-19-D",
+    "addr:postcode": "160019",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Oxford Heart and Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065247,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco No.47 - 49,Sector - 34A, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "fax": "2660689",
+    "healthcare": "hospital",
+    "name": "Mukat Hospital and Heart Institute",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065252,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco-341-42, Sector-34A, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nins Brain and Spine Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065257,
+  "tags": {
+    "addr:district": "Puducherry",
+    "addr:full": "No-90,Vazhuthavur Main Road,V.V.P Nagar",
+    "addr:postcode": "605009",
+    "addr:state": "Puducherry",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ashwini Maternity Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065262,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector: 34/A, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Inscol Tertiary Care Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065267,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "3026, Sec-21 D",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Deep Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065272,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "CHC, Sector - 22",
+    "addr:landmark": "Opposite Nehru Park",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector -22",
+    "amenity": "hospital",
+    "contact:phone": "1722773711",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital-Sector 22",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065278,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Site No.1 and 2, Sector 44-C",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "contact:phone": "9988808880",
+    "email": "info@chaitanyahospital.org",
+    "healthcare": "hospital",
+    "healthcare:speciality": "Obstetrics;Gynaecology",
+    "name": "Chaitanya Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.chaitanyahospital.org/"
+  }
+},
+{
+  "type": "node",
+  "id": 6908065283,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S C O 166-167-168-169, Madhya Marg, Sector-9-C",
+    "addr:postcode": "160009",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Grewal Eye Institute",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908090589,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Civil Hospital Manimajra",
+    "addr:landmark": "Near Fun Republic Manimajra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "addr:street": "Old Ropar Road",
+    "amenity": "hospital",
+    "contact:phone": "1722751004",
+    "description": "civil hospital",
+    "healthcare": "hospital",
+    "locality": "Near Motor Market",
+    "name": "Civil hospital, Manimajra",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100816,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Koti No. 201, Sector 35 - A",
+    "addr:postcode": "160015",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Abhilasha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111123,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "801, Mani Majra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Arya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111137,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "150, Sector 40B",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Dabur Dhanwantry Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111147,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Phase IX, Sector - 63, SAS Nagar, Mohali",
+    "addr:postcode": "160062",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare:speciality": "multispecialty",
+    "name": "Silver Oaks Hospitals",
+    "opening_hours": "24/7",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.silveroakshospital.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111148,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S.C.O. 66, Sector-20 C, Tribune Road",
+    "addr:postcode": "160020",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Arthoscopy and Spinal Endoscopy Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111153,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco No. 226-227,Sector-34-A",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Virdi Eye Hospital(Virk Hospital)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111159,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "#2103, Sector, 35-C, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "fax": "2661789",
+    "name": "Mangnum Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111164,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "# 140, Sector-35-A, Near Kisan Bhavan",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Grover Eye Laser and E.N.T Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111174,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "182, 33A, Sector 33, A, Chandigarh",
+    "addr:postcode": "160020",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bedi Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111179,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco 855A, Nac, Manimajra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gupta Eye Hospital, Chandigarh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111185,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Postgraduate Institute of Medical Education andResearch, Sector-12",
+    "addr:landmark": "Opposite Panjab Universty",
+    "addr:postcode": "160012",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector-12",
+    "amenity": "hospital",
+    "contact:phone": "0172-2755220",
+    "description": "Medical Colleges Hospital",
+    "healthcare": "hospital",
+    "name": "Postgraduate Institute of Medical Education and Research (PGIMER)",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "https://pgimer.edu.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111195,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S.C.O. 166, Sector-37-C, First Floor, Chandigarh",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Neeraj Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111200,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Site No.2,Sec-46D, Chandigarh",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Kapoor's Kidney and Urostone Centre Pvt.Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111214,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco- 343 - 345, Sector 34- A, Opposite Gurudwara Sector 34",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Omni Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111219,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sco - 831, Nac, Manimajra",
+    "addr:postcode": "160101",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Tricity Hospital Pvt. Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6991401840,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:district": "Panchkula",
+    "addr:full": "1187, Sector 11, Near Main Bus Stand",
+    "addr:postcode": "134112",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "email": "aduashriram@rediffmail.com",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Shri Ram Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://shriramclinic.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6991515853,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Site No.3, Sector-17,Near Gowri Shankar Mandir",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Institute Of Reproduction and Child Cares",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993910947,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "# 873, Sector - 8",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Singla Orthopaedic Centre / Ortho Nava Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6993933619,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:district": "Panchkula",
+    "addr:full": "Sco-138, Sector-14",
+    "addr:housenumber": "138",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "addr:street": "Sector 14",
+    "amenity": "hospital",
+    "email": "info@raffelshospital.com",
+    "healthcare": "hospital",
+    "name": "Raffels Hospital",
+    "phone": "0172-258730003",
+    "source": "OpenGovernmentData",
+    "website": "https://www.raffelshospital.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6994262713,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "# 1034, Sector - 15",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gokul Surgical Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6994503285,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Behind Raghunath Mandir, Nursing Home Site No1,Sector-15",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Orthomax Bone and Joint Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6998001050,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "208, Sector-10",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chakravarty Polyclinics",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://chakravartynursinghome.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6998022893,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "SCO-26, Sector-11",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "email": "agdrishtiag@gmail.com",
+    "healthcare": "hospital",
+    "healthcare:speciality": "Eye Care",
+    "name": "Drishti Eye Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://drishtieyehospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7001618746,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "# 1303- P, Sector-21, New Grain Market Road",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Aarogya Hospital, Panchkula",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7003170268,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "SCO 8, Sector 16",
+    "addr:postcode": "134108",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "email": "phoenixhospital@gmail.com",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Phoenix Hospital, Panchkula",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.phoenixhospitalindia.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7003235215,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Nursing Home Site No.-1,Adjoining Gh-34, Sector-5, (Mansadevi Complex)",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Happy Family Maternitys Children Hospital Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7051329437,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar,",
+    "addr:full": "Sector 69, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "062837 05192",
+    "email": "info@grecianhospital.com",
+    "name": "Grecian Hospital",
+    "phone": "062837 05192",
+    "source": "OpenGovernmentData",
+    "website": "https://www.grecianhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7051329443,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 69, Chandighar Sohana Highway, Opposite Pearl Showroom",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 221 7575",
+    "email": "help@aceheartinstitute.com",
+    "name": "Shivalik Hospital and ACE Heart & Vascular Institute",
+    "phone": "0172 221 6868",
+    "source": "OpenGovernmentData",
+    "website": "https://aceheartinstitute.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 7053641550,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "SCO-49,Sector 42-C,Near Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Kaushal Hospital, Chandigarh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7053752809,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "NH-21, Zirakpur- Chandigarh Highway, Under Flyover, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "email": "hospital@jpsingla.com; hr@jpsingla.com",
+    "name": "JP Hospital, Zirakpur",
+    "operator:type": "private",
+    "phone": "84277 76095, 176 2331900, 331901",
+    "source": "OpenGovernmentData",
+    "website": "https://jphospitals.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 7054108274,
+  "tags": {
+    "addr:district": "Rupnagar",
+    "addr:full": "sector 70,opp.Regional Spinal Injury Centre",
+    "addr:postcode": "160071",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Amar Hospital, Rupnagar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7059003996,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "SCF 98-100, Near Chawla Chowk, Phase 3B-2, Sector 60",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "01762 512 666",
+    "email": "dr.raman@indushospital.in",
+    "healthcare": "hospital",
+    "name": "Indus Hospital,S.A.S Nagar",
+    "source": "OpenGovernmentData",
+    "website": "https://www.indushospital.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 7062624282,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "1, Phase 7, Sector 61",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "098145 01415",
+    "email": "admin@chawlanursinghome.com",
+    "healthcare": "hospital",
+    "name": "Chawla Nursing Home",
+    "source": "OpenGovernmentData",
+    "website": "https://www.chawlanursinghome.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 7103822719,
+  "tags": {
+    "addr:district": "Rupnagar",
+    "addr:full": "Phase - 7, H.No, 35, Mohali Stadium Rd, Sector 61",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "099148 74442",
+    "healthcare": "hospital",
+    "name": "J P Eye Hospital, Rupnagar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103863139,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Chandigarh Rd, near Civil Hospital, Phase 6, Sector 56",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 521 2000",
+    "healthcare": "hospital",
+    "name": "Max Super Speciality Hospital-Mohali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103863154,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "Ambala Chandigarh Expy, Godown Area, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "01762 509 993",
+    "name": "Ujjawal Eye Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103863173,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sco-18, First Floor, Phase-1, Mohali, Near Post Office and, above Aman Scanners",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Adityaj Hospital And Laboratory",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7103944974,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 55, Phase 1, Sector 58",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "085560 82078",
+    "name": "Singla Medicare Clinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7104053286,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "SCO 21, Kalgidhar Enclave, Opposite K-Area, Baltana, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "01762 509 503",
+    "healthcare": "hospital",
+    "name": "Chaitanya Public Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7105995457,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "1799-1800, Phase 3B-2, Mohali",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 227 3402",
+    "healthcare": "hospital",
+    "name": "Liberty Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106035566,
+  "tags": {
+    "addr:district": "S.A.S Nagar",
+    "addr:full": "Opp. Old DC Office, Sector 55, Phase 1",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 522 2000",
+    "name": "Indus Super Speciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7106398572,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "SCF-16, Phase 3B2, Sector 60",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Sodhi's Health Care, Multispeciality Hospital- Mohali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7111403693,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:landmark": "Behind Sabji Mandi",
+    "addr:postcode": "160019",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector 26",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Police Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7111403701,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "addr:street": "Ramdarbar",
+    "amenity": "hospital",
+    "description": "General Hospital",
+    "healthcare": "hospital",
+    "locality": "Industrial Area",
+    "name": "ESIC Hospital Ramdarbar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7111403705,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:landmark": "Airport Chowk",
+    "addr:postcode": "160003",
+    "addr:state": "Chandigarh",
+    "addr:street": "Industrial Area Phase II",
+    "amenity": "hospital",
+    "contact:phone": "1722655752",
+    "name": "Composite Hospital I.T.B.P",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153345512,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Opposite Govternment Girls College/Adjoing Max Super Specialty Hospital, Sector 56",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "addr:subdistrict": "SAS Nagar (Mohali)",
+    "amenity": "hospital",
+    "contact:phone": "0172-2271295",
+    "description": "District Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital SAS Nagar (Mohali)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206523,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "48, Phase-2, Industrial Area Phase I, Chandigarh,",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Cloudnine Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206527,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Plot No.6, Phase 3 A, Sector 53, Chandigarh",
+    "addr:postcode": "160059",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Babe Ke Hospital And IMT",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206529,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector 40A, Ground Floor, Chandigarh",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nirmal Dr. Bhasin Jannee Fertility Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206532,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO 2463-2464, 2nd Floor, JW Marriott Hotel Aroma Lane, 22C, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Ashok Sharma's Cornea Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206533,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "473, 32A, Sector 32, Chandigarh",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Chandan Trikha Homeopathic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206534,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "2413 c, sco, Sector 22, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206535,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "1151, 36 C, Near Park, Sector 36, Chandigarh",
+    "addr:postcode": "160036",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Pandhi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206543,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "1550, Sector 7-C, Chandigarh",
+    "addr:postcode": "160019",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Priyanka Sharma Gynaecologist",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206547,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO 10, 11, Madhya Marg, Sector 8C, Sector 9, Chandigarh",
+    "addr:postcode": "160009",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chd City Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206548,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Dr.P.N.Chhuttani Memorial IMA Complex, 35B, Sector 35, Chandigarh",
+    "addr:postcode": "160022",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Guru Nanak Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206560,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Near Dilshad confectionery, Maloya, Chandigarh",
+    "addr:postcode": "160025",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Kaushal Clinic & Clinical Lab",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206562,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO 11, Sector 11D, Sector 11, Chandigarh",
+    "addr:postcode": "160011",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fortis Medcentre Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206566,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "S.C.O 52 - 53 - 54, Bridge Market, 17C, Sector 17, Chandigarh",
+    "addr:postcode": "160017",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chhuttani Medical Centre - Psychiatrist & De-addiction Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206571,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "House No- 2125, Near Tulasi Das Library, Sector 21C, Chandigarh",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ARV Othopaedic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206572,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "Plot No-115, Near Hometel Hotel, Phase 1, Chandigarh",
+    "addr:postcode": "160002",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Eden Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206590,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "House No, 1204, Sector 18-C, Sector 18, Chandigarh",
+    "addr:postcode": "160018",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mamta Child Health Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7473206592,
+  "tags": {
+    "addr:district": "Chandigarh",
+    "addr:full": "SCO No. 23, Sector, 33D, Sector 33, Chandigarh",
+    "addr:postcode": "160047",
+    "addr:state": "Chandigarh",
+    "amenity": "hospital",
+    "name": "Sarhind Orthopaedic Multispeciality Medical Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7611240842,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "#624, Sector 26, Panchkula Extension, Panchkula",
+    "addr:postcode": "134116",
+    "addr:state": "Haryana",
+    "amenity": "hospital",
+    "name": "AM Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603965,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Kumbra, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Universal Institute & Charitable Hospiital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603981,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 65, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Chahal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603990,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 60, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Amritpal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603995,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gopal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603996,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Grand Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856603999,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Trauma and Emergency Critical Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604009,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Trehan Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604010,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Mayo Healthcare Super Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604013,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "I- Med Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604016,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160055",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Harmony Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604021,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 59, Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160059",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dhingra Hospital and Surgical Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604024,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856604025,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "160062",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. Virendra Dhanlhar Mayo Health Care Super Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731926,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Ashirwad Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731928,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Panchkula",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sethi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731929,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "S.S Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731930,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "AKS Colony, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dashmesh Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731931,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Arya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731932,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Mubarakpur, Sanauli",
+    "addr:postcode": "140507",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Charitable Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731934,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dr. R.C.P. Singh Memorial Charitable Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731940,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Life Line Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731941,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Trinity Hospital & Medical Research Institute",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731946,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "134112",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731949,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Sector 20, Panchkula",
+    "addr:postcode": "134117",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Amcare Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731951,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Doctor Square Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731957,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Preet Colony, Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Tara Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731964,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Swastik Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731965,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Osmed Healthcare Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731966,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Dhakoli, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Blessings Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731968,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Mubarakpur",
+    "addr:postcode": "140507",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Gavean Joti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731971,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Divine Physiotherapy and Neuro Rehabilitation Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731976,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Panchkula",
+    "addr:postcode": "134116",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Netra Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731979,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Panchkula",
+    "addr:postcode": "134117",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Jai Shree Shyam Skin Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731982,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Matsya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731984,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Amcare Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731989,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Saini Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731995,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Dhakoli, Zirakpur",
+    "addr:postcode": "160104",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mom and Me Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731998,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Lohgarh, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Vishwas Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856731999,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "V Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732000,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Advamed Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732002,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Vision Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732003,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Preet Colony, Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Dhuper Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732005,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:postcode": "140604",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Life Line Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7856732006,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "Utrathiya, Zirakpur",
+    "addr:postcode": "140603",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "name": "Santosh Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 10272516167,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "508-A",
+    "addr:street": "Sector 12A",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Malik Multi-Speciality Hospital",
+    "phone": "0172-582524"
+  }
+},
+{
+  "type": "node",
+  "id": 10810944121,
+  "tags": {
+    "addr:city": "Sahibzada Ajit Singh Nagar",
+    "addr:housenumber": "956",
+    "addr:postcode": "160055",
+    "addr:street": "Sector 82 JLPL",
+    "amenity": "hospital",
+    "description": "Yukti Herbs is a leading brand in the natural health and wellness industry, renowned for its exceptional line of herbal products. The company's philosophy is deeply rooted in the ancient Indian Ayurvedic system of medicine",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ayurveda",
+    "name": "Yukti Herbs",
+    "phone": "08283865637",
+    "website": "https://www.yuktiherbs.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 12597187787,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "CHANDIGARH",
+    "addr:housenumber": "PQ3H+835, 31D, Sector 31, Chandigarh, 160030",
+    "addr:postcode": "160030",
+    "addr:street": "Chandi Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Air Force Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12597209820,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "CHANDIGARH",
+    "addr:housenumber": "32C, Sector 32, Chandigarh, 160047",
+    "addr:postcode": "160047",
+    "addr:street": "Chandi Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mental Health Institute"
+  }
+},
+{
+  "type": "way",
+  "id": 113779330,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Superintended Hospital Engineer Building"
+  }
+},
+{
+  "type": "way",
+  "id": 129023343,
+  "tags": {
+    "addr:district": "Sahibzada Ajit Singh Nagar",
+    "addr:full": "3376, Lakhnaur Pind Road, Sector 71",
+    "addr:postcode": "160071",
+    "addr:state": "Punjab",
+    "amenity": "hospital",
+    "contact:phone": "0172 717 0000",
+    "name": "Ivy Health and Life Sciences Pvt. Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 129453616,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:full": "Sector-32, Chandigarh",
+    "addr:landmark": "Opposite CSIO",
+    "addr:postcode": "160030",
+    "addr:state": "Chandigarh",
+    "addr:street": "Sector-32",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "email": "dpgmch-chd@gmch.gov.in",
+    "emergency": "yes",
+    "fax": "0172-2609360",
+    "healthcare": "hospital",
+    "name": "GMCH SECTOR 32",
+    "name:en": "Government Medical College Hospital",
+    "operator:type": "government",
+    "phone": "0172-2601023",
+    "source": "OpenGovernmentData",
+    "start_date": "1991",
+    "website": "https://gmch.gov.in/",
+    "wikidata": "Q5513730",
+    "wikipedia": "en:Government Medical College and Hospital, Chandigarh"
+  }
+},
+{
+  "type": "way",
+  "id": 129453735,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 129782458,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "Chandigarh",
+    "addr:landmark": "Near Rose Garden",
+    "addr:postcode": "160016",
+    "addr:state": "Chandigarh",
+    "addr:street": "GMSH-16",
+    "amenity": "hospital",
+    "contact:phone": "1722768119",
+    "description": "District Hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "GMSH Sector-16",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 129877132,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Sector 6, Panchkula",
+    "addr:postcode": "134109",
+    "addr:state": "Haryana",
+    "addr:street": "Sector 6",
+    "addr:subdistrict": "Kalka",
+    "amenity": "hospital",
+    "contact:phone": "0172-567540",
+    "description": "Civil Hospital",
+    "healthcare": "hospital",
+    "name": "Civil Hospital Panchkula",
+    "name:en": "General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 130274562,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Command Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 130282368,
+  "tags": {
+    "addr:district": "Panchkula",
+    "addr:full": "Sector 21",
+    "addr:postcode": "134112",
+    "addr:state": "Haryana",
+    "addr:street": "Sector 21",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Alchemist Hospital, Panchkula",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.alchemisthospitals.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 155001233,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Cancer Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 155001235,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "New OPD"
+  }
+},
+{
+  "type": "way",
+  "id": 784590327,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 25",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Oscar Medical Center",
+    "phone": "+91-9053893331"
+  }
+},
+{
+  "type": "way",
+  "id": 1058106342,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "H-1",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 26",
+    "amenity": "hospital",
+    "contact:email": "info@ojashospital.co.in",
+    "contact:phone": "+91 172 4500000",
+    "contact:website": "https://ojashospital.co.in/",
+    "healthcare": "hospital",
+    "name": "Ojas Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1059472337,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 26",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government Poly Clinic"
+  }
+},
+{
+  "type": "way",
+  "id": 1097915747,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "518",
+    "addr:postcode": "134116",
+    "addr:street": "Sector 27",
+    "amenity": "hospital",
+    "contact:facebook": "https://www.facebook.com/Omhospital27/",
+    "healthcare": "hospital",
+    "name": "Om Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1099801803,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134109",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Paras Hospital",
+    "website": "https://www.parashospitals.com/india/paras-hospitals-panchkula"
+  }
+},
+{
+  "type": "way",
+  "id": 1153423420,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "RHTC Palsora"
+  }
+},
+{
+  "type": "way",
+  "id": 1194654675,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:postcode": "134116",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "nephrology",
+    "name": "Bright Kidney Care Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1207648642,
+  "tags": {
+    "addr:city": "Panchkula",
+    "addr:housenumber": "342",
+    "addr:place": "Sector 21",
+    "amenity": "hospital",
+    "building": "hospital",
+    "name": "Prolife Hospital",
+    "phone": "+91-172-2930738;+91-9417277728"
+  }
+},
+{
+  "type": "way",
+  "id": 1360772601,
+  "tags": {
+    "addr:city": "Chandigarh",
+    "addr:district": "CHANDIGARH",
+    "addr:housenumber": "32C, Sector 32, Chandigarh, 160047",
+    "addr:postcode": "160047",
+    "addr:street": "Chandi Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mental Health Institute"
+  }
+},
+{
+  "type": "relation",
+  "id": 2082640,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Nehru Hospital",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}

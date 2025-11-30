@@ -1,0 +1,3874 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T11:56:35Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 2332892996,
+  "lat": 24.3735429,
+  "lon": 91.4176425,
+  "tags": {
+    "addr:city": "Habiganj",
+    "addr:postcode": "3300",
+    "amenity": "hospital",
+    "name": "Habiganj General Hospital",
+    "name:bn": "হবিগঞ্জ সরকারী হাসপাতাল",
+    "source": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332892997,
+  "lat": 24.3659437,
+  "lon": 91.8570806,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kamalganj Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332892999,
+  "lat": 24.4811474,
+  "lon": 91.7662744,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:postcode": "3200",
+    "addr:street": "Dhaka - Moulvibazar Highway",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare:speciality": "general;surgery",
+    "name": "Moulvibaza Sadar Hospital",
+    "name:bn": "মৌলভীাজার সদর হাসাতাল"
+  }
+},
+{
+  "type": "node",
+  "id": 2332919089,
+  "lat": 24.1940443,
+  "lon": 91.1962986,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Nasirnagar Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332919090,
+  "lat": 24.3008980,
+  "lon": 91.7364249,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sreemangal Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333151683,
+  "lat": 23.9764611,
+  "lon": 91.1110050,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Brahmanbaria General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2333151684,
+  "lat": 24.0971494,
+  "lon": 91.2875089,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Madhabpur Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164527,
+  "lat": 23.8645379,
+  "lon": 91.2032730,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Akhaura Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164530,
+  "lat": 23.6137621,
+  "lon": 91.0941092,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Brahmanpara Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164531,
+  "lat": 23.5572321,
+  "lon": 91.1271728,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Burichang Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164533,
+  "lat": 23.4553504,
+  "lon": 91.1816815,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Comilla General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164534,
+  "lat": 23.4515975,
+  "lon": 91.2022664,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Comilla Medical College Hospital",
+    "name:bn": "কুমিল্লা মেডিকেল কলেজ হাসপাতাল"
+  }
+},
+{
+  "type": "node",
+  "id": 2333176629,
+  "lat": 23.0382598,
+  "lon": 91.5166759,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Chagalnaiya Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333176631,
+  "lat": 23.0300437,
+  "lon": 91.4053964,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Feni General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2333176632,
+  "lat": 23.2107104,
+  "lon": 91.4447134,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Parshuram Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2334074205,
+  "lat": 22.9383620,
+  "lon": 91.3104378,
+  "tags": {
+    "amenity": "hospital",
+    "name": "দাগনভূঁইয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "name:en": "Daganbhuiyan Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2334074206,
+  "lat": 22.9956182,
+  "lon": 91.2327521,
+  "tags": {
+    "addr:city": "Noakhali",
+    "addr:street": "সেনবাগ রোড",
+    "amenity": "hospital",
+    "internet_access": "wlan",
+    "name": "Senbagh Upazila Health Complex",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 2343341315,
+  "lat": 23.0025372,
+  "lon": 91.0952915,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Begumganj Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382262817,
+  "lat": 23.3765251,
+  "lon": 91.0589789,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Barura Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382263483,
+  "lat": 23.2339429,
+  "lon": 91.1177264,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Laksham Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382265286,
+  "lat": 23.1715795,
+  "lon": 91.1989327,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "নাঙলকোট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "name:en": "Nangolkot Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382266322,
+  "lat": 23.0395169,
+  "lon": 91.8753994,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Matiranga Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382266618,
+  "lat": 23.1080103,
+  "lon": 91.9927821,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Khagrachari General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2382267549,
+  "lat": 23.2495549,
+  "lon": 92.0658016,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dighinala Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382267550,
+  "lat": 23.2972126,
+  "lon": 91.8999107,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Panchari Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2492654592,
+  "lat": 23.4619904,
+  "lon": 91.1793856,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "CD PATH"
+  }
+},
+{
+  "type": "node",
+  "id": 2509564908,
+  "lat": 23.4585048,
+  "lon": 91.1806023,
+  "tags": {
+    "addr:city": "Comilla",
+    "addr:postcode": "3500",
+    "addr:street": "Comilla - Laksam Rd",
+    "amenity": "hospital",
+    "name": "Midland Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2813443337,
+  "lat": 23.0129351,
+  "lon": 91.3975738,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Feni Diabetic Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2815348434,
+  "lat": 23.4859570,
+  "lon": 91.0067378,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Chandina General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3889036052,
+  "lat": 23.4789692,
+  "lon": 91.0731361,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Eastern Medical College & Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4365113104,
+  "lat": 23.7441573,
+  "lon": 91.0027708,
+  "tags": {
+    "amenity": "hospital",
+    "name": "DOYAMOY PHARMACY"
+  }
+},
+{
+  "type": "node",
+  "id": 4365113694,
+  "lat": 23.7440833,
+  "lon": 91.0029587,
+  "tags": {
+    "amenity": "hospital",
+    "name": "SRI KISNA PHARMACY"
+  }
+},
+{
+  "type": "node",
+  "id": 4682641902,
+  "lat": 24.0410539,
+  "lon": 91.0123001,
+  "tags": {
+    "amenity": "hospital",
+    "name:en": "APSCL medical"
+  }
+},
+{
+  "type": "node",
+  "id": 4710195981,
+  "lat": 24.0711405,
+  "lon": 91.1182935,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sarail Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 4727903891,
+  "lat": 24.3722667,
+  "lon": 91.4173900,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name:en": "Marry stopes"
+  }
+},
+{
+  "type": "node",
+  "id": 5216272719,
+  "lat": 23.4500891,
+  "lon": 91.1870837,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "New hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5348955670,
+  "lat": 23.4507178,
+  "lon": 91.1993928,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "LMRF Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5580233204,
+  "lat": 22.9383161,
+  "lon": 91.3044743,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "জাতীয় হাসপাতাল",
+    "name:en": "National Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5730090442,
+  "lat": 24.2718981,
+  "lon": 91.3799022,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5866203323,
+  "lat": 24.4156449,
+  "lon": 91.0541001,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mithamoin Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 6120545702,
+  "lat": 23.4555423,
+  "lon": 91.1809715,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Comilla General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6157980346,
+  "lat": 23.3385322,
+  "lon": 91.1436376,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Bagmara Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6180167165,
+  "lat": 23.4650340,
+  "lon": 91.1754017,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Medicare General Hospit"
+  }
+},
+{
+  "type": "node",
+  "id": 6180203268,
+  "lat": 23.4651151,
+  "lon": 91.1751603,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Comilla Meghna General Hospital কুমিল্লা মেঘনা জেনারেল হাসপাতালে"
+  }
+},
+{
+  "type": "node",
+  "id": 6268608185,
+  "lat": 24.4838806,
+  "lon": 92.1588775,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Brijondernagar"
+  }
+},
+{
+  "type": "node",
+  "id": 6583188418,
+  "lat": 23.9596092,
+  "lon": 91.0961474,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ghdgn"
+  }
+},
+{
+  "type": "node",
+  "id": 6658506641,
+  "lat": 23.0247588,
+  "lon": 91.1505679,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Monu Miya Hospital",
+    "name:bn": "মনু মিয়া হাসপাতাল",
+    "name:en": "Monu Miya Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6787831161,
+  "lat": 24.4788832,
+  "lon": 91.7650813,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:street": "Shreemangal Road",
+    "amenity": "hospital",
+    "name": "Life Care Pvt Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6787831177,
+  "lat": 24.4841782,
+  "lon": 91.7656730,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:street": "Shreemangal Road",
+    "amenity": "hospital",
+    "name": "Life Line Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6905030116,
+  "lat": 23.5545804,
+  "lon": 91.4556831,
+  "tags": {
+    "addr:city": "Udaipur",
+    "addr:district": "Gomati",
+    "addr:full": "District Hospital, Near Tepania Eco Park, Udaipur Gomati",
+    "addr:postcode": "799114",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:mobile": "9436131338",
+    "email": "bloodbankdhg@gmail.com",
+    "fax": "03821 222410",
+    "healthcare": "hospital",
+    "name": "Gomati District Hospital",
+    "opening_hours": "24/7",
+    "operator": "state govt.",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083719,
+  "lat": 24.0396985,
+  "lon": 92.1985665,
+  "tags": {
+    "addr:district": "North",
+    "addr:full": "Kanchanpur ADC Village",
+    "addr:postcode": "799270",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Dasda",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Kanchanpur Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083736,
+  "lat": 23.0668626,
+  "lon": 91.6445223,
+  "tags": {
+    "addr:district": "South",
+    "addr:full": "Near South manubazar High School, Manu Bazar, Manu Bazar",
+    "addr:postcode": "799143",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Satchand",
+    "amenity": "hospital",
+    "healthcare": "centre",
+    "name": "Manubazar Rural Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083760,
+  "lat": 24.3180247,
+  "lon": 92.0025198,
+  "tags": {
+    "addr:block": "Kailashahar",
+    "addr:district": "Unakoti",
+    "addr:full": "Opposite of District Jail, Kailashahar, Ward No. 11",
+    "addr:postcode": "799277",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Rajib Gandhi Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083765,
+  "lat": 23.5363433,
+  "lon": 91.4974934,
+  "tags": {
+    "addr:district": "Gomati",
+    "addr:full": "Near DM Office, Dak Bunglow Rd",
+    "addr:postcode": "799120",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Matarbari",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Tripura Sundari Sub divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083775,
+  "lat": 23.2505139,
+  "lon": 91.4676967,
+  "tags": {
+    "addr:block": "Belonia",
+    "addr:district": "South",
+    "addr:full": "Near 1 No Tilla Bazar, Belonia MC, 1 No Tilla Bazar",
+    "addr:postcode": "799155",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:phone": "3823222204",
+    "description": "Sub-District Hospital",
+    "name": "Belonia Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908094337,
+  "lat": 24.3900466,
+  "lon": 92.1601760,
+  "tags": {
+    "addr:district": "North Tripura",
+    "addr:full": "Hospital Road Dharmanagar Dharmanagar",
+    "addr:postcode": "799250",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Mahanam Seva Sadan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100786,
+  "lat": 23.8303051,
+  "lon": 91.2784789,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "9A, PO: Chowmuhani, 67 Mantribari Road Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Agartala Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100806,
+  "lat": 23.6828067,
+  "lon": 91.2794593,
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Near Agartala Bishalgarh Road, Bishalgarh Sub Division, Bishalgarh",
+    "addr:postcode": "799102",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Bishalgarh",
+    "amenity": "hospital",
+    "name": "Bishalghar S.D. Hospital, West Tripura",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100827,
+  "lat": 23.5166478,
+  "lon": 91.6502009,
+  "tags": {
+    "addr:district": "Gomati",
+    "addr:full": "East Bank of Fatik Sagar, Sukumar Colony, Hospital Road, Amarpur Nagar Panchayet",
+    "addr:postcode": "799101",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Amarpur",
+    "amenity": "hospital",
+    "contact:phone": "03821 263557",
+    "description": "Sub-District Hospital",
+    "name": "Amarpur Sub divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100832,
+  "lat": 24.3903666,
+  "lon": 92.1590334,
+  "tags": {
+    "addr:district": "North",
+    "addr:full": "Dharmanagar",
+    "addr:postcode": "799251",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Kadamtala",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Dharmanagar Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108234,
+  "lat": 23.9511506,
+  "lon": 92.0077421,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "NEAR CHAILENGTA H/S SCHOOL, Chailengta LONGTHORAI VALLEY SUB DIVISION, CHAILENGTA",
+    "addr:postcode": "799273",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Manu",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Chailengta Sub Divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108239,
+  "lat": 24.1973668,
+  "lon": 91.8280891,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "English Midium School, Kamalpur NP Kamalpur Sub Division, Baligaon Noagaon Road",
+    "addr:postcode": "799285",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Durga Choumuhani",
+    "amenity": "hospital",
+    "contact:phone": "3826262232",
+    "description": "Sub-District Hospital",
+    "name": "Bimal Sinha Memorial S.D. Hospital, Dhalai",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108252,
+  "lat": 24.0715915,
+  "lon": 91.6025823,
+  "tags": {
+    "addr:district": "Khowai",
+    "addr:full": "Lalchara, Khowai Sub division, Nripen Chakraborty Avenue",
+    "addr:postcode": "799201",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Khowai",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Khowai District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108263,
+  "lat": 23.8596535,
+  "lon": 91.2916915,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Kunjaban, Agartala",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Govinda Ballav Panth Hospital, West Tripura",
+    "name:etymology:wikidata": "Q2724411",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111085,
+  "lat": 23.8410733,
+  "lon": 91.2827370,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Regd No: F.Cmo(W) 9(217), Cle/2011 24 Dimsagar, Opposite Astable Ground, Vip Road, Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Devlok Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111090,
+  "lat": 23.8608346,
+  "lon": 91.2946030,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Kunjaban",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Cancer Hospital,West Tripura",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111111,
+  "lat": 23.8602986,
+  "lon": 91.2928221,
+  "tags": {
+    "addr:district": "West",
+    "addr:full": "Govt Medical College Street, GB Baazar, Govt Medical College Street",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:phone": "0381 235 7130",
+    "description": "Medical Colleges Hospital",
+    "email": "agmc@rediffmail.com",
+    "health_facility:type": "MRI, CT Scan, EEG, TMT, Endoscopy, Ultra Sonography, 500 mA X-ray, with IITV Echo",
+    "healthcare:speciality": "multispecialty",
+    "name": "Agartala Govt Medical College and GBP Hospital",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "www.agmc.nic.in"
+  }
+},
+{
+  "type": "node",
+  "id": 6909859499,
+  "lat": 23.9092850,
+  "lon": 92.4947387,
+  "tags": {
+    "addr:district": "Mamit",
+    "addr:full": "Aizwal-Kumarghat Road,Near CMO Office,Mamit",
+    "addr:postcode": "796441",
+    "addr:state": "Mizoram",
+    "addr:subdistrict": "Zawlnuam",
+    "amenity": "hospital",
+    "name": "District Hospital, Mamit",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7074302188,
+  "lat": 24.0296206,
+  "lon": 91.0070997,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ashuganj Upozila Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 7127376546,
+  "lat": 22.9063694,
+  "lon": 92.4698014,
+  "tags": {
+    "addr:district": "Lunglei",
+    "addr:full": "TH Lewin Road,Near Post Office,Tlabung",
+    "addr:postcode": "796751",
+    "addr:state": "Mizoram",
+    "addr:subdistrict": "Lungsen",
+    "amenity": "hospital",
+    "name": "Civil Hospital,Tlabung",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657819,
+  "lat": 23.4848604,
+  "lon": 91.4983684,
+  "tags": {
+    "addr:district": "Gomati",
+    "addr:full": "Near Tepania Block, Tepania",
+    "addr:postcode": "799114",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Matarbari",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Integrated AYUSH Hospital, Gomati",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657820,
+  "lat": 23.3105040,
+  "lon": 91.5575974,
+  "tags": {
+    "addr:district": "South",
+    "addr:full": "Santirbazar, Santirbazar",
+    "addr:postcode": "799144",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Jolaibari",
+    "amenity": "hospital",
+    "name": "Sub-Divsional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657824,
+  "lat": 23.6050187,
+  "lon": 91.8177781,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Near Govt Revenue Duck Bunglow, 60 Card Gandachra Sub Division, Hospital Road",
+    "addr:postcode": "799284",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Dumburnagar",
+    "amenity": "hospital",
+    "contact:phone": "3826265233",
+    "description": "Sub-District Hospital",
+    "name": "Gandacherra Sub Divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657825,
+  "lat": 24.1903303,
+  "lon": 92.1042451,
+  "tags": {
+    "addr:district": "Unakoti",
+    "addr:full": "Near NH 44 Road, Pecharthal, Pecharthal",
+    "addr:postcode": "799263",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Pencharthal",
+    "amenity": "hospital",
+    "contact:phone": "3822265206",
+    "name": "Pecharthal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657835,
+  "lat": 24.3046280,
+  "lon": 92.0333460,
+  "tags": {
+    "addr:district": "Unakoti",
+    "addr:full": "Near Radio Center, Bhagabannagar, Gournagar",
+    "addr:postcode": "799279",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Gournagar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Hospital, Unakoti",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657836,
+  "lat": 23.5641251,
+  "lon": 91.2914810,
+  "tags": {
+    "addr:district": "Sepahijala",
+    "addr:full": "Bishramganj Taxapara Road., Sonamura Sub Division, Taxapara GP",
+    "addr:postcode": "799103",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Taksapara hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657874,
+  "lat": 23.4844500,
+  "lon": 91.2630530,
+  "tags": {
+    "addr:district": "Sepahijala",
+    "addr:full": "Hospital Road, Sonamura NP, Sonamura Town",
+    "addr:postcode": "799131",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Sonamura Gramin Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657886,
+  "lat": 23.3165260,
+  "lon": 91.5551770,
+  "tags": {
+    "addr:district": "South",
+    "addr:full": "Opps Divisional PWD Office, Santirbazar, Santirbazar, Santirbazar Trijunction",
+    "addr:postcode": "799144",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Bokafa",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Hospital South",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657901,
+  "lat": 23.9551603,
+  "lon": 91.8252174,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Basudebpara GP, Kulai Basudebpara Ambasa Sub Division, Ambassa Kamalpur Road",
+    "addr:postcode": "799278",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Ambassa",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Dhalai District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7210907225,
+  "lat": 23.4931778,
+  "lon": 91.3323109,
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Melaghar, Sonamura",
+    "addr:postcode": "799115",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Melaghar hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7385945593,
+  "lat": 24.3108310,
+  "lon": 91.7337185,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mazumder Nursing Clinic",
+    "source": "Survey"
+  }
+},
+{
+  "type": "node",
+  "id": 7385965799,
+  "lat": 24.3107297,
+  "lon": 91.7335547,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Dipshikha Infertility Center",
+    "source": "Field Survey"
+  }
+},
+{
+  "type": "node",
+  "id": 7388623578,
+  "lat": 24.3442840,
+  "lon": 91.9774391,
+  "tags": {
+    "addr:city": "Mulvibazar",
+    "addr:housenumber": "2 no Word",
+    "addr:postcode": "3223",
+    "addr:street": "Sharifpur",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;Primary_Health_Service",
+    "name": "Sharifpur Health Center",
+    "operator": "Government Organization",
+    "operator:type": "government",
+    "source": "Nomouja"
+  }
+},
+{
+  "type": "node",
+  "id": 7466289937,
+  "lat": 23.8191641,
+  "lon": 91.2337122,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605909,
+  "lat": 23.9965273,
+  "lon": 91.8281359,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Purba Daluchhara",
+    "addr:postcode": "799278",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Daluchara Ayorvedik Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605910,
+  "lat": 23.8263332,
+  "lon": 91.2819867,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Dhaleswar",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ASR Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605911,
+  "lat": 23.8303963,
+  "lon": 91.2864718,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "CR Road, Santipara, Dhaleswar, Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Venkataeswara Hospitals",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605912,
+  "lat": 24.3650387,
+  "lon": 92.0209683,
+  "tags": {
+    "addr:district": "Unokoti",
+    "addr:full": "Dhaliarkandi",
+    "addr:postcode": "799281",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Irani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605914,
+  "lat": 23.9224905,
+  "lon": 91.8535273,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Ambassa",
+    "addr:postcode": "799289",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Ambassa Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605916,
+  "lat": 23.8788260,
+  "lon": 91.2547020,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Usha Bazar, Agartala",
+    "addr:postcode": "799009",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "VHAT Eye Hospital",
+    "operator": "Voluntary Health Association of Tripura",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605917,
+  "lat": 24.1684760,
+  "lon": 91.9584010,
+  "tags": {
+    "addr:district": "Unokoti",
+    "addr:full": "Ganganagar",
+    "addr:postcode": "799290",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Rajkandi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605918,
+  "lat": 24.2592350,
+  "lon": 92.1819080,
+  "tags": {
+    "addr:district": "North Tripura",
+    "addr:full": "Jalabasa, Pekuchhara",
+    "addr:postcode": "799260",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Jalabasa Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605923,
+  "lat": 23.9149437,
+  "lon": 91.8331377,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Kamacherra, Ambassa",
+    "addr:postcode": "799289",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Makunda Christian Missionary Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605925,
+  "lat": 23.8077381,
+  "lon": 91.2981913,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Sadhu Tilla, Subhash Nagar, Jogendra Nagar, Agartala",
+    "addr:postcode": "799004",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Homoeopathic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605927,
+  "lat": 23.7761829,
+  "lon": 91.8458544,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Khowaipara",
+    "addr:postcode": "799289",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Ganganagar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605931,
+  "lat": 23.7848589,
+  "lon": 91.2591853,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Master Para, Hapania, Agartala",
+    "addr:postcode": "799014",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Hapania Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605933,
+  "lat": 24.3717301,
+  "lon": 92.1516952,
+  "tags": {
+    "addr:district": "North Tripura",
+    "addr:full": "Algapur, Dharmanagar",
+    "addr:postcode": "799253",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605934,
+  "lat": 23.7902884,
+  "lon": 91.4424673,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Radhapur",
+    "addr:postcode": "799035",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Kherengbar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605936,
+  "lat": 24.0872210,
+  "lon": 92.1137800,
+  "tags": {
+    "addr:district": "Unokoti",
+    "addr:full": "Dakshin Machmara",
+    "addr:postcode": "799264",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Krishnatilla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7638517587,
+  "lat": 24.1331197,
+  "lon": 92.3319950,
+  "tags": {
+    "addr:postcode": "796471",
+    "addr:street": "Vengpui",
+    "amenity": "hospital",
+    "name": "Zawlnuam Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8064477261,
+  "lat": 24.4770905,
+  "lon": 91.7656209,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:postcode": "3200",
+    "addr:street": "Dhaka - Moulvibazar Highway",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;blood_check",
+    "name": "Mamun Private Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8117999632,
+  "lat": 23.3746983,
+  "lon": 91.0627069,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fair Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8234473095,
+  "lat": 24.3723066,
+  "lon": 91.4137366,
+  "tags": {
+    "addr:street": "Court Station Road",
+    "amenity": "hospital",
+    "name": "The Lab Aid  Hospital",
+    "phone": "01710662996"
+  }
+},
+{
+  "type": "node",
+  "id": 8234513411,
+  "lat": 24.3705763,
+  "lon": 91.4122200,
+  "tags": {
+    "addr:street": "Court Station Rd.",
+    "amenity": "hospital",
+    "name": "Jaspus Habiganj Adhunik Eye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8234519170,
+  "lat": 24.3711350,
+  "lon": 91.4123932,
+  "tags": {
+    "addr:street": "Court Station Rd.",
+    "amenity": "hospital",
+    "name": "Habiganj Hospital Pvt. Ltd."
+  }
+},
+{
+  "type": "node",
+  "id": 9610301355,
+  "lat": 23.1537678,
+  "lon": 91.0581442,
+  "tags": {
+    "addr:city": "Cumilla",
+    "addr:postcode": "3623",
+    "amenity": "hospital",
+    "email": "monoharganj@uhfpo.dghs.gov.bd",
+    "healthcare": "hospital",
+    "mobile": "+8801730324839",
+    "name": "Monohorgonj Upazila Health Complex",
+    "name:bn": "মনোহরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "operator": "Government",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "node",
+  "id": 10047119749,
+  "lat": 23.1624117,
+  "lon": 91.0562881,
+  "tags": {
+    "addr:postcode": "3623",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general"
+  }
+},
+{
+  "type": "node",
+  "id": 10183614709,
+  "lat": 22.9443848,
+  "lon": 91.1108550,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Begumganj Upazila Health Complex",
+    "name:bn": "উপজেলা স্বাস্থ্য কমপ্লেক্স, বেগমগঞ্জ",
+    "operator": "goverment",
+    "operator:type": "public"
+  }
+},
+{
+  "type": "node",
+  "id": 10236595613,
+  "lat": 23.0101349,
+  "lon": 91.3772861,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bokho Bidhi Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 10241366020,
+  "lat": 23.1111089,
+  "lon": 91.3349786,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gangra Community Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 10241429256,
+  "lat": 23.0993318,
+  "lon": 91.3417171,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bhazonkora Community Health Center"
+  }
+},
+{
+  "type": "node",
+  "id": 10260401001,
+  "lat": 23.1977995,
+  "lon": 91.3128820,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Batisa Union Health and Family Welfare Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 10262777719,
+  "lat": 23.2215644,
+  "lon": 91.3128155,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Upazila Animal Resources Department and Veterinary Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10266597779,
+  "lat": 23.2303924,
+  "lon": 91.3135754,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chauddagram Medinova Diagnostic Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 10268879481,
+  "lat": 23.2440315,
+  "lon": 91.3086350,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Family Welfare Center. Wazirpur Union"
+  }
+},
+{
+  "type": "node",
+  "id": 10278372098,
+  "lat": 23.3347761,
+  "lon": 91.2714191,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "The Apollo Hospital Consultancy & Diagnostic Center."
+  }
+},
+{
+  "type": "node",
+  "id": 10278399141,
+  "lat": 23.3366077,
+  "lon": 91.2699759,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Meah Bazar Medical Cente"
+  }
+},
+{
+  "type": "node",
+  "id": 10286789528,
+  "lat": 23.3689659,
+  "lon": 91.2493842,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "vatpara Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10294741822,
+  "lat": 23.3874319,
+  "lon": 91.2285152,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "City health Centre, komolapur, comilla"
+  }
+},
+{
+  "type": "node",
+  "id": 10305045054,
+  "lat": 23.4508699,
+  "lon": 91.1453606,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nargis-Nasrin-Delowara Future Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11031718905,
+  "lat": 24.4865847,
+  "lon": 91.7706149,
+  "tags": {
+    "addr:postcode": "3200",
+    "addr:street": "Syed Shah Mostafa Road",
+    "amenity": "hospital",
+    "internet_access": "wlan",
+    "name": "মা ও শিশু প্রাঃ হাসপাতাল আন্ড ডায়াগনস্টিক সেন্টার",
+    "name:en": "Maa o shishu pvt hospital and diagnostic center",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 11449665766,
+  "lat": 24.1708009,
+  "lon": 91.4741748,
+  "tags": {
+    "addr:city": "Habiganj",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "লস্করপুর বাগান হাসপাতাল",
+    "name:en": "Luskerpore Garden Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12153537948,
+  "lat": 23.1634294,
+  "lon": 92.1880336,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "বাঘাইছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "name:en": "Baghaichhari Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 12153811061,
+  "lat": 23.1390075,
+  "lon": 92.2212186,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "উগলছড়ি হেলথ কমপ্লেক্স",
+    "name:en": "Ugalchhari Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 12196648723,
+  "lat": 23.4592156,
+  "lon": 91.1779089,
+  "tags": {
+    "addr:street": "Nazrul Avenue, Kandirpar, Comilla",
+    "amenity": "hospital",
+    "name": "Gomoti Hospital",
+    "phone": "01711798083"
+  }
+},
+{
+  "type": "node",
+  "id": 12247544795,
+  "lat": 23.4804627,
+  "lon": 91.1760767,
+  "tags": {
+    "amenity": "hospital",
+    "name": "নগর স্বাস্থ্য কেন্দ্র ৩"
+  }
+},
+{
+  "type": "node",
+  "id": 12541281035,
+  "lat": 23.4556454,
+  "lon": 91.2052388,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ময়নামতি মেডিকেল কলেজ ও হাসপাতাল",
+    "name:en": "Mainamoti Medical College and Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 224494108,
+  "center": {
+    "lat": 24.3323592,
+    "lon": 91.7380859
+  },
+  "nodes": [
+    2333149608,
+    2333149609,
+    2333149610,
+    2333149611,
+    2333149608
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Sreemangal Labour Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 252543158,
+  "center": {
+    "lat": 23.3784456,
+    "lon": 91.2667014
+  },
+  "nodes": [
+    2585729904,
+    2585729905,
+    2585729906,
+    2585729907,
+    2585729904
+  ],
+  "tags": {
+    "addr:city": "Comilla",
+    "addr:housename": "Kamolpur Community Clinic",
+    "addr:postcode": "3504",
+    "addr:street": "Lampur Kamolpur Road",
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Kamolpur Community Clinic"
+  }
+},
+{
+  "type": "way",
+  "id": 262527490,
+  "center": {
+    "lat": 23.4642922,
+    "lon": 91.1764503
+  },
+  "nodes": [
+    2681919712,
+    2681919713,
+    2681919714,
+    2681919717,
+    2681919718,
+    2681919719,
+    2681919720,
+    7825089429,
+    2681919712
+  ],
+  "tags": {
+    "addr:city": "comilla",
+    "addr:postcode": "3500",
+    "addr:street": "jaotola road",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Moinamoti medical college & hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 361004663,
+  "center": {
+    "lat": 23.8308032,
+    "lon": 91.2759815
+  },
+  "nodes": [
+    3655362541,
+    3655362540,
+    3655362422,
+    3655362396,
+    3655362399,
+    3655362386,
+    3655362389,
+    3655362541
+  ],
+  "tags": {
+    "addr:district": "West",
+    "addr:full": "Umakanta Academy School, Hospital Road,Dhaleswar, Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:phone": "0381 2323331,3812325606",
+    "description": "Hospital",
+    "name": "IGM Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 495144644,
+  "center": {
+    "lat": 23.4822309,
+    "lon": 91.1168359
+  },
+  "nodes": [
+    4869287675,
+    4869287676,
+    4869287677,
+    4869287678,
+    4869287675
+  ],
+  "tags": {
+    "addr:city": "Comilla Cantonment",
+    "addr:postcode": "3521",
+    "addr:street": "Comilla-Sylhet Highway",
+    "amenity": "hospital",
+    "name": "Maynamoti Cantonment General Hospital",
+    "operator": "Comilla Cantonment"
+  }
+},
+{
+  "type": "way",
+  "id": 548308782,
+  "center": {
+    "lat": 23.4432231,
+    "lon": 91.2491792
+  },
+  "nodes": [
+    5297167712,
+    5297167709,
+    5297167710,
+    5297167711,
+    5297167712
+  ],
+  "tags": {
+    "addr:city": "Comilla",
+    "addr:place": "DURLOVPUR",
+    "addr:postcode": "3500",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Madrasha Building"
+  }
+},
+{
+  "type": "way",
+  "id": 660867780,
+  "center": {
+    "lat": 23.2339559,
+    "lon": 91.1174996
+  },
+  "nodes": [
+    6187296818,
+    6187296797,
+    6187296798,
+    6187296801,
+    6187296802,
+    6187296808,
+    6187296807,
+    6187296805,
+    6187296806,
+    6187296817,
+    6187296816,
+    6187296812,
+    6187296810,
+    6187296809,
+    6187296811,
+    6187296814,
+    6187296813,
+    6187296815,
+    6187296803,
+    6187296804,
+    6187296800,
+    6187296799,
+    6187296818
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "layer": "1",
+    "name": "Laksham Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 750987104,
+  "center": {
+    "lat": 23.8674648,
+    "lon": 91.2890509
+  },
+  "nodes": [
+    7021110575,
+    7021110574,
+    7021110573,
+    6908094361,
+    7021110572,
+    7021110571,
+    7021110570,
+    7021110569,
+    7021110568,
+    7021110567,
+    7021110575
+  ],
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Kunjaban, Near Kendriya Vidyalay, Capital Complex Extension",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "health_facility:type": "Laboratory, Pharmacy, Radiology, Ambulance, Ultrasound and Colour Doppler, Echocardiography, 16-slice CT, Digital X-Rays, Operating Theatre, Blood Bank",
+    "healthcare:speciality": "multispecialty",
+    "name": "ILS Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.ilshospitals.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 819658989,
+  "center": {
+    "lat": 23.2516882,
+    "lon": 91.4575003
+  },
+  "nodes": [
+    7654163176,
+    7654163175,
+    7654163174,
+    7654163173,
+    7654163172,
+    7654163171,
+    7654163170,
+    7621605913,
+    7654163169,
+    7654163176
+  ],
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Belonia",
+    "addr:postcode": "799155",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Sub-Divisional Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 957593891,
+  "center": {
+    "lat": 23.1536103,
+    "lon": 91.0581099
+  },
+  "nodes": [
+    8860641958,
+    10962898352,
+    8860641959,
+    10962898353,
+    8860641960,
+    8860641961,
+    8860641958
+  ],
+  "tags": {
+    "addr:city": "Cumilla",
+    "addr:postcode": "3623",
+    "amenity": "hospital",
+    "email": "monoharganj@uhfpo.dghs.gov.bd",
+    "healthcare": "hospital",
+    "mobile": "+8801730324839",
+    "name": "Monohorgonj Upazila Health Complex",
+    "operator": "Government",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "way",
+  "id": 972288122,
+  "center": {
+    "lat": 23.0300192,
+    "lon": 91.4057490
+  },
+  "nodes": [
+    8998888026,
+    8998888027,
+    8998888028,
+    10139464040,
+    9001697630,
+    8998888029,
+    8998888030,
+    9001697629,
+    8998888031,
+    10139464039,
+    8998888026
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Feni general hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 972289231,
+  "center": {
+    "lat": 23.0129029,
+    "lon": 91.3976874
+  },
+  "nodes": [
+    8998891778,
+    8998891779,
+    8998891780,
+    8998891781,
+    8998891778
+  ],
+  "tags": {
+    "addr:city": "Feni",
+    "addr:postcode": "3900",
+    "addr:street": "মিজান সড়ক",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Feni diabetic hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 972300624,
+  "center": {
+    "lat": 23.0129143,
+    "lon": 91.3986752
+  },
+  "nodes": [
+    8998992329,
+    8998992330,
+    12749357171,
+    12749357170,
+    12749357169,
+    12749357168,
+    8998992331,
+    8998992332,
+    8998992329
+  ],
+  "tags": {
+    "addr:city": "Feni",
+    "addr:street": "কলেজ সড়ক",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "National Heart foundation Feni"
+  }
+},
+{
+  "type": "way",
+  "id": 1063540299,
+  "center": {
+    "lat": 23.0037033,
+    "lon": 91.7276884
+  },
+  "nodes": [
+    9769189736,
+    9769189156,
+    9769192486,
+    9769190444,
+    6908065222,
+    9769192282,
+    9769188148,
+    9769189818,
+    9769191027,
+    9769193835,
+    9769192862,
+    9769187919,
+    9769186185,
+    9769188600,
+    9769188521,
+    9769193626,
+    9769186697,
+    9769193003,
+    9769194120,
+    9769186897,
+    9769187241,
+    9769191615,
+    9769166226,
+    9769189736
+  ],
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Near Sabroom Motor Stand, Sabroom NP, Sabroom",
+    "addr:postcode": "799145",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Satchand",
+    "amenity": "hospital",
+    "building": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Sabroom Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1350001389,
+  "center": {
+    "lat": 24.3715707,
+    "lon": 91.4146760
+  },
+  "nodes": [
+    12488541867,
+    12488541868,
+    12488541869,
+    12488541870,
+    12488541871,
+    12488541872,
+    12488541873,
+    12488541874,
+    12488541867
+  ],
+  "tags": {
+    "addr:city": "Habiganj",
+    "addr:postcode": "3300",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Surjomukhi General Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1350003313,
+  "center": {
+    "lat": 24.3735796,
+    "lon": 91.4170609
+  },
+  "nodes": [
+    12488592899,
+    12488592900,
+    12488593101,
+    12488593102,
+    12488592899
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Habiganj Medical College"
+  }
+},
+{
+  "type": "way",
+  "id": 1355134416,
+  "center": {
+    "lat": 23.4551772,
+    "lon": 91.2051743
+  },
+  "nodes": [
+    12541281024,
+    12541281025,
+    12541281026,
+    12541281027,
+    12541281028,
+    12541281029,
+    12541281030,
+    12541281034,
+    12541281031,
+    12541281032,
+    12541281033,
+    12541281024
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ময়নামতি মেডিকেল কলেজ ও হাসপাতাল",
+    "name:en": "Mainamoti Medical College and Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1355134420,
+  "center": {
+    "lat": 23.4522483,
+    "lon": 91.2023473
+  },
+  "nodes": [
+    12541281054,
+    12541281055,
+    12541281056,
+    12541281057,
+    12541281058,
+    12541281059,
+    12541281060,
+    12541281061,
+    12541281062,
+    12541281063,
+    12541281064,
+    12541281065,
+    12541281066,
+    12541281067,
+    12541281071,
+    12541281068,
+    12541281069,
+    12541281070,
+    12541281054
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "কুমিল্লা মেডিকেল কলেজ হাসপাতাল",
+    "name:en": "Cumilla Medical College Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1376927983,
+  "center": {
+    "lat": 23.0129231,
+    "lon": 91.3989396
+  },
+  "nodes": [
+    12749357163,
+    12749357160,
+    12749357161,
+    12749357162,
+    12749357163
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "National Heart foundation Feni"
+  }
+},
+{
+  "type": "way",
+  "id": 1376927984,
+  "center": {
+    "lat": 23.0129259,
+    "lon": 91.3988203
+  },
+  "nodes": [
+    12749357167,
+    12749357166,
+    12749357165,
+    12749357164,
+    12749357167
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2332892996,
+  "tags": {
+    "addr:city": "Habiganj",
+    "addr:postcode": "3300",
+    "amenity": "hospital",
+    "name": "Habiganj General Hospital",
+    "name:bn": "হবিগঞ্জ সরকারী হাসপাতাল",
+    "source": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2332892997,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kamalganj Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332892999,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:postcode": "3200",
+    "addr:street": "Dhaka - Moulvibazar Highway",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare:speciality": "general;surgery",
+    "name": "Moulvibaza Sadar Hospital",
+    "name:bn": "মৌলভীাজার সদর হাসাতাল"
+  }
+},
+{
+  "type": "node",
+  "id": 2332919089,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Nasirnagar Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2332919090,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sreemangal Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333151683,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Brahmanbaria General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2333151684,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Madhabpur Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164527,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Akhaura Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164530,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Brahmanpara Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164531,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Burichang Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164533,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Comilla General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2333164534,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Comilla Medical College Hospital",
+    "name:bn": "কুমিল্লা মেডিকেল কলেজ হাসপাতাল"
+  }
+},
+{
+  "type": "node",
+  "id": 2333176629,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Chagalnaiya Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2333176631,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Feni General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2333176632,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Parshuram Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2334074205,
+  "tags": {
+    "amenity": "hospital",
+    "name": "দাগনভূঁইয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "name:en": "Daganbhuiyan Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2334074206,
+  "tags": {
+    "addr:city": "Noakhali",
+    "addr:street": "সেনবাগ রোড",
+    "amenity": "hospital",
+    "internet_access": "wlan",
+    "name": "Senbagh Upazila Health Complex",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 2343341315,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Begumganj Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382262817,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Barura Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382263483,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Laksham Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382265286,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "নাঙলকোট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "name:en": "Nangolkot Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382266322,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Matiranga Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382266618,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Khagrachari General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2382267549,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dighinala Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2382267550,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Panchari Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 2492654592,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "CD PATH"
+  }
+},
+{
+  "type": "node",
+  "id": 2509564908,
+  "tags": {
+    "addr:city": "Comilla",
+    "addr:postcode": "3500",
+    "addr:street": "Comilla - Laksam Rd",
+    "amenity": "hospital",
+    "name": "Midland Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2813443337,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Feni Diabetic Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2815348434,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Chandina General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3889036052,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Eastern Medical College & Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4365113104,
+  "tags": {
+    "amenity": "hospital",
+    "name": "DOYAMOY PHARMACY"
+  }
+},
+{
+  "type": "node",
+  "id": 4365113694,
+  "tags": {
+    "amenity": "hospital",
+    "name": "SRI KISNA PHARMACY"
+  }
+},
+{
+  "type": "node",
+  "id": 4682641902,
+  "tags": {
+    "amenity": "hospital",
+    "name:en": "APSCL medical"
+  }
+},
+{
+  "type": "node",
+  "id": 4710195981,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sarail Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 4727903891,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name:en": "Marry stopes"
+  }
+},
+{
+  "type": "node",
+  "id": 5216272719,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "New hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5348955670,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "LMRF Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5580233204,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "জাতীয় হাসপাতাল",
+    "name:en": "National Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5730090442,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5866203323,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mithamoin Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 6120545702,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Comilla General Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6157980346,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Bagmara Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6180167165,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Medicare General Hospit"
+  }
+},
+{
+  "type": "node",
+  "id": 6180203268,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Comilla Meghna General Hospital কুমিল্লা মেঘনা জেনারেল হাসপাতালে"
+  }
+},
+{
+  "type": "node",
+  "id": 6268608185,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Brijondernagar"
+  }
+},
+{
+  "type": "node",
+  "id": 6583188418,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ghdgn"
+  }
+},
+{
+  "type": "node",
+  "id": 6658506641,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Monu Miya Hospital",
+    "name:bn": "মনু মিয়া হাসপাতাল",
+    "name:en": "Monu Miya Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6787831161,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:street": "Shreemangal Road",
+    "amenity": "hospital",
+    "name": "Life Care Pvt Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6787831177,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:street": "Shreemangal Road",
+    "amenity": "hospital",
+    "name": "Life Line Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6905030116,
+  "tags": {
+    "addr:city": "Udaipur",
+    "addr:district": "Gomati",
+    "addr:full": "District Hospital, Near Tepania Eco Park, Udaipur Gomati",
+    "addr:postcode": "799114",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:mobile": "9436131338",
+    "email": "bloodbankdhg@gmail.com",
+    "fax": "03821 222410",
+    "healthcare": "hospital",
+    "name": "Gomati District Hospital",
+    "opening_hours": "24/7",
+    "operator": "state govt.",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083719,
+  "tags": {
+    "addr:district": "North",
+    "addr:full": "Kanchanpur ADC Village",
+    "addr:postcode": "799270",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Dasda",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Kanchanpur Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083736,
+  "tags": {
+    "addr:district": "South",
+    "addr:full": "Near South manubazar High School, Manu Bazar, Manu Bazar",
+    "addr:postcode": "799143",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Satchand",
+    "amenity": "hospital",
+    "healthcare": "centre",
+    "name": "Manubazar Rural Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083760,
+  "tags": {
+    "addr:block": "Kailashahar",
+    "addr:district": "Unakoti",
+    "addr:full": "Opposite of District Jail, Kailashahar, Ward No. 11",
+    "addr:postcode": "799277",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Rajib Gandhi Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083765,
+  "tags": {
+    "addr:district": "Gomati",
+    "addr:full": "Near DM Office, Dak Bunglow Rd",
+    "addr:postcode": "799120",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Matarbari",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Tripura Sundari Sub divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908083775,
+  "tags": {
+    "addr:block": "Belonia",
+    "addr:district": "South",
+    "addr:full": "Near 1 No Tilla Bazar, Belonia MC, 1 No Tilla Bazar",
+    "addr:postcode": "799155",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:phone": "3823222204",
+    "description": "Sub-District Hospital",
+    "name": "Belonia Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908094337,
+  "tags": {
+    "addr:district": "North Tripura",
+    "addr:full": "Hospital Road Dharmanagar Dharmanagar",
+    "addr:postcode": "799250",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Mahanam Seva Sadan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100786,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "9A, PO: Chowmuhani, 67 Mantribari Road Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Agartala Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100806,
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Near Agartala Bishalgarh Road, Bishalgarh Sub Division, Bishalgarh",
+    "addr:postcode": "799102",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Bishalgarh",
+    "amenity": "hospital",
+    "name": "Bishalghar S.D. Hospital, West Tripura",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100827,
+  "tags": {
+    "addr:district": "Gomati",
+    "addr:full": "East Bank of Fatik Sagar, Sukumar Colony, Hospital Road, Amarpur Nagar Panchayet",
+    "addr:postcode": "799101",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Amarpur",
+    "amenity": "hospital",
+    "contact:phone": "03821 263557",
+    "description": "Sub-District Hospital",
+    "name": "Amarpur Sub divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908100832,
+  "tags": {
+    "addr:district": "North",
+    "addr:full": "Dharmanagar",
+    "addr:postcode": "799251",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Kadamtala",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Dharmanagar Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108234,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "NEAR CHAILENGTA H/S SCHOOL, Chailengta LONGTHORAI VALLEY SUB DIVISION, CHAILENGTA",
+    "addr:postcode": "799273",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Manu",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Chailengta Sub Divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108239,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "English Midium School, Kamalpur NP Kamalpur Sub Division, Baligaon Noagaon Road",
+    "addr:postcode": "799285",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Durga Choumuhani",
+    "amenity": "hospital",
+    "contact:phone": "3826262232",
+    "description": "Sub-District Hospital",
+    "name": "Bimal Sinha Memorial S.D. Hospital, Dhalai",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108252,
+  "tags": {
+    "addr:district": "Khowai",
+    "addr:full": "Lalchara, Khowai Sub division, Nripen Chakraborty Avenue",
+    "addr:postcode": "799201",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Khowai",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Khowai District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908108263,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Kunjaban, Agartala",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Govinda Ballav Panth Hospital, West Tripura",
+    "name:etymology:wikidata": "Q2724411",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111085,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Regd No: F.Cmo(W) 9(217), Cle/2011 24 Dimsagar, Opposite Astable Ground, Vip Road, Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Devlok Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111090,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Kunjaban",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Cancer Hospital,West Tripura",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908111111,
+  "tags": {
+    "addr:district": "West",
+    "addr:full": "Govt Medical College Street, GB Baazar, Govt Medical College Street",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:phone": "0381 235 7130",
+    "description": "Medical Colleges Hospital",
+    "email": "agmc@rediffmail.com",
+    "health_facility:type": "MRI, CT Scan, EEG, TMT, Endoscopy, Ultra Sonography, 500 mA X-ray, with IITV Echo",
+    "healthcare:speciality": "multispecialty",
+    "name": "Agartala Govt Medical College and GBP Hospital",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "www.agmc.nic.in"
+  }
+},
+{
+  "type": "node",
+  "id": 6909859499,
+  "tags": {
+    "addr:district": "Mamit",
+    "addr:full": "Aizwal-Kumarghat Road,Near CMO Office,Mamit",
+    "addr:postcode": "796441",
+    "addr:state": "Mizoram",
+    "addr:subdistrict": "Zawlnuam",
+    "amenity": "hospital",
+    "name": "District Hospital, Mamit",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7074302188,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ashuganj Upozila Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 7127376546,
+  "tags": {
+    "addr:district": "Lunglei",
+    "addr:full": "TH Lewin Road,Near Post Office,Tlabung",
+    "addr:postcode": "796751",
+    "addr:state": "Mizoram",
+    "addr:subdistrict": "Lungsen",
+    "amenity": "hospital",
+    "name": "Civil Hospital,Tlabung",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657819,
+  "tags": {
+    "addr:district": "Gomati",
+    "addr:full": "Near Tepania Block, Tepania",
+    "addr:postcode": "799114",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Matarbari",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Integrated AYUSH Hospital, Gomati",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657820,
+  "tags": {
+    "addr:district": "South",
+    "addr:full": "Santirbazar, Santirbazar",
+    "addr:postcode": "799144",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Jolaibari",
+    "amenity": "hospital",
+    "name": "Sub-Divsional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657824,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Near Govt Revenue Duck Bunglow, 60 Card Gandachra Sub Division, Hospital Road",
+    "addr:postcode": "799284",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Dumburnagar",
+    "amenity": "hospital",
+    "contact:phone": "3826265233",
+    "description": "Sub-District Hospital",
+    "name": "Gandacherra Sub Divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657825,
+  "tags": {
+    "addr:district": "Unakoti",
+    "addr:full": "Near NH 44 Road, Pecharthal, Pecharthal",
+    "addr:postcode": "799263",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Pencharthal",
+    "amenity": "hospital",
+    "contact:phone": "3822265206",
+    "name": "Pecharthal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657835,
+  "tags": {
+    "addr:district": "Unakoti",
+    "addr:full": "Near Radio Center, Bhagabannagar, Gournagar",
+    "addr:postcode": "799279",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Gournagar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Hospital, Unakoti",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657836,
+  "tags": {
+    "addr:district": "Sepahijala",
+    "addr:full": "Bishramganj Taxapara Road., Sonamura Sub Division, Taxapara GP",
+    "addr:postcode": "799103",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Taksapara hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657874,
+  "tags": {
+    "addr:district": "Sepahijala",
+    "addr:full": "Hospital Road, Sonamura NP, Sonamura Town",
+    "addr:postcode": "799131",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Sonamura Gramin Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657886,
+  "tags": {
+    "addr:district": "South",
+    "addr:full": "Opps Divisional PWD Office, Santirbazar, Santirbazar, Santirbazar Trijunction",
+    "addr:postcode": "799144",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Bokafa",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Hospital South",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7127657901,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Basudebpara GP, Kulai Basudebpara Ambasa Sub Division, Ambassa Kamalpur Road",
+    "addr:postcode": "799278",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Ambassa",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Dhalai District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7210907225,
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Melaghar, Sonamura",
+    "addr:postcode": "799115",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Melaghar hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7385945593,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mazumder Nursing Clinic",
+    "source": "Survey"
+  }
+},
+{
+  "type": "node",
+  "id": 7385965799,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Dipshikha Infertility Center",
+    "source": "Field Survey"
+  }
+},
+{
+  "type": "node",
+  "id": 7388623578,
+  "tags": {
+    "addr:city": "Mulvibazar",
+    "addr:housenumber": "2 no Word",
+    "addr:postcode": "3223",
+    "addr:street": "Sharifpur",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;Primary_Health_Service",
+    "name": "Sharifpur Health Center",
+    "operator": "Government Organization",
+    "operator:type": "government",
+    "source": "Nomouja"
+  }
+},
+{
+  "type": "node",
+  "id": 7466289937,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605909,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Purba Daluchhara",
+    "addr:postcode": "799278",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Daluchara Ayorvedik Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605910,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Dhaleswar",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ASR Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605911,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "CR Road, Santipara, Dhaleswar, Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Venkataeswara Hospitals",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605912,
+  "tags": {
+    "addr:district": "Unokoti",
+    "addr:full": "Dhaliarkandi",
+    "addr:postcode": "799281",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Irani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605914,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Ambassa",
+    "addr:postcode": "799289",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Ambassa Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605916,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Usha Bazar, Agartala",
+    "addr:postcode": "799009",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "VHAT Eye Hospital",
+    "operator": "Voluntary Health Association of Tripura",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605917,
+  "tags": {
+    "addr:district": "Unokoti",
+    "addr:full": "Ganganagar",
+    "addr:postcode": "799290",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Rajkandi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605918,
+  "tags": {
+    "addr:district": "North Tripura",
+    "addr:full": "Jalabasa, Pekuchhara",
+    "addr:postcode": "799260",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Jalabasa Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605923,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Kamacherra, Ambassa",
+    "addr:postcode": "799289",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Makunda Christian Missionary Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605925,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Sadhu Tilla, Subhash Nagar, Jogendra Nagar, Agartala",
+    "addr:postcode": "799004",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Homoeopathic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605927,
+  "tags": {
+    "addr:district": "Dhalai",
+    "addr:full": "Khowaipara",
+    "addr:postcode": "799289",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Ganganagar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605931,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Master Para, Hapania, Agartala",
+    "addr:postcode": "799014",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Hapania Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605933,
+  "tags": {
+    "addr:district": "North Tripura",
+    "addr:full": "Algapur, Dharmanagar",
+    "addr:postcode": "799253",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605934,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Radhapur",
+    "addr:postcode": "799035",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Kherengbar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7621605936,
+  "tags": {
+    "addr:district": "Unokoti",
+    "addr:full": "Dakshin Machmara",
+    "addr:postcode": "799264",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Krishnatilla Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7638517587,
+  "tags": {
+    "addr:postcode": "796471",
+    "addr:street": "Vengpui",
+    "amenity": "hospital",
+    "name": "Zawlnuam Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8064477261,
+  "tags": {
+    "addr:city": "Moulvibazar",
+    "addr:postcode": "3200",
+    "addr:street": "Dhaka - Moulvibazar Highway",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;blood_check",
+    "name": "Mamun Private Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8117999632,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fair Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8234473095,
+  "tags": {
+    "addr:street": "Court Station Road",
+    "amenity": "hospital",
+    "name": "The Lab Aid  Hospital",
+    "phone": "01710662996"
+  }
+},
+{
+  "type": "node",
+  "id": 8234513411,
+  "tags": {
+    "addr:street": "Court Station Rd.",
+    "amenity": "hospital",
+    "name": "Jaspus Habiganj Adhunik Eye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8234519170,
+  "tags": {
+    "addr:street": "Court Station Rd.",
+    "amenity": "hospital",
+    "name": "Habiganj Hospital Pvt. Ltd."
+  }
+},
+{
+  "type": "node",
+  "id": 9610301355,
+  "tags": {
+    "addr:city": "Cumilla",
+    "addr:postcode": "3623",
+    "amenity": "hospital",
+    "email": "monoharganj@uhfpo.dghs.gov.bd",
+    "healthcare": "hospital",
+    "mobile": "+8801730324839",
+    "name": "Monohorgonj Upazila Health Complex",
+    "name:bn": "মনোহরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "operator": "Government",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "node",
+  "id": 10047119749,
+  "tags": {
+    "addr:postcode": "3623",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general"
+  }
+},
+{
+  "type": "node",
+  "id": 10183614709,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Begumganj Upazila Health Complex",
+    "name:bn": "উপজেলা স্বাস্থ্য কমপ্লেক্স, বেগমগঞ্জ",
+    "operator": "goverment",
+    "operator:type": "public"
+  }
+},
+{
+  "type": "node",
+  "id": 10236595613,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bokho Bidhi Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 10241366020,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gangra Community Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 10241429256,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bhazonkora Community Health Center"
+  }
+},
+{
+  "type": "node",
+  "id": 10260401001,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Batisa Union Health and Family Welfare Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 10262777719,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Upazila Animal Resources Department and Veterinary Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10266597779,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chauddagram Medinova Diagnostic Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 10268879481,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Family Welfare Center. Wazirpur Union"
+  }
+},
+{
+  "type": "node",
+  "id": 10278372098,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "The Apollo Hospital Consultancy & Diagnostic Center."
+  }
+},
+{
+  "type": "node",
+  "id": 10278399141,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Meah Bazar Medical Cente"
+  }
+},
+{
+  "type": "node",
+  "id": 10286789528,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "vatpara Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10294741822,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "City health Centre, komolapur, comilla"
+  }
+},
+{
+  "type": "node",
+  "id": 10305045054,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nargis-Nasrin-Delowara Future Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11031718905,
+  "tags": {
+    "addr:postcode": "3200",
+    "addr:street": "Syed Shah Mostafa Road",
+    "amenity": "hospital",
+    "internet_access": "wlan",
+    "name": "মা ও শিশু প্রাঃ হাসপাতাল আন্ড ডায়াগনস্টিক সেন্টার",
+    "name:en": "Maa o shishu pvt hospital and diagnostic center",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 11449665766,
+  "tags": {
+    "addr:city": "Habiganj",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "লস্করপুর বাগান হাসপাতাল",
+    "name:en": "Luskerpore Garden Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12153537948,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "বাঘাইছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    "name:en": "Baghaichhari Upazila Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 12153811061,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "উগলছড়ি হেলথ কমপ্লেক্স",
+    "name:en": "Ugalchhari Health Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 12196648723,
+  "tags": {
+    "addr:street": "Nazrul Avenue, Kandirpar, Comilla",
+    "amenity": "hospital",
+    "name": "Gomoti Hospital",
+    "phone": "01711798083"
+  }
+},
+{
+  "type": "node",
+  "id": 12247544795,
+  "tags": {
+    "amenity": "hospital",
+    "name": "নগর স্বাস্থ্য কেন্দ্র ৩"
+  }
+},
+{
+  "type": "node",
+  "id": 12541281035,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ময়নামতি মেডিকেল কলেজ ও হাসপাতাল",
+    "name:en": "Mainamoti Medical College and Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 224494108,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Sreemangal Labour Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 252543158,
+  "tags": {
+    "addr:city": "Comilla",
+    "addr:housename": "Kamolpur Community Clinic",
+    "addr:postcode": "3504",
+    "addr:street": "Lampur Kamolpur Road",
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "Kamolpur Community Clinic"
+  }
+},
+{
+  "type": "way",
+  "id": 262527490,
+  "tags": {
+    "addr:city": "comilla",
+    "addr:postcode": "3500",
+    "addr:street": "jaotola road",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Moinamoti medical college & hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 361004663,
+  "tags": {
+    "addr:district": "West",
+    "addr:full": "Umakanta Academy School, Hospital Road,Dhaleswar, Agartala",
+    "addr:postcode": "799001",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "contact:phone": "0381 2323331,3812325606",
+    "description": "Hospital",
+    "name": "IGM Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 495144644,
+  "tags": {
+    "addr:city": "Comilla Cantonment",
+    "addr:postcode": "3521",
+    "addr:street": "Comilla-Sylhet Highway",
+    "amenity": "hospital",
+    "name": "Maynamoti Cantonment General Hospital",
+    "operator": "Comilla Cantonment"
+  }
+},
+{
+  "type": "way",
+  "id": 548308782,
+  "tags": {
+    "addr:city": "Comilla",
+    "addr:place": "DURLOVPUR",
+    "addr:postcode": "3500",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Madrasha Building"
+  }
+},
+{
+  "type": "way",
+  "id": 660867780,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "layer": "1",
+    "name": "Laksham Upazila Health Complex"
+  }
+},
+{
+  "type": "way",
+  "id": 750987104,
+  "tags": {
+    "addr:district": "West Tripura",
+    "addr:full": "Kunjaban, Near Kendriya Vidyalay, Capital Complex Extension",
+    "addr:postcode": "799006",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "health_facility:type": "Laboratory, Pharmacy, Radiology, Ambulance, Ultrasound and Colour Doppler, Echocardiography, 16-slice CT, Digital X-Rays, Operating Theatre, Blood Bank",
+    "healthcare:speciality": "multispecialty",
+    "name": "ILS Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.ilshospitals.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 819658989,
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Belonia",
+    "addr:postcode": "799155",
+    "addr:state": "Tripura",
+    "amenity": "hospital",
+    "name": "Sub-Divisional Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 957593891,
+  "tags": {
+    "addr:city": "Cumilla",
+    "addr:postcode": "3623",
+    "amenity": "hospital",
+    "email": "monoharganj@uhfpo.dghs.gov.bd",
+    "healthcare": "hospital",
+    "mobile": "+8801730324839",
+    "name": "Monohorgonj Upazila Health Complex",
+    "operator": "Government",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "way",
+  "id": 972288122,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Feni general hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 972289231,
+  "tags": {
+    "addr:city": "Feni",
+    "addr:postcode": "3900",
+    "addr:street": "মিজান সড়ক",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Feni diabetic hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 972300624,
+  "tags": {
+    "addr:city": "Feni",
+    "addr:street": "কলেজ সড়ক",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "National Heart foundation Feni"
+  }
+},
+{
+  "type": "way",
+  "id": 1063540299,
+  "tags": {
+    "addr:district": "South Tripura",
+    "addr:full": "Near Sabroom Motor Stand, Sabroom NP, Sabroom",
+    "addr:postcode": "799145",
+    "addr:state": "Tripura",
+    "addr:subdistrict": "Satchand",
+    "amenity": "hospital",
+    "building": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "Sabroom Sub-divisional Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1350001389,
+  "tags": {
+    "addr:city": "Habiganj",
+    "addr:postcode": "3300",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Surjomukhi General Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1350003313,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Habiganj Medical College"
+  }
+},
+{
+  "type": "way",
+  "id": 1355134416,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ময়নামতি মেডিকেল কলেজ ও হাসপাতাল",
+    "name:en": "Mainamoti Medical College and Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1355134420,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "কুমিল্লা মেডিকেল কলেজ হাসপাতাল",
+    "name:en": "Cumilla Medical College Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1376927983,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "name": "National Heart foundation Feni"
+  }
+},
+{
+  "type": "way",
+  "id": 1376927984,
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes"
+  }
+}
+
+  ]
+}

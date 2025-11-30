@@ -1,0 +1,5543 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T12:52:53Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 2207107909,
+  "lat": 15.5106173,
+  "lon": 73.7694653,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Aurveda clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 3289988157,
+  "lat": 15.5893910,
+  "lon": 73.7642300,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4114502623,
+  "lat": 15.2747345,
+  "lon": 73.9779050,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Near Power House, Aquem",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Lawande's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4114541591,
+  "lat": 15.2130010,
+  "lon": 73.9755000,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Subhash Nagzekar Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4236980191,
+  "lat": 15.2736025,
+  "lon": 73.9629900,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kamat Criticare & Research Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4236996890,
+  "lat": 15.2815950,
+  "lon": 73.9641100,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Near St. Joaquim Chappel, Barda",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Mother Care Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4247936989,
+  "lat": 15.2739370,
+  "lon": 73.9731200,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kerker Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4259963290,
+  "lat": 15.4848420,
+  "lon": 73.8115837,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "781, St. Mayrs Colony, Near Stella Miramar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Trinity Health Care and Medical Research",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4260442890,
+  "lat": 15.2710180,
+  "lon": 73.9720100,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Royal Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4260460290,
+  "lat": 15.2601000,
+  "lon": 73.9820000,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Prabhu Dessai Hospitals Private Limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4281444194,
+  "lat": 15.5909470,
+  "lon": 73.9483260,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mardolkar"
+  }
+},
+{
+  "type": "node",
+  "id": 4283671694,
+  "lat": 15.2771495,
+  "lon": 73.9605105,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Opp b p s club, behind astro housing society, pagifond, margoa",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "email": "info@gracecardiachospital.com",
+    "name": "Grace Intensive Cardiac Care Center",
+    "source": "OpenGovernmentData",
+    "website": "https://gracecardiachospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 4286276690,
+  "lat": 15.3971710,
+  "lon": 73.8117400,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. M.M. Mesquita Maternity & Eye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4286313289,
+  "lat": 15.4047020,
+  "lon": 73.8191000,
+  "tags": {
+    "amenity": "hospital",
+    "name": "INHS Jeevanti"
+  }
+},
+{
+  "type": "node",
+  "id": 4291023405,
+  "lat": 15.4971793,
+  "lon": 73.9322459,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sushruti Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4291023407,
+  "lat": 15.2383200,
+  "lon": 74.0245620,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shri Damodar Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 4291047007,
+  "lat": 15.2916914,
+  "lon": 74.0243421,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Salcete",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Curtorim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4292651097,
+  "lat": 15.6253550,
+  "lon": 73.8580600,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dhumaskar Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4292676694,
+  "lat": 15.6191760,
+  "lon": 73.8397560,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Chaitanya Mental Health Care Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4294057389,
+  "lat": 15.3699670,
+  "lon": 73.9479030,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Coral Clinic Systems"
+  }
+},
+{
+  "type": "node",
+  "id": 4295605292,
+  "lat": 15.2905280,
+  "lon": 73.9609900,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Near Nehru Stadium",
+    "addr:postcode": "403602",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Antonio Vicante Da Costa Memorial Clinic / A V Da Costa Hospital",
+    "name:en": "AV Da Costa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4296818994,
+  "lat": 15.5229850,
+  "lon": 73.8268050,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mandovi Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 4297409591,
+  "lat": 15.5898490,
+  "lon": 73.8706740,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Asilo Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4297617090,
+  "lat": 15.4760400,
+  "lon": 74.1094400,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Guleli Govt Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298328692,
+  "lat": 15.2630540,
+  "lon": 73.9490800,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Correia Afonso Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298358392,
+  "lat": 15.3483700,
+  "lon": 73.9342960,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Verna Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298358395,
+  "lat": 15.3952810,
+  "lon": 73.8058300,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjeevani Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298509389,
+  "lat": 15.2737560,
+  "lon": 73.9563940,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Gracias Maternity Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298533690,
+  "lat": 15.2754899,
+  "lon": 73.9795950,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Aquem",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Yashodhan Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4298533691,
+  "lat": 15.2904265,
+  "lon": 73.9772615,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Infant Jesus Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298544310,
+  "lat": 15.4904267,
+  "lon": 73.8327823,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Indus Health Plus P. Ltd."
+  }
+},
+{
+  "type": "node",
+  "id": 4298547590,
+  "lat": 15.3921180,
+  "lon": 74.0051810,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Platicare Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298564189,
+  "lat": 15.3995290,
+  "lon": 74.0060500,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Janakibai Memorial Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298569692,
+  "lat": 15.5439170,
+  "lon": 73.7644350,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shri Ram Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298575490,
+  "lat": 15.5004212,
+  "lon": 73.8287032,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Rajadhyaksha Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298590096,
+  "lat": 15.5268460,
+  "lon": 73.8260493,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Plot No. 217 & 218, P.D.A. Colony, Panjim-Mapusa Road",
+    "addr:postcode": "403521",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "fax": "8322422824",
+    "name": "Rg Stone Urology and Laparoscopy Hospital, North Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4298590196,
+  "lat": 15.4906240,
+  "lon": 73.8323640,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Indus Health Plus - Goa Scan Center, Wockhardt"
+  }
+},
+{
+  "type": "node",
+  "id": 4307338094,
+  "lat": 15.3269825,
+  "lon": 73.9896200,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Divine Medical Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4307338493,
+  "lat": 15.3388778,
+  "lon": 73.9907036,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Salcete",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Loutolim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4308224889,
+  "lat": 15.2164196,
+  "lon": 74.0780270,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Quepem",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Quepem",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4310435789,
+  "lat": 15.6478722,
+  "lon": 73.8366557,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Elshaddai House"
+  }
+},
+{
+  "type": "node",
+  "id": 4336891891,
+  "lat": 15.5758190,
+  "lon": 73.9797105,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Parvati Nagar, Sarvan, Collan",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Adhar Hospital, Collan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4342083589,
+  "lat": 15.2141100,
+  "lon": 74.0696200,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ranade Maturnity Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4342143090,
+  "lat": 15.2553729,
+  "lon": 74.1200907,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Parekh Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4342146390,
+  "lat": 15.2644700,
+  "lon": 74.0877700,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sudha Nursing Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4342147090,
+  "lat": 15.2572900,
+  "lon": 74.0619600,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Samrat Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4343037192,
+  "lat": 15.4187800,
+  "lon": 74.0807200,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Geeta Javali Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4343041090,
+  "lat": 15.4271986,
+  "lon": 74.0797206,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shree Dwarka Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4346787390,
+  "lat": 15.7164800,
+  "lon": 73.7977900,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sushrut"
+  }
+},
+{
+  "type": "node",
+  "id": 4346789990,
+  "lat": 15.6410600,
+  "lon": 73.7223900,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Girish"
+  }
+},
+{
+  "type": "node",
+  "id": 4359972602,
+  "lat": 15.2882258,
+  "lon": 73.9544086,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Opp Ktc Bus Stand, Madel",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr.Rebellos Clinic And Hospital",
+    "name:en": "Rebello Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4516599390,
+  "lat": 15.6676634,
+  "lon": 73.7195090,
+  "tags": {
+    "addr:housenumber": "248(5)",
+    "addr:postcode": "403527",
+    "addr:street": "H No .248(5),Madhlamaj,Mandrem",
+    "amenity": "hospital",
+    "email": "parmendar27@gmail.com",
+    "name": "Sofiya clinic mandrem",
+    "name:en": "Sofiya clinic mandrem",
+    "name:hi": "SOFIYA क्लिनिक Mandrem",
+    "name:ru": "София клиник мандрем",
+    "opening_hours": "Mo-Su 09:00-20:00",
+    "phone": "+919881751927"
+  }
+},
+{
+  "type": "node",
+  "id": 4769714021,
+  "lat": 15.2839834,
+  "lon": 73.9582877,
+  "tags": {
+    "amenity": "hospital",
+    "name": "OHS Orthopedic Hospital for Surgery",
+    "name:en": "OHS Orthopedic Hospital for Surgery"
+  }
+},
+{
+  "type": "node",
+  "id": 5178838363,
+  "lat": 15.5165208,
+  "lon": 73.7678369,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Патанджали"
+  }
+},
+{
+  "type": "node",
+  "id": 5260311523,
+  "lat": 15.5437234,
+  "lon": 73.7722516,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dharwadkar Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 5285397928,
+  "lat": 15.2807019,
+  "lon": 73.9613761,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Aster hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5435635422,
+  "lat": 15.3974153,
+  "lon": 73.8294927,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Vadem",
+    "addr:postcode": "403803",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pai Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 5963900720,
+  "lat": 15.5194613,
+  "lon": 73.8289188,
+  "tags": {
+    "addr:city": "porvorim,Goa",
+    "addr:housenumber": "A3 Hilltop apts",
+    "addr:postcode": "403521",
+    "addr:street": "SH 66",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Archis Ayurved"
+  }
+},
+{
+  "type": "node",
+  "id": 6908213043,
+  "lat": 15.4006696,
+  "lon": 74.0129869,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Flat No A 1, Abhinav Cooperative Housing Society, Ganga Nagar, Curti",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Juwarkars Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908254073,
+  "lat": 15.4905205,
+  "lon": 73.8324085,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Jai Ram Complex, A-1, Nevgi Nagar Rua De Ourem Malaviya Nagar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Ghanshyam Govind Kamat Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908254078,
+  "lat": 15.5318236,
+  "lon": 74.1359594,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "C/O Amshekar Hospital, Ashravy Bunglow, Near Maruti Temple",
+    "addr:postcode": "403506",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Amshekar Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908262660,
+  "lat": 15.2746777,
+  "lon": 73.9552577,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Is Floor, Vasant Arcade, Near Popular High School",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Sinai Clinic and Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908308851,
+  "lat": 15.2738860,
+  "lon": 73.9624540,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Sapana Valey, Pajifond",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Adarsh Family Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908331628,
+  "lat": 15.3939333,
+  "lon": 73.8068752,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Mapsekar Bldg",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjeevani Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497514,
+  "lat": 15.3980773,
+  "lon": 73.8146925,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Fr. Joseph Vaz Road",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Sri Damodar Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497534,
+  "lat": 15.5944141,
+  "lon": 73.8116459,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Dattawadi",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Bhagyoday Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497539,
+  "lat": 15.3975782,
+  "lon": 74.0027234,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "North Goa",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Usgaonkers Children Hospital and iNICU",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497545,
+  "lat": 15.3762147,
+  "lon": 73.9270898,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "First Gate, Verna Industrial Estate",
+    "addr:postcode": "403722",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "fax": "26966167",
+    "healthcare": "hospital",
+    "name": "Chikitsa Hospital - Verna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497550,
+  "lat": 15.4801333,
+  "lon": 73.8144089,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "390A, Indira Smruti, Tonca, C/O Raikar Nursing Home",
+    "addr:postcode": "403002",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Indira Smruti Raikar Nursing Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497564,
+  "lat": 15.4885211,
+  "lon": 73.8154247,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Next To Bal Bhavan, Opposite Parade Grounds, Campel",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Campal Health Services Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497565,
+  "lat": 15.6072918,
+  "lon": 73.9311242,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Hno 2851, Sankalp Gardens, Opp Raksha Restaurant On Mapusa Bicholim Highway",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Mahatme Nursing Home - Bicholim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497580,
+  "lat": 15.4905935,
+  "lon": 73.8325607,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "B-1, 1st Floor, Jairam Complex, Nevgi Nagar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kaisare Eye And Dental Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497581,
+  "lat": 15.5882164,
+  "lon": 73.9444055,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bicholim City",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr Caeiros Bichollm Polyclinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909502799,
+  "lat": 15.3885854,
+  "lon": 73.8491146,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "H No. 179D, Alto- Dabolim",
+    "addr:postcode": "403711",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Parulekars Eye- Site (Superspeciality Eye Hospital)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909502804,
+  "lat": 15.2868533,
+  "lon": 73.9774074,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Las Palmas Housing Estate, Gogol",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Trimurti General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7104096248,
+  "lat": 15.4002930,
+  "lon": 73.8323820,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Mormugao",
+    "amenity": "hospital",
+    "name": "Cottage Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7226642386,
+  "lat": 15.6844880,
+  "lon": 73.9669950,
+  "tags": {
+    "addr:district": "Sindhudurg",
+    "addr:full": "PRB No. SDD No. 179, Govt. Rural Hospital, Sawantwada, Taluka - Dodamarg",
+    "addr:postcode": "416512",
+    "addr:state": "Maharashtra",
+    "addr:subdistrict": "Dodamarg",
+    "amenity": "hospital",
+    "name": "Rural Hospital Dodamarg",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7643338070,
+  "lat": 15.7352416,
+  "lon": 73.7210728,
+  "tags": {
+    "addr:district": "Sindhudurg",
+    "addr:full": "Deul Wada, Aronda",
+    "addr:postcode": "416513",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Hospital Sawant",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7643338099,
+  "lat": 15.7849260,
+  "lon": 73.7395780,
+  "tags": {
+    "addr:district": "Sindhudurg",
+    "addr:full": "Kondure",
+    "addr:postcode": "416510",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Malewad Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188374,
+  "lat": 15.5411381,
+  "lon": 73.8135256,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Sangolda",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kurias Earth Ayurveda Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188379,
+  "lat": 15.5873940,
+  "lon": 73.9497060,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bandarwada, Bicholim",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr.Sawant's Ayurvedic Panchakarma Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188384,
+  "lat": 15.5920720,
+  "lon": 73.8089840,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Chemps, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Ankur Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188391,
+  "lat": 15.5446823,
+  "lon": 73.7637688,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Calangute - Anjuna Road, Calangute",
+    "addr:postcode": "403516",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Mathew Braganza Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188405,
+  "lat": 15.5315307,
+  "lon": 73.8273826,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Penha de Franca",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Prabhu Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188411,
+  "lat": 15.5694164,
+  "lon": 73.8066968,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Guirim",
+    "addr:postcode": "403510",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Marwahi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188423,
+  "lat": 15.5466300,
+  "lon": 73.8153010,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Penha de Franca",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Prabhu Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188424,
+  "lat": 15.5335240,
+  "lon": 73.8238140,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Church Street, Porvorim, Bardez",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Anil D'Silva's Multispeciality Dental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188429,
+  "lat": 15.5297062,
+  "lon": 73.8256407,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Penha de Franca",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Chodankar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188447,
+  "lat": 15.4972642,
+  "lon": 73.9320712,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Carambolim, Corlim",
+    "addr:postcode": "403110",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Dhulapkar's Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188450,
+  "lat": 15.5884920,
+  "lon": 73.9448700,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bicholim Road, Bicholim",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Subodh Maternity Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188453,
+  "lat": 15.5887969,
+  "lon": 73.9654913,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bicholim",
+    "addr:postcode": "403529",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Bicholim Hospital",
+    "source": "Local Knowledge",
+    "wikidata": "Q4903615"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188457,
+  "lat": 15.4943092,
+  "lon": 73.9374732,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Carambolim, Corlim",
+    "addr:postcode": "403110",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Saud EMS Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188460,
+  "lat": 15.6002205,
+  "lon": 73.8125335,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Balkrishna Bhosale Marg, Alto Duler, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Ramanso Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448663,
+  "lat": 15.3479410,
+  "lon": 73.9344420,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Verna",
+    "addr:postcode": "403722",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Roque Ferreira's Memorial Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448676,
+  "lat": 15.4008257,
+  "lon": 74.0130689,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Main Road, Near Aiasha, Ponda, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kakodkar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448677,
+  "lat": 15.4934120,
+  "lon": 73.8264910,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "PE Agnelo Road, Altinho, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "CMM Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448683,
+  "lat": 15.4008782,
+  "lon": 74.0052319,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Khadpabandh, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Dev's Children Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448686,
+  "lat": 15.4805870,
+  "lon": 73.8431590,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "St Cruz",
+    "addr:postcode": "403202",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vrundavan Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448688,
+  "lat": 15.3839600,
+  "lon": 73.8740720,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Zuarinagar, Sancoale",
+    "addr:postcode": "403726",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ESI Hospital",
+    "operator": "Employees' State Insurance",
+    "operator:short": "ESI",
+    "operator:type": "private",
+    "operator:wikidata": "Q3595726",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448689,
+  "lat": 15.3921769,
+  "lon": 73.9956555,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Santa Cruz, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr.Amit Naik Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448695,
+  "lat": 15.4982185,
+  "lon": 73.8226594,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Caetano de Albuquerque Road, Near Municipal Market, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vaidya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448701,
+  "lat": 15.3991454,
+  "lon": 74.0125117,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Upper Bazar Road, Shanti Nagar, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Platicare hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448704,
+  "lat": 15.4005132,
+  "lon": 74.0023005,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Khadpabandh, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Singbal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448711,
+  "lat": 15.4464830,
+  "lon": 73.9705600,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Mardol",
+    "addr:postcode": "403115",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Priyolkar's Surgery Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448718,
+  "lat": 15.4029040,
+  "lon": 74.0108840,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Bhanudeep Arcade, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Drishti Eye Hospital & Laser Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448720,
+  "lat": 15.4008466,
+  "lon": 74.0129713,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Commerce Centre, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Shirsat Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448726,
+  "lat": 15.4903535,
+  "lon": 73.8330510,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Rua de Ourem, Neugi Nagar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kaisares Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448728,
+  "lat": 15.4774880,
+  "lon": 73.8215250,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Odlem Bhat, Taleigao",
+    "addr:postcode": "403002",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Parab's Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448730,
+  "lat": 15.5152928,
+  "lon": 73.9608754,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Orgao, Marcel, Orgao",
+    "addr:postcode": "403107",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Anandi Maternity & Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448733,
+  "lat": 15.3998199,
+  "lon": 74.0055238,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Shantinagar Road, Durgabhat, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Juwarkar's Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448737,
+  "lat": 15.4123850,
+  "lon": 73.9887530,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Farmagudi Fort, Donshiwado, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Singbal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448738,
+  "lat": 15.4972080,
+  "lon": 73.8336700,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Patto Centre, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vedicure Wellness Clinics and Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448746,
+  "lat": 15.4686252,
+  "lon": 73.8482933,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Cabesa Ward, St Cruz",
+    "addr:postcode": "403202",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Anthony Gonsalves Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448752,
+  "lat": 15.5140310,
+  "lon": 73.9623910,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Marcela, Deul Wada",
+    "addr:postcode": "403107",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Raikar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448753,
+  "lat": 15.4873520,
+  "lon": 73.8123670,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Miramar, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Ajit Kamat Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448754,
+  "lat": 15.3992900,
+  "lon": 74.0085770,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Shanti Nagar, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Chodankar Ortho Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448756,
+  "lat": 15.4030210,
+  "lon": 74.0052240,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Kazi Waza, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Priolkar Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448757,
+  "lat": 15.4997220,
+  "lon": 73.8229890,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Panjim Market, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Noble Super Speciality Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260337,
+  "lat": 15.2823890,
+  "lon": 73.9588000,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Grebelo Road, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Holy Spirit Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260345,
+  "lat": 15.2928539,
+  "lon": 73.9674910,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "SBI Housing Colony, Cupangale Society, Margao",
+    "addr:postcode": "403602",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Desai Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260349,
+  "lat": 15.2729424,
+  "lon": 73.9630303,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Pajifond, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vintage Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260355,
+  "lat": 15.2636320,
+  "lon": 73.9612590,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Margao",
+    "addr:postcode": "403707",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Sunshine Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260356,
+  "lat": 15.0026942,
+  "lon": 74.0812635,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Canacona Industrial Estate, Canacona",
+    "addr:postcode": "403702",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260360,
+  "lat": 15.2916320,
+  "lon": 74.0322292,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Chirdolem, Curtorim",
+    "addr:postcode": "403709",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Baracho Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260362,
+  "lat": 15.2902980,
+  "lon": 73.9772790,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Cupangale Society, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Braganza's Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260363,
+  "lat": 15.3959776,
+  "lon": 73.8094262,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Swatantra Path, Vasco da Gama",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vaatsalya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260369,
+  "lat": 15.2801821,
+  "lon": 73.9594879,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Nehrunagar, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Arcanjo Menezes Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260374,
+  "lat": 15.3995724,
+  "lon": 73.8222011,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Filipe Mansion, Vasco",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Prakaash Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260385,
+  "lat": 15.2721137,
+  "lon": 73.9582954,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Navelim, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kudchadkar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260389,
+  "lat": 15.3198830,
+  "lon": 74.0293140,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Shiroda",
+    "addr:postcode": "403103",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Shri Kamaxidevi Homoeopathic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260392,
+  "lat": 15.0068060,
+  "lon": 74.0464170,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Manoraj Diva Building,Chavadi village, Canacona",
+    "addr:postcode": "403702",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Shetty Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260395,
+  "lat": 15.3993290,
+  "lon": 73.8262120,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "New Vaddem, Mormugao",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ESI Hospital",
+    "operator": "Employees' State Insurance",
+    "operator:short": "ESI",
+    "operator:type": "private",
+    "operator:wikidata": "Q3595726",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260411,
+  "lat": 15.3980970,
+  "lon": 73.8137210,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Opposite Childrens Park, Vasco, Vaddem, New Vaddem, Mormugao",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kamat Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260419,
+  "lat": 15.3973424,
+  "lon": 73.8105026,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Fr Jose Vaz Road, New Vaddem, Vasco da Gam",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Santhgiri Ayurveda Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260424,
+  "lat": 15.2832226,
+  "lon": 73.9690293,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Borda, Margao",
+    "addr:postcode": "403602",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Noble Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260428,
+  "lat": 15.3943307,
+  "lon": 73.8063580,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Baina, Mormugao",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Vishwa Sanjeevani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9596927573,
+  "lat": 15.5508098,
+  "lon": 73.8156457,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sangath"
+  }
+},
+{
+  "type": "node",
+  "id": 13275314237,
+  "lat": 15.6578758,
+  "lon": 73.7460657,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 274202665,
+  "center": {
+    "lat": 15.4637639,
+    "lon": 73.8584047
+  },
+  "nodes": [
+    9057575622,
+    2789689669,
+    12794154767,
+    2789689670,
+    2789689671,
+    2789689672,
+    2789689673,
+    2789689674,
+    2789689675,
+    2789689677,
+    2789689678,
+    2789689679,
+    2789689680,
+    12683742240,
+    2789689681,
+    12802107946,
+    7819632940,
+    7819632939,
+    9057575621,
+    9057575622
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Goa Medical College and Hospital Bambolim, Tiswadi",
+    "addr:postcode": "403202",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Tiswadi",
+    "amenity": "hospital",
+    "description": "Medical Colleges Hospital",
+    "emergency": "yes",
+    "name": "Goa Medical College Hospital",
+    "name:pt": "Escola Médico-Cirúrgica de Goa",
+    "source": "OpenGovernmentData",
+    "website": "http://www.gmc.goa.gov.in/",
+    "wikidata": "Q5575088"
+  }
+},
+{
+  "type": "way",
+  "id": 365895407,
+  "center": {
+    "lat": 15.5200463,
+    "lon": 73.7707012
+  },
+  "nodes": [
+    3698967648,
+    3698967649,
+    3698967650,
+    3698967651,
+    3698967648
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Bosio Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 373178602,
+  "center": {
+    "lat": 15.3929934,
+    "lon": 74.0056819
+  },
+  "nodes": [
+    3766893604,
+    7104096210,
+    7104096209,
+    7104096208,
+    7104096207,
+    3766893605,
+    3766893606,
+    3766893607,
+    3766893604
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Ponda",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Ponda Sub District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 430544182,
+  "center": {
+    "lat": 15.0110638,
+    "lon": 74.0332150
+  },
+  "nodes": [
+    4298111705,
+    4298111706,
+    4298111707,
+    4298111708,
+    4298111705
+  ],
+  "tags": {
+    "addr:place": "Canacona",
+    "addr:state": "GA",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Victor Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 430889405,
+  "center": {
+    "lat": 15.2611444,
+    "lon": 74.1125655
+  },
+  "nodes": [
+    4301517247,
+    4301517248,
+    4301517249,
+    4301517250,
+    4301517247
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "Sonu Kamat Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 432335188,
+  "center": {
+    "lat": 15.6059423,
+    "lon": 73.8132935
+  },
+  "nodes": [
+    4314109326,
+    4314109327,
+    11077507508,
+    11077507507,
+    12956291799,
+    4314109328,
+    4314109325,
+    4314109326
+  ],
+  "tags": {
+    "addr:city": "Mapusa",
+    "addr:postcode": "403507",
+    "addr:street": "Mapusa-Duler-Camurlim Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Kolwalkar's Galaxy Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 437932986,
+  "center": {
+    "lat": 15.2670032,
+    "lon": 73.9656332
+  },
+  "nodes": [
+    4357166538,
+    4357166707,
+    4357166706,
+    4357166695,
+    4357166689,
+    11203038430,
+    4357166542,
+    11203038429,
+    4247942392,
+    11203038431,
+    11203038432,
+    4357166538
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "E S I Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 480138462,
+  "center": {
+    "lat": 15.2954249,
+    "lon": 73.9540185
+  },
+  "nodes": [
+    4731591291,
+    4731591299,
+    4731591292,
+    4731591293,
+    4731591294,
+    4731591295,
+    4731591296,
+    4731591297,
+    4731591298,
+    11366881621,
+    11366881620,
+    4731591300,
+    4731591291
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Salcete",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Distict Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 533882237,
+  "center": {
+    "lat": 15.5165407,
+    "lon": 73.7678087
+  },
+  "nodes": [
+    5178835494,
+    5178835495,
+    5178835496,
+    5178835497,
+    5178835494
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Патанджали"
+  }
+},
+{
+  "type": "way",
+  "id": 538444637,
+  "center": {
+    "lat": 15.6005096,
+    "lon": 73.7503934
+  },
+  "nodes": [
+    5211749942,
+    10965960661,
+    5211749934,
+    5211749936,
+    10965960660,
+    5211749951,
+    5211749942
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "H No. 123/1, Zorin, Nr Anjuna Petrol Pump",
+    "addr:postcode": "403509",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "St. Anthony's Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 546557225,
+  "center": {
+    "lat": 15.5567528,
+    "lon": 74.0161037
+  },
+  "nodes": [
+    4709848490,
+    5281818145,
+    5281818146,
+    5281818147,
+    5281818148,
+    5281818149,
+    5281818150,
+    5281818151,
+    5281818152,
+    5281818153,
+    5281818154,
+    5281818155,
+    4709848490
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bicholim",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Sanquelim",
+    "name:en": "Primary Health Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 569233392,
+  "center": {
+    "lat": 15.0151351,
+    "lon": 74.0298431
+  },
+  "nodes": [
+    2706102786,
+    5474877695,
+    5474877696,
+    5474877697,
+    5474877698,
+    5474877699,
+    5474877700,
+    5474877701,
+    5474877702,
+    5474877703,
+    5474877704,
+    2706102786
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "civic",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 620136470,
+  "center": {
+    "lat": 15.5564614,
+    "lon": 74.0231093
+  },
+  "nodes": [
+    5859338669,
+    5859338670,
+    5859338671,
+    5859338672,
+    5859338669
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chaitanya Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 760467188,
+  "center": {
+    "lat": 15.2278262,
+    "lon": 74.1538177
+  },
+  "nodes": [
+    7104095987,
+    7104095995,
+    7104095986,
+    7104095985,
+    7104095992,
+    7104095993,
+    7104091484,
+    7104095999,
+    7104095988,
+    7104095991,
+    7104095990,
+    7104095989,
+    7104095998,
+    7104095987
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Sanguem",
+    "amenity": "hospital",
+    "building": "hospital",
+    "cash_withdrawal:currency": "Rupees",
+    "cash_withdrawal:fee": "no",
+    "cash_withdrawal:purchase_minimum": "varies",
+    "description": "Primary Health Centre",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;maternity;emergency",
+    "name": "Sanguem Primary Health Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 978893688,
+  "center": {
+    "lat": 15.4659712,
+    "lon": 73.8575010
+  },
+  "nodes": [
+    12794154755,
+    9057575731,
+    9057575730,
+    9057575729,
+    9057575728,
+    9057575727,
+    9057575726,
+    12794154754,
+    12794154755
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Goa Dental College And Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 978895943,
+  "center": {
+    "lat": 15.4221431,
+    "lon": 73.9495915
+  },
+  "nodes": [
+    9057588925,
+    4291035391,
+    9057588924,
+    9057588923,
+    9057588925
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Ponda",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Marcaim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1019344277,
+  "center": {
+    "lat": 15.4601200,
+    "lon": 73.8132689
+  },
+  "nodes": [
+    9401706141,
+    9401706140,
+    9401706139,
+    9401706138,
+    9401702199,
+    7821577906,
+    9401706137,
+    9401706136,
+    9401706135,
+    9401706134,
+    9401706133,
+    9401706132,
+    9401706131,
+    9401706130,
+    9401706129,
+    9401706128,
+    9401706141
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Manipal Hospital, Dr E Boges Road, Dona Paula",
+    "addr:postcode": "403004",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "email": "mghgoa@manipalhealth.com",
+    "emergency": "yes",
+    "fax": "3048813",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multispeciality",
+    "name": "Manipal Goa Cancer and General Hospital",
+    "source": "OpenGovernmentData",
+    "website": "https://www.manipalhospitals.com/goa/"
+  }
+},
+{
+  "type": "way",
+  "id": 1020315938,
+  "center": {
+    "lat": 15.5778149,
+    "lon": 73.8626840
+  },
+  "nodes": [
+    4297451390,
+    9410609940,
+    9410609939,
+    9410609938,
+    4297451390
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Aldona",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1020893556,
+  "center": {
+    "lat": 15.4627620,
+    "lon": 73.8674027
+  },
+  "nodes": [
+    2682368828,
+    9415857166,
+    9415857165,
+    9415857164,
+    9415857163,
+    12645801430,
+    12645801431,
+    9415857162,
+    12645801432,
+    9415857161,
+    9415857160,
+    9415857159,
+    2682368829,
+    9415857170,
+    9415857167,
+    9415857169,
+    9415857168,
+    2682368828
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Military Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1155613086,
+  "center": {
+    "lat": 15.5969195,
+    "lon": 73.8203050
+  },
+  "nodes": [
+    10746644598,
+    12740626448,
+    10746644597,
+    10746644596,
+    10746644595,
+    10746644594,
+    12728102103,
+    12728097188,
+    10746644593,
+    4511433690,
+    10746644592,
+    10746644598
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Hospital, Mapusa",
+    "name:en": "District Hospital Mapusa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1155891486,
+  "center": {
+    "lat": 15.4940615,
+    "lon": 73.8315736
+  },
+  "nodes": [
+    4294842794,
+    10749338859,
+    10749338858,
+    10749338857,
+    10749338856,
+    4294842794
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Healthway Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1157043652,
+  "center": {
+    "lat": 15.4934917,
+    "lon": 73.8186608
+  },
+  "nodes": [
+    10759855791,
+    10759855790,
+    10759855789,
+    10759855788,
+    4545001209,
+    10759855791
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Military Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1158138145,
+  "center": {
+    "lat": 15.6895838,
+    "lon": 73.7925790
+  },
+  "nodes": [
+    8302621917,
+    7104096243,
+    10770513612,
+    12830221663,
+    10770513611,
+    10770513610,
+    8302621917
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Pernem",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "CHC, Tuem Pernem",
+    "opening_hours": "24/7",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1158141752,
+  "center": {
+    "lat": 15.6876186,
+    "lon": 73.8307764
+  },
+  "nodes": [
+    4322803615,
+    10770507790,
+    10770507789,
+    10770507788,
+    4322803615
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Redkar Hospital And Research Center",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1166324919,
+  "center": {
+    "lat": 15.3946729,
+    "lon": 73.8363406
+  },
+  "nodes": [
+    10848423432,
+    10848423431,
+    10848423430,
+    6909497544,
+    10848423429,
+    10848423428,
+    10848423427,
+    10848423432
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Off Airport Road",
+    "addr:postcode": "403711",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Salgaocar Medical Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1166324949,
+  "center": {
+    "lat": 15.4029052,
+    "lon": 73.7907685
+  },
+  "nodes": [
+    10848442403,
+    10848442402,
+    10848442401,
+    10848442400,
+    10848442399,
+    10848442398,
+    10848442397,
+    10848442396,
+    10848442395,
+    7673260382,
+    10848442394,
+    10848442393,
+    10848442392,
+    10848442403
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Headland Sada, Mormugao",
+    "addr:postcode": "403804",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "MPT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1167003306,
+  "center": {
+    "lat": 15.4004575,
+    "lon": 73.8323709
+  },
+  "nodes": [
+    10852004112,
+    7673260376,
+    10852004111,
+    10852004110,
+    10852004109,
+    10852004108,
+    10852004107,
+    10852004106,
+    10852004112
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Alto Chicalim, Vasco da Gama",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1182070518,
+  "center": {
+    "lat": 15.6049299,
+    "lon": 73.8202808
+  },
+  "nodes": [
+    7671188403,
+    10977316920,
+    10977316919,
+    10977316918,
+    7671188403
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Karaswada, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vision Hospital Emergency Complex",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1182078630,
+  "center": {
+    "lat": 15.5898759,
+    "lon": 73.8166404
+  },
+  "nodes": [
+    7671188462,
+    10977381778,
+    10977381779,
+    10977381776,
+    10977381775,
+    10977381774,
+    10977381777,
+    10977381780,
+    7671188462
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "building": "hospital",
+    "name": "Urban Primary Health Centre Mapusa",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1182078632,
+  "center": {
+    "lat": 15.5902147,
+    "lon": 73.8162860
+  },
+  "nodes": [
+    10977381804,
+    10977381802,
+    12596178038,
+    12583463756,
+    4290797492,
+    12594444169,
+    10977381804
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Holy Cross General Remanso Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1185330112,
+  "center": {
+    "lat": 15.7046547,
+    "lon": 74.2206019
+  },
+  "nodes": [
+    8188037128,
+    11010706312,
+    11010706311,
+    11010706310,
+    11010706309,
+    8188037128
+  ],
+  "tags": {
+    "addr:full": "Kankumbi, Kankumbi, Karnataka",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Primary Health Centre",
+    "name:kn": "ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ"
+  }
+},
+{
+  "type": "way",
+  "id": 1193932207,
+  "center": {
+    "lat": 15.5999690,
+    "lon": 73.8111929
+  },
+  "nodes": [
+    7671188438,
+    11083114730,
+    11083114729,
+    11083114728,
+    7671188438
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Alto Duler, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Gauns Child Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1209131046,
+  "center": {
+    "lat": 15.2793649,
+    "lon": 73.9607133
+  },
+  "nodes": [
+    11203038405,
+    7673260358,
+    11203038404,
+    11203038403,
+    11203038402,
+    11203038401,
+    11203038400,
+    11203038399,
+    11203038398,
+    11203038397,
+    11203038396,
+    11203038395,
+    4113906989,
+    11203038405
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Monte Hill, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Hospicio Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1209131078,
+  "center": {
+    "lat": 15.2796132,
+    "lon": 73.9653737
+  },
+  "nodes": [
+    11203039435,
+    11203039434,
+    5285397929,
+    11203039433,
+    11203039432,
+    11203039431,
+    11203039430,
+    11203039429,
+    11203039428,
+    11203039435
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Monte Hill, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "TB Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1209655354,
+  "center": {
+    "lat": 15.6040397,
+    "lon": 73.8200726
+  },
+  "nodes": [
+    2614494854,
+    13103061438,
+    11206994515,
+    11204964939,
+    11206994514,
+    2614494854
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Duler Ground Road, Dangui Colony, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "fax": "2256788",
+    "name": "Vision Multispeciality Hospital",
+    "source": "OpenGovernmentData",
+    "website": "https://visionhospitalgoa.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1323671633,
+  "center": {
+    "lat": 15.4835919,
+    "lon": 73.8233319
+  },
+  "nodes": [
+    4298524291,
+    12248782347,
+    12248782346,
+    12248782345,
+    12248782344,
+    4298524291
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "TB and Chest Disease Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1341232016,
+  "center": {
+    "lat": 15.0076787,
+    "lon": 74.0518668
+  },
+  "nodes": [
+    12406698777,
+    12406698756,
+    12406698776,
+    12406698775,
+    12406698774,
+    12406698773,
+    12406698772,
+    12406698777
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Canacona",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "Community Health Centre, Canacona",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1341674421,
+  "center": {
+    "lat": 15.5289125,
+    "lon": 74.1304636
+  },
+  "nodes": [
+    12410795815,
+    10172956614,
+    12410795814,
+    12410795813,
+    12410795815
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Govt Hospital Valpoi"
+  }
+},
+{
+  "type": "way",
+  "id": 1349188907,
+  "center": {
+    "lat": 15.4856998,
+    "lon": 73.9108806
+  },
+  "nodes": [
+    12480232537,
+    12480232542,
+    12480232541,
+    12480232540,
+    12480232539,
+    12480232538,
+    12480232537
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Ella Village",
+    "addr:postcode": "403402",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Healthway Hospitals",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1349836753,
+  "center": {
+    "lat": 15.5149219,
+    "lon": 73.7679630
+  },
+  "nodes": [
+    12487011546,
+    12487011545,
+    12487011544,
+    1688110031,
+    12487011546
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Candolim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1356312707,
+  "center": {
+    "lat": 15.5413202,
+    "lon": 73.8227470
+  },
+  "nodes": [
+    4298588995,
+    12553002934,
+    12553002933,
+    12553002924,
+    10976476412,
+    4298588995
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Alto-Porvorim",
+    "addr:postcode": "403521",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Jesus, Mary and Joseph (JMJ) Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1356611447,
+  "center": {
+    "lat": 15.5266217,
+    "lon": 73.8339586
+  },
+  "nodes": [
+    12555935069,
+    7104096250,
+    12555935067,
+    12555935068,
+    12555935069
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "E - Type Govt. Qtrs. E-1-4",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "addr:street": "Porvorim",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Porvorim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1360542275,
+  "center": {
+    "lat": 15.5915292,
+    "lon": 73.8148437
+  },
+  "nodes": [
+    12594962307,
+    12594948944,
+    12594948982,
+    12594948961,
+    12594962307
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Near , Alankar Cinema",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Olavo Ribeiro Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1360661022,
+  "center": {
+    "lat": 15.6036470,
+    "lon": 73.8241743
+  },
+  "nodes": [
+    12595949661,
+    12595949666,
+    12595949657,
+    12595949664,
+    12595949663,
+    12595949662,
+    12595949661
+  ],
+  "tags": {
+    "addr:city": "Mapusa",
+    "addr:street": "NH 17 A, By-pass Karaswada",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Vrundavan Shalby Hospital",
+    "phone": "+91 832 6713535",
+    "source": "http://www.vrundavanshalby.com/",
+    "website": "http://www.vrundavanshalby.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1361430115,
+  "center": {
+    "lat": 15.5282905,
+    "lon": 73.7649929
+  },
+  "nodes": [
+    12603836012,
+    12603836020,
+    12603836042,
+    12603836040,
+    12603836012
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Dukle's Hospital & Research Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 1362261969,
+  "center": {
+    "lat": 15.6876677,
+    "lon": 73.9658672
+  },
+  "nodes": [
+    4296327797,
+    12612418216,
+    12612418215,
+    12612418214,
+    4296327797
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dodamarg Gramin Rugnalaya"
+  }
+},
+{
+  "type": "way",
+  "id": 1364452159,
+  "center": {
+    "lat": 15.4524044,
+    "lon": 73.8608402
+  },
+  "nodes": [
+    12635362409,
+    12635362184,
+    12277156041,
+    12277156042,
+    12277156043,
+    12277156044,
+    12277156045,
+    12277156046,
+    12277156047,
+    12635362189,
+    12568401262,
+    12568401261,
+    12568401260,
+    12568401259,
+    12568401269,
+    12635362409
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Institute of Psychiatry and Human Behaviour (IPHB)",
+    "website": "https://iphb.goa.gov.in/"
+  }
+},
+{
+  "type": "way",
+  "id": 1381915092,
+  "center": {
+    "lat": 15.4622488,
+    "lon": 73.8549807
+  },
+  "nodes": [
+    12794154836,
+    12794154835,
+    12794154834,
+    12568480787,
+    12568480786,
+    12568480785,
+    12568480784,
+    12568480783,
+    12568480782,
+    12568480781,
+    12794154833,
+    12794154832,
+    12794154831,
+    12794154830,
+    12794154836
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Super Speciality Block Goa Medical College"
+  }
+},
+{
+  "type": "way",
+  "id": 1381915095,
+  "center": {
+    "lat": 15.4662014,
+    "lon": 73.8632619
+  },
+  "nodes": [
+    12794154853,
+    12794154846,
+    12794154852,
+    12794154851,
+    12794154848,
+    12794154850,
+    12794154849,
+    12794154853
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Pediatrics Neuro Rehabilitation Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 1382488722,
+  "center": {
+    "lat": 15.4908487,
+    "lon": 73.8278326
+  },
+  "nodes": [
+    12799711604,
+    12799711603,
+    12799711602,
+    12799711601,
+    12799703100,
+    7672448751,
+    12799711604
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Nerul, Panaji",
+    "addr:postcode": "403114",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Healthway Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1408547624,
+  "center": {
+    "lat": 15.3253535,
+    "lon": 74.0218851
+  },
+  "nodes": [
+    4306074597,
+    12944610655,
+    12944610654,
+    12944610653,
+    12944610652,
+    4306074597
+  ],
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Ponda",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Shiroda",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1430148007,
+  "center": {
+    "lat": 15.4168347,
+    "lon": 74.0833157
+  },
+  "nodes": [
+    13146469121,
+    12709423410,
+    12709423409,
+    12709423411,
+    13146469120,
+    13146469119,
+    4343042294,
+    13229162739,
+    13146469121
+  ],
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Dharbandora",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Dharbandora",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "relation",
+  "id": 16349605,
+  "center": {
+    "lat": 15.2690253,
+    "lon": 73.9662427
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 1209131051,
+      "role": "outer"
+    },
+    {
+      "type": "way",
+      "ref": 1126503868,
+      "role": "outer"
+    }
+  ],
+  "tags": {
+    "addr:city": "Margao",
+    "amenity": "hospital",
+    "name": "Victor Hospital",
+    "type": "multipolygon",
+    "website": "https://www.victorhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 2207107909,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Aurveda clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 3289988157,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4114502623,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Near Power House, Aquem",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Lawande's Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4114541591,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Subhash Nagzekar Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4236980191,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kamat Criticare & Research Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4236996890,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Near St. Joaquim Chappel, Barda",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Mother Care Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4247936989,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kerker Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4259963290,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "781, St. Mayrs Colony, Near Stella Miramar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Trinity Health Care and Medical Research",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4260442890,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Royal Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4260460290,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Prabhu Dessai Hospitals Private Limited"
+  }
+},
+{
+  "type": "node",
+  "id": 4281444194,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mardolkar"
+  }
+},
+{
+  "type": "node",
+  "id": 4283671694,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Opp b p s club, behind astro housing society, pagifond, margoa",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "email": "info@gracecardiachospital.com",
+    "name": "Grace Intensive Cardiac Care Center",
+    "source": "OpenGovernmentData",
+    "website": "https://gracecardiachospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 4286276690,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. M.M. Mesquita Maternity & Eye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4286313289,
+  "tags": {
+    "amenity": "hospital",
+    "name": "INHS Jeevanti"
+  }
+},
+{
+  "type": "node",
+  "id": 4291023405,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sushruti Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4291023407,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shri Damodar Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 4291047007,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Salcete",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Curtorim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4292651097,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dhumaskar Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4292676694,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Chaitanya Mental Health Care Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4294057389,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Coral Clinic Systems"
+  }
+},
+{
+  "type": "node",
+  "id": 4295605292,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Near Nehru Stadium",
+    "addr:postcode": "403602",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Antonio Vicante Da Costa Memorial Clinic / A V Da Costa Hospital",
+    "name:en": "AV Da Costa Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4296818994,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Mandovi Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 4297409591,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Asilo Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4297617090,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Guleli Govt Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298328692,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Correia Afonso Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298358392,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Verna Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298358395,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjeevani Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298509389,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Gracias Maternity Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298533690,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Aquem",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Yashodhan Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4298533691,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Infant Jesus Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298544310,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Indus Health Plus P. Ltd."
+  }
+},
+{
+  "type": "node",
+  "id": 4298547590,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Platicare Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298564189,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Janakibai Memorial Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298569692,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shri Ram Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298575490,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Rajadhyaksha Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4298590096,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Plot No. 217 & 218, P.D.A. Colony, Panjim-Mapusa Road",
+    "addr:postcode": "403521",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "fax": "8322422824",
+    "name": "Rg Stone Urology and Laparoscopy Hospital, North Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4298590196,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Indus Health Plus - Goa Scan Center, Wockhardt"
+  }
+},
+{
+  "type": "node",
+  "id": 4307338094,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Divine Medical Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4307338493,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Salcete",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Loutolim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4308224889,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Quepem",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Quepem",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4310435789,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Elshaddai House"
+  }
+},
+{
+  "type": "node",
+  "id": 4336891891,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Parvati Nagar, Sarvan, Collan",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Adhar Hospital, Collan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4342083589,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Ranade Maturnity Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4342143090,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Parekh Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4342146390,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sudha Nursing Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4342147090,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Samrat Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4343037192,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Geeta Javali Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4343041090,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Shree Dwarka Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4346787390,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Sushrut"
+  }
+},
+{
+  "type": "node",
+  "id": 4346789990,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Girish"
+  }
+},
+{
+  "type": "node",
+  "id": 4359972602,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Opp Ktc Bus Stand, Madel",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr.Rebellos Clinic And Hospital",
+    "name:en": "Rebello Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 4516599390,
+  "tags": {
+    "addr:housenumber": "248(5)",
+    "addr:postcode": "403527",
+    "addr:street": "H No .248(5),Madhlamaj,Mandrem",
+    "amenity": "hospital",
+    "email": "parmendar27@gmail.com",
+    "name": "Sofiya clinic mandrem",
+    "name:en": "Sofiya clinic mandrem",
+    "name:hi": "SOFIYA क्लिनिक Mandrem",
+    "name:ru": "София клиник мандрем",
+    "opening_hours": "Mo-Su 09:00-20:00",
+    "phone": "+919881751927"
+  }
+},
+{
+  "type": "node",
+  "id": 4769714021,
+  "tags": {
+    "amenity": "hospital",
+    "name": "OHS Orthopedic Hospital for Surgery",
+    "name:en": "OHS Orthopedic Hospital for Surgery"
+  }
+},
+{
+  "type": "node",
+  "id": 5178838363,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Патанджали"
+  }
+},
+{
+  "type": "node",
+  "id": 5260311523,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dharwadkar Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 5285397928,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Aster hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 5435635422,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Vadem",
+    "addr:postcode": "403803",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pai Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 5963900720,
+  "tags": {
+    "addr:city": "porvorim,Goa",
+    "addr:housenumber": "A3 Hilltop apts",
+    "addr:postcode": "403521",
+    "addr:street": "SH 66",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Archis Ayurved"
+  }
+},
+{
+  "type": "node",
+  "id": 6908213043,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Flat No A 1, Abhinav Cooperative Housing Society, Ganga Nagar, Curti",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Juwarkars Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908254073,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Jai Ram Complex, A-1, Nevgi Nagar Rua De Ourem Malaviya Nagar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Ghanshyam Govind Kamat Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908254078,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "C/O Amshekar Hospital, Ashravy Bunglow, Near Maruti Temple",
+    "addr:postcode": "403506",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Amshekar Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908262660,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Is Floor, Vasant Arcade, Near Popular High School",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Sinai Clinic and Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908308851,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Sapana Valey, Pajifond",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Adarsh Family Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908331628,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Mapsekar Bldg",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjeevani Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497514,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Fr. Joseph Vaz Road",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Sri Damodar Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497534,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Dattawadi",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Bhagyoday Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497539,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "North Goa",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Usgaonkers Children Hospital and iNICU",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497545,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "First Gate, Verna Industrial Estate",
+    "addr:postcode": "403722",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "fax": "26966167",
+    "healthcare": "hospital",
+    "name": "Chikitsa Hospital - Verna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497550,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "390A, Indira Smruti, Tonca, C/O Raikar Nursing Home",
+    "addr:postcode": "403002",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Indira Smruti Raikar Nursing Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497564,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Next To Bal Bhavan, Opposite Parade Grounds, Campel",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Campal Health Services Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497565,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Hno 2851, Sankalp Gardens, Opp Raksha Restaurant On Mapusa Bicholim Highway",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Mahatme Nursing Home - Bicholim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497580,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "B-1, 1st Floor, Jairam Complex, Nevgi Nagar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kaisare Eye And Dental Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909497581,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bicholim City",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr Caeiros Bichollm Polyclinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909502799,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "H No. 179D, Alto- Dabolim",
+    "addr:postcode": "403711",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Parulekars Eye- Site (Superspeciality Eye Hospital)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6909502804,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Las Palmas Housing Estate, Gogol",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Trimurti General Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7104096248,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Mormugao",
+    "amenity": "hospital",
+    "name": "Cottage Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7226642386,
+  "tags": {
+    "addr:district": "Sindhudurg",
+    "addr:full": "PRB No. SDD No. 179, Govt. Rural Hospital, Sawantwada, Taluka - Dodamarg",
+    "addr:postcode": "416512",
+    "addr:state": "Maharashtra",
+    "addr:subdistrict": "Dodamarg",
+    "amenity": "hospital",
+    "name": "Rural Hospital Dodamarg",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7643338070,
+  "tags": {
+    "addr:district": "Sindhudurg",
+    "addr:full": "Deul Wada, Aronda",
+    "addr:postcode": "416513",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Hospital Sawant",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7643338099,
+  "tags": {
+    "addr:district": "Sindhudurg",
+    "addr:full": "Kondure",
+    "addr:postcode": "416510",
+    "addr:state": "Maharastra",
+    "amenity": "hospital",
+    "name": "Malewad Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188374,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Sangolda",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kurias Earth Ayurveda Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188379,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bandarwada, Bicholim",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr.Sawant's Ayurvedic Panchakarma Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188384,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Chemps, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Ankur Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188391,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Calangute - Anjuna Road, Calangute",
+    "addr:postcode": "403516",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Mathew Braganza Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188405,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Penha de Franca",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Prabhu Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188411,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Guirim",
+    "addr:postcode": "403510",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Marwahi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188423,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Penha de Franca",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Prabhu Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188424,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Church Street, Porvorim, Bardez",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Anil D'Silva's Multispeciality Dental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188429,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Porvorim, Penha de Franca",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Chodankar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188447,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Carambolim, Corlim",
+    "addr:postcode": "403110",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Dhulapkar's Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188450,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bicholim Road, Bicholim",
+    "addr:postcode": "403504",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Subodh Maternity Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188453,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Bicholim",
+    "addr:postcode": "403529",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Bicholim Hospital",
+    "source": "Local Knowledge",
+    "wikidata": "Q4903615"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188457,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Carambolim, Corlim",
+    "addr:postcode": "403110",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Saud EMS Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7671188460,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Balkrishna Bhosale Marg, Alto Duler, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Ramanso Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448663,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Verna",
+    "addr:postcode": "403722",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Roque Ferreira's Memorial Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448676,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Main Road, Near Aiasha, Ponda, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kakodkar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448677,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "PE Agnelo Road, Altinho, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "CMM Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448683,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Khadpabandh, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Dev's Children Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448686,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "St Cruz",
+    "addr:postcode": "403202",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vrundavan Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448688,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Zuarinagar, Sancoale",
+    "addr:postcode": "403726",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ESI Hospital",
+    "operator": "Employees' State Insurance",
+    "operator:short": "ESI",
+    "operator:type": "private",
+    "operator:wikidata": "Q3595726",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448689,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Santa Cruz, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr.Amit Naik Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448695,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Caetano de Albuquerque Road, Near Municipal Market, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vaidya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448701,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Upper Bazar Road, Shanti Nagar, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Platicare hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448704,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Khadpabandh, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Singbal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448711,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Mardol",
+    "addr:postcode": "403115",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Priyolkar's Surgery Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448718,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Bhanudeep Arcade, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Drishti Eye Hospital & Laser Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448720,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Commerce Centre, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Shirsat Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448726,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Rua de Ourem, Neugi Nagar",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kaisares Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448728,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Odlem Bhat, Taleigao",
+    "addr:postcode": "403002",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Parab's Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448730,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Orgao, Marcel, Orgao",
+    "addr:postcode": "403107",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Anandi Maternity & Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448733,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Shantinagar Road, Durgabhat, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Juwarkar's Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448737,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Farmagudi Fort, Donshiwado, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Singbal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448738,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Patto Centre, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vedicure Wellness Clinics and Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448746,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Cabesa Ward, St Cruz",
+    "addr:postcode": "403202",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Anthony Gonsalves Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448752,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Marcela, Deul Wada",
+    "addr:postcode": "403107",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Raikar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448753,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Miramar, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Ajit Kamat Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448754,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Shanti Nagar, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Chodankar Ortho Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448756,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Kazi Waza, Ponda",
+    "addr:postcode": "403401",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Priolkar Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7672448757,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Panjim Market, Panaji",
+    "addr:postcode": "403001",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Noble Super Speciality Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260337,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Grebelo Road, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Holy Spirit Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260345,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "SBI Housing Colony, Cupangale Society, Margao",
+    "addr:postcode": "403602",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Desai Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260349,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Pajifond, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vintage Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260355,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Margao",
+    "addr:postcode": "403707",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Sunshine Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260356,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Canacona Industrial Estate, Canacona",
+    "addr:postcode": "403702",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260360,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Chirdolem, Curtorim",
+    "addr:postcode": "403709",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Baracho Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260362,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Cupangale Society, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Braganza's Maternity Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260363,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Swatantra Path, Vasco da Gama",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vaatsalya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260369,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Nehrunagar, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Arcanjo Menezes Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260374,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Filipe Mansion, Vasco",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Prakaash Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260385,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Navelim, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kudchadkar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260389,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Shiroda",
+    "addr:postcode": "403103",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Shri Kamaxidevi Homoeopathic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260392,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Manoraj Diva Building,Chavadi village, Canacona",
+    "addr:postcode": "403702",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Shetty Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260395,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "New Vaddem, Mormugao",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ESI Hospital",
+    "operator": "Employees' State Insurance",
+    "operator:short": "ESI",
+    "operator:type": "private",
+    "operator:wikidata": "Q3595726",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260411,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Opposite Childrens Park, Vasco, Vaddem, New Vaddem, Mormugao",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Kamat Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260419,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Fr Jose Vaz Road, New Vaddem, Vasco da Gam",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Santhgiri Ayurveda Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260424,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Borda, Margao",
+    "addr:postcode": "403602",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Noble Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7673260428,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Baina, Mormugao",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Vishwa Sanjeevani Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9596927573,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sangath"
+  }
+},
+{
+  "type": "node",
+  "id": 13275314237,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 274202665,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Goa Medical College and Hospital Bambolim, Tiswadi",
+    "addr:postcode": "403202",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Tiswadi",
+    "amenity": "hospital",
+    "description": "Medical Colleges Hospital",
+    "emergency": "yes",
+    "name": "Goa Medical College Hospital",
+    "name:pt": "Escola Médico-Cirúrgica de Goa",
+    "source": "OpenGovernmentData",
+    "website": "http://www.gmc.goa.gov.in/",
+    "wikidata": "Q5575088"
+  }
+},
+{
+  "type": "way",
+  "id": 365895407,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Bosio Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 373178602,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Ponda",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Ponda Sub District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 430544182,
+  "tags": {
+    "addr:place": "Canacona",
+    "addr:state": "GA",
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Victor Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 430889405,
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "Sonu Kamat Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 432335188,
+  "tags": {
+    "addr:city": "Mapusa",
+    "addr:postcode": "403507",
+    "addr:street": "Mapusa-Duler-Camurlim Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Kolwalkar's Galaxy Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 437932986,
+  "tags": {
+    "amenity": "hospital",
+    "name": "E S I Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 480138462,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Salcete",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Distict Hospital, South Goa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 533882237,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Патанджали"
+  }
+},
+{
+  "type": "way",
+  "id": 538444637,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "H No. 123/1, Zorin, Nr Anjuna Petrol Pump",
+    "addr:postcode": "403509",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "St. Anthony's Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 546557225,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bicholim",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Sanquelim",
+    "name:en": "Primary Health Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 569233392,
+  "tags": {
+    "amenity": "hospital",
+    "building": "civic",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 620136470,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chaitanya Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 760467188,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Sanguem",
+    "amenity": "hospital",
+    "building": "hospital",
+    "cash_withdrawal:currency": "Rupees",
+    "cash_withdrawal:fee": "no",
+    "cash_withdrawal:purchase_minimum": "varies",
+    "description": "Primary Health Centre",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;maternity;emergency",
+    "name": "Sanguem Primary Health Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 978893688,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Goa Dental College And Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 978895943,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Ponda",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Marcaim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1019344277,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Manipal Hospital, Dr E Boges Road, Dona Paula",
+    "addr:postcode": "403004",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "email": "mghgoa@manipalhealth.com",
+    "emergency": "yes",
+    "fax": "3048813",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multispeciality",
+    "name": "Manipal Goa Cancer and General Hospital",
+    "source": "OpenGovernmentData",
+    "website": "https://www.manipalhospitals.com/goa/"
+  }
+},
+{
+  "type": "way",
+  "id": 1020315938,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Aldona",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1020893556,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Military Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1155613086,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "District Hospital, Mapusa",
+    "name:en": "District Hospital Mapusa",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1155891486,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Healthway Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1157043652,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Military Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1158138145,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Pernem",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "CHC, Tuem Pernem",
+    "opening_hours": "24/7",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1158141752,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Redkar Hospital And Research Center",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1166324919,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Off Airport Road",
+    "addr:postcode": "403711",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Salgaocar Medical Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1166324949,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Headland Sada, Mormugao",
+    "addr:postcode": "403804",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "MPT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1167003306,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Alto Chicalim, Vasco da Gama",
+    "addr:postcode": "403802",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1182070518,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Karaswada, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Vision Hospital Emergency Complex",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1182078630,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "building": "hospital",
+    "name": "Urban Primary Health Centre Mapusa",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1182078632,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Holy Cross General Remanso Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1185330112,
+  "tags": {
+    "addr:full": "Kankumbi, Kankumbi, Karnataka",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Primary Health Centre",
+    "name:kn": "ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ"
+  }
+},
+{
+  "type": "way",
+  "id": 1193932207,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Alto Duler, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Gauns Child Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1209131046,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Monte Hill, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Hospicio Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1209131078,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:full": "Monte Hill, Margao",
+    "addr:postcode": "403601",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "TB Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1209655354,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Duler Ground Road, Dangui Colony, Mapusa",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "fax": "2256788",
+    "name": "Vision Multispeciality Hospital",
+    "source": "OpenGovernmentData",
+    "website": "https://visionhospitalgoa.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1323671633,
+  "tags": {
+    "amenity": "hospital",
+    "name": "TB and Chest Disease Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1341232016,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Canacona",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "Community Health Centre, Canacona",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1341674421,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Govt Hospital Valpoi"
+  }
+},
+{
+  "type": "way",
+  "id": 1349188907,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Ella Village",
+    "addr:postcode": "403402",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Healthway Hospitals",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1349836753,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Candolim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1356312707,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Alto-Porvorim",
+    "addr:postcode": "403521",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Jesus, Mary and Joseph (JMJ) Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1356611447,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "E - Type Govt. Qtrs. E-1-4",
+    "addr:postcode": "403501",
+    "addr:state": "Goa",
+    "addr:street": "Porvorim",
+    "addr:subdistrict": "Bardez",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Porvorim",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1360542275,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Near , Alankar Cinema",
+    "addr:postcode": "403507",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "name": "Dr. Olavo Ribeiro Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1360661022,
+  "tags": {
+    "addr:city": "Mapusa",
+    "addr:street": "NH 17 A, By-pass Karaswada",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Vrundavan Shalby Hospital",
+    "phone": "+91 832 6713535",
+    "source": "http://www.vrundavanshalby.com/",
+    "website": "http://www.vrundavanshalby.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1361430115,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Dukle's Hospital & Research Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 1362261969,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dodamarg Gramin Rugnalaya"
+  }
+},
+{
+  "type": "way",
+  "id": 1364452159,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Institute of Psychiatry and Human Behaviour (IPHB)",
+    "website": "https://iphb.goa.gov.in/"
+  }
+},
+{
+  "type": "way",
+  "id": 1381915092,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Super Speciality Block Goa Medical College"
+  }
+},
+{
+  "type": "way",
+  "id": 1381915095,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Pediatrics Neuro Rehabilitation Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 1382488722,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:full": "Nerul, Panaji",
+    "addr:postcode": "403114",
+    "addr:state": "Goa",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Healthway Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1408547624,
+  "tags": {
+    "addr:district": "North Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Ponda",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Shiroda",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1430148007,
+  "tags": {
+    "addr:district": "South Goa",
+    "addr:state": "Goa",
+    "addr:subdistrict": "Dharbandora",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Dharbandora",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "relation",
+  "id": 16349605,
+  "tags": {
+    "addr:city": "Margao",
+    "amenity": "hospital",
+    "name": "Victor Hospital",
+    "type": "multipolygon",
+    "website": "https://www.victorhospital.com/"
+  }
+}
+
+  ]
+}

@@ -12,12 +12,24 @@ Utility scripts for database management, diagnostics, and GitHub automation.
 ```
 This creates 9 GitHub issues for the complete messaging system (Internet + Bluetooth + WiFi Direct).
 
+**Import hospitals from South India (100% FREE):**
+```bash
+# Step 1: Download hospital data from OpenStreetMap
+./scripts/import_south_india_hospitals.sh
+
+# Step 2: Import to Supabase (update credentials in script first!)
+dart run scripts/import_osm_hospitals.dart
+```
+Imports 2,300-3,400 hospitals from Tamil Nadu, Karnataka, Kerala, and Andhra Pradesh using OpenStreetMap (saves $92,800/year vs Google Places!)
+
 ---
 
 ## 📁 Folder Structure
 
-### **Root Scripts** - GitHub Automation (1 file)
-- `create_messaging_issues.sh` - **Create 9 messaging module GitHub issues** (NEW! 🎉)
+### **Root Scripts** - GitHub Automation & Hospital Import (3 files)
+- `create_messaging_issues.sh` - **Create 9 messaging module GitHub issues**
+- `import_south_india_hospitals.sh` - **Download hospitals from OpenStreetMap** (NEW! 🎉)
+- `import_osm_hospitals.dart` - **Import hospitals to Supabase** (NEW! 🎉)
 
 ### `/scripts/database/` - SQL Scripts (14 files)
 
@@ -66,6 +78,37 @@ Flutter diagnostic and testing utilities.
 ---
 
 ## 🚀 Common Usage
+
+### Import Hospitals from South India (100% FREE)
+
+```bash
+# Step 1: Download hospital data (15-20 minutes)
+chmod +x scripts/import_south_india_hospitals.sh
+./scripts/import_south_india_hospitals.sh
+
+# Step 2: Configure Supabase credentials
+# Edit scripts/import_osm_hospitals.dart
+# Update lines 15-16 with your Supabase URL and anon key
+
+# Step 3: Import to database (5-10 minutes)
+dart run scripts/import_osm_hospitals.dart
+
+# Step 4: Verify import
+# Check Supabase dashboard or run SQL:
+# SELECT COUNT(*) FROM hospitals WHERE data_source = 'openstreetmap';
+```
+
+**What you get:**
+- 2,300-3,400 hospitals across 4 states
+- Tamil Nadu (~1,000 hospitals)
+- Karnataka (~750 hospitals)
+- Kerala (~500 hospitals)
+- Andhra Pradesh (~650 hospitals)
+- **Total cost: $0** (saves $92,800/year vs Google Places!)
+
+**See:** [IMPORT_SOUTH_INDIA_HOSPITALS.md](../docs/IMPORT_SOUTH_INDIA_HOSPITALS.md) for detailed guide
+
+---
 
 ### Setup Fresh Database
 

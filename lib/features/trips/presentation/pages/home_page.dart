@@ -157,7 +157,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 children: [
                   IconButton(
                     icon: const Icon(Icons.filter_list, color: Colors.white),
-                    onPressed: () => _showFilterSheet(context),
+                    onPressed: () => _navigateToFilterPage(context),
                   ),
                   if (_hasActiveFilters)
                     Positioned(
@@ -244,11 +244,15 @@ class _HomePageState extends ConsumerState<HomePage>
                                       child: TextField(
                                         controller: _searchController,
                                         autofocus: true,
+                                        autocorrect: false,
+                                        enableSuggestions: false,
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
+                                          decoration: TextDecoration.none,
                                         ),
+                                        cursorColor: Colors.white,
                                         decoration: InputDecoration(
                                           hintText: 'Search trips...',
                                           hintStyle: TextStyle(
@@ -841,369 +845,48 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Future<void> _showFilterSheet(BuildContext context) async {
-    final TextEditingController minBudgetController = TextEditingController(
-      text: _minBudget?.toStringAsFixed(0) ?? '',
-    );
-    final TextEditingController maxBudgetController = TextEditingController(
-      text: _maxBudget?.toStringAsFixed(0) ?? '',
-    );
+  /// Navigate to filter page using GoRouter (fixes _dependents.isEmpty error)
+  Future<void> _navigateToFilterPage(BuildContext context) async {
+    // Build query parameters with current filter values
+    final queryParams = <String, String>{};
 
-    DateTime? tempCreatedAfter = _createdAfter;
-    DateTime? tempCreatedBefore = _createdBefore;
+    if (_minBudget != null) {
+      queryParams['minBudget'] = _minBudget!.toStringAsFixed(0);
+    }
+    if (_maxBudget != null) {
+      queryParams['maxBudget'] = _maxBudget!.toStringAsFixed(0);
+    }
+    if (_createdAfter != null) {
+      queryParams['createdAfter'] = _createdAfter!.toIso8601String();
+    }
+    if (_createdBefore != null) {
+      queryParams['createdBefore'] = _createdBefore!.toIso8601String();
+    }
 
-    // Use return value to avoid timing issues
-    final result = await showModalBottomSheet<Map<String, dynamic>?>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      builder: (bottomSheetContext) => StatefulBuilder(
-        builder: (modalContext, setModalState) => Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppTheme.radiusXl),
-              topRight: Radius.circular(AppTheme.radiusXl),
-            ),
-          ),
-          child: SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(modalContext).viewInsets.bottom,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Handle
-                  Center(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: AppTheme.spacingMd),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: AppTheme.neutral300,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
+    // Debug: Log navigation
+    print('🔍 DEBUG: Navigating to tripFilter route with params: $queryParams');
 
-                  // Title and Clear button
-                  Padding(
-                    padding: const EdgeInsets.all(AppTheme.spacingLg),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Filter Trips',
-                          style: Theme.of(modalContext).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                        if (_hasActiveFilters)
-                          TextButton(
-                            onPressed: () {
-                              // Return cleared filters
-                              final clearedFilters = {
-                                'minBudget': null,
-                                'maxBudget': null,
-                                'createdAfter': null,
-                                'createdBefore': null,
-                              };
-                              Navigator.pop(bottomSheetContext, clearedFilters);
-                            },
-                            child: const Text('Clear All'),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  // Budget Filter Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.attach_money, size: 20, color: AppTheme.success),
-                            const SizedBox(width: AppTheme.spacingXs),
-                            Text(
-                              'Budget Range',
-                              style: Theme.of(modalContext).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: minBudgetController,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  labelText: 'Min Budget',
-                                  hintText: '0',
-                                  prefixText: '₹ ',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd,
-                                    vertical: AppTheme.spacingSm,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            Expanded(
-                              child: TextField(
-                                controller: maxBudgetController,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  labelText: 'Max Budget',
-                                  hintText: '100000',
-                                  prefixText: '₹ ',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd,
-                                    vertical: AppTheme.spacingSm,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingXl),
-
-                  // Date Created Filter Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_today, size: 20, color: AppTheme.info),
-                            const SizedBox(width: AppTheme.spacingXs),
-                            Text(
-                              'Date Created',
-                              style: Theme.of(modalContext).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  final date = await showDatePicker(
-                                    context: modalContext,
-                                    initialDate: tempCreatedAfter ?? DateTime.now(),
-                                    firstDate: DateTime(2020),
-                                    lastDate: DateTime.now(),
-                                  );
-                                  if (date != null) {
-                                    setModalState(() {
-                                      tempCreatedAfter = date;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingSm,
-                                    vertical: AppTheme.spacingMd,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: AppTheme.neutral300),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.calendar_month, size: 18),
-                                      const SizedBox(width: AppTheme.spacingXs),
-                                      Expanded(
-                                        child: Text(
-                                          tempCreatedAfter != null
-                                              ? '${tempCreatedAfter!.day.toString().padLeft(2, '0')}/${tempCreatedAfter!.month.toString().padLeft(2, '0')}/${tempCreatedAfter!.year}'
-                                              : 'From Date',
-                                          style: TextStyle(
-                                            color: tempCreatedAfter != null
-                                                ? AppTheme.neutral900
-                                                : AppTheme.neutral500,
-                                            fontSize: 12,
-                                          ),
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                      if (tempCreatedAfter != null)
-                                        GestureDetector(
-                                          onTap: () {
-                                            setModalState(() {
-                                              tempCreatedAfter = null;
-                                            });
-                                          },
-                                          child: const Icon(
-                                            Icons.clear,
-                                            size: 16,
-                                            color: AppTheme.neutral600,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  final date = await showDatePicker(
-                                    context: modalContext,
-                                    initialDate: tempCreatedBefore ?? DateTime.now(),
-                                    firstDate: tempCreatedAfter ?? DateTime(2020),
-                                    lastDate: DateTime.now(),
-                                  );
-                                  if (date != null) {
-                                    setModalState(() {
-                                      tempCreatedBefore = date;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingSm,
-                                    vertical: AppTheme.spacingMd,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: AppTheme.neutral300),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.calendar_month, size: 18),
-                                      const SizedBox(width: AppTheme.spacingXs),
-                                      Expanded(
-                                        child: Text(
-                                          tempCreatedBefore != null
-                                              ? '${tempCreatedBefore!.day.toString().padLeft(2, '0')}/${tempCreatedBefore!.month.toString().padLeft(2, '0')}/${tempCreatedBefore!.year}'
-                                              : 'To Date',
-                                          style: TextStyle(
-                                            color: tempCreatedBefore != null
-                                                ? AppTheme.neutral900
-                                                : AppTheme.neutral500,
-                                            fontSize: 12,
-                                          ),
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                      if (tempCreatedBefore != null)
-                                        GestureDetector(
-                                          onTap: () {
-                                            setModalState(() {
-                                              tempCreatedBefore = null;
-                                            });
-                                          },
-                                          child: const Icon(
-                                            Icons.clear,
-                                            size: 16,
-                                            color: AppTheme.neutral600,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingXl),
-
-                  // Apply Button
-                  Padding(
-                    padding: const EdgeInsets.all(AppTheme.spacingLg),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Return filter values
-                          final filters = {
-                            'minBudget': minBudgetController.text.isNotEmpty
-                                ? double.tryParse(minBudgetController.text)
-                                : null,
-                            'maxBudget': maxBudgetController.text.isNotEmpty
-                                ? double.tryParse(maxBudgetController.text)
-                                : null,
-                            'createdAfter': tempCreatedAfter,
-                            'createdBefore': tempCreatedBefore,
-                          };
-                          Navigator.pop(bottomSheetContext, filters);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          ),
-                        ),
-                        child: const Text(
-                          'Apply Filters',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+    // Navigate to filter page using NAMED route (not path) to avoid route matching issues
+    final result = await context.pushNamed<Map<String, dynamic>>(
+      'tripFilter',
+      queryParameters: queryParams,
     );
 
-    // Dispose controllers
-    minBudgetController.dispose();
-    maxBudgetController.dispose();
-
-    // Apply returned filters after navigation completes
+    // Apply returned filters - GoRouter handles navigation lifecycle properly
     if (result != null && mounted) {
-      // Use addPostFrameCallback to avoid setState during build
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {
-            _minBudget = result['minBudget'] as double?;
-            _maxBudget = result['maxBudget'] as double?;
-            _createdAfter = result['createdAfter'] as DateTime?;
-            _createdBefore = result['createdBefore'] as DateTime?;
-          });
-
-          // Debug: Log filter values
-          print('🔍 Filters applied:');
-          print('  Min Budget: $_minBudget');
-          print('  Max Budget: $_maxBudget');
-          print('  Created After: $_createdAfter');
-          print('  Created Before: $_createdBefore');
-        }
+      setState(() {
+        _minBudget = result['minBudget'] as double?;
+        _maxBudget = result['maxBudget'] as double?;
+        _createdAfter = result['createdAfter'] as DateTime?;
+        _createdBefore = result['createdBefore'] as DateTime?;
       });
+
+      // Debug: Log filter values
+      print('🔍 Filters applied:');
+      print('  Min Budget: $_minBudget');
+      print('  Max Budget: $_maxBudget');
+      print('  Created After: $_createdAfter');
+      print('  Created Before: $_createdBefore');
     }
   }
 

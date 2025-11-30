@@ -1,0 +1,1017 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T12:36:23Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 4925330128,
+  "lat": 27.3313407,
+  "lon": 88.6135864,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6493516285,
+  "lat": 27.3708529,
+  "lon": 88.2252546,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:postcode": "737113",
+    "addr:state": "Sikkim",
+    "addr:subdistrict": "Gyalshing",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "locality": "Yuksam",
+    "name": "Yuksam, PHC",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6902545405,
+  "lat": 27.1655039,
+  "lon": 88.3605830,
+  "tags": {
+    "addr:city": "Namchi",
+    "addr:district": "South Sikkim",
+    "addr:full": "Namchi District Hospital, Hospital Road, Namchi",
+    "addr:postcode": "737126",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "contact:mobile": "7797895320",
+    "contact:phone": "3595264544",
+    "email": "anjurai100@gmail.com",
+    "healthcare": "hospital",
+    "name": "Government General Hospital Blood Bank - Namchi",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120518,
+  "lat": 27.3163644,
+  "lon": 88.5975829,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "5Th Mile Tadong, Gangtok",
+    "addr:postcode": "737101",
+    "addr:state": "Sikkim",
+    "ambulance": "yes",
+    "amenity": "hospital",
+    "beds": "550",
+    "description": "Multi-specialty, NABH-accredited hospital with 24/7 emergency, advanced ICUs (ICU, SICU, NICU, PICU, CCU, NSICU, ITU), world-class diagnostics, and digital imaging (first in Sikkim with PACS), attached to Sikkim Manipal University",
+    "emergency": "yes",
+    "fax": "231162",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;surgery;cardiology;neurosurgery;gastroenterology;blood_donation;maternity;pediatric;radiology;intensive_care",
+    "internet_access": "yes",
+    "laboratory": "yes",
+    "language:en": "yes",
+    "language:hi": "yes",
+    "name": "Central Referral Hospital",
+    "official_name": "Central Referral Hospital (A Constituent Unit Of Sikkim Manipal University)",
+    "opening_hours": "24/7",
+    "operator": "Sikkim Manipal University",
+    "operator:type": "private",
+    "parking": "yes",
+    "pharmacy": "yes",
+    "phone": "18001202114",
+    "staff_count:doctors": "76",
+    "website": "https://smu.edu.in/crh/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120519,
+  "lat": 27.3174225,
+  "lon": 88.5975802,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "SMIMS, 5th Mile, Tadong,East Sikkim",
+    "addr:postcode": "737102",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sikkim Manipal Institute of Medical Sciences",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "www.smims.smu.edu.in"
+  }
+},
+{
+  "type": "node",
+  "id": 7065473741,
+  "lat": 27.0733801,
+  "lon": 88.4766126,
+  "tags": {
+    "addr:district": "Darjeeling",
+    "addr:full": "Guruji Pranami Mission Trust,10th Mile, Kalimpong",
+    "addr:postcode": "734301",
+    "addr:state": "West Bengal",
+    "amenity": "hospital",
+    "name": "Seva Sadan Hospital, Darjeeling",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7118826339,
+  "lat": 27.2911210,
+  "lon": 88.2569220,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:postcode": "737111",
+    "addr:state": "Sikkim",
+    "addr:subdistrict": "Geyzing",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Geyzing",
+    "name": "Geyzing District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7118826340,
+  "lat": 27.2298217,
+  "lon": 88.4950137,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:postcode": "737134",
+    "addr:state": "Sikkim",
+    "addr:street": "Singtam District Hospital",
+    "addr:subdistrict": "Gangtok",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Singtam",
+    "name": "Singtam District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7199769364,
+  "lat": 27.0723710,
+  "lon": 88.1980600,
+  "tags": {
+    "addr:district": "Darjiling",
+    "addr:full": "Near Pwd Bunglow, Chainpuray Hospital Line",
+    "addr:postcode": "734201",
+    "addr:state": "West Bengal",
+    "addr:subdistrict": "Darjeeling Pulbazar",
+    "amenity": "hospital",
+    "name": "Bijanbari Rural Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097179,
+  "lat": 27.3271420,
+  "lon": 88.2866980,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:full": "Tashiding",
+    "addr:postcode": "737111",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Tashiding Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097183,
+  "lat": 27.1712753,
+  "lon": 88.3750115,
+  "tags": {
+    "addr:district": "South Sikkim",
+    "addr:full": "Namchi",
+    "addr:postcode": "737126",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "District Hospital",
+    "name:ne": "जिल्ला अस्पताल",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097189,
+  "lat": 27.7296019,
+  "lon": 88.5508921,
+  "tags": {
+    "addr:district": "North Sikkim",
+    "addr:full": "Gurudongmar Road",
+    "addr:postcode": "737120",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Lachen Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097191,
+  "lat": 27.2276025,
+  "lon": 88.4955880,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "Sikkim",
+    "addr:postcode": "737134",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Baidhya Ayurvedic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097197,
+  "lat": 27.4908780,
+  "lon": 88.5318770,
+  "tags": {
+    "addr:district": "North Sikkim",
+    "addr:full": "Mangan",
+    "addr:postcode": "737116",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Mangan District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097198,
+  "lat": 27.3148170,
+  "lon": 88.5970160,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "Tadong, Gangtok",
+    "addr:postcode": "737102",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097203,
+  "lat": 27.2436348,
+  "lon": 88.5987252,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "Pakyong",
+    "addr:postcode": "737106",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "STNM Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097209,
+  "lat": 27.2895730,
+  "lon": 88.2454480,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:full": "Geyzing",
+    "addr:postcode": "737111",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "50 Bedded Ayush Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7666886934,
+  "lat": 27.0859750,
+  "lon": 88.2583660,
+  "tags": {
+    "addr:district": "Darjeeling",
+    "addr:full": "Darjeeling - Jorethang Road, Tukvar Tea Garden",
+    "addr:postcode": "734104",
+    "addr:state": "West Bengal",
+    "amenity": "hospital",
+    "name": "Tukvar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 11611348610,
+  "lat": 27.1739834,
+  "lon": 88.3234648,
+  "tags": {
+    "addr:street": "Central Park, Namchi-Manpur Rd, Namchi, Sikkim 737126, India",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Paksam Namchi"
+  }
+},
+{
+  "type": "way",
+  "id": 348885962,
+  "center": {
+    "lat": 27.0445161,
+    "lon": 88.2647213
+  },
+  "nodes": [
+    13319152444,
+    13319152443,
+    3549322426,
+    13319152442,
+    3549322427,
+    13319152441,
+    3549322429,
+    3549322428,
+    13319152440,
+    13319152439,
+    13319152438,
+    3549322430,
+    13319152437,
+    3549322425,
+    13319152436,
+    13319152435,
+    13319152444
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Eden Hospital",
+    "operator:type": "public"
+  }
+},
+{
+  "type": "way",
+  "id": 349556187,
+  "center": {
+    "lat": 27.3466714,
+    "lon": 88.6026462
+  },
+  "nodes": [
+    3554050125,
+    3554050121,
+    3554050115,
+    3554050103,
+    3554050097,
+    3554050108,
+    3554050117,
+    3554050135,
+    3554050138,
+    3554050144,
+    3554050143,
+    3554050137,
+    3554050128,
+    3554050125
+  ],
+  "tags": {
+    "addr:full": "NH-31A, Sochaygang, Gangtok, Sikkim, 737101, India",
+    "ambulance": "yes",
+    "amenity": "hospital",
+    "beds": "1002",
+    "description": "Major government hospital in northeast India, NABH accredited, advanced ICUs, operation theaters, round-the-clock emergency, spacious wards, diagnostics, and modern pharmacy. Tele-consultation available.",
+    "emergency": "yes",
+    "fax": "09845562399",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;surgery;cardiology;pediatrics;urology;nephrology;radiology;pediatry;maternity;intensive_care;blood_donation",
+    "image": "https://stnmhospital.com/static/images/hospital-exterior.jpg",
+    "internet_access": "yes",
+    "laboratory": "yes",
+    "language:en": "yes",
+    "language:hi": "yes",
+    "language:ne": "yes",
+    "name": "STNM Hospital",
+    "official_name": "Sir Thutob Namgyal Memorial Hospital",
+    "opening_hours": "24/7",
+    "operator": "Government of Sikkim",
+    "operator:type": "government",
+    "parking": "yes",
+    "pharmacy": "yes",
+    "phone": "+919845562399;+913592-202944",
+    "staff_count": "398",
+    "website": "http://sikkimhealth.gov.in/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 503713625,
+  "center": {
+    "lat": 27.1270754,
+    "lon": 88.8757319
+  },
+  "nodes": [
+    4939911409,
+    4939911404,
+    4939911403,
+    4939911402,
+    4939911409
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "contact:email": "tchoden@samtse.gov.bt",
+    "contact:phone": "+975 17708958",
+    "healthcare": "hospital",
+    "name": "Tendu BHU",
+    "operator": "Thinley Choden (DHO)"
+  }
+},
+{
+  "type": "way",
+  "id": 815289057,
+  "center": {
+    "lat": 27.3237393,
+    "lon": 88.3215659
+  },
+  "nodes": [
+    7615088365,
+    7615088362,
+    7615088363,
+    7615088364,
+    7615088365
+  ],
+  "tags": {
+    "addr:district": "South Sikkim",
+    "addr:full": "Sikkim",
+    "addr:postcode": "737139",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "building": "yes",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 880965330,
+  "center": {
+    "lat": 27.1327591,
+    "lon": 88.1215960
+  },
+  "nodes": [
+    8193787086,
+    8193787085,
+    8193787084,
+    8193787083,
+    8193787086
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1122944398,
+  "center": {
+    "lat": 27.1257776,
+    "lon": 88.8473804
+  },
+  "nodes": [
+    10270044712,
+    10270044709,
+    10270044710,
+    10270044711,
+    10270044712
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "contact:email": "tchoden@samtse.gov.bt",
+    "contact:phone": "+975 17708958",
+    "healthcare": "hospital",
+    "name": "Bara BHU",
+    "operator": "Thinley Choden (DHO)"
+  }
+},
+{
+  "type": "way",
+  "id": 1128379703,
+  "center": {
+    "lat": 27.0474710,
+    "lon": 88.8978424
+  },
+  "nodes": [
+    10316134967,
+    10316134966,
+    10316134965,
+    10316134964,
+    10316134967
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "contact:email": "tchoden@samtse.gov.bt",
+    "contact:phone": "+975 17708958",
+    "healthcare": "hospital",
+    "name": "Pemaling BHU",
+    "operator": "Thinley Choden (DHO)"
+  }
+},
+{
+  "type": "way",
+  "id": 1155453376,
+  "center": {
+    "lat": 27.0351803,
+    "lon": 88.8836586
+  },
+  "nodes": [
+    10315986791,
+    10315986790,
+    10315986789,
+    10315986792,
+    10315986791
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "Sibsoo Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1229236232,
+  "center": {
+    "lat": 27.3313882,
+    "lon": 88.6135632
+  },
+  "nodes": [
+    11399717713,
+    11399717714,
+    13190097092,
+    11399717715,
+    11399717716,
+    11399717717,
+    11399717713
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1265651908,
+  "center": {
+    "lat": 27.3088197,
+    "lon": 88.3649865
+  },
+  "nodes": [
+    11756711383,
+    11756711382,
+    11756711381,
+    11756711380,
+    11756711379,
+    11756711378,
+    11756711377,
+    11756711376,
+    11756711375,
+    11756711374,
+    11756711373,
+    11756711372,
+    11756711371,
+    11756711370,
+    11756711369,
+    11756711268,
+    11756711383
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "yes",
+    "name": "Health & Wellness Center",
+    "operator": "gouvernement"
+  }
+},
+{
+  "type": "node",
+  "id": 4925330128,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6493516285,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:postcode": "737113",
+    "addr:state": "Sikkim",
+    "addr:subdistrict": "Gyalshing",
+    "amenity": "hospital",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "locality": "Yuksam",
+    "name": "Yuksam, PHC",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6902545405,
+  "tags": {
+    "addr:city": "Namchi",
+    "addr:district": "South Sikkim",
+    "addr:full": "Namchi District Hospital, Hospital Road, Namchi",
+    "addr:postcode": "737126",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "contact:mobile": "7797895320",
+    "contact:phone": "3595264544",
+    "email": "anjurai100@gmail.com",
+    "healthcare": "hospital",
+    "name": "Government General Hospital Blood Bank - Namchi",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120518,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "5Th Mile Tadong, Gangtok",
+    "addr:postcode": "737101",
+    "addr:state": "Sikkim",
+    "ambulance": "yes",
+    "amenity": "hospital",
+    "beds": "550",
+    "description": "Multi-specialty, NABH-accredited hospital with 24/7 emergency, advanced ICUs (ICU, SICU, NICU, PICU, CCU, NSICU, ITU), world-class diagnostics, and digital imaging (first in Sikkim with PACS), attached to Sikkim Manipal University",
+    "emergency": "yes",
+    "fax": "231162",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;surgery;cardiology;neurosurgery;gastroenterology;blood_donation;maternity;pediatric;radiology;intensive_care",
+    "internet_access": "yes",
+    "laboratory": "yes",
+    "language:en": "yes",
+    "language:hi": "yes",
+    "name": "Central Referral Hospital",
+    "official_name": "Central Referral Hospital (A Constituent Unit Of Sikkim Manipal University)",
+    "opening_hours": "24/7",
+    "operator": "Sikkim Manipal University",
+    "operator:type": "private",
+    "parking": "yes",
+    "pharmacy": "yes",
+    "phone": "18001202114",
+    "staff_count:doctors": "76",
+    "website": "https://smu.edu.in/crh/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120519,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "SMIMS, 5th Mile, Tadong,East Sikkim",
+    "addr:postcode": "737102",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sikkim Manipal Institute of Medical Sciences",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "www.smims.smu.edu.in"
+  }
+},
+{
+  "type": "node",
+  "id": 7065473741,
+  "tags": {
+    "addr:district": "Darjeeling",
+    "addr:full": "Guruji Pranami Mission Trust,10th Mile, Kalimpong",
+    "addr:postcode": "734301",
+    "addr:state": "West Bengal",
+    "amenity": "hospital",
+    "name": "Seva Sadan Hospital, Darjeeling",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7118826339,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:postcode": "737111",
+    "addr:state": "Sikkim",
+    "addr:subdistrict": "Geyzing",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Geyzing",
+    "name": "Geyzing District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7118826340,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:postcode": "737134",
+    "addr:state": "Sikkim",
+    "addr:street": "Singtam District Hospital",
+    "addr:subdistrict": "Gangtok",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Singtam",
+    "name": "Singtam District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7199769364,
+  "tags": {
+    "addr:district": "Darjiling",
+    "addr:full": "Near Pwd Bunglow, Chainpuray Hospital Line",
+    "addr:postcode": "734201",
+    "addr:state": "West Bengal",
+    "addr:subdistrict": "Darjeeling Pulbazar",
+    "amenity": "hospital",
+    "name": "Bijanbari Rural Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097179,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:full": "Tashiding",
+    "addr:postcode": "737111",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Tashiding Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097183,
+  "tags": {
+    "addr:district": "South Sikkim",
+    "addr:full": "Namchi",
+    "addr:postcode": "737126",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "District Hospital",
+    "name:ne": "जिल्ला अस्पताल",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097189,
+  "tags": {
+    "addr:district": "North Sikkim",
+    "addr:full": "Gurudongmar Road",
+    "addr:postcode": "737120",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Lachen Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097191,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "Sikkim",
+    "addr:postcode": "737134",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Baidhya Ayurvedic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097197,
+  "tags": {
+    "addr:district": "North Sikkim",
+    "addr:full": "Mangan",
+    "addr:postcode": "737116",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Mangan District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097198,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "Tadong, Gangtok",
+    "addr:postcode": "737102",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "Government Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097203,
+  "tags": {
+    "addr:district": "East Sikkim",
+    "addr:full": "Pakyong",
+    "addr:postcode": "737106",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "STNM Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7615097209,
+  "tags": {
+    "addr:district": "West Sikkim",
+    "addr:full": "Geyzing",
+    "addr:postcode": "737111",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "name": "50 Bedded Ayush Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7666886934,
+  "tags": {
+    "addr:district": "Darjeeling",
+    "addr:full": "Darjeeling - Jorethang Road, Tukvar Tea Garden",
+    "addr:postcode": "734104",
+    "addr:state": "West Bengal",
+    "amenity": "hospital",
+    "name": "Tukvar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 11611348610,
+  "tags": {
+    "addr:street": "Central Park, Namchi-Manpur Rd, Namchi, Sikkim 737126, India",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Paksam Namchi"
+  }
+},
+{
+  "type": "way",
+  "id": 348885962,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Eden Hospital",
+    "operator:type": "public"
+  }
+},
+{
+  "type": "way",
+  "id": 349556187,
+  "tags": {
+    "addr:full": "NH-31A, Sochaygang, Gangtok, Sikkim, 737101, India",
+    "ambulance": "yes",
+    "amenity": "hospital",
+    "beds": "1002",
+    "description": "Major government hospital in northeast India, NABH accredited, advanced ICUs, operation theaters, round-the-clock emergency, spacious wards, diagnostics, and modern pharmacy. Tele-consultation available.",
+    "emergency": "yes",
+    "fax": "09845562399",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;surgery;cardiology;pediatrics;urology;nephrology;radiology;pediatry;maternity;intensive_care;blood_donation",
+    "image": "https://stnmhospital.com/static/images/hospital-exterior.jpg",
+    "internet_access": "yes",
+    "laboratory": "yes",
+    "language:en": "yes",
+    "language:hi": "yes",
+    "language:ne": "yes",
+    "name": "STNM Hospital",
+    "official_name": "Sir Thutob Namgyal Memorial Hospital",
+    "opening_hours": "24/7",
+    "operator": "Government of Sikkim",
+    "operator:type": "government",
+    "parking": "yes",
+    "pharmacy": "yes",
+    "phone": "+919845562399;+913592-202944",
+    "staff_count": "398",
+    "website": "http://sikkimhealth.gov.in/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 503713625,
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "contact:email": "tchoden@samtse.gov.bt",
+    "contact:phone": "+975 17708958",
+    "healthcare": "hospital",
+    "name": "Tendu BHU",
+    "operator": "Thinley Choden (DHO)"
+  }
+},
+{
+  "type": "way",
+  "id": 815289057,
+  "tags": {
+    "addr:district": "South Sikkim",
+    "addr:full": "Sikkim",
+    "addr:postcode": "737139",
+    "addr:state": "Sikkim",
+    "amenity": "hospital",
+    "building": "yes",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 880965330,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1122944398,
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "contact:email": "tchoden@samtse.gov.bt",
+    "contact:phone": "+975 17708958",
+    "healthcare": "hospital",
+    "name": "Bara BHU",
+    "operator": "Thinley Choden (DHO)"
+  }
+},
+{
+  "type": "way",
+  "id": 1128379703,
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "contact:email": "tchoden@samtse.gov.bt",
+    "contact:phone": "+975 17708958",
+    "healthcare": "hospital",
+    "name": "Pemaling BHU",
+    "operator": "Thinley Choden (DHO)"
+  }
+},
+{
+  "type": "way",
+  "id": 1155453376,
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "Sibsoo Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1229236232,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1265651908,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "yes",
+    "name": "Health & Wellness Center",
+    "operator": "gouvernement"
+  }
+}
+
+  ]
+}

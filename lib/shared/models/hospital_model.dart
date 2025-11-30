@@ -333,27 +333,109 @@ class HospitalModel extends Equatable {
   }
 
   factory HospitalModel.fromJson(Map<String, dynamic> json) {
+    // Safe string extraction helper
+    String? safeString(dynamic value) {
+      if (value == null) return null;
+      if (value is String) return value.isEmpty ? null : value;
+      return value.toString();
+    }
+
+    // Safe string extraction with fallback
+    String safeStringWithDefault(dynamic value, String defaultValue) {
+      final str = safeString(value);
+      return str ?? defaultValue;
+    }
+
+    // Safe double extraction
+    double? safeDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is num) return value.toDouble();
+      final parsed = double.tryParse(value.toString());
+      return parsed;
+    }
+
+    // Safe bool extraction
+    bool? safeBool(dynamic value) {
+      if (value == null) return null;
+      if (value is bool) return value;
+      if (value is String) {
+        final lower = value.toLowerCase();
+        if (lower == 'true' || lower == '1') return true;
+        if (lower == 'false' || lower == '0') return false;
+      }
+      if (value is int) return value != 0;
+      return null;
+    }
+
+    // Handle trauma level from database (integer 1-3) or string
+    TraumaLevel? parseTraumaLevel(dynamic value) {
+      if (value == null) return null;
+      if (value is int) {
+        switch (value) {
+          case 1:
+            return TraumaLevel.levelOne;
+          case 2:
+            return TraumaLevel.levelTwo;
+          case 3:
+            return TraumaLevel.levelThree;
+          default:
+            return null;
+        }
+      }
+      return TraumaLevel.fromString(value.toString());
+    }
+
+    // Parse hospital type from database values
+    HospitalType parseHospitalType(String? value) {
+      if (value == null) return HospitalType.general;
+      switch (value.toLowerCase()) {
+        case 'government':
+        case 'private':
+        case 'trust':
+        case 'military':
+          return HospitalType.general; // Map all to general for now
+        case 'emergency':
+          return HospitalType.emergency;
+        case 'trauma':
+          return HospitalType.traumaCenter;
+        default:
+          return HospitalType.general;
+      }
+    }
+
     return HospitalModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      address: json['address'] as String,
-      city: json['city'] as String,
-      state: json['state'] as String,
-      country: json['country'] as String? ?? 'USA',
-      postalCode: json['postal_code'] as String?,
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
-      phoneNumber: json['phone_number'] as String?,
-      emergencyPhone: json['emergency_phone'] as String?,
-      website: json['website'] as String?,
-      email: json['email'] as String?,
-      type: HospitalType.fromString(json['type'] as String),
-      capacity: json['capacity'] as int?,
-      hasEmergencyRoom: json['has_emergency_room'] as bool? ?? true,
-      hasTraumaCenter: json['has_trauma_center'] as bool? ?? false,
-      traumaLevel: TraumaLevel.fromString(json['trauma_level'] as String?),
-      acceptsAmbulance: json['accepts_ambulance'] as bool? ?? true,
-      is24_7: json['is_24_7'] as bool? ?? true,
+      id: safeStringWithDefault(json['id'], ''),
+      name: safeStringWithDefault(json['name'], 'Unknown Hospital'),
+      address: safeStringWithDefault(json['address'], 'Unknown Address'),
+      city: safeStringWithDefault(json['city'], 'Unknown City'),
+      state: safeStringWithDefault(json['state'], 'Unknown State'),
+      country: safeStringWithDefault(json['country'], 'India'),
+      postalCode: safeString(json['postal_code']) ?? safeString(json['pincode']),
+      latitude: safeDouble(json['latitude']) ?? 0.0,
+      longitude: safeDouble(json['longitude']) ?? 0.0,
+      // Handle both 'phone' (DB) and 'phone_number' (old format)
+      phoneNumber: safeString(json['phone_number']) ?? safeString(json['phone']),
+      emergencyPhone: safeString(json['emergency_phone']),
+      website: safeString(json['website']),
+      email: safeString(json['email']),
+      // Parse hospital_type from database
+      type: parseHospitalType(safeString(json['type']) ?? safeString(json['hospital_type'])),
+      // Map total_beds to capacity
+      capacity: json['capacity'] as int? ?? json['total_beds'] as int?,
+      // Handle both has_emergency (DB) and has_emergency_room (old format)
+      hasEmergencyRoom: safeBool(json['has_emergency_room']) ??
+                        safeBool(json['has_emergency']) ??
+                        true,
+      hasTraumaCenter: safeBool(json['has_trauma_center']) ??
+                       (json['trauma_level'] != null),
+      traumaLevel: parseTraumaLevel(json['trauma_level']),
+      // Handle both has_ambulance (DB) and accepts_ambulance (old format)
+      acceptsAmbulance: safeBool(json['accepts_ambulance']) ??
+                        safeBool(json['has_ambulance']) ??
+                        true,
+      is24_7: safeBool(json['is_24_7']) ?? true,
       openingHours: json['opening_hours'] as Map<String, dynamic>?,
       services: (json['services'] as List<dynamic>?)
               ?.map((e) => e.toString())
@@ -363,18 +445,22 @@ class HospitalModel extends Equatable {
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null,
+      rating: safeDouble(json['rating']),
       totalReviews: json['total_reviews'] as int? ?? 0,
-      isActive: json['is_active'] as bool? ?? true,
-      isVerified: json['is_verified'] as bool? ?? false,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      isActive: safeBool(json['is_active']) ??
+                safeBool(json['is_operational']) ??
+                true,
+      isVerified: safeBool(json['is_verified']) ??
+                  safeBool(json['verified']) ??
+                  false,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
       updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
+          ? DateTime.tryParse(json['updated_at'].toString())
           : null,
       metadata: json['metadata'] as Map<String, dynamic>?,
-      distanceKm: json['distance_km'] != null
-          ? (json['distance_km'] as num).toDouble()
-          : null,
+      distanceKm: safeDouble(json['distance_km']),
     );
   }
 

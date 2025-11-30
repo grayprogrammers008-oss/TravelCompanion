@@ -145,6 +145,8 @@ class NearestHospitalsWidget extends ConsumerWidget {
 
   Widget _buildHospitalsList(BuildContext context, List<HospitalModel> hospitals) {
     return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       itemCount: hospitals.length,
       separatorBuilder: (context, index) => const SizedBox(height: AppTheme.spacingMd),

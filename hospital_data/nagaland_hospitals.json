@@ -1,0 +1,3408 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-11-30T12:38:26Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1987734179,
+  "lat": 26.7575886,
+  "lon": 94.2015550,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjivani Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2383182545,
+  "lat": 26.7490914,
+  "lon": 94.1774577,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "IMSR"
+  }
+},
+{
+  "type": "node",
+  "id": 2686563541,
+  "lat": 26.3240761,
+  "lon": 94.5217855,
+  "tags": {
+    "amenity": "hospital",
+    "designation": "Private Clinic",
+    "emergency": "no",
+    "name": "Modern Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 2689917278,
+  "lat": 26.3243522,
+  "lon": 94.5177439,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Doctor's Clinic & Mediciner"
+  }
+},
+{
+  "type": "node",
+  "id": 2696256995,
+  "lat": 26.3253666,
+  "lon": 94.5224108,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Impur Mission Hospital Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 4101022014,
+  "lat": 26.5068894,
+  "lon": 94.4130927,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Govt Dispensary"
+  }
+},
+{
+  "type": "node",
+  "id": 5074262121,
+  "lat": 26.3933509,
+  "lon": 94.5331556,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Community Health Centre",
+    "name:en": "Community Health Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 6255128239,
+  "lat": 25.8602360,
+  "lon": 93.7804314,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "4Th Mile, Dimapur, P.O. Artc, Post Box - 31",
+    "addr:postcode": "797115",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "CHIS (referal hospital)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6255151466,
+  "lat": 25.8999432,
+  "lon": 93.7007122,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Eden Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6255303391,
+  "lat": 25.6694195,
+  "lon": 94.0960672,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Naga Hospital Authority, Hospital Colony, NH - 29",
+    "addr:postcode": "797001",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "email": "info@vision-studio.com",
+    "healthcare": "hospital",
+    "name": "Naga Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.nhos.symbios.co.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 6763195716,
+  "lat": 25.6688782,
+  "lon": 94.1056576,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Phool Bari",
+    "addr:postcode": "797001",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Oking Hospital And Research Clinic Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6905015648,
+  "lat": 25.8429968,
+  "lon": 93.4331672,
+  "tags": {
+    "addr:city": "Diphu",
+    "addr:district": "KARBI ANGLONG",
+    "addr:full": "Diphu, Karbi Anglong",
+    "addr:postcode": "782460",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:mobile": "9435066080",
+    "email": "bloodbank.karbianglong@gmail.com",
+    "healthcare": "hospital",
+    "name": "diphu cancer hodspital",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120471,
+  "lat": 25.9051075,
+  "lon": 93.7196231,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Old Sewak Road",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Faith Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120476,
+  "lat": 25.9161945,
+  "lon": 93.7476133,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Purana Bazar",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Zion Hospital and Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120485,
+  "lat": 26.2371121,
+  "lon": 94.8134185,
+  "tags": {
+    "addr:district": "Tuensang",
+    "addr:full": "Eleutheros Christian Society, Post Box No. 51",
+    "addr:postcode": "798612",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Eleutheros Christian Society Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120490,
+  "lat": 26.0149631,
+  "lon": 94.5262223,
+  "tags": {
+    "addr:district": "Zunheboto",
+    "addr:full": "Project Colony",
+    "addr:postcode": "798620",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Y. Rochill Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120501,
+  "lat": 25.9086408,
+  "lon": 93.7154670,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "P W D Road, Midland",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Nikos Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908445869,
+  "lat": 25.9140329,
+  "lon": 93.7164420,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Circular Road",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Metro Hospital, Dimapur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913038500,
+  "lat": 26.5106294,
+  "lon": 93.9658190,
+  "tags": {
+    "addr:city": "Golaghat",
+    "addr:district": "Golaghat",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "addr:street": "Hospital Road",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "gynaecology;general",
+    "name": "HGM Nursing Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913054790,
+  "lat": 26.7466487,
+  "lon": 94.2021123,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "At Road, Tarajan",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjivani Hospital, Jorhat",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288175,
+  "lat": 26.5914174,
+  "lon": 93.7494734,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Nrl Township. Post : Numaligarh Refinery Complex",
+    "addr:postcode": "785699",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Vivekananda Kendra-Nrl Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288176,
+  "lat": 26.5159925,
+  "lon": 93.9748279,
+  "tags": {
+    "addr:city": "Golaghat",
+    "addr:district": "Golaghat",
+    "addr:full": "Jagat Goswami Road",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "addr:street": "Jagat Goswami Road",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Lifeline Hospital and Research Centre",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288181,
+  "lat": 26.5947920,
+  "lon": 94.1924442,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Titabor",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Titabar SDC Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913293207,
+  "lat": 26.9977983,
+  "lon": 94.6198744,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "Jenganikatia, N H By Pass, Jenganikatia",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:phone": "3772222070",
+    "name": "Pragati Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913293208,
+  "lat": 26.9933470,
+  "lon": 94.6428274,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "A T Road, Ward No 13, Kanaknagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:phone": "3772222233",
+    "name": "Sampreeti Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913293283,
+  "lat": 26.9857955,
+  "lon": 94.6507171,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "B G Road",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:phone": "3772221066",
+    "name": "East Point Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882236,
+  "lat": 26.7238973,
+  "lon": 95.0287876,
+  "tags": {
+    "addr:block": "Mon",
+    "addr:district": "Mon",
+    "addr:postcode": "798621",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Mon Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Mon Town",
+    "name": "Mon, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882241,
+  "lat": 26.2529567,
+  "lon": 94.8178952,
+  "tags": {
+    "addr:district": "Tuensang",
+    "addr:landmark": "Near Chuchem Lashong (Church)",
+    "addr:postcode": "798612",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Tuensang Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Tuensang Town",
+    "name": "Tuensang, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882248,
+  "lat": 25.8826359,
+  "lon": 94.7815880,
+  "tags": {
+    "addr:block": "Kiphire",
+    "addr:district": "Kiphire",
+    "addr:landmark": "Rural",
+    "addr:postcode": "798611",
+    "addr:state": "Nagaland",
+    "addr:street": "Medical Colony",
+    "addr:subdistrict": "Kiphire Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Medical Colony",
+    "name": "Kiphire, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882252,
+  "lat": 26.4929778,
+  "lon": 94.8042633,
+  "tags": {
+    "addr:block": "Longleng",
+    "addr:district": "Longleng",
+    "addr:postcode": "798625",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Longleng",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Longleng Town",
+    "name": "Longleng, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882264,
+  "lat": 25.9049590,
+  "lon": 93.7315230,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:landmark": "Behind SBI main branch",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Dimapur Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Medical Colony",
+    "name": "District Hospital, Dimapur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882272,
+  "lat": 26.0030617,
+  "lon": 94.5236166,
+  "tags": {
+    "addr:block": "Zunheboto",
+    "addr:district": "Zunheboto",
+    "addr:postcode": "798620",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Zunheboto Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Medical colony",
+    "name": "Zunheboto, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882279,
+  "lat": 25.7627400,
+  "lon": 93.8844550,
+  "tags": {
+    "addr:block": "Medziphema",
+    "addr:district": "Dimapur",
+    "addr:landmark": "Near NH-29",
+    "addr:postcode": "797106",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Medziphema",
+    "amenity": "hospital",
+    "contact:phone": "+91-3862289639",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "locality": "Ward-1, Medziphema Town",
+    "name": "CHC, Medziphema",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882283,
+  "lat": 25.5354667,
+  "lon": 93.7352403,
+  "tags": {
+    "addr:block": "Peren",
+    "addr:district": "Peren",
+    "addr:landmark": "Near Government High School, Peren",
+    "addr:postcode": "797101",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Peren",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Peren Town",
+    "name": "Peren, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882296,
+  "lat": 26.2004719,
+  "lon": 95.0251042,
+  "tags": {
+    "addr:block": "Noklak",
+    "addr:district": "Tuensang",
+    "addr:landmark": "Nokhu Road",
+    "addr:postcode": "798626",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Noklak",
+    "amenity": "hospital",
+    "locality": "New Medical Sector",
+    "name": "Govt. Hospital, Noklak",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745414,
+  "lat": 26.9712074,
+  "lon": 95.0899633,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "Towkok Grant No.2, Near Catholic Church",
+    "addr:postcode": "785690",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sonari",
+    "amenity": "hospital",
+    "name": "Manjushree Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745471,
+  "lat": 26.9860920,
+  "lon": 94.6338680,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "A.T Road, Joysagar, Sivasagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sibsagar",
+    "amenity": "hospital",
+    "contact:phone": "9435801979",
+    "description": "District Hospital",
+    "name": "Sibsagar Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745480,
+  "lat": 26.9943545,
+  "lon": 95.0709836,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "No.4, Towkok Grant No.2, Near Tea Factory",
+    "addr:postcode": "785690",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sonari",
+    "amenity": "hospital",
+    "name": "Towkok Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745509,
+  "lat": 26.8809204,
+  "lon": 93.7538581,
+  "tags": {
+    "addr:district": "Sonitpur",
+    "addr:full": "Kalabari Model Hospital, , Vill-Bamungaon, Near Difalusatra Sub Post Office",
+    "addr:postcode": "784169",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Gohpur",
+    "amenity": "hospital",
+    "name": "Kalabari Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745518,
+  "lat": 26.9666701,
+  "lon": 93.8661852,
+  "tags": {
+    "addr:district": "Lakhimpur",
+    "addr:full": "Narayanpur Bihpuria Road",
+    "addr:postcode": "784164",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Narayanpur Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153254922,
+  "lat": 26.4499040,
+  "lon": 94.1326737,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Borholla, Assam",
+    "addr:postcode": "785631",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Titabor",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "CHC, Borholla",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153254935,
+  "lat": 26.1961824,
+  "lon": 93.9295837,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Kachomari, Girjaghar",
+    "addr:postcode": "785601",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sarupathar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Kachomari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153254992,
+  "lat": 26.4256728,
+  "lon": 94.1294188,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "urangial, borholla, Titabor",
+    "addr:postcode": "785631",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Titabor",
+    "amenity": "hospital",
+    "name": "Urangial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386677,
+  "lat": 26.6456268,
+  "lon": 94.1876136,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Borsoikata Gohain Gaon Road, Sonari Gaon",
+    "addr:postcode": "785630",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Jalukanibari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386687,
+  "lat": 26.7591560,
+  "lon": 94.5661610,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "Near Satsang Kendra, Amguri Grant",
+    "addr:postcode": "785681",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Amguri",
+    "amenity": "hospital",
+    "name": "Amgoori Tea Estate Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386707,
+  "lat": 26.6003726,
+  "lon": 93.9488146,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Aka path, charingia gaon, Near Maidamoni charingia L.P. school",
+    "addr:postcode": "785622",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Golaghat",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "Charingia CHC",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386806,
+  "lat": 26.8352270,
+  "lon": 94.4086004,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "AT Road, Near SDC Office, Teok",
+    "addr:postcode": "785112",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sonari",
+    "amenity": "hospital",
+    "description": "First Referral Unit",
+    "name": "FRU, Teok",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386838,
+  "lat": 26.7837630,
+  "lon": 94.6148137,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "Namti Grant, Near Durga Mandir, Borsillah",
+    "addr:postcode": "785680",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Nazira",
+    "amenity": "hospital",
+    "name": "Borsillah Tea Estate Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386874,
+  "lat": 26.6417920,
+  "lon": 93.5986970,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Kalakhowa",
+    "addr:postcode": "785612",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Bokakhat",
+    "amenity": "hospital",
+    "name": "Swahid Kamala Miri Civil Hospital Bokakhat",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386890,
+  "lat": 26.6970438,
+  "lon": 93.8207510,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Dusutimukh GP",
+    "addr:postcode": "785611",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Khumtai",
+    "amenity": "hospital",
+    "name": "Dusutimukh hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386892,
+  "lat": 26.8010210,
+  "lon": 93.3480820,
+  "tags": {
+    "addr:district": "Sonitpur",
+    "addr:full": "Rangsali-Bedeti Road, Near Behali Police Station, Than Behali",
+    "addr:postcode": "784166",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Biswanath",
+    "amenity": "hospital",
+    "name": "Behali Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7532351007,
+  "lat": 26.9932360,
+  "lon": 94.6427050,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "Milon Nagar, Sivasagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Erc Eye Care Hub Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7532351019,
+  "lat": 26.9804987,
+  "lon": 94.6378242,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "Sivasagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Netra Jyoti Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578866,
+  "lat": 26.7669056,
+  "lon": 94.2071066,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Jb Road, Macharhaat, Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "City Orthopaedic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578869,
+  "lat": 26.5096254,
+  "lon": 93.9642533,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Golaghat",
+    "addr:postcode": "785702",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "K.K.Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578916,
+  "lat": 26.7621573,
+  "lon": 94.2080630,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Old Circuit House Road, Malow Ali, Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chandraprabha Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578917,
+  "lat": 26.5121084,
+  "lon": 93.9673357,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "As Sh 34, Magistrate Colony, Golaghat",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "KKC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578931,
+  "lat": 26.7385005,
+  "lon": 94.2010669,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Barbheta, Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mission Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7588412954,
+  "lat": 25.2855010,
+  "lon": 94.0301720,
+  "tags": {
+    "addr:district": "Senapati",
+    "addr:full": "Senapati",
+    "addr:postcode": "795007",
+    "addr:state": "Manipur",
+    "amenity": "hospital",
+    "name": "District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502531,
+  "lat": 26.3309630,
+  "lon": 94.5309940,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "Mokokchung-Amguri Road, Sungkomen,",
+    "addr:postcode": "798601",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Lenjem Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502538,
+  "lat": 25.5734942,
+  "lon": 94.3047665,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Pfutsero",
+    "addr:postcode": "797107",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502539,
+  "lat": 25.9066270,
+  "lon": 93.7312530,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Civil Hospital Colony",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "City Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502541,
+  "lat": 26.2704552,
+  "lon": 94.4469613,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "2nd NAP Battalion, Alichen",
+    "addr:postcode": "798601",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Unit Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502542,
+  "lat": 26.2057603,
+  "lon": 94.2004138,
+  "tags": {
+    "addr:district": "Wokha",
+    "addr:full": "Sanis",
+    "addr:postcode": "797100",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Sanis Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502546,
+  "lat": 25.5242888,
+  "lon": 94.1308005,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Khuzama",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Khuzama T.B. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502552,
+  "lat": 26.3176018,
+  "lon": 94.5094781,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "Mokokchung",
+    "addr:postcode": "798601",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Assamrifle Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502553,
+  "lat": 25.8820969,
+  "lon": 94.7815154,
+  "tags": {
+    "addr:district": "Kiphire",
+    "addr:full": "Kiphire",
+    "addr:postcode": "798611",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502559,
+  "lat": 25.9055101,
+  "lon": 93.7500946,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Purana Baza",
+    "addr:postcode": "797116",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Dimapur Hospital and Research Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502562,
+  "lat": 26.0919460,
+  "lon": 94.2577520,
+  "tags": {
+    "addr:district": "Wokha",
+    "addr:full": "Wokha",
+    "addr:postcode": "797111",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "N.Ezung Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502565,
+  "lat": 25.6928850,
+  "lon": 94.4557927,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Phek",
+    "addr:postcode": "797108",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Assamrifle Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502568,
+  "lat": 25.9142282,
+  "lon": 93.7096698,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Fellowship Road, Fellowship Colony",
+    "addr:postcode": "797113",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fellowship Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502572,
+  "lat": 25.5381468,
+  "lon": 94.2289530,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Zuketsa",
+    "addr:postcode": "797107",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Zuketsa Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502573,
+  "lat": 25.9085790,
+  "lon": 93.7165530,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "PWD Road, Midland",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Nagaland Multispeciality Hospital & Research Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502575,
+  "lat": 25.5925140,
+  "lon": 94.1894160,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Kohima",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Kezocha Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502576,
+  "lat": 26.0702460,
+  "lon": 94.8759340,
+  "tags": {
+    "addr:district": "Tuensang",
+    "addr:full": "Sampurre",
+    "addr:postcode": "798612",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Shamator Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502578,
+  "lat": 25.7327640,
+  "lon": 94.1080140,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Thizama",
+    "addr:postcode": "797004",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Regimental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502587,
+  "lat": 25.7227121,
+  "lon": 94.3242418,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Chozuba",
+    "addr:postcode": "797104",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "General Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502588,
+  "lat": 25.8872853,
+  "lon": 93.7556933,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Darogapathar",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Olive Christian Hospital and Reserch Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502589,
+  "lat": 26.7219386,
+  "lon": 95.0289195,
+  "tags": {
+    "addr:district": "Mon",
+    "addr:full": "Near Ao Baptist Church",
+    "addr:postcode": "798621",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Rapha Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502593,
+  "lat": 25.9097390,
+  "lon": 93.7122970,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Landmark Colony",
+    "addr:postcode": "797113",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "JK Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502598,
+  "lat": 25.4816237,
+  "lon": 93.7887183,
+  "tags": {
+    "addr:district": "Peren",
+    "addr:full": "Nagaland",
+    "addr:postcode": "797101",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "New Puilwa Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502599,
+  "lat": 25.6448895,
+  "lon": 94.1032895,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Tekhuba",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Kohima Mental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502600,
+  "lat": 26.8972914,
+  "lon": 95.0894333,
+  "tags": {
+    "addr:district": "Mon",
+    "addr:full": "Mon",
+    "addr:postcode": "798602",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Unit Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502604,
+  "lat": 25.8013770,
+  "lon": 93.7849510,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Chumukeidma",
+    "addr:postcode": "797103",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Referral Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502613,
+  "lat": 26.7142848,
+  "lon": 94.6351003,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "Tzudikong",
+    "addr:postcode": "798623",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "NPPC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502615,
+  "lat": 25.8103371,
+  "lon": 94.8451780,
+  "tags": {
+    "addr:district": "Kiphire",
+    "addr:full": "Pungro Town",
+    "addr:postcode": "798611",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502620,
+  "lat": 25.9083545,
+  "lon": 93.7035979,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Dobhinalla Road, Near State Bank, Duncan Basti",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Shamrock Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7858159624,
+  "lat": 25.4455527,
+  "lon": 94.9547494,
+  "tags": {
+    "amenity": "hospital",
+    "beds": "25",
+    "healthcare": "hospital",
+    "name": "လေရှီးမြို့နယ်ဆေးရုံ",
+    "name:en": "Lay Shi Township Hospital",
+    "name:my": "လေရှီးမြို့နယ်ဆေးရုံ",
+    "pcode": "MMR005035",
+    "source": "Importing non-sensitive public hospital data from MIMU, ESRI"
+  }
+},
+{
+  "type": "node",
+  "id": 8205237694,
+  "lat": 25.6036868,
+  "lon": 94.1225184,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Zakhama",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Government Hospital, Zakhama",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9376210530,
+  "lat": 25.8319306,
+  "lon": 93.4301196,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Diphu Medical College"
+  }
+},
+{
+  "type": "node",
+  "id": 9378909936,
+  "lat": 25.8483799,
+  "lon": 93.4457832,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Rengpoli Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 9404347698,
+  "lat": 25.9178545,
+  "lon": 93.4412065,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Catholic Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 9463171417,
+  "lat": 26.6721971,
+  "lon": 94.3079145,
+  "tags": {
+    "addr:city": "Jorhat",
+    "addr:district": "Jorhat",
+    "addr:postcode": "785634",
+    "addr:province": "Assam",
+    "addr:state": "AS",
+    "addr:street": "Jorhat Mariani Road",
+    "addr:suburb": "Katonibari",
+    "amenity": "hospital",
+    "name": "Katonibari T.E. Hospital",
+    "opening_hours": "Mo-Fr 09:00-15:00"
+  }
+},
+{
+  "type": "node",
+  "id": 10248459009,
+  "lat": 25.6556899,
+  "lon": 94.0990558,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kohima Diagnostic Center"
+  }
+},
+{
+  "type": "node",
+  "id": 10285608845,
+  "lat": 26.7319159,
+  "lon": 94.2210406,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. J.K. Saikia Homeopathic Medical College & Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11351332651,
+  "lat": 26.7538629,
+  "lon": 94.2029298,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ONGC Medical Section Jorhat"
+  }
+},
+{
+  "type": "node",
+  "id": 11356598239,
+  "lat": 26.4555109,
+  "lon": 94.5520485,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 11356598277,
+  "lat": 26.4914860,
+  "lon": 94.8047989,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 11577200069,
+  "lat": 25.6949558,
+  "lon": 94.1232645,
+  "tags": {
+    "amenity": "hospital",
+    "email": "nimsrkohima@gmail.com",
+    "name": "Nagaland Institute of Medical Sciences and  Research (NIMSR)",
+    "opening_hours": "Mo-Su 09:00-16:00",
+    "operator": "Government of Nagaland",
+    "website": "https://nimsr.nagaland.gov.in"
+  }
+},
+{
+  "type": "node",
+  "id": 12350533315,
+  "lat": 25.8368818,
+  "lon": 93.4304437,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DMC main entrace gate"
+  }
+},
+{
+  "type": "node",
+  "id": 12723267921,
+  "lat": 26.5147076,
+  "lon": 95.1666063,
+  "tags": {
+    "amenity": "hospital",
+    "beds": "16",
+    "name": "ယမ်းကြုံးတိုက်နယ်ဆေးရုံ",
+    "name:en": "Yan Kyein Station Hospital",
+    "name:my": "ယမ်းကြုံးတိုက်နယ်ဆေးရုံ",
+    "pcode": "MMR005036",
+    "source": "Importing non-sensitive public hospital data from MIMU, ESRI"
+  }
+},
+{
+  "type": "node",
+  "id": 12723267924,
+  "lat": 25.3672316,
+  "lon": 94.6845329,
+  "tags": {
+    "amenity": "hospital",
+    "beds": "16",
+    "name": "ဆွမ္မရာတိုက်နယ်ဆေးရုံ",
+    "name:en": "Somra Station Hospital",
+    "name:my": "ဆွမ္မရာတိုက်နယ်ဆေးရုံ",
+    "pcode": "MMR005035",
+    "source": "Importing non-sensitive public hospital data from MIMU, ESRI"
+  }
+},
+{
+  "type": "way",
+  "id": 266142081,
+  "center": {
+    "lat": 26.3892027,
+    "lon": 94.5447714
+  },
+  "nodes": [
+    2717210926,
+    2717210892,
+    2717210916,
+    2717217391,
+    2717210920,
+    2717210924,
+    2717210896,
+    2717210927,
+    2717210914,
+    2717210906,
+    2717210912,
+    2717210926
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "name": "Impur Christian Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 358944929,
+  "center": {
+    "lat": 26.7422634,
+    "lon": 94.1960520
+  },
+  "nodes": [
+    3637673895,
+    3637673871,
+    3637673858,
+    3637673841,
+    3637673809,
+    3637673811,
+    3637673821,
+    3637673825,
+    3637673818,
+    3637673817,
+    3637673819,
+    3637673815,
+    3637673822,
+    3637673778,
+    3637673777,
+    3637673791,
+    3637673805,
+    3637673806,
+    3637673803,
+    3637673774,
+    3637673776,
+    3637673782,
+    3637673780,
+    3637673772,
+    3637673769,
+    3637673756,
+    3637673753,
+    3637673750,
+    3637673748,
+    3637673744,
+    3637673741,
+    3637673740,
+    3637673739,
+    3637673742,
+    3637673746,
+    3637673755,
+    3637673792,
+    3637673820,
+    3637673844,
+    3637673851,
+    3637673855,
+    3637673859,
+    3637673865,
+    3637673869,
+    3637673872,
+    3637673876,
+    3637673878,
+    3637673880,
+    3637673883,
+    3637673894,
+    3637673904,
+    3637673908,
+    3637673914,
+    3637673917,
+    3637673922,
+    3637673920,
+    3637673924,
+    3637673926,
+    3637673929,
+    3637673934,
+    3637673933,
+    3637673932,
+    3777733389,
+    3637673930,
+    3637673919,
+    3777733384,
+    3637673903,
+    3637673900,
+    3637673898,
+    3637673897,
+    3637673892,
+    3637673888,
+    3637673886,
+    3637673887,
+    3637673889,
+    3637673891,
+    3637673901,
+    3637673899,
+    3637673895
+  ],
+  "tags": {
+    "addr:city": "Jorhat",
+    "addr:district": "Jorhat",
+    "addr:full": "Konwar Path, Barbheta P.O.Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "addr:street": "Jail Road",
+    "amenity": "hospital",
+    "contact:nodal_officer_email": "drpbm29@gmail.com",
+    "contact:nodal_officer_mobile": "9435141989",
+    "email": "adinathsarmah@rediffmail.com; jmc-asm@nic.in",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Jorhat Medical College and Hospital(JMCH)",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "https://www.jmch.org.in/"
+  }
+},
+{
+  "type": "way",
+  "id": 666622185,
+  "center": {
+    "lat": 25.8700433,
+    "lon": 93.7598616
+  },
+  "nodes": [
+    6241411218,
+    6241411217,
+    6241411216,
+    6241411215,
+    6241411214,
+    6241411213,
+    6241411212,
+    6241410637,
+    6241411211,
+    6241411218
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "fixme": "extent",
+    "name": "Christian Institute of Health Sciences and Research Hospital",
+    "source": "GRID"
+  }
+},
+{
+  "type": "way",
+  "id": 735440614,
+  "center": {
+    "lat": 26.5099706,
+    "lon": 93.9650331
+  },
+  "nodes": [
+    6888435236,
+    6888435235,
+    6888435234,
+    7005410725,
+    7005410724,
+    7005410726,
+    6888435233,
+    6888435236
+  ],
+  "tags": {
+    "addr:city": "Golaghat",
+    "addr:district": "Golaghat",
+    "addr:full": "Civil Hospital road, Golaghat Town, Near Jt. DHS Office",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "addr:street": "Hospital Road",
+    "addr:subdistrict": "Golaghat",
+    "amenity": "hospital",
+    "building": "yes",
+    "building:levels": "3",
+    "check_date": "2025-09-13",
+    "description": "Government Hospital and Research Centre.",
+    "name": "Kushal Konwar (KK) Civil Hospital Complex",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 873120205,
+  "center": {
+    "lat": 25.7100201,
+    "lon": 94.4643706
+  },
+  "nodes": [
+    8130413699,
+    8130413698,
+    8130413697,
+    8130413696,
+    8130413695,
+    8130413694,
+    8130413693,
+    8130413692,
+    8130413691,
+    8130413690,
+    8130413689,
+    8130413688,
+    8130413687,
+    8130413686,
+    7100882268,
+    8130413685,
+    8130413684,
+    8130413683,
+    8130413682,
+    8130413699
+  ],
+  "tags": {
+    "addr:block": "Phek",
+    "addr:district": "Phek",
+    "addr:landmark": "Near Phek Town Baptist Church",
+    "addr:postcode": "797108",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Phek Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Phek Town",
+    "name": "Phek, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 873120206,
+  "center": {
+    "lat": 25.6860685,
+    "lon": 94.6267998
+  },
+  "nodes": [
+    8130413710,
+    8130413709,
+    7614502605,
+    8130413708,
+    8130413707,
+    8130413706,
+    8130413705,
+    8130413704,
+    8130413703,
+    8130413702,
+    8130413701,
+    8130413710
+  ],
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Meluri",
+    "addr:postcode": "797114",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1090894532,
+  "center": {
+    "lat": 26.0790996,
+    "lon": 94.2591204
+  },
+  "nodes": [
+    9991959220,
+    9991959219,
+    9991959218,
+    9991959217,
+    9991955516,
+    9991955515,
+    9991955514,
+    7100882297,
+    9991955513,
+    9991955512,
+    9991955511,
+    9991955510,
+    9991959220
+  ],
+  "tags": {
+    "addr:district": "Wokha",
+    "addr:full": "Dr.Motsou Memorial District Hospital",
+    "addr:postcode": "797111",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Wokha Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "hospital colony",
+    "name": "Wokha, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1117552898,
+  "center": {
+    "lat": 26.5894914,
+    "lon": 93.4096896
+  },
+  "nodes": [
+    10221101343,
+    10221101344,
+    10054342063,
+    10054342055,
+    567378313,
+    10221101345,
+    10221101346,
+    10221101343
+  ],
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1374150121,
+  "center": {
+    "lat": 25.3671026,
+    "lon": 94.6846564
+  },
+  "nodes": [
+    12723267857,
+    12723267856,
+    12723267855,
+    12723267854,
+    12723267853,
+    12723267852,
+    12723267851,
+    12723267850,
+    12723267857
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1374150125,
+  "center": {
+    "lat": 25.4455659,
+    "lon": 94.9547193
+  },
+  "nodes": [
+    12723267893,
+    12723267892,
+    12723267891,
+    12723267890,
+    12723267889,
+    12723267888,
+    12723267887,
+    12723267886,
+    12723267885,
+    12723267884,
+    12723267893
+  ],
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 1987734179,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjivani Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 2383182545,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "IMSR"
+  }
+},
+{
+  "type": "node",
+  "id": 2686563541,
+  "tags": {
+    "amenity": "hospital",
+    "designation": "Private Clinic",
+    "emergency": "no",
+    "name": "Modern Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 2689917278,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Doctor's Clinic & Mediciner"
+  }
+},
+{
+  "type": "node",
+  "id": 2696256995,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Impur Mission Hospital Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 4101022014,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "name": "Govt Dispensary"
+  }
+},
+{
+  "type": "node",
+  "id": 5074262121,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Community Health Centre",
+    "name:en": "Community Health Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 6255128239,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "4Th Mile, Dimapur, P.O. Artc, Post Box - 31",
+    "addr:postcode": "797115",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "CHIS (referal hospital)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6255151466,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Eden Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 6255303391,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Naga Hospital Authority, Hospital Colony, NH - 29",
+    "addr:postcode": "797001",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "email": "info@vision-studio.com",
+    "healthcare": "hospital",
+    "name": "Naga Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.nhos.symbios.co.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 6763195716,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Phool Bari",
+    "addr:postcode": "797001",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Oking Hospital And Research Clinic Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6905015648,
+  "tags": {
+    "addr:city": "Diphu",
+    "addr:district": "KARBI ANGLONG",
+    "addr:full": "Diphu, Karbi Anglong",
+    "addr:postcode": "782460",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:mobile": "9435066080",
+    "email": "bloodbank.karbianglong@gmail.com",
+    "healthcare": "hospital",
+    "name": "diphu cancer hodspital",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120471,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Old Sewak Road",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Faith Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120476,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Purana Bazar",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Zion Hospital and Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120485,
+  "tags": {
+    "addr:district": "Tuensang",
+    "addr:full": "Eleutheros Christian Society, Post Box No. 51",
+    "addr:postcode": "798612",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Eleutheros Christian Society Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120490,
+  "tags": {
+    "addr:district": "Zunheboto",
+    "addr:full": "Project Colony",
+    "addr:postcode": "798620",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Y. Rochill Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908120501,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "P W D Road, Midland",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Nikos Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6908445869,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Circular Road",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Metro Hospital, Dimapur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913038500,
+  "tags": {
+    "addr:city": "Golaghat",
+    "addr:district": "Golaghat",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "addr:street": "Hospital Road",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "gynaecology;general",
+    "name": "HGM Nursing Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913054790,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "At Road, Tarajan",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjivani Hospital, Jorhat",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288175,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Nrl Township. Post : Numaligarh Refinery Complex",
+    "addr:postcode": "785699",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Vivekananda Kendra-Nrl Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288176,
+  "tags": {
+    "addr:city": "Golaghat",
+    "addr:district": "Golaghat",
+    "addr:full": "Jagat Goswami Road",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "addr:street": "Jagat Goswami Road",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Lifeline Hospital and Research Centre",
+    "operator:type": "private",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913288181,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Titabor",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Titabar SDC Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913293207,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "Jenganikatia, N H By Pass, Jenganikatia",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:phone": "3772222070",
+    "name": "Pragati Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913293208,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "A T Road, Ward No 13, Kanaknagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:phone": "3772222233",
+    "name": "Sampreeti Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6913293283,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "B G Road",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "contact:phone": "3772221066",
+    "name": "East Point Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882236,
+  "tags": {
+    "addr:block": "Mon",
+    "addr:district": "Mon",
+    "addr:postcode": "798621",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Mon Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Mon Town",
+    "name": "Mon, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882241,
+  "tags": {
+    "addr:district": "Tuensang",
+    "addr:landmark": "Near Chuchem Lashong (Church)",
+    "addr:postcode": "798612",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Tuensang Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Tuensang Town",
+    "name": "Tuensang, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882248,
+  "tags": {
+    "addr:block": "Kiphire",
+    "addr:district": "Kiphire",
+    "addr:landmark": "Rural",
+    "addr:postcode": "798611",
+    "addr:state": "Nagaland",
+    "addr:street": "Medical Colony",
+    "addr:subdistrict": "Kiphire Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Medical Colony",
+    "name": "Kiphire, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882252,
+  "tags": {
+    "addr:block": "Longleng",
+    "addr:district": "Longleng",
+    "addr:postcode": "798625",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Longleng",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Longleng Town",
+    "name": "Longleng, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882264,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:landmark": "Behind SBI main branch",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Dimapur Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Medical Colony",
+    "name": "District Hospital, Dimapur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882272,
+  "tags": {
+    "addr:block": "Zunheboto",
+    "addr:district": "Zunheboto",
+    "addr:postcode": "798620",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Zunheboto Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Medical colony",
+    "name": "Zunheboto, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882279,
+  "tags": {
+    "addr:block": "Medziphema",
+    "addr:district": "Dimapur",
+    "addr:landmark": "Near NH-29",
+    "addr:postcode": "797106",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Medziphema",
+    "amenity": "hospital",
+    "contact:phone": "+91-3862289639",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "locality": "Ward-1, Medziphema Town",
+    "name": "CHC, Medziphema",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882283,
+  "tags": {
+    "addr:block": "Peren",
+    "addr:district": "Peren",
+    "addr:landmark": "Near Government High School, Peren",
+    "addr:postcode": "797101",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Peren",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Peren Town",
+    "name": "Peren, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7100882296,
+  "tags": {
+    "addr:block": "Noklak",
+    "addr:district": "Tuensang",
+    "addr:landmark": "Nokhu Road",
+    "addr:postcode": "798626",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Noklak",
+    "amenity": "hospital",
+    "locality": "New Medical Sector",
+    "name": "Govt. Hospital, Noklak",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745414,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "Towkok Grant No.2, Near Catholic Church",
+    "addr:postcode": "785690",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sonari",
+    "amenity": "hospital",
+    "name": "Manjushree Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745471,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "A.T Road, Joysagar, Sivasagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sibsagar",
+    "amenity": "hospital",
+    "contact:phone": "9435801979",
+    "description": "District Hospital",
+    "name": "Sibsagar Civil Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745480,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "No.4, Towkok Grant No.2, Near Tea Factory",
+    "addr:postcode": "785690",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sonari",
+    "amenity": "hospital",
+    "name": "Towkok Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745509,
+  "tags": {
+    "addr:district": "Sonitpur",
+    "addr:full": "Kalabari Model Hospital, , Vill-Bamungaon, Near Difalusatra Sub Post Office",
+    "addr:postcode": "784169",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Gohpur",
+    "amenity": "hospital",
+    "name": "Kalabari Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7150745518,
+  "tags": {
+    "addr:district": "Lakhimpur",
+    "addr:full": "Narayanpur Bihpuria Road",
+    "addr:postcode": "784164",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Narayanpur Model Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153254922,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Borholla, Assam",
+    "addr:postcode": "785631",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Titabor",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "CHC, Borholla",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153254935,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Kachomari, Girjaghar",
+    "addr:postcode": "785601",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sarupathar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Kachomari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153254992,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "urangial, borholla, Titabor",
+    "addr:postcode": "785631",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Titabor",
+    "amenity": "hospital",
+    "name": "Urangial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386677,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Borsoikata Gohain Gaon Road, Sonari Gaon",
+    "addr:postcode": "785630",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Jalukanibari Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386687,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "Near Satsang Kendra, Amguri Grant",
+    "addr:postcode": "785681",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Amguri",
+    "amenity": "hospital",
+    "name": "Amgoori Tea Estate Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386707,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Aka path, charingia gaon, Near Maidamoni charingia L.P. school",
+    "addr:postcode": "785622",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Golaghat",
+    "amenity": "hospital",
+    "description": "Community Health Centre",
+    "healthcare": "centre",
+    "name": "Charingia CHC",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386806,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "AT Road, Near SDC Office, Teok",
+    "addr:postcode": "785112",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Sonari",
+    "amenity": "hospital",
+    "description": "First Referral Unit",
+    "name": "FRU, Teok",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386838,
+  "tags": {
+    "addr:district": "Sibsagar",
+    "addr:full": "Namti Grant, Near Durga Mandir, Borsillah",
+    "addr:postcode": "785680",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Nazira",
+    "amenity": "hospital",
+    "name": "Borsillah Tea Estate Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386874,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Kalakhowa",
+    "addr:postcode": "785612",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Bokakhat",
+    "amenity": "hospital",
+    "name": "Swahid Kamala Miri Civil Hospital Bokakhat",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386890,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Dusutimukh GP",
+    "addr:postcode": "785611",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Khumtai",
+    "amenity": "hospital",
+    "name": "Dusutimukh hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7153386892,
+  "tags": {
+    "addr:district": "Sonitpur",
+    "addr:full": "Rangsali-Bedeti Road, Near Behali Police Station, Than Behali",
+    "addr:postcode": "784166",
+    "addr:state": "Assam",
+    "addr:subdistrict": "Biswanath",
+    "amenity": "hospital",
+    "name": "Behali Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7532351007,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "Milon Nagar, Sivasagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Erc Eye Care Hub Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7532351019,
+  "tags": {
+    "addr:district": "Sivasagar",
+    "addr:full": "Sivasagar",
+    "addr:postcode": "785640",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "Netra Jyoti Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578866,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Jb Road, Macharhaat, Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "City Orthopaedic Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578869,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "Golaghat",
+    "addr:postcode": "785702",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "K.K.Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578916,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Old Circuit House Road, Malow Ali, Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Chandraprabha Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578917,
+  "tags": {
+    "addr:district": "Golaghat",
+    "addr:full": "As Sh 34, Magistrate Colony, Golaghat",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "name": "KKC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7540578931,
+  "tags": {
+    "addr:district": "Jorhat",
+    "addr:full": "Barbheta, Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mission Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7588412954,
+  "tags": {
+    "addr:district": "Senapati",
+    "addr:full": "Senapati",
+    "addr:postcode": "795007",
+    "addr:state": "Manipur",
+    "amenity": "hospital",
+    "name": "District Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502531,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "Mokokchung-Amguri Road, Sungkomen,",
+    "addr:postcode": "798601",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Lenjem Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502538,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Pfutsero",
+    "addr:postcode": "797107",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502539,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Civil Hospital Colony",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "City Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502541,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "2nd NAP Battalion, Alichen",
+    "addr:postcode": "798601",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Unit Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502542,
+  "tags": {
+    "addr:district": "Wokha",
+    "addr:full": "Sanis",
+    "addr:postcode": "797100",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Sanis Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502546,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Khuzama",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Khuzama T.B. Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502552,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "Mokokchung",
+    "addr:postcode": "798601",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Assamrifle Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502553,
+  "tags": {
+    "addr:district": "Kiphire",
+    "addr:full": "Kiphire",
+    "addr:postcode": "798611",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502559,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Purana Baza",
+    "addr:postcode": "797116",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Dimapur Hospital and Research Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502562,
+  "tags": {
+    "addr:district": "Wokha",
+    "addr:full": "Wokha",
+    "addr:postcode": "797111",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "N.Ezung Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502565,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Phek",
+    "addr:postcode": "797108",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Assamrifle Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502568,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Fellowship Road, Fellowship Colony",
+    "addr:postcode": "797113",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fellowship Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502572,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Zuketsa",
+    "addr:postcode": "797107",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Zuketsa Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502573,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "PWD Road, Midland",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Nagaland Multispeciality Hospital & Research Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502575,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Kohima",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Kezocha Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502576,
+  "tags": {
+    "addr:district": "Tuensang",
+    "addr:full": "Sampurre",
+    "addr:postcode": "798612",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Shamator Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502578,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Thizama",
+    "addr:postcode": "797004",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Regimental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502587,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Chozuba",
+    "addr:postcode": "797104",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "General Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502588,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Darogapathar",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Olive Christian Hospital and Reserch Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502589,
+  "tags": {
+    "addr:district": "Mon",
+    "addr:full": "Near Ao Baptist Church",
+    "addr:postcode": "798621",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Rapha Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502593,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Landmark Colony",
+    "addr:postcode": "797113",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "JK Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502598,
+  "tags": {
+    "addr:district": "Peren",
+    "addr:full": "Nagaland",
+    "addr:postcode": "797101",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "New Puilwa Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502599,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Tekhuba",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Kohima Mental Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502600,
+  "tags": {
+    "addr:district": "Mon",
+    "addr:full": "Mon",
+    "addr:postcode": "798602",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Unit Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502604,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Chumukeidma",
+    "addr:postcode": "797103",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Referral Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502613,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "addr:full": "Tzudikong",
+    "addr:postcode": "798623",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "NPPC Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502615,
+  "tags": {
+    "addr:district": "Kiphire",
+    "addr:full": "Pungro Town",
+    "addr:postcode": "798611",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7614502620,
+  "tags": {
+    "addr:district": "Dimapur",
+    "addr:full": "Dobhinalla Road, Near State Bank, Duncan Basti",
+    "addr:postcode": "797112",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Shamrock Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7858159624,
+  "tags": {
+    "amenity": "hospital",
+    "beds": "25",
+    "healthcare": "hospital",
+    "name": "လေရှီးမြို့နယ်ဆေးရုံ",
+    "name:en": "Lay Shi Township Hospital",
+    "name:my": "လေရှီးမြို့နယ်ဆေးရုံ",
+    "pcode": "MMR005035",
+    "source": "Importing non-sensitive public hospital data from MIMU, ESRI"
+  }
+},
+{
+  "type": "node",
+  "id": 8205237694,
+  "tags": {
+    "addr:district": "Kohima",
+    "addr:full": "Zakhama",
+    "addr:postcode": "797005",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Government Hospital, Zakhama",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9376210530,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Diphu Medical College"
+  }
+},
+{
+  "type": "node",
+  "id": 9378909936,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Rengpoli Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 9404347698,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Catholic Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 9463171417,
+  "tags": {
+    "addr:city": "Jorhat",
+    "addr:district": "Jorhat",
+    "addr:postcode": "785634",
+    "addr:province": "Assam",
+    "addr:state": "AS",
+    "addr:street": "Jorhat Mariani Road",
+    "addr:suburb": "Katonibari",
+    "amenity": "hospital",
+    "name": "Katonibari T.E. Hospital",
+    "opening_hours": "Mo-Fr 09:00-15:00"
+  }
+},
+{
+  "type": "node",
+  "id": 10248459009,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Kohima Diagnostic Center"
+  }
+},
+{
+  "type": "node",
+  "id": 10285608845,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. J.K. Saikia Homeopathic Medical College & Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11351332651,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ONGC Medical Section Jorhat"
+  }
+},
+{
+  "type": "node",
+  "id": 11356598239,
+  "tags": {
+    "addr:district": "Mokokchung",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 11356598277,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 11577200069,
+  "tags": {
+    "amenity": "hospital",
+    "email": "nimsrkohima@gmail.com",
+    "name": "Nagaland Institute of Medical Sciences and  Research (NIMSR)",
+    "opening_hours": "Mo-Su 09:00-16:00",
+    "operator": "Government of Nagaland",
+    "website": "https://nimsr.nagaland.gov.in"
+  }
+},
+{
+  "type": "node",
+  "id": 12350533315,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DMC main entrace gate"
+  }
+},
+{
+  "type": "node",
+  "id": 12723267921,
+  "tags": {
+    "amenity": "hospital",
+    "beds": "16",
+    "name": "ယမ်းကြုံးတိုက်နယ်ဆေးရုံ",
+    "name:en": "Yan Kyein Station Hospital",
+    "name:my": "ယမ်းကြုံးတိုက်နယ်ဆေးရုံ",
+    "pcode": "MMR005036",
+    "source": "Importing non-sensitive public hospital data from MIMU, ESRI"
+  }
+},
+{
+  "type": "node",
+  "id": 12723267924,
+  "tags": {
+    "amenity": "hospital",
+    "beds": "16",
+    "name": "ဆွမ္မရာတိုက်နယ်ဆေးရုံ",
+    "name:en": "Somra Station Hospital",
+    "name:my": "ဆွမ္မရာတိုက်နယ်ဆေးရုံ",
+    "pcode": "MMR005035",
+    "source": "Importing non-sensitive public hospital data from MIMU, ESRI"
+  }
+},
+{
+  "type": "way",
+  "id": 266142081,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Impur Christian Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 358944929,
+  "tags": {
+    "addr:city": "Jorhat",
+    "addr:district": "Jorhat",
+    "addr:full": "Konwar Path, Barbheta P.O.Jorhat",
+    "addr:postcode": "785001",
+    "addr:state": "Assam",
+    "addr:street": "Jail Road",
+    "amenity": "hospital",
+    "contact:nodal_officer_email": "drpbm29@gmail.com",
+    "contact:nodal_officer_mobile": "9435141989",
+    "email": "adinathsarmah@rediffmail.com; jmc-asm@nic.in",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Jorhat Medical College and Hospital(JMCH)",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "https://www.jmch.org.in/"
+  }
+},
+{
+  "type": "way",
+  "id": 666622185,
+  "tags": {
+    "amenity": "hospital",
+    "fixme": "extent",
+    "name": "Christian Institute of Health Sciences and Research Hospital",
+    "source": "GRID"
+  }
+},
+{
+  "type": "way",
+  "id": 735440614,
+  "tags": {
+    "addr:city": "Golaghat",
+    "addr:district": "Golaghat",
+    "addr:full": "Civil Hospital road, Golaghat Town, Near Jt. DHS Office",
+    "addr:postcode": "785621",
+    "addr:state": "Assam",
+    "addr:street": "Hospital Road",
+    "addr:subdistrict": "Golaghat",
+    "amenity": "hospital",
+    "building": "yes",
+    "building:levels": "3",
+    "check_date": "2025-09-13",
+    "description": "Government Hospital and Research Centre.",
+    "name": "Kushal Konwar (KK) Civil Hospital Complex",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 873120205,
+  "tags": {
+    "addr:block": "Phek",
+    "addr:district": "Phek",
+    "addr:landmark": "Near Phek Town Baptist Church",
+    "addr:postcode": "797108",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Phek Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "Phek Town",
+    "name": "Phek, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 873120206,
+  "tags": {
+    "addr:district": "Phek",
+    "addr:full": "Meluri",
+    "addr:postcode": "797114",
+    "addr:state": "Nagaland",
+    "amenity": "hospital",
+    "name": "Civil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 1090894532,
+  "tags": {
+    "addr:district": "Wokha",
+    "addr:full": "Dr.Motsou Memorial District Hospital",
+    "addr:postcode": "797111",
+    "addr:state": "Nagaland",
+    "addr:subdistrict": "Wokha Sadar",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "locality": "hospital colony",
+    "name": "Wokha, District Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 1117552898,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1374150121,
+  "tags": {
+    "amenity": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1374150125,
+  "tags": {
+    "amenity": "hospital"
+  }
+}
+
+  ]
+}
