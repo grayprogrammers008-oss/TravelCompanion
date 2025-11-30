@@ -145,7 +145,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
         ),
       ),
-      floatingActionButton: _buildQuickActionsFAB(context),
     );
   }
 
@@ -186,6 +185,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           FadeSlideAnimation(
             delay: AppAnimations.staggerSmall * 4,
             child: _buildTripMembersSection(context, activeTrip),
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // Quick Actions Section
+          FadeSlideAnimation(
+            delay: AppAnimations.staggerSmall * 5,
+            child: _buildQuickActionsSection(context, activeTrip),
           ),
           const SizedBox(height: AppTheme.spacing3xl),
         ]),
@@ -906,131 +912,170 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     );
   }
 
-  Widget _buildQuickActionsFAB(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => _showQuickActionsSheet(context),
-      child: const Icon(Icons.add),
-    );
-  }
+  Widget _buildQuickActionsSection(BuildContext context, TripWithMembers tripWithMembers) {
+    final trip = tripWithMembers.trip;
 
-  void _showQuickActionsSheet(BuildContext context) {
-    final activeTripAsync = ref.read(activeTripProvider);
-    final activeTrip = activeTripAsync.value;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(AppTheme.radiusXl),
-            topRight: Radius.circular(AppTheme.radiusXl),
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        boxShadow: AppTheme.shadowSm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              // Handle
               Container(
-                margin: const EdgeInsets.only(top: AppTheme.spacingMd),
-                width: 40,
-                height: 4,
+                padding: const EdgeInsets.all(AppTheme.spacingXs),
                 decoration: BoxDecoration(
-                  color: AppTheme.neutral300,
-                  borderRadius: BorderRadius.circular(2),
+                  color: context.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+                child: Icon(
+                  Icons.flash_on,
+                  color: context.primaryColor,
+                  size: 20,
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingLg),
+              const SizedBox(width: AppTheme.spacingSm),
               Text(
                 'Quick Actions',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
               ),
-              const SizedBox(height: AppTheme.spacingMd),
-              // Action items
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: context.primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: Icon(Icons.flight_takeoff, color: context.primaryColor),
-                ),
-                title: const Text('Create New Trip'),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push('/trips/create');
-                },
-              ),
-              if (activeTrip != null) ...[
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingXs),
-                    decoration: BoxDecoration(
-                      color: AppTheme.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: const Icon(Icons.receipt_long, color: AppTheme.success),
-                  ),
-                  title: const Text('Add Expense'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/trips/${activeTrip.trip.id}/expenses/add');
-                  },
-                ),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingXs),
-                    decoration: BoxDecoration(
-                      color: AppTheme.info.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: const Icon(Icons.event, color: AppTheme.info),
-                  ),
-                  title: const Text('Add Itinerary Item'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/trips/${activeTrip.trip.id}/itinerary/add');
-                  },
-                ),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingXs),
-                    decoration: BoxDecoration(
-                      color: AppTheme.warning.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: const Icon(Icons.checklist, color: AppTheme.warning),
-                  ),
-                  title: const Text('View Checklists'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/trips/${activeTrip.trip.id}/checklists');
-                  },
-                ),
-              ],
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(Icons.emergency, color: AppTheme.error),
-                ),
-                title: const Text('Emergency Services'),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push('/emergency');
-                },
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
             ],
           ),
+          const SizedBox(height: AppTheme.spacingMd),
+          // Action buttons grid
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 4,
+            mainAxisSpacing: AppTheme.spacingSm,
+            crossAxisSpacing: AppTheme.spacingSm,
+            childAspectRatio: 0.85,
+            children: [
+              _buildActionButton(
+                context,
+                icon: Icons.receipt_long,
+                label: 'Add\nExpense',
+                color: AppTheme.success,
+                onTap: () => context.push('/trips/${trip.id}/expenses/add'),
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.event,
+                label: 'Add\nItinerary',
+                color: AppTheme.info,
+                onTap: () => context.push('/trips/${trip.id}/itinerary/add'),
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.checklist,
+                label: 'View\nChecklists',
+                color: AppTheme.warning,
+                onTap: () => context.push('/trips/${trip.id}/checklists'),
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.chat_bubble_outline,
+                label: 'Group\nChat',
+                color: context.primaryColor,
+                onTap: () {
+                  final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
+                  context.push('/trips/${trip.id}/chat?tripName=${Uri.encodeComponent(trip.name)}&userId=$currentUserId');
+                },
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.person_add_outlined,
+                label: 'Invite\nMember',
+                color: context.accentColor,
+                onTap: () => context.push('/trips/${trip.id}'),
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.flight_takeoff,
+                label: 'New\nTrip',
+                color: AppTheme.neutral600,
+                onTap: () => context.push('/trips/create'),
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.qr_code_scanner,
+                label: 'Join\nTrip',
+                color: AppTheme.neutral500,
+                onTap: () => context.push('/join-trip'),
+              ),
+              _buildActionButton(
+                context,
+                icon: Icons.emergency,
+                label: 'Emergency',
+                color: AppTheme.error,
+                onTap: () => context.push('/emergency?tripId=${trip.id}'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppTheme.spacingSm,
+          horizontal: AppTheme.spacingXs,
+        ),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: color.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXs),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 22,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingXs),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.neutral700,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );
