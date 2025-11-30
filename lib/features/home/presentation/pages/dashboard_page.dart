@@ -167,31 +167,31 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
           const SizedBox(height: AppTheme.spacingLg),
 
-          // Today's Itinerary Section
+          // Quick Actions Section (at top for easy access)
           FadeSlideAnimation(
             delay: AppAnimations.staggerSmall * 2,
+            child: _buildQuickActionsSection(context, activeTrip),
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // Today's Itinerary Section
+          FadeSlideAnimation(
+            delay: AppAnimations.staggerSmall * 3,
             child: _buildTodayItinerarySection(context, activeTrip.trip.id),
           ),
           const SizedBox(height: AppTheme.spacingLg),
 
           // Expenses Summary Section
           FadeSlideAnimation(
-            delay: AppAnimations.staggerSmall * 3,
+            delay: AppAnimations.staggerSmall * 4,
             child: _buildExpensesSummarySection(context, activeTrip),
           ),
           const SizedBox(height: AppTheme.spacingLg),
 
           // Trip Members Section
           FadeSlideAnimation(
-            delay: AppAnimations.staggerSmall * 4,
-            child: _buildTripMembersSection(context, activeTrip),
-          ),
-          const SizedBox(height: AppTheme.spacingLg),
-
-          // Quick Actions Section
-          FadeSlideAnimation(
             delay: AppAnimations.staggerSmall * 5,
-            child: _buildQuickActionsSection(context, activeTrip),
+            child: _buildTripMembersSection(context, activeTrip),
           ),
           const SizedBox(height: AppTheme.spacing3xl),
         ]),
