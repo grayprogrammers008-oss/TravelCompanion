@@ -915,74 +915,51 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   Widget _buildQuickActionsSection(BuildContext context, TripWithMembers tripWithMembers) {
     final trip = tripWithMembers.trip;
 
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: AppTheme.shadowSm,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingXs),
-                decoration: BoxDecoration(
-                  color: context.primaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section header
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+          child: Text(
+            'Quick Actions',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
                 ),
-                child: Icon(
-                  Icons.flash_on,
-                  color: context.primaryColor,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Text(
-                'Quick Actions',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-              ),
-            ],
           ),
-          const SizedBox(height: AppTheme.spacingMd),
-          // Action buttons grid
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 4,
-            mainAxisSpacing: AppTheme.spacingSm,
-            crossAxisSpacing: AppTheme.spacingSm,
-            childAspectRatio: 0.85,
+        ),
+        // Horizontal scrollable action buttons
+        SizedBox(
+          height: 72,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
             children: [
               _buildActionButton(
                 context,
                 icon: Icons.receipt_long,
-                label: 'Add\nExpense',
+                label: 'Expense',
                 color: AppTheme.success,
                 onTap: () => context.push('/trips/${trip.id}/expenses/add'),
               ),
               _buildActionButton(
                 context,
                 icon: Icons.event,
-                label: 'Add\nItinerary',
+                label: 'Itinerary',
                 color: AppTheme.info,
                 onTap: () => context.push('/trips/${trip.id}/itinerary/add'),
               ),
               _buildActionButton(
                 context,
                 icon: Icons.checklist,
-                label: 'View\nChecklists',
+                label: 'Checklists',
                 color: AppTheme.warning,
                 onTap: () => context.push('/trips/${trip.id}/checklists'),
               ),
               _buildActionButton(
                 context,
                 icon: Icons.chat_bubble_outline,
-                label: 'Group\nChat',
+                label: 'Chat',
                 color: context.primaryColor,
                 onTap: () {
                   final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
@@ -992,35 +969,35 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               _buildActionButton(
                 context,
                 icon: Icons.person_add_outlined,
-                label: 'Invite\nMember',
+                label: 'Invite',
                 color: context.accentColor,
                 onTap: () => context.push('/trips/${trip.id}'),
               ),
               _buildActionButton(
                 context,
                 icon: Icons.flight_takeoff,
-                label: 'New\nTrip',
+                label: 'New Trip',
                 color: AppTheme.neutral600,
                 onTap: () => context.push('/trips/create'),
               ),
               _buildActionButton(
                 context,
                 icon: Icons.qr_code_scanner,
-                label: 'Join\nTrip',
+                label: 'Join',
                 color: AppTheme.neutral500,
                 onTap: () => context.push('/join-trip'),
               ),
               _buildActionButton(
                 context,
                 icon: Icons.emergency,
-                label: 'Emergency',
+                label: 'SOS',
                 color: AppTheme.error,
                 onTap: () => context.push('/emergency?tripId=${trip.id}'),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -1031,51 +1008,47 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: AppTheme.spacingSm,
-          horizontal: AppTheme.spacingXs,
-        ),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
+    return Padding(
+      padding: const EdgeInsets.only(right: AppTheme.spacingSm),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          border: Border.all(
-            color: color.withValues(alpha: 0.2),
-            width: 1,
+          child: Container(
+            width: 64,
+            padding: const EdgeInsets.symmetric(
+              vertical: AppTheme.spacingSm,
+              horizontal: AppTheme.spacingXs,
+            ),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: color,
+                  size: 24,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.neutral700,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXs),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 22,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingXs),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.neutral700,
-                height: 1.2,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
         ),
       ),
     );
