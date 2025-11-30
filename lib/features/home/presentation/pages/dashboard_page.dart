@@ -67,11 +67,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           children: [
                             Row(
                               children: [
-                                UserAvatarWidget(
-                                  imageUrl: currentUser.value?.avatarUrl,
-                                  userName: currentUser.value?.fullName,
-                                  size: 48,
-                                  showBorder: true,
+                                GestureDetector(
+                                  onTap: () => context.push('/profile'),
+                                  child: UserAvatarWidget(
+                                    imageUrl: currentUser.value?.avatarUrl,
+                                    userName: currentUser.value?.fullName,
+                                    size: 48,
+                                    showBorder: true,
+                                  ),
                                 ),
                                 const SizedBox(width: AppTheme.spacingMd),
                                 Expanded(
