@@ -75,30 +75,32 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
     if (query.length < 2) {
       _suggestions = [];
       _lastSearchedQuery = '';
+      _isLoading = false;
       return _buildEmptyState(context);
     }
 
     final currentQuery = query;
 
-    // Clear suggestions if query has changed to avoid showing stale results
+    // Only trigger new search if query has actually changed
     if (_lastSearchedQuery != currentQuery) {
+      // Clear suggestions and show loading for new query
       _suggestions = [];
       _isLoading = true;
-    }
 
-    // Trigger debounced search
-    _searchService.searchPlacesDebounced(currentQuery, (places) {
-      // Only update if the query hasn't changed since we started the search
-      if (query == currentQuery) {
-        _suggestions = places;
-        _lastSearchedQuery = currentQuery;
-        _isLoading = false;
-        // Rebuild suggestions
-        if (context.mounted) {
-          showSuggestions(context);
+      // Trigger debounced search
+      _searchService.searchPlacesDebounced(currentQuery, (places) {
+        // Only update if the query hasn't changed since we started the search
+        if (query == currentQuery) {
+          _suggestions = places;
+          _lastSearchedQuery = currentQuery;
+          _isLoading = false;
+          // Rebuild suggestions
+          if (context.mounted) {
+            showSuggestions(context);
+          }
         }
-      }
-    });
+      });
+    }
 
     return _buildSearchResults(context);
   }
