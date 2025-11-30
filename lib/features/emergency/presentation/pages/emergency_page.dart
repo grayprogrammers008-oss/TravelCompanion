@@ -162,7 +162,7 @@ class EmergencyPage extends ConsumerWidget {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  const SizedBox(height: AppTheme.spacingMd),
+                  const SizedBox(height: AppTheme.spacingSm),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -176,12 +176,12 @@ class EmergencyPage extends ConsumerWidget {
                             // Medical emergency action is handled by the button itself
                           },
                           child: const MedicalEmergencyButton(
-                            size: 60,
+                            size: 40,
                             showLabel: false,
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppTheme.spacingMd),
+                      const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
                         child: _QuickActionCard(
                           icon: Icons.local_police,
@@ -193,7 +193,7 @@ class EmergencyPage extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppTheme.spacingMd),
+                  const SizedBox(height: AppTheme.spacingSm),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -206,7 +206,7 @@ class EmergencyPage extends ConsumerWidget {
                           onTap: () => _callEmergencyNumber(context, '101'),
                         ),
                       ),
-                      const SizedBox(width: AppTheme.spacingMd),
+                      const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
                         child: _QuickActionCard(
                           icon: Icons.location_on,
@@ -513,60 +513,63 @@ class _QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: themeData.primaryShadow,
-          border: Border.all(
-            color: color.withValues(alpha: 0.2),
-            width: 2,
+    return SizedBox(
+      height: 72, // Reduced fixed height for ALL cards
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 6,
+            vertical: 6,
           ),
-        ),
-        child: child != null
-            ? Center(
-                child: SizedBox(
-                  height: 60,
-                  child: Center(child: child),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            boxShadow: themeData.primaryShadow,
+            border: Border.all(
+              color: color.withValues(alpha: 0.2),
+              width: 1.5,
+            ),
+          ),
+          child: child != null
+              ? Center(child: child)
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 22,
+                      color: color,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                            fontSize: 10,
+                            height: 1.1,
+                          ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                            fontSize: 8,
+                            height: 1.1,
+                          ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-              )
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    icon,
-                    size: 32,
-                    color: color,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                          fontSize: 13,
-                        ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontSize: 10,
-                        ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+        ),
       ),
     );
   }
