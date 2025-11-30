@@ -9,6 +9,8 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
+import '../../../../core/widgets/place_search_delegate.dart';
+import '../../../../core/services/place_search_service.dart';
 import '../providers/trip_providers.dart';
 
 class CreateTripPage extends ConsumerStatefulWidget {
@@ -163,6 +165,19 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     );
     if (picked != null) {
       setState(() => _endDate = picked);
+    }
+  }
+
+  Future<void> _searchDestination() async {
+    final Place? result = await showSearch<Place?>(
+      context: context,
+      delegate: PlaceSearchDelegate(),
+    );
+
+    if (result != null && mounted) {
+      setState(() {
+        _destinationController.text = result.shortName;
+      });
     }
   }
 
@@ -400,18 +415,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
 
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 2,
-                  child: _buildFormField(
-                    controller: _destinationController,
-                    label: 'Destination',
-                    icon: Icons.location_on,
-                    hint: 'e.g., Bali, Indonesia',
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a destination';
-                      }
-                      return null;
-                    },
-                  ),
+                  child: _buildDestinationField(),
                 ),
                 const SizedBox(height: AppTheme.spacingMd),
 
@@ -591,6 +595,76 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                   color: context.textColor,
                   fontSize: 16,
                 ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDestinationField() {
+    final hasValue = _destinationController.text.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label above the field
+        Padding(
+          padding: const EdgeInsets.only(
+            left: AppTheme.spacingXs,
+            bottom: AppTheme.spacingSm,
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.location_on, size: 20, color: context.primaryColor),
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                'Destination',
+                style: context.titleStyle.copyWith(
+                  color: context.textColor,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Tappable search field
+        GestureDetector(
+          onTap: _isLoading ? null : _searchDestination,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd,
+              vertical: AppTheme.spacingMd,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(color: AppTheme.neutral200, width: 1.5),
+              boxShadow: AppTheme.shadowSm,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    hasValue
+                        ? _destinationController.text
+                        : 'Search city, town, or country...',
+                    style: TextStyle(
+                      color: hasValue ? context.textColor : AppTheme.neutral400,
+                      fontSize: 16,
+                      fontWeight: hasValue ? FontWeight.w500 : FontWeight.w400,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Icon(
+                  Icons.search,
+                  color: context.primaryColor,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
       ],
