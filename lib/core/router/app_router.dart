@@ -19,6 +19,10 @@ import '../../features/checklists/presentation/pages/checklist_list_page.dart';
 import '../../features/checklists/presentation/pages/checklist_detail_page.dart';
 import '../../features/messaging/presentation/pages/chat_screen.dart';
 import '../../features/messaging/presentation/pages/message_queue_screen.dart';
+import '../../features/messaging/presentation/pages/conversation_list_page.dart';
+import '../../features/messaging/presentation/pages/create_conversation_page.dart';
+import '../../features/messaging/presentation/pages/group_chat_page.dart';
+import '../../features/messaging/presentation/pages/conversation_info_page.dart';
 import '../../features/settings/presentation/pages/theme_settings_page.dart';
 import '../../features/settings/presentation/pages/settings_page_enhanced.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
@@ -73,6 +77,10 @@ class AppRoutes {
   static const String checklistDetail = '/trips/:tripId/checklists/:checklistId';
   static const String chat = '/trips/:tripId/chat';
   static const String messageQueue = '/trips/:tripId/messages/queue';
+  static const String conversations = '/trips/:tripId/conversations';
+  static const String createConversation = '/trips/:tripId/conversations/create';
+  static const String groupChat = '/trips/:tripId/conversations/:conversationId';
+  static const String conversationInfo = '/trips/:tripId/conversations/:conversationId/info';
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
@@ -341,6 +349,63 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
           return MessageQueueScreen(tripId: tripId);
+        },
+      ),
+      // Group Chat / Conversations routes
+      GoRoute(
+        path: AppRoutes.createConversation,
+        name: 'createConversation',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final currentUserId = state.uri.queryParameters['userId'] ?? '';
+          final preselectedUserId = state.uri.queryParameters['dmWith'];
+          return CreateConversationPage(
+            tripId: tripId,
+            currentUserId: currentUserId,
+            preselectedUserId: preselectedUserId,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.conversationInfo,
+        name: 'conversationInfo',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final conversationId = state.pathParameters['conversationId']!;
+          final currentUserId = state.uri.queryParameters['userId'] ?? '';
+          return ConversationInfoPage(
+            tripId: tripId,
+            conversationId: conversationId,
+            currentUserId: currentUserId,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.groupChat,
+        name: 'groupChat',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final conversationId = state.pathParameters['conversationId']!;
+          final currentUserId = state.uri.queryParameters['userId'] ?? '';
+          return GroupChatPage(
+            tripId: tripId,
+            conversationId: conversationId,
+            currentUserId: currentUserId,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.conversations,
+        name: 'conversations',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final tripName = state.uri.queryParameters['tripName'] ?? 'Trip';
+          final currentUserId = state.uri.queryParameters['userId'] ?? '';
+          return ConversationListPage(
+            tripId: tripId,
+            tripName: tripName,
+            currentUserId: currentUserId,
+          );
         },
       ),
       GoRoute(

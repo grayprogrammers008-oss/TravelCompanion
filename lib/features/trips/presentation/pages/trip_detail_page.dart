@@ -378,18 +378,18 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days',
             ),
 
-          // Budget
+          // Trip Cost
           const Divider(height: AppTheme.spacingLg),
           _buildInfoRow(
             context,
             icon: hasBudget ? Icons.savings : Icons.savings_outlined,
             iconColor: hasBudget ? Colors.blue.shade700 : Colors.grey.shade400,
             iconBg: hasBudget ? Colors.blue.shade50 : Colors.grey.shade50,
-            label: 'Budget',
+            label: 'Trip Cost',
             value: hasBudget
                 ? '${trip.trip.currency} ${budget.toStringAsFixed(2)}'
-                : 'No budget specified',
-            subtitle: hasBudget ? 'Your trip budget' : null,
+                : 'No cost specified',
+            subtitle: hasBudget ? 'Estimated trip cost' : null,
           ),
 
           // Trip Visibility
@@ -848,14 +848,14 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               child: FadeSlideAnimation(
                 delay: AppAnimations.staggerTiny * 2,
                 child: _ActionCard(
-                  icon: Icons.chat_bubble_outline,
-                  label: 'Chat',
+                  icon: Icons.chat,
+                  label: 'Chats',
                   color: AppTheme.info,
                   onTap: () {
                     final currentUserId =
                         ref.read(authStateProvider).value ?? '';
                     context.push(
-                      '/trips/${widget.tripId}/chat'
+                      '/trips/${widget.tripId}/conversations'
                       '?tripName=${Uri.encodeComponent(trip.trip.name)}'
                       '&userId=$currentUserId',
                     );
