@@ -261,3 +261,27 @@ final expenseControllerProvider =
     NotifierProvider<ExpenseController, ExpenseState>(() {
       return ExpenseController();
     });
+
+/// Provider to calculate member frequency based on expense splits for a trip
+/// Returns a Map<String, int> where key is userId and value is the count of expenses they were split with
+final memberFrequencyProvider = FutureProvider.family<Map<String, int>, String>((ref, tripId) async {
+  try {
+    final expensesAsync = await ref.watch(tripExpensesProvider(tripId).future);
+
+    // Count how many times each member appears in expense splits
+    final frequencyMap = <String, int>{};
+
+    for (final expenseWithSplits in expensesAsync) {
+      for (final split in expenseWithSplits.splits) {
+        frequencyMap[split.userId] = (frequencyMap[split.userId] ?? 0) + 1;
+      }
+    }
+
+    return frequencyMap;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('❌ memberFrequencyProvider error: $e');
+    }
+    return <String, int>{};
+  }
+});

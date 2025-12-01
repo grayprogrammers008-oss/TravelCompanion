@@ -10,6 +10,32 @@ import '../../domain/usecases/get_user_stats_usecase.dart';
 ///
 /// Handles all trip-related operations with Supabase backend.
 /// Provides CRUD operations, member management, and real-time subscriptions.
+/// Model for system users that can be added to trips
+class SystemUserModel {
+  final String id;
+  final String? email;
+  final String? fullName;
+  final String? avatarUrl;
+
+  const SystemUserModel({
+    required this.id,
+    this.email,
+    this.fullName,
+    this.avatarUrl,
+  });
+
+  factory SystemUserModel.fromJson(Map<String, dynamic> json) {
+    return SystemUserModel(
+      id: json['id'] as String,
+      email: json['email'] as String?,
+      fullName: json['full_name'] as String?,
+      avatarUrl: json['avatar_url'] as String?,
+    );
+  }
+
+  String get displayName => fullName ?? email ?? 'Unknown User';
+}
+
 abstract class TripRemoteDataSource {
   /// Create a new trip
   Future<TripModel> createTrip(TripModel trip);
@@ -31,6 +57,14 @@ abstract class TripRemoteDataSource {
 
   /// Remove a member from a trip
   Future<void> removeMember(String tripId, String userId);
+
+  /// Search for system users to add to trip
+  /// Excludes users already in the trip
+  Future<List<SystemUserModel>> searchSystemUsers({
+    String? search,
+    List<String>? excludeUserIds,
+    int limit = 50,
+  });
 
   /// Watch trips for real-time updates
   Stream<List<TripWithMembers>> watchUserTrips();
@@ -270,6 +304,51 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
           .eq('user_id', userId);
     } catch (e) {
       throw Exception('Failed to remove member: $e');
+    }
+  }
+
+  @override
+  Future<List<SystemUserModel>> searchSystemUsers({
+    String? search,
+    List<String>? excludeUserIds,
+    int limit = 50,
+  }) async {
+    try {
+      // Build query to fetch users from profiles
+      var query = _client
+          .from('profiles')
+          .select('id, email, full_name, avatar_url');
+
+      // Apply search filter if provided
+      if (search != null && search.isNotEmpty) {
+        query = query.or('email.ilike.%$search%,full_name.ilike.%$search%');
+      }
+
+      // Execute query with ordering and limit
+      final response = await query
+          .order('full_name', ascending: true)
+          .limit(limit);
+
+      // Parse response
+      var users = (response as List)
+          .map((json) => SystemUserModel.fromJson(json))
+          .toList();
+
+      // Filter out excluded users (existing members)
+      if (excludeUserIds != null && excludeUserIds.isNotEmpty) {
+        users = users.where((user) => !excludeUserIds.contains(user.id)).toList();
+      }
+
+      if (kDebugMode) {
+        debugPrint('🔍 Found ${users.length} system users for search: "$search"');
+      }
+
+      return users;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error searching system users: $e');
+      }
+      throw Exception('Failed to search users: $e');
     }
   }
 

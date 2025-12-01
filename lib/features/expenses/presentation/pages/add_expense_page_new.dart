@@ -10,6 +10,7 @@ import '../../../../core/widgets/premium_form_fields.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/confetti_animation.dart';
+import '../../../../core/widgets/member_picker.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
@@ -32,6 +33,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
   String? _selectedCategory;
   DateTime? _transactionDate;
   bool _isLoading = false;
+  List<String> _selectedMemberIds = [];
 
   final List<String> _categories = [
     'Food',
@@ -69,13 +71,11 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
 
       // Get split members
       if (widget.tripId != null) {
-        // Trip expense: split with trip members
-        final tripAsync = await ref.read(tripProvider(widget.tripId!).future);
-        memberIds = tripAsync.members.map((m) => m.userId).toList();
-
-        if (memberIds.isEmpty) {
-          throw Exception('No members found in trip');
+        // Trip expense: use selected members from picker
+        if (_selectedMemberIds.isEmpty) {
+          throw Exception('Please select at least one member to split with');
         }
+        memberIds = _selectedMemberIds;
       } else {
         // Standalone expense: split with just current user
         memberIds = [currentUserId];
@@ -135,6 +135,73 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  Widget _buildMemberPicker() {
+    if (widget.tripId == null) return const SizedBox.shrink();
+
+    final tripAsync = ref.watch(tripProvider(widget.tripId!));
+    final frequencyAsync = ref.watch(memberFrequencyProvider(widget.tripId!));
+
+    return tripAsync.when(
+      data: (trip) {
+        final members = trip.members;
+        final frequency = frequencyAsync.when(
+          data: (data) => data,
+          loading: () => <String, int>{},
+          error: (_, __) => <String, int>{},
+        );
+
+        // Initialize selected members to all members if not set yet
+        if (_selectedMemberIds.isEmpty && members.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _selectedMemberIds = members.map((m) => m.userId).toList();
+              });
+            }
+          });
+        }
+
+        return MemberPickerWidget(
+          members: members,
+          selectedMemberIds: _selectedMemberIds,
+          memberFrequency: frequency,
+          labelText: 'Split With *',
+          hintText: 'Select members to split this expense',
+          onSelectionChanged: (selectedIds) {
+            setState(() {
+              _selectedMemberIds = selectedIds;
+            });
+          },
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppTheme.spacingMd),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, _) => Container(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          color: AppTheme.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.error_outline, color: AppTheme.error),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                'Failed to load members',
+                style: TextStyle(color: AppTheme.error),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -310,9 +377,19 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
 
                   const SizedBox(height: AppTheme.spacingLg),
 
+                  // Member Picker (only for trip expenses)
+                  if (!isStandalone && widget.tripId != null)
+                    FadeSlideAnimation(
+                      delay: AppAnimations.staggerSmall * 4,
+                      child: _buildMemberPicker(),
+                    ),
+
+                  if (!isStandalone && widget.tripId != null)
+                    const SizedBox(height: AppTheme.spacingLg),
+
                   // Transaction Date Picker
                   FadeSlideAnimation(
-                    delay: AppAnimations.staggerSmall * 4,
+                    delay: AppAnimations.staggerSmall * (isStandalone ? 4 : 5),
                     child: PremiumDateTimePicker(
                       selectedDate: _transactionDate,
                       labelText: 'Transaction Date (optional)',
@@ -331,7 +408,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
 
                   // Description
                   FadeSlideAnimation(
-                    delay: AppAnimations.staggerSmall * 5,
+                    delay: AppAnimations.staggerSmall * (isStandalone ? 5 : 6),
                     child: PremiumTextField(
                       controller: _descriptionController,
                       labelText: 'Description (Optional)',
@@ -348,7 +425,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
 
                   // Info Card
                   FadeSlideAnimation(
-                    delay: AppAnimations.staggerSmall * 6,
+                    delay: AppAnimations.staggerSmall * (isStandalone ? 6 : 7),
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
@@ -384,7 +461,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
                             child: Text(
                               isStandalone
                                   ? 'This is a personal expense tracked only by you'
-                                  : 'This expense will be split equally among all trip members',
+                                  : 'This expense will be split equally among the selected members',
                               style: TextStyle(
                                 color: AppTheme.neutral800,
                                 fontSize: 13,
@@ -401,7 +478,7 @@ class _AddExpensePageNewState extends ConsumerState<AddExpensePageNew> {
 
                   // Submit Button
                   FadeSlideAnimation(
-                    delay: AppAnimations.staggerSmall * 7,
+                    delay: AppAnimations.staggerSmall * (isStandalone ? 7 : 8),
                     child: GlossyButton(
                       label: 'Add Expense',
                       icon: Icons.add,

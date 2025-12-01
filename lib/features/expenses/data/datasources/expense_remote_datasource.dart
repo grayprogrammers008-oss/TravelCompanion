@@ -311,7 +311,8 @@ class ExpenseRemoteDataSource {
             expense_splits(
               *,
               user:profiles!expense_splits_user_id_fkey(id, full_name)
-            )
+            ),
+            payer:profiles!expenses_paid_by_fkey(full_name)
           ''');
 
       if (tripId != null) {
@@ -329,9 +330,13 @@ class ExpenseRemoteDataSource {
 
       for (var expenseJson in response) {
         final expense = ExpenseModel.fromJson(expenseJson);
-        final splits = (expenseJson['expense_splits'] as List)
-            .map((s) => ExpenseSplitModel.fromJson(s))
-            .toList();
+        // Parse splits with user names from nested 'user' object
+        final splits = (expenseJson['expense_splits'] as List).map((splitJson) {
+          final user = splitJson['user'];
+          return ExpenseSplitModel.fromJson(splitJson).copyWith(
+            userName: user?['full_name'],
+          );
+        }).toList();
 
         // Track payer
         final payerId = expense.paidBy;
@@ -346,9 +351,12 @@ class ExpenseRemoteDataSource {
             balance: 0,
           );
         }
+        // Preserve existing proper name (not a UUID) if we have one
+        final existingPayerName = balances[payerId]!.userName;
+        final bestPayerName = _isProperName(existingPayerName) ? existingPayerName : payerName;
         balances[payerId] = BalanceSummary(
           userId: payerId,
-          userName: payerName,
+          userName: bestPayerName,
           totalPaid: balances[payerId]!.totalPaid + expense.amount,
           totalOwed: balances[payerId]!.totalOwed,
           balance: 0, // Will calculate later
@@ -356,19 +364,22 @@ class ExpenseRemoteDataSource {
 
         // Track splits
         for (var split in splits) {
-          final userName = split.userName ?? split.userId;
+          final splitUserName = split.userName ?? split.userId;
           if (!balances.containsKey(split.userId)) {
             balances[split.userId] = BalanceSummary(
               userId: split.userId,
-              userName: userName,
+              userName: splitUserName,
               totalPaid: 0,
               totalOwed: 0,
               balance: 0,
             );
           }
+          // Preserve existing proper name (not a UUID) if we have one
+          final existingSplitName = balances[split.userId]!.userName;
+          final bestSplitName = _isProperName(existingSplitName) ? existingSplitName : splitUserName;
           balances[split.userId] = BalanceSummary(
             userId: split.userId,
-            userName: userName,
+            userName: bestSplitName,
             totalPaid: balances[split.userId]!.totalPaid,
             totalOwed: balances[split.userId]!.totalOwed + split.amount,
             balance: 0, // Will calculate later
@@ -389,6 +400,16 @@ class ExpenseRemoteDataSource {
     } catch (e) {
       throw Exception('Failed to get balances: $e');
     }
+  }
+
+  /// Check if a name is a proper name (not a UUID)
+  bool _isProperName(String name) {
+    // UUIDs are typically 36 chars with dashes: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    // A proper name should not match this pattern
+    final uuidPattern = RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+    );
+    return !uuidPattern.hasMatch(name);
   }
 
   /// Create a settlement

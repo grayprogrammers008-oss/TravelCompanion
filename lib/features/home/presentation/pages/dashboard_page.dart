@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/network/supabase_client.dart';
@@ -12,11 +15,30 @@ import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../../../shared/models/itinerary_model.dart';
+import '../../../../shared/models/expense_model.dart';
+import '../../../../core/utils/extensions.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../providers/dashboard_providers.dart';
+
+/// Model for suggested settlement between two users
+class SuggestedSettlement {
+  final String fromUserId;
+  final String fromUserName;
+  final String toUserId;
+  final String toUserName;
+  final double amount;
+
+  SuggestedSettlement({
+    required this.fromUserId,
+    required this.fromUserName,
+    required this.toUserId,
+    required this.toUserName,
+    required this.amount,
+  });
+}
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -106,12 +128,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                     ],
                                   ),
                                 ),
-                                // Notification bell
+                                // Menu (3-dot)
                                 IconButton(
-                                  icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                                  onPressed: () {
-                                    // TODO: Show notifications
-                                  },
+                                  icon: const Icon(Icons.more_vert, color: Colors.white),
+                                  onPressed: () => _showProfileMenu(context, ref),
                                 ),
                               ],
                             ),
@@ -185,10 +205,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
           const SizedBox(height: AppTheme.spacingLg),
 
-          // Expenses Summary Section
+          // Unified Expenses Section (Current Trip + Global Summary)
           FadeSlideAnimation(
             delay: AppAnimations.staggerSmall * 4,
-            child: _buildExpensesSummarySection(context, activeTrip),
+            child: _buildUnifiedExpensesSection(context, activeTrip),
           ),
           const SizedBox(height: AppTheme.spacingLg),
 
@@ -205,29 +225,26 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   Widget _buildActiveTripCard(BuildContext context, TripWithMembers tripWithMembers) {
     final trip = tripWithMembers.trip;
+    final members = tripWithMembers.members;
     final now = DateTime.now();
     final startDate = trip.startDate;
     final endDate = trip.endDate;
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
-    String statusText;
-    Color statusColor;
-    IconData statusIcon;
+    // Calculate countdown info
+    int? daysUntil;
+    int? dayNumber;
+    int? totalDays;
+    bool isUpcoming = false;
+    bool isOngoing = false;
 
     if (startDate != null && now.isBefore(startDate)) {
-      final daysUntil = startDate.difference(now).inDays;
-      statusText = '$daysUntil days until departure';
-      statusColor = context.accentColor;
-      statusIcon = Icons.flight_takeoff;
+      daysUntil = startDate.difference(now).inDays;
+      isUpcoming = true;
     } else if (startDate != null && endDate != null && now.isAfter(startDate) && now.isBefore(endDate)) {
-      final dayNumber = now.difference(startDate).inDays + 1;
-      final totalDays = endDate.difference(startDate).inDays + 1;
-      statusText = 'Day $dayNumber of $totalDays';
-      statusColor = AppTheme.success;
-      statusIcon = Icons.explore;
-    } else {
-      statusText = 'Trip in progress';
-      statusColor = AppTheme.success;
-      statusIcon = Icons.explore;
+      dayNumber = now.difference(startDate).inDays + 1;
+      totalDays = endDate.difference(startDate).inDays + 1;
+      isOngoing = true;
     }
 
     return GestureDetector(
@@ -235,112 +252,166 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-          boxShadow: AppTheme.shadowLg,
+          boxShadow: [
+            BoxShadow(
+              color: themeData.primaryColor.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppTheme.radiusXl),
           child: Stack(
             children: [
-              // Background Image
+              // Background Image - Taller for more impact
               DestinationImage(
                 tripName: trip.destination ?? trip.name,
-                height: 200,
+                height: 280,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
-              // Gradient Overlay
+              // Gradient Overlay - More dramatic
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
+                      stops: const [0.0, 0.4, 1.0],
                       colors: [
+                        Colors.black.withValues(alpha: 0.3),
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
+                        Colors.black.withValues(alpha: 0.85),
                       ],
                     ),
                   ),
                 ),
               ),
-              // Content
+              // Countdown Badge - Top Left with glassmorphism
+              if (isUpcoming && daysUntil != null)
+                Positioned(
+                  left: AppTheme.spacingMd,
+                  top: AppTheme.spacingMd,
+                  child: _buildCountdownBadge(context, daysUntil, themeData),
+                ),
+              // Ongoing Trip Progress - Top Left
+              if (isOngoing && dayNumber != null && totalDays != null)
+                Positioned(
+                  left: AppTheme.spacingMd,
+                  top: AppTheme.spacingMd,
+                  child: _buildProgressBadge(context, dayNumber, totalDays, themeData),
+                ),
+              // Member Avatars - Top Right
+              Positioned(
+                right: AppTheme.spacingMd,
+                top: AppTheme.spacingMd,
+                child: _buildMemberAvatars(members),
+              ),
+              // Content with glassmorphism card
               Positioned(
                 left: AppTheme.spacingMd,
                 right: AppTheme.spacingMd,
                 bottom: AppTheme.spacingMd,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Status Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingSm,
-                        vertical: AppTheme.spacingXs,
-                      ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: statusColor,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(statusIcon, size: 14, color: Colors.white),
-                          const SizedBox(width: 4),
+                          // Trip Name
                           Text(
-                            statusText,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            trip.name,
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.5,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          // Location and Date Row
+                          Row(
+                            children: [
+                              if (trip.destination != null) ...[
+                                Icon(Icons.location_on, size: 14, color: Colors.white.withValues(alpha: 0.8)),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    trip.destination!,
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: 0.9),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                              if (startDate != null) ...[
+                                const SizedBox(width: 12),
+                                Icon(Icons.calendar_today, size: 14, color: Colors.white.withValues(alpha: 0.8)),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${startDate.day}/${startDate.month}',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          // View Trip Button
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'View Trip',
+                                        style: TextStyle(
+                                          color: themeData.primaryColor,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        size: 16,
+                                        color: themeData.primaryColor,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: AppTheme.spacingSm),
-                    // Trip Name
-                    Text(
-                      trip.name,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (trip.destination != null) ...[
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, size: 16, color: Colors.white70),
-                          const SizedBox(width: 4),
-                          Text(
-                            trip.destination!,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              // Tap indicator
-              Positioned(
-                right: AppTheme.spacingMd,
-                top: AppTheme.spacingMd,
-                child: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 20,
                   ),
                 ),
               ),
@@ -348,6 +419,216 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
         ),
       ),
+    );
+  }
+
+  /// Animated countdown badge for upcoming trips
+  Widget _buildCountdownBadge(BuildContext context, int daysUntil, dynamic themeData) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.95, end: 1.05),
+      duration: const Duration(milliseconds: 1000),
+      curve: Curves.easeInOut,
+      builder: (context, scale, child) {
+        return Transform.scale(
+          scale: scale,
+          child: child,
+        );
+      },
+      onEnd: () {
+        // This creates a pulsing effect by rebuilding
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  themeData.primaryColor.withValues(alpha: 0.8),
+                  themeData.primaryColor.withValues(alpha: 0.6),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: themeData.primaryColor.withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.flight_takeoff, size: 18, color: Colors.white),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      daysUntil == 0 ? 'TODAY!' : '$daysUntil',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        height: 1,
+                      ),
+                    ),
+                    if (daysUntil > 0)
+                      Text(
+                        daysUntil == 1 ? 'day to go' : 'days to go',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Progress badge for ongoing trips
+  Widget _buildProgressBadge(BuildContext context, int dayNumber, int totalDays, dynamic themeData) {
+    final progress = dayNumber / totalDays;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: AppTheme.success.withValues(alpha: 0.85),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.explore, size: 18, color: Colors.white),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Day $dayNumber',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // Mini progress bar
+                  Container(
+                    width: 50,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: progress,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Member avatars stack
+  Widget _buildMemberAvatars(List<TripMemberModel> members) {
+    final displayMembers = members.take(3).toList();
+    final remainingCount = members.length - 3;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Stacked avatars
+        SizedBox(
+          height: 36,
+          child: Stack(
+            children: [
+              for (int i = 0; i < displayMembers.length; i++)
+                Positioned(
+                  left: i * 22.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: UserAvatarWidget(
+                      imageUrl: displayMembers[i].avatarUrl,
+                      userName: displayMembers[i].fullName ?? displayMembers[i].email,
+                      size: 32,
+                    ),
+                  ),
+                ),
+              // +N indicator
+              if (remainingCount > 0)
+                Positioned(
+                  left: displayMembers.length * 22.0,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        '+$remainingCount',
+                        style: TextStyle(
+                          color: AppTheme.neutral700,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -516,11 +797,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     );
   }
 
-  Widget _buildExpensesSummarySection(BuildContext context, TripWithMembers tripWithMembers) {
+  /// Unified Expenses Section showing both current trip and global summary
+  Widget _buildUnifiedExpensesSection(BuildContext context, TripWithMembers tripWithMembers) {
     final trip = tripWithMembers.trip;
-    final expensesAsync = ref.watch(tripExpensesProvider(trip.id));
+    final tripExpensesAsync = ref.watch(tripExpensesProvider(trip.id));
+    final userExpensesAsync = ref.watch(userExpensesProvider);
     final balancesAsync = ref.watch(tripBalancesProvider(trip.id));
     final currentUserId = SupabaseClientWrapper.currentUserId;
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -532,6 +816,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -540,18 +825,18 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   Container(
                     padding: const EdgeInsets.all(AppTheme.spacingXs),
                     decoration: BoxDecoration(
-                      color: AppTheme.success.withValues(alpha: 0.1),
+                      color: AppTheme.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                     ),
                     child: const Icon(
                       Icons.account_balance_wallet,
-                      color: AppTheme.success,
+                      color: AppTheme.warning,
                       size: 20,
                     ),
                   ),
                   const SizedBox(width: AppTheme.spacingSm),
                   Text(
-                    'Expenses',
+                    'My Expenses',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -559,110 +844,377 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ],
               ),
               TextButton(
-                onPressed: () => context.push('/trips/${trip.id}/expenses'),
+                onPressed: () => context.go('/expenses'),
                 child: const Text('View All'),
               ),
             ],
           ),
           const SizedBox(height: AppTheme.spacingMd),
-          expensesAsync.when(
-            data: (expenses) {
-              final totalSpent = expenses.fold<double>(
+
+          // Current Trip Expenses
+          tripExpensesAsync.when(
+            data: (tripExpenses) {
+              final tripTotalSpent = tripExpenses.fold<double>(
                 0,
                 (sum, e) => sum + e.expense.amount,
               );
 
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Total spent row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  // Current Trip Card
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          themeData.primaryColor.withValues(alpha: 0.1),
+                          themeData.primaryColor.withValues(alpha: 0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      border: Border.all(
+                        color: themeData.primaryColor.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Text(
-                              'Total Spent',
-                              style: TextStyle(
-                                color: AppTheme.neutral500,
-                                fontSize: 12,
+                            Icon(
+                              Icons.flight_takeoff,
+                              size: 16,
+                              color: themeData.primaryColor,
+                            ),
+                            const SizedBox(width: AppTheme.spacingXs),
+                            Expanded(
+                              child: Text(
+                                trip.name,
+                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  color: themeData.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Text(
-                              '${trip.currency} ${totalSpent.toStringAsFixed(0)}',
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppTheme.neutral900,
+                            // Group Chat button for this trip
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
+                                  context.push('/trips/${trip.id}/chat?tripName=${Uri.encodeComponent(trip.name)}&userId=$currentUserId');
+                                },
+                                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                child: Container(
+                                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                                  decoration: BoxDecoration(
+                                    color: themeData.primaryColor.withValues(alpha: 0.1),
+                                    shape: BoxShape.circle,
                                   ),
+                                  child: Icon(
+                                    Icons.chat_bubble_outline,
+                                    size: 16,
+                                    color: themeData.primaryColor,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: AppTheme.spacingSm),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Trip Expenses',
+                                    style: TextStyle(
+                                      color: AppTheme.neutral500,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${trip.currency} ${tripTotalSpent.toStringAsFixed(0)}',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: AppTheme.neutral900,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Balance for this trip
+                            balancesAsync.when(
+                              data: (balances) {
+                                final userBalance = balances.where(
+                                  (b) => b.userId == currentUserId,
+                                ).firstOrNull;
+
+                                if (userBalance == null || userBalance.balance == 0) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacingSm,
+                                      vertical: AppTheme.spacingXs,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.success.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                    ),
+                                    child: Text(
+                                      'Settled',
+                                      style: TextStyle(
+                                        color: AppTheme.success,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                final balance = userBalance.balance;
+                                final isOwed = balance > 0;
+                                final color = isOwed ? AppTheme.success : AppTheme.error;
+                                final text = isOwed
+                                    ? 'Owed ${trip.currency} ${balance.abs().toStringAsFixed(0)}'
+                                    : 'Owe ${trip.currency} ${balance.abs().toStringAsFixed(0)}';
+
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingSm,
+                                    vertical: AppTheme.spacingXs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: color.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                  ),
+                                  child: Text(
+                                    text,
+                                    style: TextStyle(
+                                      color: color,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              },
+                              loading: () => const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              error: (_, __) => const SizedBox.shrink(),
+                            ),
+                          ],
+                        ),
+                        // Trip-specific Who Owes Whom section
+                        balancesAsync.when(
+                          data: (balances) {
+                            if (balances.isEmpty) return const SizedBox.shrink();
+
+                            // Calculate suggested settlements from balances
+                            final settlements = _calculateSuggestedSettlements(balances);
+
+                            if (settlements.isEmpty) return const SizedBox.shrink();
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: AppTheme.spacingMd),
+                                Divider(color: themeData.primaryColor.withValues(alpha: 0.2)),
+                                const SizedBox(height: AppTheme.spacingSm),
+                                Text(
+                                  'Settle Up',
+                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.neutral700,
+                                  ),
+                                ),
+                                const SizedBox(height: AppTheme.spacingSm),
+                                ...settlements.take(4).map((settlement) => _buildSettlementRow(context, settlement, trip.currency)),
+                                if (settlements.length > 4)
+                                  Center(
+                                    child: TextButton(
+                                      onPressed: () => context.push('/trips/${trip.id}/expenses'),
+                                      child: Text(
+                                        '+${settlements.length - 4} more',
+                                        style: TextStyle(
+                                          color: themeData.primaryColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  // Balance summary section
-                  balancesAsync.when(
-                    data: (balances) {
-                      // Find current user's balance
-                      final userBalance = balances.where(
-                        (b) => b.userId == currentUserId,
-                      ).firstOrNull;
 
-                      if (userBalance == null) {
-                        return _buildBalanceCard(
-                          context,
-                          isSettled: true,
-                          amount: 0,
-                          currency: trip.currency,
-                        );
+                  // Global Summary - Who Owes What
+                  userExpensesAsync.when(
+                    data: (allExpenses) {
+                      if (allExpenses.isEmpty) {
+                        return const SizedBox.shrink();
                       }
 
-                      final balance = userBalance.balance;
-                      // Positive balance = others owe you
-                      // Negative balance = you owe others
-                      return _buildBalanceCard(
-                        context,
-                        isSettled: balance == 0,
-                        amount: balance.abs(),
-                        currency: trip.currency,
-                        youAreOwed: balance > 0,
+                      final totalAcrossAllTrips = allExpenses.fold<double>(
+                        0,
+                        (sum, e) => sum + e.expense.amount,
+                      );
+
+                      final balances = _calculateBalancesFromExpenses(allExpenses);
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Total across all trips
+                          Container(
+                            padding: const EdgeInsets.all(AppTheme.spacingMd),
+                            decoration: BoxDecoration(
+                              color: AppTheme.neutral50,
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              border: Border.all(color: AppTheme.neutral200),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.warning.withValues(alpha: 0.2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.receipt_long,
+                                    color: AppTheme.warning,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: AppTheme.spacingMd),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Total Across All Trips',
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: AppTheme.neutral600,
+                                        ),
+                                      ),
+                                      Text(
+                                        totalAcrossAllTrips.toINR(),
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: AppTheme.neutral900,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingSm,
+                                    vertical: AppTheme.spacingXs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.neutral200,
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                  ),
+                                  child: Text(
+                                    '${allExpenses.length} expenses',
+                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                      color: AppTheme.neutral600,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Who Owes What section - using settlements format
+                          if (balances.isNotEmpty) ...[
+                            const SizedBox(height: AppTheme.spacingMd),
+                            Text(
+                              'Settle Up',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.neutral900,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spacingSm),
+                            Builder(
+                              builder: (context) {
+                                final settlements = _calculateSuggestedSettlements(balances);
+                                if (settlements.isEmpty) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.success.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.check_circle, color: AppTheme.success, size: 20),
+                                        const SizedBox(width: AppTheme.spacingSm),
+                                        Text(
+                                          'All settled up!',
+                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                            color: AppTheme.success,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                return Column(
+                                  children: [
+                                    ...settlements.take(3).map((settlement) => _buildSettlementRow(context, settlement, '₹')),
+                                    if (settlements.length > 3)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: AppTheme.spacingXs),
+                                        child: Center(
+                                          child: TextButton(
+                                            onPressed: () => context.go('/expenses'),
+                                            child: Text(
+                                              '+${settlements.length - 3} more',
+                                              style: TextStyle(
+                                                color: themeData.primaryColor,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        ],
                       );
                     },
-                    loading: () => Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingMd),
-                      decoration: BoxDecoration(
-                        color: AppTheme.neutral100,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      ),
-                      child: const Center(
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                    ),
-                    error: (_, __) => Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingMd),
-                      decoration: BoxDecoration(
-                        color: AppTheme.neutral100,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      ),
-                      child: Text(
-                        'Unable to load balance',
-                        style: TextStyle(color: AppTheme.neutral500),
-                      ),
-                    ),
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
+
                   const SizedBox(height: AppTheme.spacingMd),
-                  // Quick add expense button
+                  // Quick add expense button - shows trip name for clarity
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: () => context.push('/trips/${trip.id}/expenses/add'),
                       icon: const Icon(Icons.add, size: 18),
-                      label: const Text('Add Expense'),
+                      label: Text('Add Expense to ${trip.name}'),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
                       ),
@@ -679,105 +1231,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ),
             error: (_, __) => const Center(
               child: Text('Failed to load expenses'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build a balance summary card showing You Owe / You're Owed / Settled
-  Widget _buildBalanceCard(
-    BuildContext context, {
-    required bool isSettled,
-    required double amount,
-    required String currency,
-    bool youAreOwed = false,
-  }) {
-    if (isSettled) {
-      return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        decoration: BoxDecoration(
-          color: AppTheme.success.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXs),
-              decoration: BoxDecoration(
-                color: AppTheme.success.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check_circle,
-                color: AppTheme.success,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              'All settled up!',
-              style: TextStyle(
-                color: AppTheme.success,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final isOwed = youAreOwed;
-    final color = isOwed ? AppTheme.success : AppTheme.error;
-    final icon = isOwed ? Icons.arrow_downward : Icons.arrow_upward;
-    final label = isOwed ? "You're owed" : 'You owe';
-
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacingXs),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacingSm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  '$currency ${amount.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
             ),
           ),
         ],
@@ -897,24 +1350,211 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               ],
             ),
           ),
-          const SizedBox(height: AppTheme.spacingMd),
-          // Chat button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                final trip = tripWithMembers.trip;
-                final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
-                context.push('/trips/${trip.id}/chat?tripName=${Uri.encodeComponent(trip.name)}&userId=$currentUserId');
-              },
-              icon: const Icon(Icons.chat_bubble_outline, size: 18),
-              label: const Text('Open Group Chat'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+        ],
+      ),
+    );
+  }
+
+  /// Calculate balances from expenses data
+  List<BalanceSummary> _calculateBalancesFromExpenses(List<ExpenseWithSplits> expenses) {
+    final Map<String, BalanceSummary> balances = {};
+
+    for (var expenseWithSplits in expenses) {
+      final expense = expenseWithSplits.expense;
+      final splits = expenseWithSplits.splits;
+
+      // Track payer - they paid this amount
+      final payerId = expense.paidBy;
+      final payerName = expense.payerName ?? payerId;
+
+      if (!balances.containsKey(payerId)) {
+        balances[payerId] = BalanceSummary(
+          userId: payerId,
+          userName: payerName,
+          totalPaid: 0,
+          totalOwed: 0,
+          balance: 0,
+        );
+      }
+      balances[payerId] = BalanceSummary(
+        userId: payerId,
+        userName: payerName,
+        totalPaid: balances[payerId]!.totalPaid + expense.amount,
+        totalOwed: balances[payerId]!.totalOwed,
+        balance: 0,
+      );
+
+      // Track splits - each person owes their split amount
+      for (var split in splits) {
+        final userName = split.userName ?? split.userId;
+        if (!balances.containsKey(split.userId)) {
+          balances[split.userId] = BalanceSummary(
+            userId: split.userId,
+            userName: userName,
+            totalPaid: 0,
+            totalOwed: 0,
+            balance: 0,
+          );
+        }
+        balances[split.userId] = BalanceSummary(
+          userId: split.userId,
+          userName: userName,
+          totalPaid: balances[split.userId]!.totalPaid,
+          totalOwed: balances[split.userId]!.totalOwed + split.amount,
+          balance: 0,
+        );
+      }
+    }
+
+    // Calculate final balances (paid - owed)
+    return balances.values.map((b) {
+      return BalanceSummary(
+        userId: b.userId,
+        userName: b.userName,
+        totalPaid: b.totalPaid,
+        totalOwed: b.totalOwed,
+        balance: b.totalPaid - b.totalOwed,
+      );
+    }).toList()
+      ..sort((a, b) => b.balance.compareTo(a.balance)); // Sort by balance (highest first)
+  }
+
+  /// Calculate suggested settlements to minimize transactions
+  /// Returns a list of "who pays whom how much" suggestions
+  List<SuggestedSettlement> _calculateSuggestedSettlements(List<BalanceSummary> balances) {
+    final settlements = <SuggestedSettlement>[];
+
+    // Separate into creditors (positive balance - owed money) and debtors (negative balance - owe money)
+    final creditors = balances.where((b) => b.balance > 0).toList()
+      ..sort((a, b) => b.balance.compareTo(a.balance)); // Highest first
+    final debtors = balances.where((b) => b.balance < 0).toList()
+      ..sort((a, b) => a.balance.compareTo(b.balance)); // Most negative first
+
+    // Create mutable copies of balances
+    final creditorBalances = {for (var c in creditors) c.userId: c.balance};
+    final debtorBalances = {for (var d in debtors) d.userId: d.balance.abs()};
+    final userNames = {for (var b in balances) b.userId: b.userName};
+
+    // Match debtors with creditors
+    for (var debtor in debtors) {
+      var remaining = debtorBalances[debtor.userId]!;
+
+      for (var creditor in creditors) {
+        if (remaining <= 0) break;
+
+        final creditorRemaining = creditorBalances[creditor.userId]!;
+        if (creditorRemaining <= 0) continue;
+
+        final settlementAmount = remaining < creditorRemaining ? remaining : creditorRemaining;
+
+        if (settlementAmount > 0.01) { // Ignore tiny amounts
+          settlements.add(SuggestedSettlement(
+            fromUserId: debtor.userId,
+            fromUserName: userNames[debtor.userId] ?? debtor.userId,
+            toUserId: creditor.userId,
+            toUserName: userNames[creditor.userId] ?? creditor.userId,
+            amount: settlementAmount,
+          ));
+
+          remaining -= settlementAmount;
+          creditorBalances[creditor.userId] = creditorRemaining - settlementAmount;
+        }
+      }
+    }
+
+    return settlements;
+  }
+
+  /// Build a settlement row showing "Vinoth owes Priya ₹250"
+  Widget _buildSettlementRow(BuildContext context, SuggestedSettlement settlement, String currency) {
+    final fromName = settlement.fromUserName.split(' ').first;
+    final toName = settlement.toUserName.split(' ').first;
+    final amount = '$currency ${settlement.amount.toStringAsFixed(0)}';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        decoration: BoxDecoration(
+          color: AppTheme.neutral50,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(color: AppTheme.neutral200),
+        ),
+        child: Row(
+          children: [
+            // From user avatar
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: AppTheme.error.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  settlement.fromUserName.isNotEmpty ? settlement.fromUserName[0].toUpperCase() : '?',
+                  style: TextStyle(
+                    color: AppTheme.error,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: AppTheme.spacingSm),
+            // Text: "Vinoth owes Priya"
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.neutral700,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: fromName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral800,
+                      ),
+                    ),
+                    const TextSpan(text: ' owes '),
+                    TextSpan(
+                      text: toName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral800,
+                      ),
+                    ),
+                  ],
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            // Amount badge
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingSm,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                color: AppTheme.warning.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+              ),
+              child: Text(
+                amount,
+                style: TextStyle(
+                  color: AppTheme.warning.withValues(alpha: 0.9),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1033,14 +1673,26 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section header
+        // Section header with trip context
         Padding(
           padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
-          child: Text(
-            'Quick Actions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Quick Actions',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'for ${trip.name}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.neutral500,
+                    ),
+              ),
+            ],
           ),
         ),
         // Horizontal scrollable circular action buttons
@@ -1125,30 +1777,320 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }) {
     return Padding(
       padding: const EdgeInsets.only(right: AppTheme.spacingMd),
-      child: GestureDetector(
-        onTap: onTap,
+      child: _AnimatedActionButton(
+        icon: icon,
+        label: label,
+        color: color,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+      ),
+    );
+  }
+
+  void _showProfileMenu(BuildContext context, WidgetRef ref) {
+    final parentContext = context;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (bottomSheetContext) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppTheme.radiusXl),
+            topRight: Radius.circular(AppTheme.radiusXl),
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle
+                Container(
+                  margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppTheme.neutral300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingLg),
+
+                // Menu Items
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: context.primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      Icons.person_outline,
+                      color: context.primaryColor,
+                    ),
+                  ),
+                  title: const Text('Profile'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/profile');
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: AppTheme.fitonistPurple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(
+                      Icons.card_membership,
+                      color: AppTheme.fitonistPurple,
+                    ),
+                  ),
+                  title: const Text('Join Trip by Code'),
+                  subtitle: const Text('Enter an invite code'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/join-trip');
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: AppTheme.success.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(
+                      Icons.history,
+                      color: AppTheme.success,
+                    ),
+                  ),
+                  title: const Text('Trip History'),
+                  subtitle: const Text('View completed trips'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/trip-history');
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: AppTheme.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(
+                      Icons.emergency,
+                      color: AppTheme.error,
+                    ),
+                  ),
+                  title: const Text('Emergency Services'),
+                  subtitle: const Text('SOS, hospitals & emergency help'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/emergency');
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: context.accentColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      Icons.palette_outlined,
+                      color: context.accentColor,
+                    ),
+                  ),
+                  title: const Text('Theme'),
+                  subtitle: const Text('Customize app colors'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/settings/theme');
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: AppTheme.neutral100,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(
+                      Icons.settings_outlined,
+                      color: AppTheme.neutral600,
+                    ),
+                  ),
+                  title: const Text('Settings'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/settings');
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(
+                      Icons.admin_panel_settings,
+                      color: Colors.purple,
+                    ),
+                  ),
+                  title: const Text('Control Room'),
+                  subtitle: const Text('User management & analytics'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    if (parentContext.mounted) {
+                      parentContext.push('/settings/admin');
+                    }
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: AppTheme.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(
+                      Icons.logout,
+                      color: AppTheme.error,
+                    ),
+                  ),
+                  title: const Text(
+                    'Logout',
+                    style: TextStyle(color: AppTheme.error),
+                  ),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    await ref.read(authControllerProvider.notifier).signOut();
+                    if (parentContext.mounted) {
+                      parentContext.go('/');
+                    }
+                  },
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Animated action button with scale effect and haptic feedback
+class _AnimatedActionButton extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _AnimatedActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  State<_AnimatedActionButton> createState() => _AnimatedActionButtonState();
+}
+
+class _AnimatedActionButtonState extends State<_AnimatedActionButton> {
+  double _scale = 1.0;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _scale = 0.92);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _scale = 1.0);
+    widget.onTap();
+  }
+
+  void _handleTapCancel() {
+    setState(() => _scale = 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
         child: SizedBox(
           width: 56,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Circular icon button
+              // Circular icon button with glow effect
               Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      widget.color,
+                      widget.color.withValues(alpha: 0.8),
+                    ],
+                  ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: color.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: widget.color.withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Icon(
-                  icon,
+                  widget.icon,
                   color: Colors.white,
                   size: 22,
                 ),
@@ -1156,10 +2098,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               const SizedBox(height: 6),
               // Label below
               Text(
-                label,
+                widget.label,
                 style: TextStyle(
                   fontSize: 11,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: AppTheme.neutral700,
                 ),
                 textAlign: TextAlign.center,

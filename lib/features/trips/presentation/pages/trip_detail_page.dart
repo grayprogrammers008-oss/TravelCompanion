@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,198 +56,220 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-            // Premium App Bar with Parallax Hero Image
-            SliverAppBar(
-              expandedHeight: 280,
-              floating: false,
-              pinned: true,
-              stretch: true,
-              backgroundColor: themeData.primaryColor,
-              foregroundColor: Colors.white,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  trip.trip.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black87,
-                        offset: Offset(0, 2),
-                        blurRadius: 8,
+              // Premium App Bar with Parallax Hero Image
+              SliverAppBar(
+                expandedHeight: 280,
+                floating: false,
+                pinned: true,
+                stretch: true,
+                backgroundColor: themeData.primaryColor,
+                foregroundColor: Colors.white,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    trip.trip.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black87,
+                          offset: Offset(0, 2),
+                          blurRadius: 8,
+                        ),
+                        Shadow(
+                          color: Colors.black54,
+                          offset: Offset(0, 1),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Parallax Hero Image
+                      Transform.translate(
+                        offset: Offset(0, _scrollOffset * 0.5),
+                        child: DestinationImage(
+                          tripName: trip.trip.destination ?? trip.trip.name,
+                          height: 280,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          showOverlay: true,
+                        ),
                       ),
-                      Shadow(
-                        color: Colors.black54,
-                        offset: Offset(0, 1),
-                        blurRadius: 4,
+                      // Gradient Overlay
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.black54],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Parallax Hero Image
-                    Transform.translate(
-                      offset: Offset(0, _scrollOffset * 0.5),
-                      child: DestinationImage(
-                        tripName: trip.trip.destination ?? trip.trip.name,
-                        height: 280,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        showOverlay: true,
-                      ),
+                actions: [
+                  Container(
+                    margin: const EdgeInsets.only(right: AppTheme.spacingXs),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                     ),
-                    // Gradient Overlay
-                    Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black54,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        context.push('/trips/${widget.tripId}/edit');
+                      },
+                    ),
+                  ),
+                  PopupMenuButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    ),
+                    itemBuilder: (context) => [
+                      if (!trip.trip.isCompleted)
+                        PopupMenuItem(
+                          value: 'complete',
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(
+                                  AppTheme.spacingXs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.success.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusXs,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.check_circle,
+                                  color: AppTheme.success,
+                                  size: 18,
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              const Text('Mark as Completed'),
+                            ],
+                          ),
+                        ),
+                      if (trip.trip.isCompleted)
+                        PopupMenuItem(
+                          value: 'reopen',
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(
+                                  AppTheme.spacingXs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.info.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusXs,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.refresh,
+                                  color: AppTheme.info,
+                                  size: 18,
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              const Text('Reopen Trip'),
+                            ],
+                          ),
+                        ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingXs),
+                              decoration: BoxDecoration(
+                                color: AppTheme.error.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusXs,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.delete,
+                                color: AppTheme.error,
+                                size: 18,
+                              ),
+                            ),
+                            const SizedBox(width: AppTheme.spacingMd),
+                            const Text('Delete Trip'),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                Container(
-                  margin: const EdgeInsets.only(right: AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      context.push('/trips/${widget.tripId}/edit');
+                    ],
+                    onSelected: (value) {
+                      if (value == 'complete') {
+                        _showCompleteDialog(context, ref);
+                      } else if (value == 'reopen') {
+                        _showReopenDialog(context, ref);
+                      } else if (value == 'delete') {
+                        _showDeleteDialog(context, ref);
+                      }
                     },
                   ),
-                ),
-                PopupMenuButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  ),
-                  itemBuilder: (context) => [
-                    if (!trip.trip.isCompleted)
-                      PopupMenuItem(
-                        value: 'complete',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(AppTheme.spacingXs),
-                              decoration: BoxDecoration(
-                                color: AppTheme.success.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                              ),
-                              child: const Icon(Icons.check_circle, color: AppTheme.success, size: 18),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            const Text('Mark as Completed'),
-                          ],
-                        ),
-                      ),
-                    if (trip.trip.isCompleted)
-                      PopupMenuItem(
-                        value: 'reopen',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(AppTheme.spacingXs),
-                              decoration: BoxDecoration(
-                                color: AppTheme.info.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                              ),
-                              child: const Icon(Icons.refresh, color: AppTheme.info, size: 18),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            const Text('Reopen Trip'),
-                          ],
-                        ),
-                      ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(AppTheme.spacingXs),
-                            decoration: BoxDecoration(
-                              color: AppTheme.error.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                            ),
-                            child: const Icon(Icons.delete, color: AppTheme.error, size: 18),
-                          ),
-                          const SizedBox(width: AppTheme.spacingMd),
-                          const Text('Delete Trip'),
-                        ],
-                      ),
-                    ),
-                  ],
-                  onSelected: (value) {
-                    if (value == 'complete') {
-                      _showCompleteDialog(context, ref);
-                    } else if (value == 'reopen') {
-                      _showReopenDialog(context, ref);
-                    } else if (value == 'delete') {
-                      _showDeleteDialog(context, ref);
-                    }
-                  },
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            // Content
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingLg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Trip Info Cards with Staggered Animation
-                    FadeSlideAnimation(
-                      delay: Duration.zero,
-                      child: _buildInfoSection(context, trip, themeData),
-                    ),
-                    const SizedBox(height: AppTheme.spacingLg),
-
-                    // Description
-                    if (trip.trip.description != null &&
-                        trip.trip.description!.isNotEmpty) ...[
+              // Content
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Trip Info Cards with Staggered Animation
                       FadeSlideAnimation(
-                        delay: AppAnimations.staggerSmall,
-                        child: _buildDescriptionCard(context, trip.trip.description!),
+                        delay: Duration.zero,
+                        child: _buildInfoSection(context, trip, themeData),
+                      ),
+                      const SizedBox(height: AppTheme.spacingLg),
+
+                      // Description
+                      if (trip.trip.description != null &&
+                          trip.trip.description!.isNotEmpty) ...[
+                        FadeSlideAnimation(
+                          delay: AppAnimations.staggerSmall,
+                          child: _buildDescriptionCard(
+                            context,
+                            trip.trip.description!,
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingXl),
+                      ],
+
+                      // Members Section
+                      FadeSlideAnimation(
+                        delay: AppAnimations.staggerSmall * 2,
+                        child: _buildMembersSection(context, trip, themeData),
+                      ),
+                      const SizedBox(height: AppTheme.spacingXl),
+
+                      // Quick Actions
+                      FadeSlideAnimation(
+                        delay: AppAnimations.staggerSmall * 3,
+                        child: _buildQuickActions(context, trip),
                       ),
                       const SizedBox(height: AppTheme.spacingXl),
                     ],
-
-                    // Members Section
-                    FadeSlideAnimation(
-                      delay: AppAnimations.staggerSmall * 2,
-                      child: _buildMembersSection(context, trip, themeData),
-                    ),
-                    const SizedBox(height: AppTheme.spacingXl),
-
-                    // Quick Actions
-                    FadeSlideAnimation(
-                      delay: AppAnimations.staggerSmall * 3,
-                      child: _buildQuickActions(context, trip),
-                    ),
-                    const SizedBox(height: AppTheme.spacingXl),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
           ),
         ),
         loading: () => const Center(
-          child: AppLoadingIndicator(
-            message: 'Loading trip details...',
-          ),
+          child: AppLoadingIndicator(message: 'Loading trip details...'),
         ),
         error: (error, stack) => Center(
           child: Padding(
@@ -272,17 +293,17 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 Text(
                   'Error loading trip',
                   style: context.headlineStyle.copyWith(
-                        color: context.textColor,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: context.textColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: AppTheme.spacingXs),
                 Text(
                   error.toString(),
                   textAlign: TextAlign.center,
                   style: context.bodyStyle.copyWith(
-                        color: context.textColor.withValues(alpha: 0.7),
-                      ),
+                    color: context.textColor.withValues(alpha: 0.7),
+                  ),
                 ),
                 const SizedBox(height: AppTheme.spacingXl),
                 GlossyButton(
@@ -298,7 +319,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
-  Widget _buildInfoSection(BuildContext context, dynamic trip, dynamic themeData) {
+  Widget _buildInfoSection(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+  ) {
     final hasBudget = trip.trip.budget != null && trip.trip.budget! > 0;
     final budget = trip.trip.budget ?? 0.0;
 
@@ -362,7 +387,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             iconBg: hasBudget ? Colors.blue.shade50 : Colors.grey.shade50,
             label: 'Budget',
             value: hasBudget
-                ? '${trip.trip.currency} ${_formatCurrency(budget)}'
+                ? '${trip.trip.currency} ${budget.toStringAsFixed(2)}'
                 : 'No budget specified',
             subtitle: hasBudget ? 'Your trip budget' : null,
           ),
@@ -412,9 +437,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: context.textColor.withValues(alpha: 0.7),
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: context.textColor.withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w500,
+                ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -422,9 +447,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Text(
                 value,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.textColor,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: context.textColor,
+                  fontWeight: FontWeight.w600,
+                ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
@@ -433,9 +458,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: context.textColor.withValues(alpha: 0.6),
-                        fontSize: 11,
-                      ),
+                    color: context.textColor.withValues(alpha: 0.6),
+                    fontSize: 11,
+                  ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
@@ -445,18 +470,6 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
       ],
     );
-  }
-
-  /// Formats currency to show whole numbers without decimals (50000)
-  /// or 2 decimal places when there are cents (50000.50)
-  String _formatCurrency(double amount) {
-    if (amount == amount.truncateToDouble()) {
-      // Whole number - no decimals
-      return amount.toStringAsFixed(0);
-    } else {
-      // Has decimal part - show 2 decimal places
-      return amount.toStringAsFixed(2);
-    }
   }
 
   Widget _buildDescriptionCard(BuildContext context, String description) {
@@ -488,9 +501,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Text(
                 'Description',
                 style: context.titleStyle.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: context.textColor,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: context.textColor,
+                ),
               ),
             ],
           ),
@@ -498,16 +511,20 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           Text(
             description,
             style: context.bodyStyle.copyWith(
-                  color: context.textColor.withValues(alpha: 0.87),
-                  height: 1.6,
-                ),
+              color: context.textColor.withValues(alpha: 0.87),
+              height: 1.6,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMembersSection(BuildContext context, dynamic trip, dynamic themeData) {
+  Widget _buildMembersSection(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
@@ -526,19 +543,15 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   color: context.accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
-                child: Icon(
-                  Icons.group,
-                  size: 20,
-                  color: context.accentColor,
-                ),
+                child: Icon(Icons.group, size: 20, color: context.accentColor),
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Text(
                 'Members',
                 style: context.titleStyle.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: context.textColor,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: context.textColor,
+                ),
               ),
               const Spacer(),
               Container(
@@ -553,9 +566,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 child: Text(
                   '${trip.members.length}',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: themeData.primaryColor,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: themeData.primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -568,34 +581,32 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               height: 40,
               child: Stack(
                 children: [
-                  ...trip.members.take(5).toList().asMap().entries.map(
-                    (entry) {
-                      final index = entry.key;
-                      final member = entry.value;
-                      return Positioned(
-                        left: index * 28.0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: UserAvatarWidget(
-                            imageUrl: member.avatarUrl,
-                            userName: member.fullName ?? member.email ?? 'U',
-                            size: 36,
-                            showBorder: false,
-                          ),
+                  ...trip.members.take(5).toList().asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final member = entry.value;
+                    return Positioned(
+                      left: index * 28.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                        child: UserAvatarWidget(
+                          imageUrl: member.avatarUrl,
+                          userName: member.fullName ?? member.email ?? 'U',
+                          size: 36,
+                          showBorder: false,
+                        ),
+                      ),
+                    );
+                  }),
                   if (trip.members.length > 5)
                     Positioned(
                       left: 5 * 28.0,
@@ -633,11 +644,12 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.person_add_outlined, color: context.textColor.withValues(alpha: 0.7)),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  const Expanded(
-                    child: Text('No other members yet'),
+                  Icon(
+                    Icons.person_add_outlined,
+                    color: context.textColor.withValues(alpha: 0.7),
                   ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  const Expanded(child: Text('No other members yet')),
                   TextButton(
                     onPressed: () {
                       InviteBottomSheet.show(
@@ -653,98 +665,112 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             )
           else
             ...trip.members.asMap().entries.map(
-                  (entry) => FadeSlideAnimation(
-                    delay: AppAnimations.staggerTiny * entry.key,
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-                      decoration: BoxDecoration(
-                        color: context.backgroundColor,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        border: Border.all(color: context.textColor.withValues(alpha: 0.2)),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          // Check if it's the current user
-                          final currentUserId = ref.read(authStateProvider).value ?? '';
-                          if (entry.value.userId == currentUserId) {
-                            // Navigate to own profile
-                            context.push('/profile');
-                          } else {
-                            // Navigate to user's profile with all member data
-                            context.push('/profile'
-                                '?userId=${Uri.encodeComponent(entry.value.userId)}'
-                                '&fullName=${Uri.encodeComponent(entry.value.fullName ?? '')}'
-                                '&email=${Uri.encodeComponent(entry.value.email ?? '')}'
-                                '&role=${Uri.encodeComponent(entry.value.role)}');
-                          }
-                        },
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppTheme.spacingMd),
-                          child: Row(
-                            children: [
-                              UserAvatarWidget(
-                                imageUrl: entry.value.avatarUrl,
-                                userName: entry.value.fullName ?? entry.value.email ?? 'U',
-                                size: 40,
-                                showBorder: false,
-                              ),
-                              const SizedBox(width: AppTheme.spacingMd),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      entry.value.fullName ?? entry.value.email ?? 'Unknown Member',
-                                      style: context.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                    Text(
-                                      entry.value.role.substring(0, 1).toUpperCase() + entry.value.role.substring(1),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: context.textColor.withValues(alpha: 0.7),
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (entry.value.role == 'organizer')
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd,
-                                    vertical: AppTheme.spacingXs,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: themeData.primaryGradient,
-                                    borderRadius:
-                                        BorderRadius.circular(AppTheme.radiusFull),
-                                  ),
-                                  child: const Text(
-                                    'Organizer',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(width: AppTheme.spacingXs),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                                color: context.textColor.withValues(alpha: 0.3),
-                              ),
-                            ],
+              (entry) => FadeSlideAnimation(
+                delay: AppAnimations.staggerTiny * entry.key,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+                  decoration: BoxDecoration(
+                    color: context.backgroundColor,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    border: Border.all(
+                      color: context.textColor.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      // Check if it's the current user
+                      final currentUserId =
+                          ref.read(authStateProvider).value ?? '';
+                      if (entry.value.userId == currentUserId) {
+                        // Navigate to own profile
+                        context.push('/profile');
+                      } else {
+                        // Navigate to user's profile with all member data
+                        context.push(
+                          '/profile'
+                          '?userId=${Uri.encodeComponent(entry.value.userId)}'
+                          '&fullName=${Uri.encodeComponent(entry.value.fullName ?? '')}'
+                          '&email=${Uri.encodeComponent(entry.value.email ?? '')}'
+                          '&role=${Uri.encodeComponent(entry.value.role)}',
+                        );
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      child: Row(
+                        children: [
+                          UserAvatarWidget(
+                            imageUrl: entry.value.avatarUrl,
+                            userName:
+                                entry.value.fullName ??
+                                entry.value.email ??
+                                'U',
+                            size: 40,
+                            showBorder: false,
                           ),
-                        ),
+                          const SizedBox(width: AppTheme.spacingMd),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  entry.value.fullName ??
+                                      entry.value.email ??
+                                      'Unknown Member',
+                                  style: context.bodyStyle.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  entry.value.role
+                                          .substring(0, 1)
+                                          .toUpperCase() +
+                                      entry.value.role.substring(1),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: context.textColor.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (entry.value.role == 'organizer')
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingMd,
+                                vertical: AppTheme.spacingXs,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: themeData.primaryGradient,
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusFull,
+                                ),
+                              ),
+                              child: const Text(
+                                'Organizer',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(width: AppTheme.spacingXs),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: context.textColor.withValues(alpha: 0.3),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
+              ),
+            ),
         ],
       ),
     );
@@ -772,9 +798,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             Text(
               'Quick Actions',
               style: context.titleStyle.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: context.textColor,
-                  ),
+                fontWeight: FontWeight.w700,
+                color: context.textColor,
+              ),
             ),
           ],
         ),
@@ -792,7 +818,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     InviteBottomSheet.show(
                       context: context,
                       tripId: widget.tripId,
-                      tripName: 'Trip', // Will be replaced with actual trip name
+                      tripName:
+                          'Trip', // Will be replaced with actual trip name
                     );
                   },
                 ),
@@ -825,7 +852,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   label: 'Chat',
                   color: AppTheme.info,
                   onTap: () {
-                    final currentUserId = ref.read(authStateProvider).value ?? '';
+                    final currentUserId =
+                        ref.read(authStateProvider).value ?? '';
                     context.push(
                       '/trips/${widget.tripId}/chat'
                       '?tripName=${Uri.encodeComponent(trip.trip.name)}'
@@ -950,11 +978,13 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 Navigator.pop(context);
                 try {
                   final userId = ref.read(authStateProvider).value ?? '';
-                  await ref.read(tripControllerProvider.notifier).markTripAsCompleted(
-                    tripId: widget.tripId,
-                    userId: userId,
-                    rating: rating > 0 ? rating : null,
-                  );
+                  await ref
+                      .read(tripControllerProvider.notifier)
+                      .markTripAsCompleted(
+                        tripId: widget.tripId,
+                        userId: userId,
+                        rating: rating > 0 ? rating : null,
+                      );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -1014,10 +1044,12 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               Navigator.pop(context);
               try {
                 final userId = ref.read(authStateProvider).value ?? '';
-                await ref.read(tripControllerProvider.notifier).unmarkTripAsCompleted(
-                  tripId: widget.tripId,
-                  userId: userId,
-                );
+                await ref
+                    .read(tripControllerProvider.notifier)
+                    .unmarkTripAsCompleted(
+                      tripId: widget.tripId,
+                      userId: userId,
+                    );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -1068,8 +1100,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         content: Text(
           'Are you sure you want to delete this trip? This action cannot be undone.',
           style: context.bodyStyle.copyWith(
-                color: context.textColor.withValues(alpha: 0.7),
-              ),
+            color: context.textColor.withValues(alpha: 0.7),
+          ),
         ),
         actions: [
           TextButton(
@@ -1096,7 +1128,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                         backgroundColor: AppTheme.success,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusMd,
+                          ),
                         ),
                       ),
                     );
@@ -1109,7 +1143,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                         backgroundColor: AppTheme.error,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusMd,
+                          ),
                         ),
                       ),
                     );
@@ -1170,9 +1206,9 @@ class _ActionCard extends StatelessWidget {
             Text(
               label,
               style: context.bodyStyle.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.textColor,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: context.textColor,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

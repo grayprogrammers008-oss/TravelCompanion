@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_crew/shared/models/trip_model.dart';
 import '../../data/datasources/trip_remote_datasource.dart';
+export '../../data/datasources/trip_remote_datasource.dart' show SystemUserModel;
 import '../../data/repositories/trip_repository_impl.dart';
 import '../../domain/repositories/trip_repository.dart';
 import '../../domain/usecases/create_trip_usecase.dart';
@@ -420,6 +421,11 @@ class TripController extends Notifier<TripState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _repository.addMember(tripId: tripId, userId: userId, role: role);
+
+      // Invalidate trip provider to refresh the member list
+      ref.invalidate(tripProvider(tripId));
+      ref.invalidate(userTripsProvider);
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -435,6 +441,11 @@ class TripController extends Notifier<TripState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _repository.removeMember(tripId: tripId, userId: userId);
+
+      // Invalidate trip provider to refresh the member list
+      ref.invalidate(tripProvider(tripId));
+      ref.invalidate(userTripsProvider);
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -565,4 +576,36 @@ class TripController extends Notifier<TripState> {
 // Trip Controller Provider - Updated for Riverpod 3.0
 final tripControllerProvider = NotifierProvider<TripController, TripState>(() {
   return TripController();
+});
+
+/// Provider to search for system users to add to a trip
+/// Parameters: (searchQuery, tripId) - tripId is used to exclude existing members
+final systemUsersSearchProvider = FutureProvider.family<List<SystemUserModel>, ({String? search, String tripId})>((
+  ref,
+  params,
+) async {
+  final dataSource = ref.watch(tripRemoteDataSourceProvider);
+
+  // Get existing member IDs from the trip
+  final tripAsync = await ref.watch(tripProvider(params.tripId).future);
+  final existingMemberIds = tripAsync.members.map((m) => m.userId).toList();
+
+  return await dataSource.searchSystemUsers(
+    search: params.search,
+    excludeUserIds: existingMemberIds,
+  );
+});
+
+/// Provider to get all system users (without excluding any)
+/// Used for the manage members screen where we show all users with checkboxes
+final allSystemUsersProvider = FutureProvider.family<List<SystemUserModel>, String?>((
+  ref,
+  search,
+) async {
+  final dataSource = ref.watch(tripRemoteDataSourceProvider);
+
+  return await dataSource.searchSystemUsers(
+    search: search,
+    excludeUserIds: null, // Don't exclude anyone
+  );
 });
