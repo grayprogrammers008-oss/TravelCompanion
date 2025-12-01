@@ -176,7 +176,7 @@ class EmergencyPage extends ConsumerWidget {
                             // Medical emergency action is handled by the button itself
                           },
                           child: const MedicalEmergencyButton(
-                            size: 40,
+                            size: 56,
                             showLabel: false,
                           ),
                         ),
@@ -514,14 +514,14 @@ class _QuickActionCard extends StatelessWidget {
     final themeData = context.appThemeData;
 
     return SizedBox(
-      height: 72, // Reduced fixed height for ALL cards
+      height: 100, // Increased height to prevent overflow
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 6,
-            vertical: 6,
+            horizontal: AppTheme.spacingSm,
+            vertical: AppTheme.spacingSm,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -540,28 +540,29 @@ class _QuickActionCard extends StatelessWidget {
                   children: [
                     Icon(
                       icon,
-                      size: 22,
+                      size: 28,
                       color: color,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppTheme.spacingXs),
                     Text(
                       title,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
-                            fontSize: 10,
-                            height: 1.1,
+                            fontSize: 13,
+                            height: 1.2,
                           ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey[600],
-                            fontSize: 8,
-                            height: 1.1,
+                            fontSize: 11,
+                            height: 1.2,
                           ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
