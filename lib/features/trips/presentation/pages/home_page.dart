@@ -1146,6 +1146,43 @@ class TripCard extends StatelessWidget {
                       ),
                     ],
 
+                    // Budget
+                    if (trip.budget != null) ...[
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppTheme.neutral100,
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusXs),
+                            ),
+                            child: const Icon(
+                              Icons.account_balance_wallet,
+                              size: 14,
+                              color: AppTheme.neutral600,
+                            ),
+                          ),
+                          const SizedBox(width: AppTheme.spacingXs),
+                          Expanded(
+                            child: Text(
+                              _formatCurrency(trip.budget!, trip.currency),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: AppTheme.neutral600,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
                     const SizedBox(height: AppTheme.spacingMd),
 
                     // Members in bottom right
@@ -1295,5 +1332,31 @@ class TripCard extends StatelessWidget {
       return 'From ${startDate.toFormattedDate()}';
     }
     return 'Until ${endDate!.toFormattedDate()}';
+  }
+
+  String _formatCurrency(double amount, String currency) {
+    // Format currency symbol
+    String symbol = '₹';
+    if (currency == 'USD') {
+      symbol = '\$';
+    } else if (currency == 'EUR') {
+      symbol = '€';
+    } else if (currency == 'GBP') {
+      symbol = '£';
+    }
+
+    // Format amount with proper separators (no decimals if whole number)
+    final wholePart = amount.truncate();
+    if (amount == wholePart) {
+      // Format as integer with thousand separators
+      final formattedAmount = wholePart.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+      return '$symbol$formattedAmount';
+    } else {
+      // Format with 2 decimal places
+      return '$symbol${amount.toStringAsFixed(2)}';
+    }
   }
 }
