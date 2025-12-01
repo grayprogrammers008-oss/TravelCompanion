@@ -7,6 +7,7 @@ import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/trips/presentation/pages/trip_filter_page.dart';
+import '../../features/trips/presentation/pages/browse_trips_page.dart';
 import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page_new.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
@@ -58,6 +59,7 @@ class AppRoutes {
   static const String createTrip = '/trips/create';
   static const String editTrip = '/trips/:tripId/edit';
   static const String tripFilter = '/trips/filter';
+  static const String browseTrips = '/trips/browse';
   static const String expenseList = '/trips/:tripId/expenses';
   static const String addExpense = '/trips/:tripId/expenses/add';
   static const String addStandaloneExpense = '/expenses/add';
@@ -211,6 +213,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             initialCreatedBefore: createdBefore != null ? DateTime.tryParse(createdBefore) : null,
           );
         },
+      ),
+      GoRoute(
+        path: AppRoutes.browseTrips,
+        name: 'browseTrips',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const BrowseTripsPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.tripDetail,

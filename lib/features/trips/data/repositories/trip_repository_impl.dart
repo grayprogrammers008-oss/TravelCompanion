@@ -1,4 +1,5 @@
 import '../../../../shared/models/trip_model.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../../domain/repositories/trip_repository.dart';
 import '../../domain/usecases/get_user_stats_usecase.dart';
 import '../datasources/trip_remote_datasource.dart';
@@ -250,6 +251,31 @@ class TripRepositoryImpl implements TripRepository {
       return _remoteDataSource.watchUserStats();
     } catch (e) {
       throw Exception('Failed to watch user stats: $e');
+    }
+  }
+
+  @override
+  Future<List<TripWithMembers>> getDiscoverableTrips() async {
+    try {
+      return await _remoteDataSource.getDiscoverableTrips();
+    } catch (e) {
+      throw Exception('Failed to get discoverable trips: $e');
+    }
+  }
+
+  @override
+  Future<void> joinTrip(String tripId) async {
+    try {
+      // Get current user ID
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Add user as a member with 'member' role
+      await _remoteDataSource.addMember(tripId, userId, role: 'member');
+    } catch (e) {
+      throw Exception('Failed to join trip: $e');
     }
   }
 }

@@ -15,6 +15,8 @@ import '../../domain/usecases/mark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/unmark_trip_as_completed_usecase.dart';
 import '../../domain/usecases/filter_trips_usecase.dart';
 import '../../domain/usecases/get_trip_cost_usecase.dart';
+import '../../domain/usecases/get_discoverable_trips_usecase.dart';
+import '../../domain/usecases/join_trip_usecase.dart';
 import '../../domain/models/trip_cost_summary.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -77,6 +79,18 @@ final getTripCostUseCaseProvider = Provider<GetTripCostUseCase>((ref) {
   return GetTripCostUseCase(expenseRepository);
 });
 
+// Get Discoverable Trips Use Case Provider
+final getDiscoverableTripsUseCaseProvider = Provider<GetDiscoverableTripsUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return GetDiscoverableTripsUseCase(repository);
+});
+
+// Join Trip Use Case Provider
+final joinTripUseCaseProvider = Provider<JoinTripUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return JoinTripUseCase(repository);
+});
+
 // Trip Cost Summary Provider - FutureProvider for trip cost
 final tripCostSummaryProvider = FutureProvider.family<TripCostSummary, String>((
   ref,
@@ -105,6 +119,12 @@ final userTripsProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref
   await for (final trips in repository.watchUserTrips()) {
     yield trips;
   }
+});
+
+// Discoverable Trips Provider - Public trips that user can join
+final discoverableTripsProvider = FutureProvider.autoDispose<List<TripWithMembers>>((ref) async {
+  final useCase = ref.watch(getDiscoverableTripsUseCaseProvider);
+  return await useCase();
 });
 
 // Single Trip Provider - REAL-TIME stream for specific trip

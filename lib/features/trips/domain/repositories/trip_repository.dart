@@ -66,4 +66,10 @@ abstract class TripRepository {
 
   /// Watch user's travel statistics with real-time updates
   Stream<UserTravelStats> watchUserStats();
+
+  /// Get public trips that the current user can discover and join
+  Future<List<TripWithMembers>> getDiscoverableTrips();
+
+  /// Join a public trip
+  Future<void> joinTrip(String tripId);
 }

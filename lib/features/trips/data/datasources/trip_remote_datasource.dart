@@ -46,6 +46,9 @@ abstract class TripRemoteDataSource {
 
   /// Watch user's travel statistics with real-time updates
   Stream<UserTravelStats> watchUserStats();
+
+  /// Get public trips that the current user can join (not already a member)
+  Future<List<TripWithMembers>> getDiscoverableTrips();
 }
 
 class TripRemoteDataSourceImpl implements TripRemoteDataSource {
@@ -672,5 +675,77 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
     };
 
     return controller.stream;
+  }
+
+  @override
+  Future<List<TripWithMembers>> getDiscoverableTrips() async {
+    try {
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
+
+      if (kDebugMode) {
+        debugPrint('🔍 Fetching discoverable public trips for user: $userId');
+      }
+
+      // First, get all trip IDs where the user is already a member
+      final userTripsResponse = await _client
+          .from('trip_members')
+          .select('trip_id')
+          .eq('user_id', userId);
+
+      final userTripIds = (userTripsResponse as List)
+          .map((row) => row['trip_id'] as String)
+          .toList();
+
+      if (kDebugMode) {
+        debugPrint('🔍 User is already member of ${userTripIds.length} trips');
+      }
+
+      // Query for all public trips
+      final response = await _client
+          .from('trips')
+          .select('''
+            *,
+            trip_members(
+              id,
+              user_id,
+              role,
+              joined_at,
+              profiles(
+                id,
+                email,
+                full_name,
+                avatar_url
+              )
+            )
+          ''')
+          .eq('is_public', true) // Only public trips
+          .order('created_at', ascending: false)
+          .limit(100); // Limit to 100 most recent public trips
+
+      // Parse all public trips and filter out trips where user is already a member
+      final allPublicTrips = (response as List)
+          .map((tripData) => _parseTripWithMembers(tripData))
+          .toList();
+
+      // Filter out trips where the current user is already a member
+      final trips = allPublicTrips
+          .where((trip) => !userTripIds.contains(trip.trip.id))
+          .take(50) // Limit to 50 trips
+          .toList();
+
+      if (kDebugMode) {
+        debugPrint('🔍 Found ${trips.length} discoverable public trips');
+      }
+
+      return trips;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Error fetching discoverable trips: $e');
+      }
+      throw Exception('Failed to get discoverable trips: $e');
+    }
   }
 }
