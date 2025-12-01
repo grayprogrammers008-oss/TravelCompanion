@@ -16,6 +16,7 @@ class CreateTripUseCase {
     String? coverImageUrl,
     double? budget,
     String? currency,
+    bool isPublic = true,
   }) async {
     // Validation
     if (name.trim().isEmpty) {
@@ -46,6 +47,7 @@ class CreateTripUseCase {
       coverImageUrl: coverImageUrl,
       budget: budget,
       currency: currency,
+      isPublic: isPublic,
     );
   }
 }

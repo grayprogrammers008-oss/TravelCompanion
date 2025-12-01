@@ -366,6 +366,20 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 : 'No budget specified',
             subtitle: hasBudget ? 'Your trip budget' : null,
           ),
+
+          // Trip Visibility
+          const Divider(height: AppTheme.spacingLg),
+          _buildInfoRow(
+            context,
+            icon: trip.trip.isPublic ? Icons.public : Icons.lock,
+            iconColor: trip.trip.isPublic ? Colors.green.shade700 : Colors.orange.shade700,
+            iconBg: trip.trip.isPublic ? Colors.green.shade50 : Colors.orange.shade50,
+            label: 'Visibility',
+            value: trip.trip.isPublic ? 'Public' : 'Private',
+            subtitle: trip.trip.isPublic
+                ? 'Anyone can discover this trip'
+                : 'Only members can see this trip',
+          ),
         ],
       ),
     );

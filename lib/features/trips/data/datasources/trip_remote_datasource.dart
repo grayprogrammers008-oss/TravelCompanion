@@ -71,6 +71,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
             'cover_image_url': trip.coverImageUrl,
             'budget': trip.budget,
             'currency': trip.currency,
+            'is_public': trip.isPublic,
             'created_by': SupabaseClientWrapper.currentUserId,
           })
           .select()

@@ -19,6 +19,7 @@ class TripRepositoryImpl implements TripRepository {
     String? coverImageUrl,
     double? budget,
     String? currency,
+    bool isPublic = true,
   }) async {
     try {
       final trip = TripModel(
@@ -32,6 +33,7 @@ class TripRepositoryImpl implements TripRepository {
         createdBy: '', // Will be set by backend
         budget: budget,
         currency: currency ?? 'INR',
+        isPublic: isPublic,
       );
 
       final createdTrip = await _remoteDataSource.createTrip(trip);
@@ -81,6 +83,7 @@ class TripRepositoryImpl implements TripRepository {
     double? rating,
     double? budget,
     String? currency,
+    bool? isPublic,
   }) async {
     try {
       // Build updates map
@@ -127,6 +130,10 @@ class TripRepositoryImpl implements TripRepository {
       if (currency != null) {
         updates['currency'] = currency;
         updatedField = updatedField == null ? 'currency' : 'details';
+      }
+      if (isPublic != null) {
+        updates['isPublic'] = isPublic;
+        updatedField = updatedField == null ? 'visibility' : 'details';
       }
 
       await _remoteDataSource.updateTrip(tripId, updates);

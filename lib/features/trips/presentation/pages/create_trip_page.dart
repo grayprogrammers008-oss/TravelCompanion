@@ -32,6 +32,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   DateTime? _startDate;
   DateTime? _endDate;
   String _currency = 'INR'; // Default currency
+  bool _isPublic = true; // Trip visibility: true = public, false = private
   bool _isLoading = false;
 
   late AnimationController _animationController;
@@ -116,6 +117,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               ? _formatCurrency(trip.trip.budget!)
               : '';
           _currency = trip.trip.currency;
+          _isPublic = trip.trip.isPublic;
           _startDate = trip.trip.startDate;
           _endDate = trip.trip.endDate;
           _isLoading = false;
@@ -246,6 +248,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               endDate: _endDate,
               budget: budget,
               currency: _currency,
+              isPublic: _isPublic,
             );
 
         if (kDebugMode) {
@@ -282,6 +285,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               endDate: _endDate,
               budget: budget,
               currency: _currency,
+              isPublic: _isPublic,
             );
 
         if (kDebugMode) {
@@ -487,9 +491,16 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 ),
                 const SizedBox(height: AppTheme.spacingMd),
 
-                // Date Section
+                // Trip Visibility Section
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 5,
+                  child: _buildVisibilityToggle(),
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
+
+                // Date Section
+                FadeSlideAnimation(
+                  delay: AppAnimations.staggerSmall * 6,
                   child: Row(
                     children: [
                       Expanded(
@@ -844,6 +855,70 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildVisibilityToggle() {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: AppTheme.shadowSm,
+        border: Border.all(
+          color: AppTheme.neutral200,
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Icon and label
+          Icon(
+            _isPublic ? Icons.public : Icons.lock,
+            size: 20,
+            color: _isPublic ? context.primaryColor : AppTheme.neutral600,
+          ),
+          const SizedBox(width: AppTheme.spacingSm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Trip Visibility',
+                  style: context.titleStyle.copyWith(
+                    color: context.textColor,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _isPublic
+                      ? 'Public - Anyone can discover this trip'
+                      : 'Private - Only members can see this trip',
+                  style: context.bodyStyle.copyWith(
+                    color: context.textColor.withValues(alpha: 0.6),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Toggle switch
+          Switch(
+            value: _isPublic,
+            onChanged: _isLoading
+                ? null
+                : (value) {
+                    setState(() {
+                      _isPublic = value;
+                    });
+                  },
+            activeTrackColor: context.primaryColor.withValues(alpha: 0.5),
+            activeThumbColor: context.primaryColor,
+          ),
+        ],
+      ),
     );
   }
 }

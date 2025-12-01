@@ -307,6 +307,7 @@ class TripController extends Notifier<TripState> {
     String? coverImageUrl,
     double? budget,
     String? currency,
+    bool isPublic = true,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -319,6 +320,7 @@ class TripController extends Notifier<TripState> {
         coverImageUrl: coverImageUrl,
         budget: budget,
         currency: currency,
+        isPublic: isPublic,
       );
 
       // Invalidate providers to trigger refresh
@@ -343,6 +345,7 @@ class TripController extends Notifier<TripState> {
     String? coverImageUrl,
     double? budget,
     String? currency,
+    bool? isPublic,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -356,6 +359,7 @@ class TripController extends Notifier<TripState> {
         coverImageUrl: coverImageUrl,
         budget: budget,
         currency: currency,
+        isPublic: isPublic,
       );
 
       // Invalidate providers to trigger refresh

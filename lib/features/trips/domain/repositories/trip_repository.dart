@@ -13,6 +13,7 @@ abstract class TripRepository {
     String? coverImageUrl,
     double? budget,
     String? currency,
+    bool isPublic = true,
   });
 
   /// Get all trips for current user
@@ -35,6 +36,7 @@ abstract class TripRepository {
     double? rating,
     double? budget,
     String? currency,
+    bool? isPublic,
   });
 
   /// Delete trip
