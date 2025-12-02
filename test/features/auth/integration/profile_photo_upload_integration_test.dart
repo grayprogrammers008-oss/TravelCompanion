@@ -8,7 +8,6 @@ import 'package:travel_crew/features/auth/data/datasources/profile_photo_service
 import 'package:travel_crew/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:travel_crew/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:travel_crew/features/auth/data/models/user_model.dart';
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 
 @GenerateMocks([
   AuthRemoteDataSource,
