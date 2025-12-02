@@ -96,93 +96,105 @@ class _DestinationImageState extends State<DestinationImage> {
     // Determine which image URL to use
     final imageUrl = widget.imageUrl ?? _fetchedImageUrl;
 
-    return Container(
-      width: widget.width,
-      height: widget.height,
-      decoration: BoxDecoration(
-        borderRadius: widget.borderRadius,
-      ),
-      child: ClipRRect(
-        borderRadius: widget.borderRadius ?? BorderRadius.zero,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Gradient background (fallback)
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(colors[0]),
-                    Color(colors[1]),
-                  ],
-                ),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Decorative pattern overlay
-                  Positioned.fill(
-                    child: CustomPaint(
-                      painter: _DestinationPatternPainter(),
-                    ),
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate effective dimensions - prefer widget dimensions, then parent constraints
+        // Handle double.infinity by falling back to parent constraints
+        double effectiveWidth;
+        if (widget.width != null && widget.width!.isFinite) {
+          effectiveWidth = widget.width!;
+        } else if (constraints.maxWidth.isFinite) {
+          effectiveWidth = constraints.maxWidth;
+        } else {
+          effectiveWidth = 300; // Fallback width
+        }
 
-                  // Trip name icon (only show if no image)
-                  if (imageUrl == null &&
-                      !_isLoading &&
-                      (widget.tripName != null || widget.destination != null))
-                    Center(
-                      child: Icon(
-                        _getDestinationIcon(
-                            widget.tripName ?? widget.destination ?? ''),
-                        size: 64,
-                        color: Colors.white.withValues(alpha: 0.3),
+        double effectiveHeight;
+        if (widget.height != null && widget.height!.isFinite) {
+          effectiveHeight = widget.height!;
+        } else if (constraints.maxHeight.isFinite) {
+          effectiveHeight = constraints.maxHeight;
+        } else {
+          effectiveHeight = 200; // Fallback height
+        }
+
+        return SizedBox(
+          width: effectiveWidth,
+          height: effectiveHeight,
+          child: ClipRRect(
+            borderRadius: widget.borderRadius ?? BorderRadius.zero,
+            child: Stack(
+              children: [
+                // Gradient background (fallback)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(colors[0]),
+                          Color(colors[1]),
+                        ],
                       ),
                     ),
-                ],
-              ),
-            ),
-
-            // Real image (if available)
-            if (imageUrl != null && !_hasError)
-              CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: widget.fit,
-                placeholder: (context, url) => _buildShimmer(),
-                errorWidget: (context, url, error) => Container(),
-              ),
-
-            // Shimmer loading effect
-            if (_isLoading) _buildShimmer(),
-
-            // Overlay gradient (for text readability)
-            if (widget.showOverlay)
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
-                      ],
-                      stops: const [0.5, 1.0],
+                    child: CustomPaint(
+                      painter: _DestinationPatternPainter(),
+                      child: imageUrl == null &&
+                              !_isLoading &&
+                              (widget.tripName != null || widget.destination != null)
+                          ? Center(
+                              child: Icon(
+                                _getDestinationIcon(
+                                    widget.tripName ?? widget.destination ?? ''),
+                                size: 64,
+                                color: Colors.white.withValues(alpha: 0.3),
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                 ),
-              ),
-
-            // Overlay content
-            if (widget.overlayChild != null)
-              Positioned.fill(
-                child: widget.overlayChild!,
-              ),
-          ],
-        ),
-      ),
+                // Real image (if available)
+                if (imageUrl != null && !_hasError)
+                  Positioned.fill(
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: widget.fit,
+                      placeholder: (context, url) => _buildShimmer(),
+                      errorWidget: (context, url, error) => const SizedBox(),
+                    ),
+                  ),
+                // Shimmer loading effect
+                if (_isLoading)
+                  Positioned.fill(child: _buildShimmer()),
+                // Overlay gradient (for text readability)
+                if (widget.showOverlay)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.7),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                // Overlay content
+                if (widget.overlayChild != null)
+                  Positioned.fill(
+                    child: widget.overlayChild!,
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

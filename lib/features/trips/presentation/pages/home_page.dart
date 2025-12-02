@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
-import '../../../../core/theme/theme_extensions.dart';
-import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
@@ -644,31 +642,8 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 const SizedBox(height: AppTheme.spacingLg),
 
-                // Menu Items
+                // Menu Items - Trip-specific actions only (Profile/Settings/Theme accessible via bottom nav)
                 ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: context.primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: Icon(
-                    Icons.person_outline,
-                    color: context.primaryColor,
-                  ),
-                ),
-                title: const Text('Profile'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/profile');
-                  }
-                },
-              ),
-              ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
@@ -761,53 +736,6 @@ class _HomePageState extends ConsumerState<HomePage>
                   await Future.delayed(const Duration(milliseconds: 100));
                   if (parentContext.mounted) {
                     parentContext.push('/emergency');
-                  }
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: context.accentColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: Icon(
-                    Icons.palette_outlined,
-                    color: context.accentColor,
-                  ),
-                ),
-                title: const Text('Theme'),
-                subtitle: const Text('Customize app colors'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/settings/theme');
-                  }
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.neutral100,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.settings_outlined,
-                    color: AppTheme.neutral600,
-                  ),
-                ),
-                title: const Text('Settings'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/settings');
                   }
                 },
               ),
@@ -939,11 +867,56 @@ class TripCard extends StatelessWidget {
     required this.onDelete,
   });
 
+  /// Get trip status info (label, color, icon)
+  ({String label, Color color, IconData icon}) _getTripStatus(TripModel trip) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (trip.isCompleted) {
+      return (label: 'Completed', color: AppTheme.success, icon: Icons.check_circle);
+    }
+
+    if (trip.startDate != null && trip.endDate != null) {
+      final startDate = DateTime(trip.startDate!.year, trip.startDate!.month, trip.startDate!.day);
+      final endDate = DateTime(trip.endDate!.year, trip.endDate!.month, trip.endDate!.day);
+
+      if (today.isBefore(startDate)) {
+        final daysLeft = startDate.difference(today).inDays;
+        return (
+          label: daysLeft == 1 ? 'Starts tomorrow' : 'In $daysLeft days',
+          color: const Color(0xFF5C6BC0), // Indigo
+          icon: Icons.schedule,
+        );
+      } else if (today.isAfter(endDate)) {
+        return (label: 'Ended', color: AppTheme.neutral500, icon: Icons.event_busy);
+      } else {
+        final dayNumber = today.difference(startDate).inDays + 1;
+        final totalDays = endDate.difference(startDate).inDays + 1;
+        return (
+          label: 'Day $dayNumber of $totalDays',
+          color: const Color(0xFFFF7043), // Deep orange
+          icon: Icons.directions_walk,
+        );
+      }
+    }
+
+    return (label: 'Upcoming', color: const Color(0xFF5C6BC0), icon: Icons.schedule);
+  }
+
+  /// Format date range in compact format: "Dec 1-5" or "Dec 1 - Jan 3"
+  String _formatCompactDateRange(DateTime start, DateTime end) {
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    if (start.month == end.month && start.year == end.year) {
+      return '${months[start.month - 1]} ${start.day}-${end.day}';
+    }
+    return '${months[start.month - 1]} ${start.day} - ${months[end.month - 1]} ${end.day}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final trip = tripWithMembers.trip;
     final members = tripWithMembers.members;
-    final daysLeft = trip.startDate?.difference(DateTime.now()).inDays;
+    final status = _getTripStatus(trip);
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -960,145 +933,133 @@ class TripCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Cover Image with Overlay
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.radiusLg),
-                      topRight: Radius.circular(AppTheme.radiusLg),
-                    ),
-                    child: DestinationImage(
-                      tripName: trip.destination ?? trip.name,
-                      height: 180,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      showOverlay: true,
-                      overlayChild: Padding(
-                        padding: const EdgeInsets.all(AppTheme.spacingMd),
+              // Cover Image with Overlay - Reduced height from 180 to 140
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(AppTheme.radiusLg),
+                  topRight: Radius.circular(AppTheme.radiusLg),
+                ),
+                child: DestinationImage(
+                  tripName: trip.destination ?? trip.name,
+                  height: 140,
+                  fit: BoxFit.cover,
+                  showOverlay: true,
+                  overlayChild: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spacingSm),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Actions Row
+                            // Top Row: Status Badge + Actions
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Edit Button
-                                _buildActionButton(
-                                  context,
-                                  Icons.edit_outlined,
-                                  onEdit,
+                                // Status Badge
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingSm,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: status.color,
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: status.color.withValues(alpha: 0.4),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        status.icon,
+                                        size: 12,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        status.label,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(width: AppTheme.spacingXs),
-                                // Delete Button
-                                _buildActionButton(
-                                  context,
-                                  Icons.delete_outline,
-                                  onDelete,
-                                  isDestructive: true,
+                                // Actions
+                                Row(
+                                  children: [
+                                    _buildActionButton(
+                                      context,
+                                      Icons.edit_outlined,
+                                      onEdit,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    _buildActionButton(
+                                      context,
+                                      Icons.delete_outline,
+                                      onDelete,
+                                      isDestructive: true,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
 
-                            // Trip Info Overlay
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Days Left Badge
-                                if (daysLeft != null && daysLeft > 0)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppTheme.spacingSm,
-                                      vertical: AppTheme.spacingXs,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: context.accentColor,
-                                      borderRadius: BorderRadius.circular(
-                                          AppTheme.radiusFull),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.access_time,
-                                          size: 12,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '$daysLeft days left',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                const SizedBox(height: AppTheme.spacingXs),
-
-                                // Trip Name
-                                Text(
-                                  trip.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        shadows: [
-                                          const Shadow(
-                                            color: Colors.black26,
-                                            offset: Offset(0, 2),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
+                            // Bottom: Trip Name
+                            Text(
+                              trip.name,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    shadows: [
+                                      const Shadow(
+                                        color: Colors.black38,
+                                        offset: Offset(0, 1),
+                                        blurRadius: 3,
                                       ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                                    ],
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
 
-              // Trip Details
+              // Trip Details - Consolidated layout
               Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Destination
-                    if (trip.destination != null)
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: AppTheme.neutral100,
-                              borderRadius:
-                                  BorderRadius.circular(AppTheme.radiusXs),
-                            ),
-                            child: const Icon(
-                              Icons.location_on,
-                              size: 14,
-                              color: AppTheme.neutral600,
-                            ),
+                    // Consolidated Row: Location + Dates
+                    Row(
+                      children: [
+                        // Location
+                        if (trip.destination != null) ...[
+                          Icon(
+                            Icons.location_on,
+                            size: 14,
+                            color: AppTheme.neutral500,
                           ),
-                          const SizedBox(width: AppTheme.spacingXs),
-                          Expanded(
+                          const SizedBox(width: 2),
+                          Flexible(
                             child: Text(
                               trip.destination!,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium
+                                  .bodySmall
                                   ?.copyWith(
                                     color: AppTheme.neutral700,
                                     fontWeight: FontWeight.w500,
@@ -1108,87 +1069,77 @@ class TripCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ),
-
-                    // Dates
-                    if (trip.startDate != null || trip.endDate != null) ...[
-                      const SizedBox(height: AppTheme.spacingXs),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: AppTheme.neutral100,
-                              borderRadius:
-                                  BorderRadius.circular(AppTheme.radiusXs),
-                            ),
-                            child: const Icon(
-                              Icons.calendar_today,
-                              size: 14,
-                              color: AppTheme.neutral600,
+                        // Separator
+                        if (trip.destination != null && trip.startDate != null && trip.endDate != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Text(
+                              '•',
+                              style: TextStyle(color: AppTheme.neutral400),
                             ),
                           ),
-                          const SizedBox(width: AppTheme.spacingXs),
-                          Expanded(
-                            child: Text(
-                              _formatDateRange(trip.startDate, trip.endDate),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.neutral600,
-                                  ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                        // Dates
+                        if (trip.startDate != null && trip.endDate != null) ...[
+                          Icon(
+                            Icons.calendar_today,
+                            size: 12,
+                            color: AppTheme.neutral500,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            _formatCompactDateRange(trip.startDate!, trip.endDate!),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: AppTheme.neutral600,
+                                  fontSize: 11,
+                                ),
                           ),
                         ],
-                      ),
-                    ],
+                      ],
+                    ),
 
-                    // Budget
-                    if (trip.budget != null) ...[
-                      const SizedBox(height: AppTheme.spacingXs),
-                      Row(
-                        children: [
+                    const SizedBox(height: AppTheme.spacingXs),
+
+                    // Bottom Row: Budget + Members
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Budget chip
+                        if (trip.budget != null)
                           Container(
-                            padding: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
-                              color: AppTheme.neutral100,
-                              borderRadius:
-                                  BorderRadius.circular(AppTheme.radiusXs),
+                              color: AppTheme.success.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                             ),
-                            child: const Icon(
-                              Icons.account_balance_wallet,
-                              size: 14,
-                              color: AppTheme.neutral600,
-                            ),
-                          ),
-                          const SizedBox(width: AppTheme.spacingXs),
-                          Expanded(
-                            child: Text(
-                              _formatCurrency(trip.budget!, trip.currency),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.neutral600,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.account_balance_wallet,
+                                  size: 12,
+                                  color: AppTheme.success,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _formatCurrency(trip.budget!, trip.currency),
+                                  style: TextStyle(
+                                    color: AppTheme.success,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                   ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-
-                    const SizedBox(height: AppTheme.spacingMd),
-
-                    // Members in bottom right
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
+                          )
+                        else
+                          const SizedBox.shrink(),
+                        // Members
                         _buildCompactMemberAvatars(members, tripWithMembers.memberCount ?? members.length),
                       ],
                     ),
@@ -1321,17 +1272,6 @@ class TripCard extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _formatDateRange(DateTime? startDate, DateTime? endDate) {
-    if (startDate == null && endDate == null) return 'Dates not set';
-    if (startDate != null && endDate != null) {
-      return '${startDate.toFormattedDate()} - ${endDate.toFormattedDate()}';
-    }
-    if (startDate != null) {
-      return 'From ${startDate.toFormattedDate()}';
-    }
-    return 'Until ${endDate!.toFormattedDate()}';
   }
 
   String _formatCurrency(double amount, String currency) {

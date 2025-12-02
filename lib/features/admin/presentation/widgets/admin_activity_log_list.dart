@@ -14,7 +14,7 @@ class AdminActivityLogList extends ConsumerStatefulWidget {
 }
 
 class _AdminActivityLogListState extends ConsumerState<AdminActivityLogList> {
-  int _currentPage = 0;
+  final int _currentPage = 0;
 
   ActivityLogParams get _currentParams => ActivityLogParams(
         limit: 50,

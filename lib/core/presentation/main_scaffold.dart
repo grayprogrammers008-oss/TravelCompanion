@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/home/presentation/pages/dashboard_page.dart';
 import '../../features/trips/presentation/pages/home_page.dart';
 import '../../features/expenses/presentation/pages/expenses_home_page.dart';
+import '../../features/settings/presentation/pages/profile_page.dart';
 
-/// Main scaffold with bottom navigation - 3 tabs: Dashboard, Trips, Expenses
+/// Main scaffold with bottom navigation - 4 tabs: Home, Trips, Expenses, Profile
 class MainScaffold extends StatefulWidget {
   final Widget child;
   final int currentIndex;
@@ -31,6 +32,9 @@ class _MainScaffoldState extends State<MainScaffold> {
       case 2:
         context.go('/expenses');
         break;
+      case 3:
+        context.go('/profile');
+        break;
     }
   }
 
@@ -39,6 +43,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -54,6 +59,11 @@ class _MainScaffoldState extends State<MainScaffold> {
             icon: Icon(Icons.receipt_long_outlined),
             activeIcon: Icon(Icons.receipt_long),
             label: 'Expenses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
         currentIndex: widget.currentIndex,
@@ -90,6 +100,16 @@ class ExpensesShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MainScaffold(currentIndex: 2, child: ExpensesHomePage());
+  }
+}
+
+/// Shell route for profile tab
+class ProfileShell extends StatelessWidget {
+  const ProfileShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MainScaffold(currentIndex: 3, child: ProfilePage());
   }
 }
 

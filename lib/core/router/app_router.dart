@@ -8,6 +8,7 @@ import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/trips/presentation/pages/trip_filter_page.dart';
 import '../../features/trips/presentation/pages/browse_trips_page.dart';
+import '../../features/trips/presentation/pages/trip_members_page.dart';
 import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page_new.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
@@ -62,6 +63,7 @@ class AppRoutes {
   static const String tripDetail = '/trips/:tripId';
   static const String createTrip = '/trips/create';
   static const String editTrip = '/trips/:tripId/edit';
+  static const String tripMembers = '/trips/:tripId/members';
   static const String tripFilter = '/trips/filter';
   static const String browseTrips = '/trips/browse';
   static const String expenseList = '/trips/:tripId/expenses';
@@ -251,6 +253,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: AppRoutes.tripMembers,
+        name: 'tripMembers',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return TripMembersPage(tripId: tripId);
+        },
+      ),
+      GoRoute(
         path: AppRoutes.expenseList,
         name: 'expenseList',
         builder: (context, state) {
@@ -416,14 +426,24 @@ final routerProvider = Provider<GoRouter>((ref) {
           final fullName = state.uri.queryParameters['fullName'];
           final email = state.uri.queryParameters['email'];
           final role = state.uri.queryParameters['role'];
+
+          // If viewing another user's profile (has userId param), show without bottom nav
+          if (userId != null && userId.isNotEmpty) {
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: ProfilePage(
+                userId: userId,
+                fullName: fullName,
+                email: email,
+                role: role,
+              ),
+            );
+          }
+
+          // Own profile - show with bottom nav via ProfileShell
           return NoTransitionPage(
             key: state.pageKey,
-            child: ProfilePage(
-              userId: userId,
-              fullName: fullName,
-              email: email,
-              role: role,
-            ),
+            child: const ProfileShell(),
           );
         },
       ),

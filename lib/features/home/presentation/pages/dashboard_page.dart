@@ -262,15 +262,18 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-          child: Stack(
-            children: [
-              // Background Image - Taller for more impact
-              DestinationImage(
-                tripName: trip.destination ?? trip.name,
-                height: 280,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+          child: SizedBox(
+            height: 280,
+            child: Stack(
+              children: [
+                // Background Image - Taller for more impact
+                Positioned.fill(
+                  child: DestinationImage(
+                    tripName: trip.destination ?? trip.name,
+                    height: 280,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               // Gradient Overlay - More dramatic
               Positioned.fill(
                 child: Container(
@@ -415,7 +418,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   ),
                 ),
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -571,6 +575,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       children: [
         // Stacked avatars
         SizedBox(
+          // Calculate width: first avatar + (overlap * remaining avatars) + optional +N badge
+          width: 32.0 + (displayMembers.length - 1) * 22.0 + (remainingCount > 0 ? 22.0 : 0),
           height: 36,
           child: Stack(
             children: [
