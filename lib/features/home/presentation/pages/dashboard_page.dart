@@ -1065,6 +1065,146 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
 
+                  // Personal Expenses Card
+                  userExpensesAsync.when(
+                    data: (allExpenses) {
+                      // Filter for personal expenses (no trip_id)
+                      final personalExpenses = allExpenses.where((e) => e.expense.tripId == null).toList();
+
+                      if (personalExpenses.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final personalTotal = personalExpenses.fold<double>(
+                        0,
+                        (sum, e) => sum + e.expense.amount,
+                      );
+
+                      return Container(
+                        padding: const EdgeInsets.all(AppTheme.spacingMd),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.orange.withValues(alpha: 0.1),
+                              Colors.orange.withValues(alpha: 0.05),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          border: Border.all(
+                            color: Colors.orange.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  size: 16,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: AppTheme.spacingXs),
+                                Text(
+                                  'Personal Expenses',
+                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Colors.orange.shade700,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingSm,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                  ),
+                                  child: Text(
+                                    '${personalExpenses.length} expense${personalExpenses.length == 1 ? '' : 's'}',
+                                    style: TextStyle(
+                                      color: Colors.orange.shade700,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppTheme.spacingSm),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Total Spent',
+                                        style: TextStyle(
+                                          color: AppTheme.neutral500,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Text(
+                                        personalTotal.toINR(),
+                                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.orange.shade700,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Quick add personal expense button
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () => context.push('/expenses/add'),
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppTheme.spacingSm,
+                                        vertical: AppTheme.spacingXs,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.add,
+                                            size: 16,
+                                            color: Colors.orange.shade700,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'Add',
+                                            style: TextStyle(
+                                              color: Colors.orange.shade700,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+
                   // Global Summary - Who Owes What
                   userExpensesAsync.when(
                     data: (allExpenses) {
