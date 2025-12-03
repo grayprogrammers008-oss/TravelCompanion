@@ -9,88 +9,83 @@ import '../../../trips/presentation/providers/trip_providers.dart';
 ///
 /// Priority: In-progress trip > Upcoming trip (closest start date)
 final activeTripProvider = FutureProvider<TripWithMembers?>((ref) async {
-  final tripsAsync = ref.watch(userTripsProvider);
+  // Await the trips data - this properly propagates loading/error states
+  final trips = await ref.watch(userTripsProvider.future);
 
-  return tripsAsync.when(
-    data: (trips) {
-      if (trips.isEmpty) return null;
+  if (trips.isEmpty) return null;
 
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
 
-      // Find trips that are currently in progress
-      final inProgressTrips = trips.where((t) {
-        final trip = t.trip;
-        if (trip.isCompleted) return false;
-        if (trip.startDate == null) return false;
+  // Find trips that are currently in progress
+  final inProgressTrips = trips.where((t) {
+    final trip = t.trip;
+    if (trip.isCompleted) return false;
+    if (trip.startDate == null) return false;
 
-        final startDate = DateTime(
-          trip.startDate!.year,
-          trip.startDate!.month,
-          trip.startDate!.day,
-        );
+    final startDate = DateTime(
+      trip.startDate!.year,
+      trip.startDate!.month,
+      trip.startDate!.day,
+    );
 
-        // Check if trip has started
-        if (startDate.isAfter(today)) return false;
+    // Check if trip has started
+    if (startDate.isAfter(today)) return false;
 
-        // Check if trip hasn't ended yet (or has no end date)
-        if (trip.endDate != null) {
-          final endDate = DateTime(
-            trip.endDate!.year,
-            trip.endDate!.month,
-            trip.endDate!.day,
-          );
-          if (endDate.isBefore(today)) return false;
-        }
+    // Check if trip hasn't ended yet (or has no end date)
+    if (trip.endDate != null) {
+      final endDate = DateTime(
+        trip.endDate!.year,
+        trip.endDate!.month,
+        trip.endDate!.day,
+      );
+      if (endDate.isBefore(today)) return false;
+    }
 
-        return true;
-      }).toList();
+    return true;
+  }).toList();
 
-      // Return first in-progress trip (could sort by start date if needed)
-      if (inProgressTrips.isNotEmpty) {
-        return inProgressTrips.first;
-      }
+  // Return first in-progress trip (could sort by start date if needed)
+  if (inProgressTrips.isNotEmpty) {
+    return inProgressTrips.first;
+  }
 
-      // Find upcoming trips (start date in the future)
-      final upcomingTrips = trips.where((t) {
-        final trip = t.trip;
-        if (trip.isCompleted) return false;
-        if (trip.startDate == null) return false;
+  // Find upcoming trips (start date in the future)
+  final upcomingTrips = trips.where((t) {
+    final trip = t.trip;
+    if (trip.isCompleted) return false;
+    if (trip.startDate == null) return false;
 
-        final startDate = DateTime(
-          trip.startDate!.year,
-          trip.startDate!.month,
-          trip.startDate!.day,
-        );
+    final startDate = DateTime(
+      trip.startDate!.year,
+      trip.startDate!.month,
+      trip.startDate!.day,
+    );
 
-        return startDate.isAfter(today);
-      }).toList();
+    return startDate.isAfter(today);
+  }).toList();
 
-      // Sort by start date and return closest
-      if (upcomingTrips.isNotEmpty) {
-        upcomingTrips.sort((a, b) =>
-          a.trip.startDate!.compareTo(b.trip.startDate!)
-        );
-        return upcomingTrips.first;
-      }
+  // Sort by start date and return closest
+  if (upcomingTrips.isNotEmpty) {
+    upcomingTrips.sort((a, b) =>
+      a.trip.startDate!.compareTo(b.trip.startDate!)
+    );
+    return upcomingTrips.first;
+  }
 
-      // No in-progress or upcoming trips, return the most recent non-completed trip
-      final activeTrips = trips.where((t) => !t.trip.isCompleted).toList();
-      if (activeTrips.isNotEmpty) {
-        // Sort by created date, most recent first
-        activeTrips.sort((a, b) {
-          final aDate = a.trip.createdAt ?? DateTime(1970);
-          final bDate = b.trip.createdAt ?? DateTime(1970);
-          return bDate.compareTo(aDate);
-        });
-        return activeTrips.first;
-      }
+  // No in-progress or upcoming trips, return the most recent non-completed trip
+  final activeTrips = trips.where((t) => !t.trip.isCompleted).toList();
+  if (activeTrips.isNotEmpty) {
+    // Sort by created date, most recent first
+    activeTrips.sort((a, b) {
+      final aDate = a.trip.createdAt ?? DateTime(1970);
+      final bDate = b.trip.createdAt ?? DateTime(1970);
+      return bDate.compareTo(aDate);
+    });
+    return activeTrips.first;
+  }
 
-      return null;
-    },
-    loading: () => null,
-    error: (_, __) => null,
-  );
+  return null;
 });
 
 /// Provider that returns dashboard statistics
@@ -111,64 +106,47 @@ class DashboardStats {
 }
 
 final dashboardStatsProvider = FutureProvider<DashboardStats>((ref) async {
-  final tripsAsync = ref.watch(userTripsProvider);
+  // Await the trips data - this properly propagates loading/error states
+  final trips = await ref.watch(userTripsProvider.future);
 
-  return tripsAsync.when(
-    data: (trips) {
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
 
-      int activeCount = 0;
-      int upcomingCount = 0;
-      int completedCount = 0;
+  int activeCount = 0;
+  int upcomingCount = 0;
+  int completedCount = 0;
 
-      for (final t in trips) {
-        final trip = t.trip;
+  for (final t in trips) {
+    final trip = t.trip;
 
-        if (trip.isCompleted) {
-          completedCount++;
-          continue;
-        }
+    if (trip.isCompleted) {
+      completedCount++;
+      continue;
+    }
 
-        if (trip.startDate == null) {
-          activeCount++; // Trips without dates are considered active
-          continue;
-        }
+    if (trip.startDate == null) {
+      activeCount++; // Trips without dates are considered active
+      continue;
+    }
 
-        final startDate = DateTime(
-          trip.startDate!.year,
-          trip.startDate!.month,
-          trip.startDate!.day,
-        );
+    final startDate = DateTime(
+      trip.startDate!.year,
+      trip.startDate!.month,
+      trip.startDate!.day,
+    );
 
-        if (startDate.isAfter(today)) {
-          upcomingCount++;
-        } else {
-          activeCount++;
-        }
-      }
+    if (startDate.isAfter(today)) {
+      upcomingCount++;
+    } else {
+      activeCount++;
+    }
+  }
 
-      return DashboardStats(
-        totalTrips: trips.length,
-        activeTrips: activeCount,
-        upcomingTrips: upcomingCount,
-        completedTrips: completedCount,
-        totalExpenses: 0, // Would need to aggregate from expenses provider
-      );
-    },
-    loading: () => DashboardStats(
-      totalTrips: 0,
-      activeTrips: 0,
-      upcomingTrips: 0,
-      completedTrips: 0,
-      totalExpenses: 0,
-    ),
-    error: (_, __) => DashboardStats(
-      totalTrips: 0,
-      activeTrips: 0,
-      upcomingTrips: 0,
-      completedTrips: 0,
-      totalExpenses: 0,
-    ),
+  return DashboardStats(
+    totalTrips: trips.length,
+    activeTrips: activeCount,
+    upcomingTrips: upcomingCount,
+    completedTrips: completedCount,
+    totalExpenses: 0, // Would need to aggregate from expenses provider
   );
 });
