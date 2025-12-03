@@ -7,6 +7,7 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../auth/data/datasources/profile_photo_service.dart';
+import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 
 /// Profile Page - View and edit user profile
@@ -746,6 +747,249 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                   const SizedBox(height: AppTheme.spacingLg),
 
+                  // Expense Statistics Card
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Expense Breakdown',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: context.textColor,
+                              ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingLg),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final expenseSummaryAsync = ref.watch(expenseSummaryProvider);
+
+                            return expenseSummaryAsync.when(
+                              data: (summary) {
+                                if (summary.totalAll == 0) {
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(AppTheme.spacingLg),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.receipt_long,
+                                            size: 48,
+                                            color: context.textColor.withValues(alpha: 0.3),
+                                          ),
+                                          const SizedBox(height: AppTheme.spacingSm),
+                                          Text(
+                                            'No expenses tracked yet',
+                                            style: TextStyle(
+                                              color: context.textColor.withValues(alpha: 0.6),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return Column(
+                                  children: [
+                                    // Visual breakdown bar
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: SizedBox(
+                                        height: 10,
+                                        child: Row(
+                                          children: [
+                                            if (summary.totalPersonal > 0)
+                                              Expanded(
+                                                flex: (summary.totalPersonal / summary.totalAll * 100).round(),
+                                                child: Container(color: Colors.orange),
+                                              ),
+                                            if (summary.totalTrip > 0)
+                                              Expanded(
+                                                flex: (summary.totalTrip / summary.totalAll * 100).round(),
+                                                child: Container(color: context.primaryColor),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingMd),
+
+                                    // Stats row
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildExpenseStatCard(
+                                            context: context,
+                                            icon: Icons.person,
+                                            label: 'Personal',
+                                            value: '₹${_formatCompact(summary.totalPersonal)}',
+                                            subValue: '${summary.personalCount} expense${summary.personalCount == 1 ? '' : 's'}',
+                                            color: Colors.orange,
+                                          ),
+                                        ),
+                                        const SizedBox(width: AppTheme.spacingMd),
+                                        Expanded(
+                                          child: _buildExpenseStatCard(
+                                            context: context,
+                                            icon: Icons.flight,
+                                            label: 'Trip',
+                                            value: '₹${_formatCompact(summary.totalTrip)}',
+                                            subValue: '${summary.tripCount} expense${summary.tripCount == 1 ? '' : 's'}',
+                                            color: context.primaryColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingMd),
+
+                                    // This month stats
+                                    Container(
+                                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                                      decoration: BoxDecoration(
+                                        color: context.primaryColor.withValues(alpha: 0.05),
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        border: Border.all(
+                                          color: context.primaryColor.withValues(alpha: 0.1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'This Month',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: context.textColor.withValues(alpha: 0.7),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                '₹${_formatCompact(summary.thisMonthSpending)}',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: context.primaryColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          // Monthly change indicator
+                                          if (summary.lastMonthSpending > 0 || summary.thisMonthSpending > 0)
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 6,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: summary.monthlyChange >= 0
+                                                    ? Colors.red.withValues(alpha: 0.1)
+                                                    : Colors.green.withValues(alpha: 0.1),
+                                                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    summary.monthlyChange >= 0
+                                                        ? Icons.trending_up
+                                                        : Icons.trending_down,
+                                                    size: 16,
+                                                    color: summary.monthlyChange >= 0
+                                                        ? Colors.red
+                                                        : Colors.green,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    '${summary.monthlyChange.abs().toStringAsFixed(0)}%',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: summary.monthlyChange >= 0
+                                                          ? Colors.red
+                                                          : Colors.green,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Top category
+                                    if (summary.topCategory != null) ...[
+                                      const SizedBox(height: AppTheme.spacingSm),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.category,
+                                            size: 14,
+                                            color: context.textColor.withValues(alpha: 0.5),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'Top category: ',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: context.textColor.withValues(alpha: 0.6),
+                                            ),
+                                          ),
+                                          Text(
+                                            summary.topCategory!.substring(0, 1).toUpperCase() +
+                                                summary.topCategory!.substring(1),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: context.textColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                );
+                              },
+                              loading: () => const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(AppTheme.spacingLg),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                              error: (_, __) => Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                                  child: Text(
+                                    'Unable to load expense stats',
+                                    style: TextStyle(
+                                      color: context.textColor.withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+
                   // Save Button (only visible when editing)
                   if (_isEditing)
                     SizedBox(
@@ -1017,6 +1261,60 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ],
       ),
     );
+  }
+
+  Widget _buildExpenseStatCard({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String value,
+    required String subValue,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: AppTheme.spacingXs),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: context.textColor.withValues(alpha: 0.7),
+            ),
+          ),
+          Text(
+            subValue,
+            style: TextStyle(
+              fontSize: 10,
+              color: context.textColor.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatCompact(double amount) {
+    if (amount >= 100000) {
+      return '${(amount / 100000).toStringAsFixed(1)}L';
+    } else if (amount >= 1000) {
+      return '${(amount / 1000).toStringAsFixed(1)}K';
+    }
+    return amount.toStringAsFixed(0);
   }
 
   Widget _buildInfoRow({

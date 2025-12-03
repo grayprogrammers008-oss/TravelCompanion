@@ -285,3 +285,115 @@ final memberFrequencyProvider = FutureProvider.family<Map<String, int>, String>(
     return <String, int>{};
   }
 });
+
+/// Expense Summary Model for dashboard display
+class ExpenseSummary {
+  final double totalPersonal;
+  final double totalTrip;
+  final double totalAll;
+  final int personalCount;
+  final int tripCount;
+  final Map<String, double> categoryBreakdown;
+  final double thisMonthSpending;
+  final double lastMonthSpending;
+
+  ExpenseSummary({
+    required this.totalPersonal,
+    required this.totalTrip,
+    required this.totalAll,
+    required this.personalCount,
+    required this.tripCount,
+    required this.categoryBreakdown,
+    required this.thisMonthSpending,
+    required this.lastMonthSpending,
+  });
+
+  /// Get percentage change from last month
+  double get monthlyChange {
+    if (lastMonthSpending == 0) return thisMonthSpending > 0 ? 100 : 0;
+    return ((thisMonthSpending - lastMonthSpending) / lastMonthSpending) * 100;
+  }
+
+  /// Get the top spending category
+  String? get topCategory {
+    if (categoryBreakdown.isEmpty) return null;
+    return categoryBreakdown.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
+  }
+}
+
+/// Provider for expense summary (dashboard stats)
+final expenseSummaryProvider = FutureProvider<ExpenseSummary>((ref) async {
+  try {
+    final expenses = await ref.watch(userExpensesProvider.future);
+
+    double totalPersonal = 0;
+    double totalTrip = 0;
+    int personalCount = 0;
+    int tripCount = 0;
+    final categoryBreakdown = <String, double>{};
+    double thisMonthSpending = 0;
+    double lastMonthSpending = 0;
+
+    final now = DateTime.now();
+    final thisMonthStart = DateTime(now.year, now.month, 1);
+    final lastMonthStart = DateTime(now.year, now.month - 1, 1);
+    final lastMonthEnd = thisMonthStart.subtract(const Duration(days: 1));
+
+    for (final expenseWithSplits in expenses) {
+      final expense = expenseWithSplits.expense;
+      final amount = expense.amount;
+
+      // Personal vs Trip
+      if (expense.tripId == null) {
+        totalPersonal += amount;
+        personalCount++;
+      } else {
+        totalTrip += amount;
+        tripCount++;
+      }
+
+      // Category breakdown
+      final category = expense.category ?? 'other';
+      categoryBreakdown[category] = (categoryBreakdown[category] ?? 0) + amount;
+
+      // Monthly comparison
+      final transactionDate = expense.transactionDate ?? expense.createdAt;
+      if (transactionDate != null) {
+        if (transactionDate.isAfter(thisMonthStart) ||
+            transactionDate.isAtSameMomentAs(thisMonthStart)) {
+          thisMonthSpending += amount;
+        } else if (transactionDate.isAfter(lastMonthStart) &&
+                   transactionDate.isBefore(lastMonthEnd.add(const Duration(days: 1)))) {
+          lastMonthSpending += amount;
+        }
+      }
+    }
+
+    return ExpenseSummary(
+      totalPersonal: totalPersonal,
+      totalTrip: totalTrip,
+      totalAll: totalPersonal + totalTrip,
+      personalCount: personalCount,
+      tripCount: tripCount,
+      categoryBreakdown: categoryBreakdown,
+      thisMonthSpending: thisMonthSpending,
+      lastMonthSpending: lastMonthSpending,
+    );
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('❌ expenseSummaryProvider error: $e');
+    }
+    return ExpenseSummary(
+      totalPersonal: 0,
+      totalTrip: 0,
+      totalAll: 0,
+      personalCount: 0,
+      tripCount: 0,
+      categoryBreakdown: {},
+      thisMonthSpending: 0,
+      lastMonthSpending: 0,
+    );
+  }
+});

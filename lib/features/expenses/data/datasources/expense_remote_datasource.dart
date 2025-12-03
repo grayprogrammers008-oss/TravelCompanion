@@ -21,6 +21,7 @@ class ExpenseRemoteDataSource {
           .from('expenses')
           .select('''
             *,
+            trips:trips(name),
             expense_splits(
               *,
               user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
@@ -48,6 +49,7 @@ class ExpenseRemoteDataSource {
             .from('expenses')
             .select('''
               *,
+              trips:trips(name),
               expense_splits(
                 *,
                 user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
@@ -83,6 +85,7 @@ class ExpenseRemoteDataSource {
           .from('expenses')
           .select('''
             *,
+            trips:trips(name),
             expense_splits(
               *,
               user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)

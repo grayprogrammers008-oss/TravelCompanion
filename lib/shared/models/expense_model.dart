@@ -2,6 +2,7 @@
 class ExpenseModel {
   final String id;
   final String? tripId; // Optional for standalone expenses
+  final String? tripName; // Joined trip name for display
   final String title;
   final String? description;
   final double amount;
@@ -19,6 +20,7 @@ class ExpenseModel {
   const ExpenseModel({
     required this.id,
     this.tripId,
+    this.tripName,
     required this.title,
     this.description,
     required this.amount,
@@ -36,6 +38,7 @@ class ExpenseModel {
   ExpenseModel copyWith({
     String? id,
     String? tripId,
+    String? tripName,
     String? title,
     String? description,
     double? amount,
@@ -52,6 +55,7 @@ class ExpenseModel {
     return ExpenseModel(
       id: id ?? this.id,
       tripId: tripId ?? this.tripId,
+      tripName: tripName ?? this.tripName,
       title: title ?? this.title,
       description: description ?? this.description,
       amount: amount ?? this.amount,
@@ -71,6 +75,7 @@ class ExpenseModel {
     return {
       'id': id,
       'trip_id': tripId,
+      'trip_name': tripName,
       'title': title,
       'description': description,
       'amount': amount,
@@ -90,6 +95,7 @@ class ExpenseModel {
     return ExpenseModel(
       id: json['id'] as String,
       tripId: json['trip_id'] as String?,
+      tripName: json['trip_name'] as String? ?? json['trips']?['name'] as String?,
       title: json['title'] as String,
       description: json['description'] as String?,
       amount: (json['amount'] as num).toDouble(),
@@ -487,6 +493,7 @@ class SettlementModel {
 class BalanceSummary {
   final String userId;
   final String userName;
+  final String? avatarUrl;
   final double totalPaid;
   final double totalOwed;
   final double balance; // positive = owed to them, negative = they owe
@@ -494,6 +501,7 @@ class BalanceSummary {
   BalanceSummary({
     required this.userId,
     required this.userName,
+    this.avatarUrl,
     required this.totalPaid,
     required this.totalOwed,
     required this.balance,
