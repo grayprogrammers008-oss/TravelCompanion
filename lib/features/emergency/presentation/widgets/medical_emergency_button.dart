@@ -63,10 +63,13 @@ class _MedicalEmergencyButtonState
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.medical_services, color: Colors.red.shade700),
             const SizedBox(width: AppTheme.spacingSm),
-            const Text('Medical Emergency'),
+            const Expanded(
+              child: Text('Medical Emergency'),
+            ),
           ],
         ),
         content: const Text(
@@ -134,6 +137,13 @@ class _MedicalEmergencyButtonState
   Widget build(BuildContext context) {
     final state = ref.watch(emergencyControllerProvider);
 
+    // For small buttons, use larger icon ratio and no internal text
+    final isSmallButton = widget.size < 60;
+    final iconSize = isSmallButton ? widget.size * 0.55 : widget.size * 0.4;
+    // Reduce shadow for small buttons to prevent overflow
+    final maxBlurRadius = isSmallButton ? 6.0 : 15.0;
+    final maxSpreadRadius = isSmallButton ? 2.0 : 4.0;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -151,38 +161,46 @@ class _MedicalEmergencyButtonState
                   boxShadow: [
                     BoxShadow(
                       color: Colors.red.withValues(alpha: 0.4 * _pulseAnimation.value),
-                      blurRadius: 15 * _pulseAnimation.value,
-                      spreadRadius: 4 * _pulseAnimation.value,
+                      blurRadius: maxBlurRadius * _pulseAnimation.value,
+                      spreadRadius: maxSpreadRadius * _pulseAnimation.value,
                     ),
                   ],
                 ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Medical Icon and Text
+                    // Medical Icon (and Text for larger buttons)
                     if (!_isConfirming && !state.isTriggeringAlert)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.medical_services,
-                            color: Colors.white,
-                            size: widget.size * 0.4,
-                          ),
-                          const SizedBox(height: AppTheme.spacingXs),
-                          Text(
-                            'MEDICAL',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
+                      isSmallButton
+                          // Small button: icon only, centered
+                          ? Icon(
+                              Icons.medical_services,
+                              color: Colors.white,
+                              size: iconSize,
+                            )
+                          // Large button: icon + text
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.medical_services,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
+                                  size: iconSize,
                                 ),
-                          ),
-                        ],
-                      ),
+                                const SizedBox(height: AppTheme.spacingXs),
+                                Text(
+                                  'MEDICAL',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.2,
+                                      ),
+                                ),
+                              ],
+                            ),
 
                     // Loading overlay
                     if (_isConfirming || state.isTriggeringAlert)
@@ -191,10 +209,15 @@ class _MedicalEmergencyButtonState
                           shape: BoxShape.circle,
                           color: Colors.black.withValues(alpha: 0.5),
                         ),
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                        child: Center(
+                          child: SizedBox(
+                            width: widget.size * 0.5,
+                            height: widget.size * 0.5,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           ),
                         ),

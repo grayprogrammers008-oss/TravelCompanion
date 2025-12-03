@@ -30,7 +30,10 @@ class EmergencyPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Emergency Services'),
+        title: const Text(
+          'Emergency Services',
+          overflow: TextOverflow.ellipsis,
+        ),
         elevation: 0,
         actions: [
           IconButton(
@@ -68,6 +71,9 @@ class EmergencyPage extends ConsumerWidget {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppTheme.spacingSm),
                   Text(
@@ -76,6 +82,8 @@ class EmergencyPage extends ConsumerWidget {
                           color: Colors.white.withValues(alpha: 0.9),
                         ),
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -167,19 +175,7 @@ class EmergencyPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.local_hospital,
-                          title: 'Medical',
-                          subtitle: 'Emergency',
-                          color: Colors.red,
-                          onTap: () {
-                            // Medical emergency action is handled by the button itself
-                          },
-                          child: const MedicalEmergencyButton(
-                            size: 56,
-                            showLabel: false,
-                          ),
-                        ),
+                        child: _MedicalEmergencyCard(tripId: tripId),
                       ),
                       const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
@@ -266,10 +262,13 @@ class EmergencyPage extends ConsumerWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
         title: const Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.info, color: AppTheme.info),
             SizedBox(width: AppTheme.spacingMd),
-            Text('Emergency Services'),
+            Expanded(
+              child: Text('Emergency Services'),
+            ),
           ],
         ),
         content: SingleChildScrollView(
@@ -351,10 +350,13 @@ class EmergencyPage extends ConsumerWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
         title: const Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.phone, color: AppTheme.error),
             SizedBox(width: AppTheme.spacingMd),
-            Text('Call Emergency Services'),
+            Expanded(
+              child: Text('Call Emergency Services'),
+            ),
           ],
         ),
         content: Text('Call $number for emergency assistance?'),
@@ -411,10 +413,13 @@ class EmergencyPage extends ConsumerWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
         title: const Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.location_on, color: AppTheme.info),
             SizedBox(width: AppTheme.spacingMd),
-            Text('Share Live Location'),
+            Expanded(
+              child: Text('Share Live Location'),
+            ),
           ],
         ),
         content: const Text(
@@ -491,6 +496,80 @@ class EmergencyPage extends ConsumerWidget {
   }
 }
 
+/// Medical Emergency Card - Special card with embedded MedicalEmergencyButton
+class _MedicalEmergencyCard extends ConsumerWidget {
+  final String? tripId;
+
+  const _MedicalEmergencyCard({this.tripId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeData = context.appThemeData;
+
+    return InkWell(
+      onTap: null, // Handled by the MedicalEmergencyButton
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      child: Container(
+        constraints: const BoxConstraints(
+          minHeight: 100,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          boxShadow: themeData.primaryShadow,
+          border: Border.all(
+            color: Colors.red.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Medical Emergency Button - shadow is reduced for small buttons
+            MedicalEmergencyButton(
+              tripId: tripId,
+              size: 48,
+              showLabel: false,
+            ),
+            const SizedBox(height: AppTheme.spacingXs),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'Medical',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                      fontSize: 14,
+                      height: 1.2,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 2),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'Emergency',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      height: 1.2,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Quick Action Card Widget
 class _QuickActionCard extends StatelessWidget {
   final IconData icon;
@@ -498,7 +577,6 @@ class _QuickActionCard extends StatelessWidget {
   final String subtitle;
   final Color color;
   final VoidCallback? onTap;
-  final Widget? child;
 
   const _QuickActionCard({
     required this.icon,
@@ -506,70 +584,69 @@ class _QuickActionCard extends StatelessWidget {
     required this.subtitle,
     required this.color,
     this.onTap,
-    this.child,
   });
 
   @override
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
 
-    return SizedBox(
-      height: 100, // Increased height to prevent overflow
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingSm,
-            vertical: AppTheme.spacingSm,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      child: Container(
+        constraints: const BoxConstraints(
+          minHeight: 100,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingMd,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          boxShadow: themeData.primaryShadow,
+          border: Border.all(
+            color: color.withValues(alpha: 0.2),
+            width: 1.5,
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            boxShadow: themeData.primaryShadow,
-            border: Border.all(
-              color: color.withValues(alpha: 0.2),
-              width: 1.5,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 28,
+              color: color,
             ),
-          ),
-          child: child != null
-              ? Center(child: child)
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      icon,
-                      size: 28,
+            const SizedBox(height: AppTheme.spacingSm),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: color,
+                      fontSize: 14,
+                      height: 1.2,
                     ),
-                    const SizedBox(height: AppTheme.spacingXs),
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                            fontSize: 13,
-                            height: 1.2,
-                          ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 4),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                subtitle,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      height: 1.2,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                            fontSize: 11,
-                            height: 1.2,
-                          ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ),
       ),
     );
