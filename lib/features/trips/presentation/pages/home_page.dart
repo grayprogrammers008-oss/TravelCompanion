@@ -34,6 +34,12 @@ class _HomePageState extends ConsumerState<HomePage>
   DateTime? _createdAfter;
   DateTime? _createdBefore;
 
+  // Status filter: 'all', 'active', 'upcoming', 'completed'
+  String _statusFilter = 'all';
+
+  // Sort options: 'recent', 'name', 'startDate', 'budget'
+  String _sortBy = 'recent';
+
   @override
   void initState() {
     super.initState();
@@ -55,11 +61,63 @@ class _HomePageState extends ConsumerState<HomePage>
     super.dispose();
   }
 
+  /// Get trip status category
+  String _getTripStatusCategory(TripModel trip) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (trip.isCompleted) return 'completed';
+
+    if (trip.startDate != null) {
+      final startDate = DateTime(trip.startDate!.year, trip.startDate!.month, trip.startDate!.day);
+
+      if (startDate.isAfter(today)) return 'upcoming';
+
+      if (trip.endDate != null) {
+        final endDate = DateTime(trip.endDate!.year, trip.endDate!.month, trip.endDate!.day);
+        if (today.isAfter(endDate)) return 'completed';
+      }
+      return 'active'; // Started but not ended
+    }
+
+    return 'active'; // No dates = active
+  }
+
+  /// Get trip stats counts
+  ({int all, int active, int upcoming, int completed}) _getTripStats(List<TripWithMembers> trips) {
+    int active = 0;
+    int upcoming = 0;
+    int completed = 0;
+
+    for (final t in trips) {
+      final status = _getTripStatusCategory(t.trip);
+      switch (status) {
+        case 'active':
+          active++;
+          break;
+        case 'upcoming':
+          upcoming++;
+          break;
+        case 'completed':
+          completed++;
+          break;
+      }
+    }
+
+    return (all: trips.length, active: active, upcoming: upcoming, completed: completed);
+  }
+
   List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
     final query = _searchController.text.toLowerCase().trim();
 
-    return trips.where((tripWithMembers) {
+    var filtered = trips.where((tripWithMembers) {
       final trip = tripWithMembers.trip;
+
+      // Status filter
+      if (_statusFilter != 'all') {
+        final status = _getTripStatusCategory(trip);
+        if (status != _statusFilter) return false;
+      }
 
       // Search filter
       if (query.isNotEmpty) {
@@ -92,6 +150,37 @@ class _HomePageState extends ConsumerState<HomePage>
 
       return true;
     }).toList();
+
+    // Apply sorting
+    switch (_sortBy) {
+      case 'name':
+        filtered.sort((a, b) => a.trip.name.toLowerCase().compareTo(b.trip.name.toLowerCase()));
+        break;
+      case 'startDate':
+        filtered.sort((a, b) {
+          final aDate = a.trip.startDate ?? DateTime(2100);
+          final bDate = b.trip.startDate ?? DateTime(2100);
+          return aDate.compareTo(bDate);
+        });
+        break;
+      case 'budget':
+        filtered.sort((a, b) {
+          final aBudget = a.trip.budget ?? 0.0;
+          final bBudget = b.trip.budget ?? 0.0;
+          return bBudget.compareTo(aBudget); // High to low
+        });
+        break;
+      case 'recent':
+      default:
+        filtered.sort((a, b) {
+          final aDate = a.trip.createdAt ?? DateTime(1970);
+          final bDate = b.trip.createdAt ?? DateTime(1970);
+          return bDate.compareTo(aDate); // Newest first
+        });
+        break;
+    }
+
+    return filtered;
   }
 
   bool get _hasActiveFilters {
@@ -101,12 +190,20 @@ class _HomePageState extends ConsumerState<HomePage>
            _createdBefore != null;
   }
 
-  void _clearFilters() {
+  bool get _hasAnyFilters {
+    return _hasActiveFilters || _statusFilter != 'all' || _sortBy != 'recent';
+  }
+
+  void _clearAllFilters() {
     setState(() {
       _minBudget = null;
       _maxBudget = null;
       _createdAfter = null;
       _createdBefore = null;
+      _statusFilter = 'all';
+      _sortBy = 'recent';
+      _searchController.clear();
+      _isSearching = false;
     });
   }
 
@@ -124,10 +221,8 @@ class _HomePageState extends ConsumerState<HomePage>
           displacement: 120, // Push indicator below the SliverAppBar
           edgeOffset: 120, // Start detecting pull below the app bar
           onRefresh: () async {
-            debugPrint('🔄 Pull to refresh triggered!');
             ref.invalidate(userTripsProvider);
             await ref.read(userTripsProvider.future);
-            debugPrint('✅ Refresh completed!');
           },
           child: CustomScrollView(
             slivers: [
@@ -291,55 +386,60 @@ class _HomePageState extends ConsumerState<HomePage>
           ),
 
           // Content
-          userTripsAsync.when(
+          ...userTripsAsync.when(
             data: (trips) {
               final filteredTrips = _filterTrips(trips);
+              final stats = _getTripStats(trips);
 
               if (trips.isEmpty) {
-                return SliverFillRemaining(
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: _buildEmptyState(context),
+                return [
+                  SliverFillRemaining(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: _buildEmptyState(context),
+                    ),
                   ),
-                );
+                ];
               }
 
-              if (filteredTrips.isEmpty && (_searchController.text.isNotEmpty || _hasActiveFilters)) {
-                return SliverFillRemaining(
-                  child: _buildNoSearchResults(context),
-                );
-              }
-
-              return SliverPadding(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final tripWithMembers = filteredTrips[index];
-                      // Staggered animation for each card
-                      return FadeSlideAnimation(
-                        delay: AppAnimations.staggerMedium * index,
-                        duration: AppAnimations.medium,
-                        child: TripCard(
-                          key: ValueKey(tripWithMembers.trip.id),
-                          tripWithMembers: tripWithMembers,
-                          onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
-                          onEdit: () => _editTrip(context, tripWithMembers.trip),
-                          onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
-                        ),
-                      );
-                    },
-                    childCount: filteredTrips.length,
-                  ),
+              return [
+                // Quick Stats Header
+                SliverToBoxAdapter(
+                  child: _buildStatsHeader(context, stats, themeData),
                 ),
-              );
+
+                // Status Filter Chips + Sort
+                SliverToBoxAdapter(
+                  child: _buildStatusFiltersAndSort(context, stats, themeData),
+                ),
+
+                // Trip List or No Results
+                if (filteredTrips.isEmpty && (_searchController.text.isNotEmpty || _hasActiveFilters || _statusFilter != 'all'))
+                  SliverFillRemaining(
+                    child: _buildNoSearchResults(context),
+                  )
+                else
+                  // Show grouped sections when viewing "All" and no search/filters active
+                  ...(_statusFilter == 'all' && _searchController.text.isEmpty && !_hasActiveFilters
+                      ? _buildGroupedTripList(context, filteredTrips, themeData)
+                      : [_buildFlatTripList(context, filteredTrips)]),
+
+                // Bottom padding for FAB
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 80),
+                ),
+              ];
             },
-            loading: () => SliverFillRemaining(
-              child: _buildPackingAnimation(context),
-            ),
-            error: (error, stack) => SliverFillRemaining(
-              child: _buildErrorState(context, error.toString(), ref, themeData),
-            ),
+            loading: () => [
+              SliverFillRemaining(
+                child: _buildPackingAnimation(context),
+              ),
+            ],
+            error: (error, stack) => [
+              SliverFillRemaining(
+                child: _buildErrorState(context, error.toString(), ref, themeData),
+              ),
+            ],
           ),
             ],
           ),
@@ -390,6 +490,464 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
+  /// Build compact stats header showing trip counts
+  Widget _buildStatsHeader(
+    BuildContext context,
+    ({int all, int active, int upcoming, int completed}) stats,
+    AppThemeData themeData,
+  ) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingSm,
+        AppTheme.spacingMd,
+        0,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingSm,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStatItem(context, 'Total', stats.all, themeData.primaryColor),
+          _buildStatDivider(),
+          _buildStatItem(context, 'Active', stats.active, const Color(0xFFFF7043)),
+          _buildStatDivider(),
+          _buildStatItem(context, 'Upcoming', stats.upcoming, const Color(0xFF5C6BC0)),
+          _buildStatDivider(),
+          _buildStatItem(context, 'Done', stats.completed, AppTheme.success),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(BuildContext context, String label, int count, Color color) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$count',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: AppTheme.neutral600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatDivider() {
+    return Container(
+      width: 1,
+      height: 30,
+      color: AppTheme.neutral200,
+    );
+  }
+
+  /// Build status filter chips and sort dropdown
+  Widget _buildStatusFiltersAndSort(
+    BuildContext context,
+    ({int all, int active, int upcoming, int completed}) stats,
+    AppThemeData themeData,
+  ) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingSm,
+        AppTheme.spacingMd,
+        AppTheme.spacingXs,
+      ),
+      child: Row(
+        children: [
+          // Status filter chips (scrollable)
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildFilterChip('all', 'All', stats.all, themeData),
+                  const SizedBox(width: 8),
+                  _buildFilterChip('active', 'Active', stats.active, themeData),
+                  const SizedBox(width: 8),
+                  _buildFilterChip('upcoming', 'Upcoming', stats.upcoming, themeData),
+                  const SizedBox(width: 8),
+                  _buildFilterChip('completed', 'Completed', stats.completed, themeData),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Sort dropdown
+          _buildSortButton(context, themeData),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String value, String label, int count, AppThemeData themeData) {
+    final isSelected = _statusFilter == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _statusFilter = value;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 6,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? themeData.primaryColor : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+          border: Border.all(
+            color: isSelected ? themeData.primaryColor : AppTheme.neutral300,
+            width: 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: themeData.primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? Colors.white : AppTheme.neutral700,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.white.withValues(alpha: 0.25)
+                    : AppTheme.neutral100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : AppTheme.neutral600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSortButton(BuildContext context, AppThemeData themeData) {
+    final sortLabels = {
+      'recent': 'Recent',
+      'name': 'Name',
+      'startDate': 'Date',
+      'budget': 'Budget',
+    };
+
+    return PopupMenuButton<String>(
+      onSelected: (value) {
+        setState(() {
+          _sortBy = value;
+        });
+      },
+      offset: const Offset(0, 40),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 6,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+          border: Border.all(color: AppTheme.neutral300),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.sort,
+              size: 16,
+              color: AppTheme.neutral600,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              sortLabels[_sortBy] ?? 'Sort',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppTheme.neutral700,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Icon(
+              Icons.arrow_drop_down,
+              size: 18,
+              color: AppTheme.neutral600,
+            ),
+          ],
+        ),
+      ),
+      itemBuilder: (context) => [
+        _buildSortMenuItem('recent', 'Recently Created', Icons.access_time, themeData),
+        _buildSortMenuItem('name', 'Name (A-Z)', Icons.sort_by_alpha, themeData),
+        _buildSortMenuItem('startDate', 'Start Date', Icons.calendar_today, themeData),
+        _buildSortMenuItem('budget', 'Budget (High-Low)', Icons.account_balance_wallet, themeData),
+      ],
+    );
+  }
+
+  PopupMenuItem<String> _buildSortMenuItem(String value, String label, IconData icon, AppThemeData themeData) {
+    final isSelected = _sortBy == value;
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 18,
+            color: isSelected ? themeData.primaryColor : AppTheme.neutral600,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              color: isSelected ? themeData.primaryColor : AppTheme.neutral800,
+            ),
+          ),
+          if (isSelected) ...[
+            const Spacer(),
+            Icon(
+              Icons.check,
+              size: 16,
+              color: themeData.primaryColor,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Build a flat list of trips (used when filtering/searching)
+  Widget _buildFlatTripList(BuildContext context, List<TripWithMembers> trips) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final tripWithMembers = trips[index];
+            return FadeSlideAnimation(
+              delay: AppAnimations.staggerMedium * index,
+              duration: AppAnimations.medium,
+              child: TripCard(
+                key: ValueKey(tripWithMembers.trip.id),
+                tripWithMembers: tripWithMembers,
+                onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
+                onEdit: () => _editTrip(context, tripWithMembers.trip),
+                onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
+              ),
+            );
+          },
+          childCount: trips.length,
+        ),
+      ),
+    );
+  }
+
+  /// Build grouped trip list with section headers (Active → Upcoming → Completed)
+  List<Widget> _buildGroupedTripList(
+    BuildContext context,
+    List<TripWithMembers> trips,
+    AppThemeData themeData,
+  ) {
+    // Group trips by status
+    final activeTrips = <TripWithMembers>[];
+    final upcomingTrips = <TripWithMembers>[];
+    final completedTrips = <TripWithMembers>[];
+
+    for (final trip in trips) {
+      final status = _getTripStatusCategory(trip.trip);
+      switch (status) {
+        case 'active':
+          activeTrips.add(trip);
+          break;
+        case 'upcoming':
+          upcomingTrips.add(trip);
+          break;
+        case 'completed':
+          completedTrips.add(trip);
+          break;
+      }
+    }
+
+    final slivers = <Widget>[];
+    int animationIndex = 0;
+
+    // Active trips section
+    if (activeTrips.isNotEmpty) {
+      slivers.add(_buildSectionHeader(
+        context,
+        'Active Now',
+        Icons.directions_walk,
+        const Color(0xFFFF7043),
+        activeTrips.length,
+      ));
+      slivers.add(_buildTripSection(context, activeTrips, animationIndex));
+      animationIndex += activeTrips.length;
+    }
+
+    // Upcoming trips section
+    if (upcomingTrips.isNotEmpty) {
+      slivers.add(_buildSectionHeader(
+        context,
+        'Upcoming',
+        Icons.schedule,
+        const Color(0xFF5C6BC0),
+        upcomingTrips.length,
+      ));
+      slivers.add(_buildTripSection(context, upcomingTrips, animationIndex));
+      animationIndex += upcomingTrips.length;
+    }
+
+    // Completed trips section
+    if (completedTrips.isNotEmpty) {
+      slivers.add(_buildSectionHeader(
+        context,
+        'Completed',
+        Icons.check_circle,
+        AppTheme.success,
+        completedTrips.length,
+      ));
+      slivers.add(_buildTripSection(context, completedTrips, animationIndex));
+    }
+
+    return slivers;
+  }
+
+  Widget _buildSectionHeader(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    int count,
+  ) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppTheme.spacingMd,
+          AppTheme.spacingMd,
+          AppTheme.spacingMd,
+          AppTheme.spacingXs,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, size: 16, color: color),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.neutral800,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTripSection(
+    BuildContext context,
+    List<TripWithMembers> trips,
+    int startIndex,
+  ) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final tripWithMembers = trips[index];
+            return FadeSlideAnimation(
+              delay: AppAnimations.staggerMedium * (startIndex + index),
+              duration: AppAnimations.medium,
+              child: TripCard(
+                key: ValueKey(tripWithMembers.trip.id),
+                tripWithMembers: tripWithMembers,
+                onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
+                onEdit: () => _editTrip(context, tripWithMembers.trip),
+                onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
+              ),
+            );
+          },
+          childCount: trips.length,
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     return EmptyStateWidget(
       title: 'No trips yet',
@@ -402,6 +960,42 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _buildNoSearchResults(BuildContext context) {
+    // Determine context-aware message
+    String title;
+    String subtitle;
+    IconData icon;
+
+    if (_statusFilter != 'all' && _searchController.text.isEmpty && !_hasActiveFilters) {
+      // Only status filter active
+      switch (_statusFilter) {
+        case 'active':
+          title = 'No active trips';
+          subtitle = 'You don\'t have any trips in progress right now';
+          icon = Icons.directions_walk;
+          break;
+        case 'upcoming':
+          title = 'No upcoming trips';
+          subtitle = 'Plan your next adventure!';
+          icon = Icons.schedule;
+          break;
+        case 'completed':
+          title = 'No completed trips';
+          subtitle = 'Complete a trip to see it here';
+          icon = Icons.check_circle_outline;
+          break;
+        default:
+          title = 'No trips found';
+          subtitle = 'Try adjusting your filters';
+          icon = Icons.search_off;
+      }
+    } else {
+      title = 'No trips found';
+      subtitle = _hasActiveFilters
+          ? 'Try adjusting your filters or search terms'
+          : 'Try a different search term';
+      icon = Icons.search_off;
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -424,14 +1018,14 @@ class _HomePageState extends ConsumerState<HomePage>
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Icons.search_off,
+                    icon,
                     size: 48,
                     color: AppTheme.neutral400,
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingSm),
                 Text(
-                  'No trips found',
+                  title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: AppTheme.neutral900,
                         fontWeight: FontWeight.w600,
@@ -440,26 +1034,50 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 const SizedBox(height: AppTheme.spacingXs),
                 Text(
-                  _hasActiveFilters
-                      ? 'Try adjusting your filters or search terms'
-                      : 'Try a different search term',
+                  subtitle,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppTheme.neutral600,
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: AppTheme.spacingSm),
-                GlossyButton(
-                  label: _hasActiveFilters ? 'Clear Filters & Search' : 'Clear Search',
-                  icon: Icons.clear,
-                  onPressed: () {
-                    setState(() {
-                      _searchController.clear();
-                      _isSearching = false;
-                      _clearFilters();
-                    });
-                  },
-                ),
+                const SizedBox(height: AppTheme.spacingMd),
+                // Show different buttons based on context
+                if (_statusFilter == 'upcoming' && _searchController.text.isEmpty && !_hasActiveFilters)
+                  GlossyButton(
+                    label: 'Create a Trip',
+                    icon: Icons.add,
+                    onPressed: () => context.push('/trips/create'),
+                  )
+                else if (_hasAnyFilters)
+                  GlossyButton(
+                    label: 'Clear All Filters',
+                    icon: Icons.clear,
+                    onPressed: _clearAllFilters,
+                  )
+                else
+                  GlossyButton(
+                    label: 'Clear Search',
+                    icon: Icons.clear,
+                    onPressed: () {
+                      setState(() {
+                        _searchController.clear();
+                        _isSearching = false;
+                      });
+                    },
+                  ),
+
+                // Show "Browse Public Trips" as secondary action
+                if (_statusFilter != 'all' || _searchController.text.isNotEmpty) ...[
+                  const SizedBox(height: AppTheme.spacingSm),
+                  TextButton.icon(
+                    onPressed: () => context.push('/trips/browse'),
+                    icon: Icon(Icons.explore, size: 18, color: AppTheme.neutral600),
+                    label: Text(
+                      'Browse Public Trips',
+                      style: TextStyle(color: AppTheme.neutral600),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -671,30 +1289,6 @@ class _HomePageState extends ConsumerState<HomePage>
                 leading: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingXs),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.explore,
-                    color: Colors.blue,
-                  ),
-                ),
-                title: const Text('Browse Public Trips'),
-                subtitle: const Text('Discover and join trips'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/trips/browse');
-                  }
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
                     color: AppTheme.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
@@ -815,9 +1409,6 @@ class _HomePageState extends ConsumerState<HomePage>
       queryParams['createdBefore'] = _createdBefore!.toIso8601String();
     }
 
-    // Debug: Log navigation
-    print('🔍 DEBUG: Navigating to tripFilter route with params: $queryParams');
-
     // Navigate to filter page using NAMED route (not path) to avoid route matching issues
     final result = await context.pushNamed<Map<String, dynamic>>(
       'tripFilter',
@@ -832,13 +1423,6 @@ class _HomePageState extends ConsumerState<HomePage>
         _createdAfter = result['createdAfter'] as DateTime?;
         _createdBefore = result['createdBefore'] as DateTime?;
       });
-
-      // Debug: Log filter values
-      print('🔍 Filters applied:');
-      print('  Min Budget: $_minBudget');
-      print('  Max Budget: $_maxBudget');
-      print('  Created After: $_createdAfter');
-      print('  Created Before: $_createdBefore');
     }
   }
 

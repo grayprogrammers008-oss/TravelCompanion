@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/home/presentation/pages/dashboard_page.dart';
 import '../../features/trips/presentation/pages/home_page.dart';
+import '../../features/trips/presentation/pages/browse_trips_page.dart';
 import '../../features/expenses/presentation/pages/expenses_home_page.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
 
-/// Main scaffold with bottom navigation - 4 tabs: Home, Trips, Expenses, Profile
+/// Main scaffold with bottom navigation - 5 tabs: Home, Trips, Explore, Expenses, Profile
 class MainScaffold extends StatefulWidget {
   final Widget child;
   final int currentIndex;
@@ -30,9 +31,12 @@ class _MainScaffoldState extends State<MainScaffold> {
         context.go('/trips');
         break;
       case 2:
-        context.go('/expenses');
+        context.go('/explore');
         break;
       case 3:
+        context.go('/expenses');
+        break;
+      case 4:
         context.go('/profile');
         break;
     }
@@ -56,6 +60,11 @@ class _MainScaffoldState extends State<MainScaffold> {
             label: 'Trips',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.explore_outlined),
+            activeIcon: Icon(Icons.explore),
+            label: 'Explore',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long_outlined),
             activeIcon: Icon(Icons.receipt_long),
             label: 'Expenses',
@@ -73,7 +82,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 }
 
-/// Shell route for dashboard tab (Home)
+/// Shell route for dashboard tab (Home) - Index 0
 class DashboardShell extends StatelessWidget {
   const DashboardShell({super.key});
 
@@ -83,7 +92,7 @@ class DashboardShell extends StatelessWidget {
   }
 }
 
-/// Shell route for trips tab
+/// Shell route for trips tab - Index 1
 class TripsShell extends StatelessWidget {
   const TripsShell({super.key});
 
@@ -93,23 +102,33 @@ class TripsShell extends StatelessWidget {
   }
 }
 
-/// Shell route for expenses tab
+/// Shell route for explore tab - Index 2
+class ExploreShell extends StatelessWidget {
+  const ExploreShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MainScaffold(currentIndex: 2, child: BrowseTripsPage());
+  }
+}
+
+/// Shell route for expenses tab - Index 3
 class ExpensesShell extends StatelessWidget {
   const ExpensesShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 2, child: ExpensesHomePage());
+    return const MainScaffold(currentIndex: 3, child: ExpensesHomePage());
   }
 }
 
-/// Shell route for profile tab
+/// Shell route for profile tab - Index 4
 class ProfileShell extends StatelessWidget {
   const ProfileShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 3, child: ProfilePage());
+    return const MainScaffold(currentIndex: 4, child: ProfilePage());
   }
 }
 
