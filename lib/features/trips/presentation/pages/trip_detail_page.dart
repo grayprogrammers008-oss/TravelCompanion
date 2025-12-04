@@ -15,6 +15,7 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/glassmorphic_card.dart';
 import '../../../../core/utils/trip_permissions.dart';
 import '../../../../core/services/share_service.dart';
+import '../../../../shared/models/trip_model.dart';
 import '../providers/trip_providers.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -1556,6 +1557,29 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
     menuItems.add(
       PopupMenuItem(
+        value: 'share_whatsapp_contact',
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXs),
+              decoration: BoxDecoration(
+                color: const Color(0xFF25D366).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+              ),
+              child: const Icon(
+                Icons.contact_phone,
+                color: Color(0xFF25D366),
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            const Text('WhatsApp to Contact'),
+          ],
+        ),
+      ),
+    );
+    menuItems.add(
+      PopupMenuItem(
         value: 'share_general',
         child: Row(
           children: [
@@ -1684,6 +1708,8 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               ),
             );
           }
+        } else if (value == 'share_whatsapp_contact') {
+          _showPhoneNumberDialog(context, trip.trip);
         } else if (value == 'share_general') {
           final text = ShareService.formatTrip(trip.trip);
           await ShareService.shareGeneral(text, subject: 'Trip: ${trip.trip.name}');
@@ -1900,6 +1926,91 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               }
             },
             child: const Text('Reopen'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPhoneNumberDialog(BuildContext context, TripModel trip) {
+    final phoneController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.contact_phone, color: Color(0xFF25D366)),
+            SizedBox(width: 12),
+            Text('Share to Contact'),
+          ],
+        ),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter the phone number with country code (e.g., 919876543210)',
+                style: TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  hintText: '919876543210',
+                  prefixIcon: Icon(Icons.phone),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a phone number';
+                  }
+                  final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
+                  if (cleaned.length < 10) {
+                    return 'Please enter a valid phone number';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton.icon(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Navigator.of(dialogContext).pop();
+                final text = ShareService.formatTrip(trip);
+                final success = await ShareService.shareToWhatsApp(
+                  text,
+                  phoneNumber: phoneController.text,
+                );
+                if (!success && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Could not open WhatsApp. Please check the phone number and try again.'),
+                    ),
+                  );
+                }
+              }
+            },
+            icon: const Icon(Icons.send),
+            label: const Text('Send'),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF25D366),
+            ),
           ),
         ],
       ),

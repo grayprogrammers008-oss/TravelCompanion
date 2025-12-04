@@ -76,6 +76,9 @@ class AiItineraryResultPage extends ConsumerWidget {
                     );
                   }
                   break;
+                case 'whatsapp_contact':
+                  _showPhoneNumberDialog(context);
+                  break;
                 case 'share':
                   await itinerary.shareGeneralItinerary();
                   break;
@@ -103,6 +106,16 @@ class AiItineraryResultPage extends ConsumerWidget {
                     Icon(Icons.chat_outlined, color: Color(0xFF25D366)),
                     SizedBox(width: 12),
                     Text('WhatsApp (Summary)'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'whatsapp_contact',
+                child: Row(
+                  children: [
+                    Icon(Icons.contact_phone, color: Color(0xFF25D366)),
+                    SizedBox(width: 12),
+                    Text('WhatsApp to Contact'),
                   ],
                 ),
               ),
@@ -278,6 +291,89 @@ class AiItineraryResultPage extends ConsumerWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  /// Show phone number input dialog for WhatsApp sharing
+  void _showPhoneNumberDialog(BuildContext context) {
+    final phoneController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.contact_phone, color: Color(0xFF25D366)),
+            SizedBox(width: 12),
+            Text('Share to Contact'),
+          ],
+        ),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter the phone number with country code (e.g., 919876543210)',
+                style: TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  hintText: '919876543210',
+                  prefixIcon: Icon(Icons.phone),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a phone number';
+                  }
+                  final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
+                  if (cleaned.length < 10) {
+                    return 'Please enter a valid phone number';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton.icon(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Navigator.of(dialogContext).pop();
+                final text = ShareService.formatAiItinerary(itinerary);
+                final success = await ShareService.shareToWhatsApp(
+                  text,
+                  phoneNumber: phoneController.text,
+                );
+                if (!success && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Could not open WhatsApp. Please check the phone number and try again.'),
+                    ),
+                  );
+                }
+              }
+            },
+            icon: const Icon(Icons.send),
+            label: const Text('Send'),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF25D366),
+            ),
+          ),
+        ],
       ),
     );
   }
