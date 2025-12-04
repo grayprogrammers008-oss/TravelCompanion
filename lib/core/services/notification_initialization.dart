@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb, visibleForTesting;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,6 +13,12 @@ class NotificationInitialization {
   /// Initialize notification services
   /// Call this after user authentication
   static Future<void> initialize() async {
+    // Skip on web - Firebase not configured
+    if (kIsWeb) {
+      debugPrint('ℹ️ [NotificationInit] Skipped on web (Firebase not configured)');
+      return;
+    }
+
     if (_isInitialized) {
       debugPrint('⚠️ [NotificationInit] Already initialized');
       return;
@@ -58,6 +64,9 @@ class NotificationInitialization {
   /// Register FCM token for authenticated user
   /// Call this after successful login
   static Future<void> registerToken() async {
+    // Skip on web
+    if (kIsWeb) return;
+
     try {
       debugPrint('🔵 [NotificationInit] Registering FCM token...');
 
@@ -83,6 +92,9 @@ class NotificationInitialization {
   /// Unregister FCM token
   /// Call this on logout
   static Future<void> unregisterToken() async {
+    // Skip on web
+    if (kIsWeb) return;
+
     try {
       debugPrint('🔵 [NotificationInit] Unregistering FCM token...');
 

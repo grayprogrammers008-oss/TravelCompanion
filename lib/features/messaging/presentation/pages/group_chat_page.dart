@@ -1,10 +1,15 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/destination_image.dart';
+import '../../data/services/image_picker_service.dart';
+import '../../data/services/storage_service.dart';
 import '../../domain/entities/conversation_entity.dart';
 import '../../domain/entities/message_entity.dart';
 import '../providers/conversation_providers.dart';
@@ -29,7 +34,10 @@ class GroupChatPage extends ConsumerStatefulWidget {
 class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
+  final _imagePickerService = ImagePickerService();
+  final _storageService = StorageService();
   bool _isSending = false;
+  bool _isUploadingImage = false;
 
   @override
   void initState() {
@@ -51,6 +59,157 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       conversationId: widget.conversationId,
       userId: widget.currentUserId,
     );
+  }
+
+  /// Show attachment options bottom sheet
+  void _showAttachmentOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue.shade100,
+                  child: const Icon(Icons.photo_library, color: Colors.blue),
+                ),
+                title: const Text('Photo Gallery'),
+                subtitle: const Text('Choose from your photos'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImageFromGallery();
+                },
+              ),
+              if (!kIsWeb) // Camera not available on web
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.green.shade100,
+                    child: const Icon(Icons.camera_alt, color: Colors.green),
+                  ),
+                  title: const Text('Camera'),
+                  subtitle: const Text('Take a new photo'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImageFromCamera();
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Pick image from gallery and send
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final file = await _imagePickerService.pickImageFromGallery();
+      if (file != null) {
+        await _sendImageMessage(file);
+      }
+    } catch (e) {
+      debugPrint('Error picking image from gallery: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Pick image from camera and send
+  Future<void> _pickImageFromCamera() async {
+    try {
+      final file = await _imagePickerService.pickImageFromCamera();
+      if (file != null) {
+        await _sendImageMessage(file);
+      }
+    } catch (e) {
+      debugPrint('Error taking photo: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to take photo: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Upload image and send as message
+  Future<void> _sendImageMessage(File imageFile) async {
+    if (_isUploadingImage) return;
+
+    setState(() => _isUploadingImage = true);
+
+    try {
+      // Generate message ID for storage path
+      final messageId = const Uuid().v4();
+
+      // Upload image to Supabase Storage
+      debugPrint('Uploading image...');
+      final imageUrl = await _storageService.uploadImage(
+        file: imageFile,
+        tripId: widget.tripId,
+        messageId: messageId,
+      );
+
+      debugPrint('Image uploaded: $imageUrl');
+
+      // Send message with image URL
+      final repository = ref.read(conversationRepositoryProvider);
+      await repository.sendConversationMessage(
+        conversationId: widget.conversationId,
+        tripId: widget.tripId,
+        senderId: widget.currentUserId,
+        message: '📷 Photo',
+        messageType: MessageType.image,
+        attachmentUrl: imageUrl,
+      );
+
+      // Scroll to bottom after sending
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Image sent!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingImage = false);
+      }
+    }
   }
 
   Future<void> _sendMessage() async {
@@ -162,7 +321,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           ),
         ),
         loading: () => const Text('Loading...'),
-        error: (_, __) => const Text('Chat'),
+        error: (error, stackTrace) => const Text('Chat'),
       ),
       actions: [
         IconButton(
@@ -316,18 +475,21 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Attachment button (placeholder)
+          // Attachment button
           IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: () {
-              // TODO: Implement attachments
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Attachments coming soon!'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
-            },
+            icon: _isUploadingImage
+                ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.grey.shade600,
+                      ),
+                    ),
+                  )
+                : const Icon(Icons.attach_file),
+            onPressed: _isUploadingImage ? null : _showAttachmentOptions,
             color: Colors.grey.shade600,
           ),
 
@@ -468,6 +630,9 @@ class _MessageBubble extends StatelessWidget {
     required this.showSenderName,
   });
 
+  bool get _isImageMessage =>
+      message.messageType == MessageType.image && message.attachmentUrl != null;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -510,48 +675,10 @@ class _MessageBubble extends StatelessWidget {
                           ),
                     ),
                   ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingSm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isMe
-                        ? context.primaryColor
-                        : Colors.grey.shade200,
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(AppTheme.radiusMd),
-                      topRight: const Radius.circular(AppTheme.radiusMd),
-                      bottomLeft: Radius.circular(
-                        isMe ? AppTheme.radiusMd : AppTheme.radiusXs,
-                      ),
-                      bottomRight: Radius.circular(
-                        isMe ? AppTheme.radiusXs : AppTheme.radiusMd,
-                      ),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        message.message ?? '',
-                        style: TextStyle(
-                          color: isMe ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _formatTime(message.createdAt),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: isMe
-                              ? Colors.white.withValues(alpha: 0.7)
-                              : Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                if (_isImageMessage)
+                  _buildImageBubble(context)
+                else
+                  _buildTextBubble(context),
               ],
             ),
           ),
@@ -562,9 +689,261 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 
+  Widget _buildTextBubble(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingSm,
+      ),
+      decoration: BoxDecoration(
+        color: isMe ? context.primaryColor : Colors.grey.shade200,
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(AppTheme.radiusMd),
+          topRight: const Radius.circular(AppTheme.radiusMd),
+          bottomLeft: Radius.circular(
+            isMe ? AppTheme.radiusMd : AppTheme.radiusXs,
+          ),
+          bottomRight: Radius.circular(
+            isMe ? AppTheme.radiusXs : AppTheme.radiusMd,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            message.message ?? '',
+            style: TextStyle(
+              color: isMe ? Colors.white : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            _formatTime(message.createdAt),
+            style: TextStyle(
+              fontSize: 10,
+              color: isMe
+                  ? Colors.white.withValues(alpha: 0.7)
+                  : Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageBubble(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showFullScreenImage(context),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 250),
+        decoration: BoxDecoration(
+          color: isMe ? context.primaryColor : Colors.grey.shade200,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(AppTheme.radiusMd),
+            topRight: const Radius.circular(AppTheme.radiusMd),
+            bottomLeft: Radius.circular(
+              isMe ? AppTheme.radiusMd : AppTheme.radiusXs,
+            ),
+            bottomRight: Radius.circular(
+              isMe ? AppTheme.radiusXs : AppTheme.radiusMd,
+            ),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(AppTheme.radiusMd),
+                topRight: const Radius.circular(AppTheme.radiusMd),
+                bottomLeft: Radius.circular(
+                  isMe ? AppTheme.radiusMd : AppTheme.radiusXs,
+                ),
+                bottomRight: Radius.circular(
+                  isMe ? AppTheme.radiusXs : AppTheme.radiusMd,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Image.network(
+                    message.attachmentUrl!,
+                    width: 250,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        width: 250,
+                        height: 150,
+                        color: Colors.grey.shade300,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 250,
+                        height: 150,
+                        color: Colors.grey.shade300,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.broken_image,
+                              size: 48,
+                              color: Colors.grey.shade500,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Failed to load image',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  // Time overlay on image
+                  Positioned(
+                    bottom: 4,
+                    right: 4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        _formatTime(message.createdAt),
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFullScreenImage(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => _FullScreenImageView(
+          imageUrl: message.attachmentUrl!,
+          senderName: message.senderName ?? 'Unknown',
+          timestamp: message.createdAt,
+        ),
+      ),
+    );
+  }
+
   String _formatTime(DateTime time) {
     final hour = time.hour.toString().padLeft(2, '0');
     final minute = time.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
+  }
+}
+
+/// Full screen image viewer
+class _FullScreenImageView extends StatelessWidget {
+  final String imageUrl;
+  final String senderName;
+  final DateTime timestamp;
+
+  const _FullScreenImageView({
+    required this.imageUrl,
+    required this.senderName,
+    required this.timestamp,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              senderName,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            Text(
+              _formatDateTime(timestamp),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          minScale: 0.5,
+          maxScale: 4.0,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                  color: Colors.white,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.broken_image,
+                    size: 64,
+                    color: Colors.white54,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load image',
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime time) {
+    final day = time.day.toString().padLeft(2, '0');
+    final month = time.month.toString().padLeft(2, '0');
+    final year = time.year;
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$day/$month/$year at $hour:$minute';
   }
 }

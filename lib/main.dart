@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,18 +34,22 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  try {
-    await Firebase.initializeApp();
-    debugPrint('✅ Firebase initialized successfully');
+  // Initialize Firebase (skip on web - requires separate configuration)
+  if (!kIsWeb) {
+    try {
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase initialized successfully');
 
-    // Register background message handler
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    debugPrint('✅ Background message handler registered');
-  } catch (e, stackTrace) {
-    debugPrint('❌ Failed to initialize Firebase: $e');
-    debugPrint('Stack trace: $stackTrace');
-    // Continue anyway - push notifications will be disabled
+      // Register background message handler
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      debugPrint('✅ Background message handler registered');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Failed to initialize Firebase: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Continue anyway - push notifications will be disabled
+    }
+  } else {
+    debugPrint('ℹ️ Firebase skipped on web (not configured)');
   }
 
   // Set system UI overlay style for premium look

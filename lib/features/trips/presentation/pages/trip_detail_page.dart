@@ -1363,7 +1363,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
         _QuickActionCard(
           icon: Icons.chat_bubble_rounded,
-          label: 'Group Chat',
+          label: 'Chats',
           color: const Color(0xFF7E57C2), // Soft purple
           onTap: () {
             HapticFeedback.mediumImpact();
@@ -1426,7 +1426,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
         _QuickActionCard(
           icon: Icons.chat_bubble_rounded,
-          label: 'Group Chat',
+          label: 'Chats',
           color: const Color(0xFF7E57C2), // Soft purple
           onTap: () {
             HapticFeedback.mediumImpact();

@@ -421,19 +421,58 @@ class ConversationRemoteDataSource {
   }
 
   /// Subscribe to messages for a conversation
+  /// Enriches messages with sender profile data for real-time display
   Stream<List<MessageModel>> subscribeToConversationMessages(
     String conversationId,
   ) {
+    // Cache for sender profiles to avoid repeated lookups
+    final senderCache = <String, Map<String, dynamic>>{};
+
     return _client
         .from('messages')
         .stream(primaryKey: ['id'])
         .eq('conversation_id', conversationId)
         .order('created_at', ascending: false)
-        .map((data) {
-          return data
-              .where((m) => m['is_deleted'] != true)
-              .map((m) => MessageModel.fromJson(m))
+        .asyncMap((data) async {
+          final messages = data.where((m) => m['is_deleted'] != true).toList();
+
+          // Get unique sender IDs that need profile data
+          final senderIds = messages
+              .map((m) => m['sender_id'] as String)
+              .toSet()
+              .where((id) => !senderCache.containsKey(id))
               .toList();
+
+          // Fetch missing sender profiles
+          if (senderIds.isNotEmpty) {
+            try {
+              final profiles = await _client
+                  .from('profiles')
+                  .select('id, full_name, avatar_url')
+                  .inFilter('id', senderIds);
+
+              for (final profile in profiles as List<dynamic>) {
+                final id = profile['id'] as String;
+                senderCache[id] = {
+                  'full_name': profile['full_name'],
+                  'avatar_url': profile['avatar_url'],
+                };
+              }
+            } catch (e) {
+              debugPrint('Error fetching sender profiles: $e');
+            }
+          }
+
+          // Enrich messages with sender data
+          return messages.map((m) {
+            final senderId = m['sender_id'] as String;
+            final senderInfo = senderCache[senderId];
+            return MessageModel.fromJson({
+              ...m,
+              'sender_name': senderInfo?['full_name'],
+              'sender_avatar_url': senderInfo?['avatar_url'],
+            });
+          }).toList();
         });
   }
 
@@ -448,22 +487,33 @@ class ConversationRemoteDataSource {
     required String otherUserId,
   }) async {
     try {
-      // Use efficient database function to find existing DM
-      final existingId = await _client.rpc(
-        'find_existing_dm',
-        params: {
-          'p_trip_id': tripId,
-          'p_user1_id': currentUserId,
-          'p_user2_id': otherUserId,
-        },
-      );
+      // Try to use efficient database function to find existing DM
+      String? existingId;
+      try {
+        final result = await _client.rpc(
+          'find_existing_dm',
+          params: {
+            'p_trip_id': tripId,
+            'p_user1_id': currentUserId,
+            'p_user2_id': otherUserId,
+          },
+        );
+        existingId = result as String?;
+        debugPrint('find_existing_dm result: $existingId');
+      } catch (rpcError) {
+        // Function might not exist yet, fall back to manual search
+        debugPrint('find_existing_dm RPC failed (function may not exist): $rpcError');
+        existingId = await _findExistingDmManually(tripId, currentUserId, otherUserId);
+      }
 
-      if (existingId != null) {
+      if (existingId != null && existingId.isNotEmpty) {
         // Found existing DM
-        return getConversation(existingId as String, currentUserId);
+        debugPrint('Found existing DM: $existingId');
+        return getConversation(existingId, currentUserId);
       }
 
       // Create new DM
+      debugPrint('Creating new DM between $currentUserId and $otherUserId');
       return createConversation(
         tripId: tripId,
         name: 'Direct Message',
@@ -474,6 +524,38 @@ class ConversationRemoteDataSource {
     } catch (e) {
       debugPrint('Error finding/creating DM: $e');
       rethrow;
+    }
+  }
+
+  /// Manual fallback to find existing DM when RPC function doesn't exist
+  Future<String?> _findExistingDmManually(
+    String tripId,
+    String user1Id,
+    String user2Id,
+  ) async {
+    try {
+      // Find DM conversations in this trip where both users are members
+      final response = await _client
+          .from('conversations')
+          .select('id, conversation_members!inner(user_id)')
+          .eq('trip_id', tripId)
+          .eq('is_direct_message', true);
+
+      for (final conv in response as List<dynamic>) {
+        final members = (conv['conversation_members'] as List<dynamic>)
+            .map((m) => m['user_id'] as String)
+            .toList();
+
+        if (members.length == 2 &&
+            members.contains(user1Id) &&
+            members.contains(user2Id)) {
+          return conv['id'] as String;
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Manual DM search failed: $e');
+      return null;
     }
   }
 }
