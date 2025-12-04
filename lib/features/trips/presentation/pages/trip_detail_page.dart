@@ -13,6 +13,8 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/glassmorphic_card.dart';
+import '../../../../core/utils/trip_permissions.dart';
+import '../../../../core/services/share_service.dart';
 import '../providers/trip_providers.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -143,20 +145,25 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     ),
                   ),
                   actions: [
-                    Container(
-                      margin: const EdgeInsets.only(right: AppTheme.spacingXs),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    // Only show edit button for trip owner
+                    if (TripPermissions.canEditTrip(
+                      currentUserId: ref.watch(authStateProvider).value,
+                      tripWithMembers: trip,
+                    ))
+                      Container(
+                        margin: const EdgeInsets.only(right: AppTheme.spacingXs),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            HapticFeedback.lightImpact();
+                            context.push('/trips/${widget.tripId}/edit');
+                          },
+                        ),
                       ),
-                      child: IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          HapticFeedback.lightImpact();
-                          context.push('/trips/${widget.tripId}/edit');
-                        },
-                      ),
-                    ),
                     _buildPopupMenu(context, trip),
                   ],
                 ),
@@ -1510,20 +1517,72 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   }
 
   Widget _buildPopupMenu(BuildContext context, dynamic trip) {
-    return PopupMenuButton(
-      icon: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingXs),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+    final currentUserId = ref.watch(authStateProvider).value;
+    final canEditTrip = TripPermissions.canEditTrip(
+      currentUserId: currentUserId,
+      tripWithMembers: trip,
+    );
+    final canDeleteTrip = TripPermissions.canDeleteTrip(
+      currentUserId: currentUserId,
+      tripWithMembers: trip,
+    );
+
+    // Build menu items based on permissions
+    final menuItems = <PopupMenuEntry<String>>[];
+
+    // Share options - available to all members
+    menuItems.add(
+      PopupMenuItem(
+        value: 'share_whatsapp',
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXs),
+              decoration: BoxDecoration(
+                color: const Color(0xFF25D366).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+              ),
+              child: const Icon(
+                Icons.chat,
+                color: Color(0xFF25D366),
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            const Text('Share via WhatsApp'),
+          ],
         ),
-        child: const Icon(Icons.more_vert),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+    );
+    menuItems.add(
+      PopupMenuItem(
+        value: 'share_general',
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXs),
+              decoration: BoxDecoration(
+                color: AppTheme.info.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+              ),
+              child: const Icon(
+                Icons.share,
+                color: AppTheme.info,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            const Text('Share via...'),
+          ],
+        ),
       ),
-      itemBuilder: (context) => [
-        if (!trip.trip.isCompleted)
+    );
+    menuItems.add(const PopupMenuDivider());
+
+    // Complete/Reopen options - only for trip owner
+    if (canEditTrip) {
+      if (!trip.trip.isCompleted) {
+        menuItems.add(
           PopupMenuItem(
             value: 'complete',
             child: Row(
@@ -1545,7 +1604,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               ],
             ),
           ),
-        if (trip.trip.isCompleted)
+        );
+      } else {
+        menuItems.add(
           PopupMenuItem(
             value: 'reopen',
             child: Row(
@@ -1567,6 +1628,13 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               ],
             ),
           ),
+        );
+      }
+    }
+
+    // Delete option - only for trip owner
+    if (canDeleteTrip) {
+      menuItems.add(
         PopupMenuItem(
           value: 'delete',
           child: Row(
@@ -1588,9 +1656,38 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             ],
           ),
         ),
-      ],
-      onSelected: (value) {
-        if (value == 'complete') {
+      );
+    }
+
+    // Menu always has share options, so it's never empty
+    return PopupMenuButton(
+      icon: Container(
+        padding: const EdgeInsets.all(AppTheme.spacingXs),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        ),
+        child: const Icon(Icons.more_vert),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      ),
+      itemBuilder: (context) => menuItems,
+      onSelected: (value) async {
+        if (value == 'share_whatsapp') {
+          final text = ShareService.formatTrip(trip.trip);
+          final success = await ShareService.shareToWhatsApp(text);
+          if (!success && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Could not open WhatsApp. Please install WhatsApp to share.'),
+              ),
+            );
+          }
+        } else if (value == 'share_general') {
+          final text = ShareService.formatTrip(trip.trip);
+          await ShareService.shareGeneral(text, subject: 'Trip: ${trip.trip.name}');
+        } else if (value == 'complete') {
           _showCompleteDialog(context, ref);
         } else if (value == 'reopen') {
           _showReopenDialog(context, ref);

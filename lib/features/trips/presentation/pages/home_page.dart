@@ -949,13 +949,115 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return EmptyStateWidget(
-      title: 'No trips yet',
-      description:
-          'Start your journey by creating your first trip.\nPlan, share, and explore together!',
-      icon: Icons.explore,
-      actionLabel: 'Create Your First Trip',
-      onAction: () => context.push('/trips/create'),
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon with gradient background
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              decoration: BoxDecoration(
+                gradient: themeData.primaryGradient,
+                shape: BoxShape.circle,
+                boxShadow: themeData.primaryShadow,
+              ),
+              child: const Icon(
+                Icons.explore,
+                size: 64,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingXl),
+
+            // Title
+            Text(
+              'No trips yet',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: AppTheme.neutral900,
+                    fontWeight: FontWeight.w700,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacingXs),
+
+            // Description
+            Text(
+              'Start your journey by creating your first trip.\nPlan, share, and explore together!',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.neutral600,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacingXl),
+
+            // Primary action - Create Trip
+            Container(
+              decoration: BoxDecoration(
+                gradient: themeData.primaryGradient,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                boxShadow: themeData.primaryShadow,
+              ),
+              child: ElevatedButton.icon(
+                onPressed: () => context.push('/trips/create'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingXl,
+                    vertical: AppTheme.spacingMd,
+                  ),
+                ),
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  'Create Your First Trip',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+
+            // Secondary actions - AI Planner & Templates
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // AI Planner button
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/ai-itinerary'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.deepPurple,
+                    side: const BorderSide(color: Colors.deepPurple),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingSm,
+                    ),
+                  ),
+                  icon: const Icon(Icons.auto_awesome, size: 18),
+                  label: const Text('AI Planner'),
+                ),
+                const SizedBox(width: AppTheme.spacingSm),
+                // Browse Templates button
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/templates'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.info,
+                    side: BorderSide(color: AppTheme.info),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingSm,
+                    ),
+                  ),
+                  icon: const Icon(Icons.library_books, size: 18),
+                  label: const Text('Templates'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -1902,6 +1902,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               ),
               _buildActionButton(
                 context,
+                icon: Icons.auto_awesome,
+                label: 'AI Planner',
+                color: Colors.deepPurple,
+                onTap: () => context.push('/ai-itinerary'),
+              ),
+              _buildActionButton(
+                context,
                 icon: Icons.emergency,
                 label: 'SOS',
                 color: AppTheme.error,

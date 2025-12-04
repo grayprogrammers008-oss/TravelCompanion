@@ -85,42 +85,45 @@ class ChecklistCard extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      // Action menu button
-                      PopupMenuButton<String>(
-                        icon: Icon(Icons.more_vert, color: context.textColor.withValues(alpha: 0.7)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      // Action menu button - only show if there are actions available
+                      if (onEdit != null || onDelete != null)
+                        PopupMenuButton<String>(
+                          icon: Icon(Icons.more_vert, color: context.textColor.withValues(alpha: 0.7)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          ),
+                          onSelected: (value) {
+                            if (value == 'edit' && onEdit != null) {
+                              onEdit!();
+                            } else if (value == 'delete' && onDelete != null) {
+                              onDelete!();
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            if (onEdit != null)
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit, color: context.primaryColor, size: 20),
+                                    const SizedBox(width: AppTheme.spacingMd),
+                                    const Text('Edit'),
+                                  ],
+                                ),
+                              ),
+                            if (onDelete != null)
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete, color: AppTheme.error, size: 20),
+                                    SizedBox(width: AppTheme.spacingMd),
+                                    Text('Delete'),
+                                  ],
+                                ),
+                              ),
+                          ],
                         ),
-                        onSelected: (value) {
-                          if (value == 'edit' && onEdit != null) {
-                            onEdit!();
-                          } else if (value == 'delete' && onDelete != null) {
-                            onDelete!();
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit, color: context.primaryColor, size: 20),
-                                const SizedBox(width: AppTheme.spacingMd),
-                                const Text('Edit'),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete, color: AppTheme.error, size: 20),
-                                SizedBox(width: AppTheme.spacingMd),
-                                Text('Delete'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                   const SizedBox(height: AppTheme.spacingMd),

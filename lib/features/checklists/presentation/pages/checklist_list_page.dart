@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/utils/trip_permissions.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/checklist_providers.dart';
 import '../widgets/checklist_card.dart';
 import '../widgets/edit_checklist_dialog.dart';
@@ -21,6 +24,16 @@ class ChecklistListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeData = context.appThemeData;
     final checklistsAsync = ref.watch(tripChecklistsProvider(tripId));
+    final tripAsync = ref.watch(tripProvider(tripId));
+    final currentUserId = ref.watch(authStateProvider).value;
+
+    // Check edit permissions
+    final canEditChecklists = tripAsync.whenOrNull(
+      data: (tripWithMembers) => TripPermissions.canEditChecklists(
+        currentUserId: currentUserId,
+        tripWithMembers: tripWithMembers,
+      ),
+    ) ?? false;
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
@@ -63,58 +76,63 @@ class ChecklistListPage extends ConsumerWidget {
                   onTap: () {
                     context.push('/trips/$tripId/checklists/${checklist.id}');
                   },
-                  onEdit: () async {
-                    final result = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => EditChecklistDialog(checklist: checklist),
-                    );
-                    if (result == true) {
-                      ref.invalidate(tripChecklistsProvider(tripId));
-                    }
-                  },
-                  onDelete: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Delete Checklist'),
-                        content: Text('Are you sure you want to delete "${checklist.name}"? This will also delete all its items.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            style: TextButton.styleFrom(
-                              foregroundColor: AppTheme.error,
+                  // Only show edit/delete callbacks if user has permission
+                  onEdit: canEditChecklists
+                      ? () async {
+                          final result = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => EditChecklistDialog(checklist: checklist),
+                          );
+                          if (result == true) {
+                            ref.invalidate(tripChecklistsProvider(tripId));
+                          }
+                        }
+                      : null,
+                  onDelete: canEditChecklists
+                      ? () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Delete Checklist'),
+                              content: Text('Are you sure you want to delete "${checklist.name}"? This will also delete all its items.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: AppTheme.error,
+                                  ),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
                             ),
-                            child: const Text('Delete'),
-                          ),
-                        ],
-                      ),
-                    );
+                          );
 
-                    if (confirmed == true) {
-                      final controller = ref.read(checklistControllerProvider.notifier);
-                      final success = await controller.deleteChecklist(checklist.id);
-                      if (success && context.mounted) {
-                        ref.invalidate(tripChecklistsProvider(tripId));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Checklist deleted'),
-                            backgroundColor: AppTheme.success,
-                          ),
-                        );
-                      } else if (!success && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Failed to delete checklist'),
-                            backgroundColor: AppTheme.error,
-                          ),
-                        );
-                      }
-                    }
-                  },
+                          if (confirmed == true) {
+                            final controller = ref.read(checklistControllerProvider.notifier);
+                            final success = await controller.deleteChecklist(checklist.id);
+                            if (success && context.mounted) {
+                              ref.invalidate(tripChecklistsProvider(tripId));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Checklist deleted'),
+                                  backgroundColor: AppTheme.success,
+                                ),
+                              );
+                            } else if (!success && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to delete checklist'),
+                                  backgroundColor: AppTheme.error,
+                                ),
+                              );
+                            }
+                          }
+                        }
+                      : null,
                 );
               },
             ),
@@ -194,25 +212,28 @@ class ChecklistListPage extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final result = await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AddChecklistPage(tripId: tripId),
-            ),
-          );
+      // Only show FAB if user can edit checklists
+      floatingActionButton: canEditChecklists
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                final result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddChecklistPage(tripId: tripId),
+                  ),
+                );
 
-          if (result == true) {
-            ref.invalidate(tripChecklistsProvider(tripId));
-          }
-        },
-        backgroundColor: themeData.primaryColor,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          'New Checklist',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-        ),
-      ),
+                if (result == true) {
+                  ref.invalidate(tripChecklistsProvider(tripId));
+                }
+              },
+              backgroundColor: themeData.primaryColor,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text(
+                'New Checklist',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+            )
+          : null,
     );
   }
 

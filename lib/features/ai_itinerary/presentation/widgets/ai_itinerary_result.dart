@@ -1,0 +1,892 @@
+// AI Itinerary Result Widget
+//
+// Displays the generated AI itinerary with option to apply to trip.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_provider.dart' as theme_provider;
+import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/services/share_service.dart';
+import '../../../itinerary/presentation/providers/itinerary_providers.dart';
+import '../../domain/entities/ai_itinerary.dart';
+
+class AiItineraryResultPage extends ConsumerWidget {
+  final AiGeneratedItinerary itinerary;
+  final String? tripId;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final double? budget;
+  final VoidCallback onBack;
+
+  const AiItineraryResultPage({
+    super.key,
+    required this.itinerary,
+    this.tripId,
+    this.startDate,
+    this.endDate,
+    this.budget,
+    required this.onBack,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
+
+    return Scaffold(
+      backgroundColor: AppTheme.neutral50,
+      appBar: AppBar(
+        backgroundColor: themeData.primaryColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: onBack,
+        ),
+        title: const Text(
+          'Your AI Itinerary',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeData.primaryGradient,
+          ),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.share, color: Colors.white),
+            onSelected: (value) async {
+              switch (value) {
+                case 'whatsapp':
+                  final success = await itinerary.shareToWhatsAppItinerary();
+                  if (!success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Could not open WhatsApp. Please install WhatsApp to share.'),
+                      ),
+                    );
+                  }
+                  break;
+                case 'whatsapp_compact':
+                  final success = await itinerary.shareToWhatsAppItinerary(compact: true);
+                  if (!success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Could not open WhatsApp. Please install WhatsApp to share.'),
+                      ),
+                    );
+                  }
+                  break;
+                case 'share':
+                  await itinerary.shareGeneralItinerary();
+                  break;
+                case 'copy':
+                  final text = ShareService.formatAiItinerary(itinerary);
+                  await ShareService.copyToClipboard(text, context);
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'whatsapp',
+                child: Row(
+                  children: [
+                    Icon(Icons.chat, color: Color(0xFF25D366)),
+                    SizedBox(width: 12),
+                    Text('WhatsApp (Full)'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'whatsapp_compact',
+                child: Row(
+                  children: [
+                    Icon(Icons.chat_outlined, color: Color(0xFF25D366)),
+                    SizedBox(width: 12),
+                    Text('WhatsApp (Summary)'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 'share',
+                child: Row(
+                  children: [
+                    Icon(Icons.share_outlined),
+                    SizedBox(width: 12),
+                    Text('Share via...'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'copy',
+                child: Row(
+                  children: [
+                    Icon(Icons.copy_outlined),
+                    SizedBox(width: 12),
+                    Text('Copy to clipboard'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: DefaultTabController(
+        length: 3,
+        child: Column(
+          children: [
+            // Header Card
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppTheme.spacingSm),
+                        decoration: BoxDecoration(
+                          color: themeData.primaryColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        ),
+                        child: Icon(
+                          Icons.location_on,
+                          color: themeData.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              itinerary.destination,
+                              style: context.titleStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '${itinerary.durationDays} days${itinerary.budget != null ? ' • ₹${itinerary.budget!.toStringAsFixed(0)}' : ''}',
+                              style: context.bodyStyle.copyWith(
+                                color: context.textColor.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (itinerary.summary != null) ...[
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Text(
+                      itinerary.summary!,
+                      style: context.bodyStyle.copyWith(
+                        color: context.textColor.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            // Tab Bar
+            Container(
+              color: Colors.white,
+              child: TabBar(
+                labelColor: themeData.primaryColor,
+                unselectedLabelColor: context.textColor.withValues(alpha: 0.5),
+                indicatorColor: themeData.primaryColor,
+                tabs: [
+                  Tab(
+                    icon: const Icon(Icons.route, size: 20),
+                    text: 'Itinerary (${itinerary.days.length})',
+                  ),
+                  Tab(
+                    icon: const Icon(Icons.checklist, size: 20),
+                    text: 'Packing (${itinerary.packingList.length})',
+                  ),
+                  Tab(
+                    icon: const Icon(Icons.lightbulb_outline, size: 20),
+                    text: 'Tips (${itinerary.tips.length})',
+                  ),
+                ],
+              ),
+            ),
+
+            // Tab Content
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildItineraryTab(context),
+                  _buildPackingTab(context),
+                  _buildTipsTab(context),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(
+          AppTheme.spacingMd,
+          AppTheme.spacingMd,
+          AppTheme.spacingMd,
+          AppTheme.spacingMd + MediaQuery.of(context).padding.bottom,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // If we have a tripId, show "Apply to Trip" as primary action
+            // Otherwise show "Create Trip" as primary action
+            if (tripId != null) ...[
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _applyToExistingTrip(context, ref),
+                  icon: const Icon(Icons.check),
+                  label: const Text('Apply to Trip'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeData.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                  ),
+                ),
+              ),
+            ] else ...[
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _createTripFromItinerary(context),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Create Trip'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeData.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Navigate to create trip page with pre-filled data
+  void _createTripFromItinerary(BuildContext context) {
+    // Build query parameters
+    final queryParams = <String, String>{
+      'destination': itinerary.destination,
+      'durationDays': itinerary.durationDays.toString(),
+    };
+
+    if (startDate != null) {
+      queryParams['startDate'] = startDate!.toIso8601String();
+    }
+    if (endDate != null) {
+      queryParams['endDate'] = endDate!.toIso8601String();
+    }
+    if (budget != null) {
+      queryParams['budget'] = budget.toString();
+    }
+
+    // Navigate to create trip page with query parameters
+    final uri = Uri(path: '/trips/create', queryParameters: queryParams);
+    context.push(uri.toString());
+  }
+
+  /// Apply itinerary to an existing trip
+  Future<void> _applyToExistingTrip(BuildContext context, WidgetRef ref) async {
+    if (tripId == null) return;
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: Card(
+          child: Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Applying itinerary to trip...'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    try {
+      final controller = ref.read(itineraryControllerProvider.notifier);
+      int createdCount = 0;
+
+      // Create itinerary items for each activity
+      for (final day in itinerary.days) {
+        int orderIndex = 0;
+        for (final activity in day.activities) {
+          // Parse start time if available
+          DateTime? activityStartTime;
+          DateTime? activityEndTime;
+
+          if (startDate != null) {
+            final dayDate = startDate!.add(Duration(days: day.dayNumber - 1));
+
+            if (activity.startTime != null) {
+              activityStartTime = _parseTimeToDateTime(activity.startTime!, dayDate);
+            }
+            if (activity.endTime != null) {
+              activityEndTime = _parseTimeToDateTime(activity.endTime!, dayDate);
+            }
+          }
+
+          // Build description with tip if available
+          String? fullDescription = activity.description;
+          if (activity.tip != null && activity.tip!.isNotEmpty) {
+            fullDescription = fullDescription != null
+                ? '$fullDescription\n\n💡 Tip: ${activity.tip}'
+                : '💡 Tip: ${activity.tip}';
+          }
+
+          await controller.createItem(
+            tripId: tripId!,
+            title: activity.title,
+            description: fullDescription,
+            location: activity.location,
+            startTime: activityStartTime,
+            endTime: activityEndTime,
+            dayNumber: day.dayNumber,
+            orderIndex: orderIndex,
+          );
+
+          createdCount++;
+          orderIndex++;
+        }
+      }
+
+      // Clear the success message from controller to prevent repeated SnackBars
+      // on the itinerary list page (which listens for successMessage changes)
+      controller.clearSuccessMessage();
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show success message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Successfully added $createdCount activities to your trip!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to the trip's itinerary page
+        context.go('/trips/$tripId/itinerary');
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to apply itinerary: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Parse a time string (e.g., "09:00 AM", "14:30") to DateTime with the given date
+  DateTime? _parseTimeToDateTime(String timeStr, DateTime date) {
+    try {
+      // Try to parse various time formats
+      final cleanTime = timeStr.trim().toUpperCase();
+
+      // Try "HH:MM AM/PM" format
+      final amPmRegex = RegExp(r'^(\d{1,2}):(\d{2})\s*(AM|PM)?$');
+      final match = amPmRegex.firstMatch(cleanTime);
+
+      if (match != null) {
+        int hour = int.parse(match.group(1)!);
+        final minute = int.parse(match.group(2)!);
+        final period = match.group(3);
+
+        if (period == 'PM' && hour != 12) {
+          hour += 12;
+        } else if (period == 'AM' && hour == 12) {
+          hour = 0;
+        }
+
+        return DateTime(date.year, date.month, date.day, hour, minute);
+      }
+
+      // Try 24-hour format "HH:MM"
+      final parts = cleanTime.split(':');
+      if (parts.length == 2) {
+        final hour = int.tryParse(parts[0]);
+        final minute = int.tryParse(parts[1].replaceAll(RegExp(r'[^0-9]'), ''));
+        if (hour != null && minute != null) {
+          return DateTime(date.year, date.month, date.day, hour, minute);
+        }
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildItineraryTab(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      itemCount: itinerary.days.length,
+      itemBuilder: (context, index) {
+        final day = itinerary.days[index];
+        return _buildDayCard(context, day);
+      },
+    );
+  }
+
+  Widget _buildDayCard(BuildContext context, AiItineraryDay day) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: AppTheme.shadowSm,
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: day.dayNumber <= 2,
+          tilePadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
+                decoration: BoxDecoration(
+                  color: context.primaryColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '${day.dayNumber}',
+                  style: context.titleStyle.copyWith(
+                    color: context.primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      day.title ?? 'Day ${day.dayNumber}',
+                      style: context.titleStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (day.description != null)
+                      Text(
+                        day.description!,
+                        style: context.bodyStyle.copyWith(
+                          fontSize: 12,
+                          color: context.textColor.withValues(alpha: 0.6),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingSm,
+                  vertical: AppTheme.spacingXs,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.neutral100,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                ),
+                child: Text(
+                  '${day.activities.length} activities',
+                  style: context.bodyStyle.copyWith(
+                    fontSize: 11,
+                    color: context.textColor.withValues(alpha: 0.6),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppTheme.spacingMd,
+                0,
+                AppTheme.spacingMd,
+                AppTheme.spacingMd,
+              ),
+              child: Column(
+                children: day.activities.map((activity) {
+                  return _buildActivityCard(context, activity);
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActivityCard(BuildContext context, AiItineraryActivity activity) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.neutral50,
+        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        border: Border.all(color: AppTheme.neutral200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingXs),
+                decoration: BoxDecoration(
+                  color: activity.category.color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                ),
+                child: Icon(
+                  activity.category.icon,
+                  size: 16,
+                  color: activity.category.color,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                child: Text(
+                  activity.title,
+                  style: context.titleStyle.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              if (activity.startTime != null)
+                Text(
+                  activity.startTime!,
+                  style: context.bodyStyle.copyWith(
+                    fontSize: 12,
+                    color: context.textColor.withValues(alpha: 0.5),
+                  ),
+                ),
+            ],
+          ),
+          if (activity.description != null) ...[
+            const SizedBox(height: AppTheme.spacingXs),
+            Text(
+              activity.description!,
+              style: context.bodyStyle.copyWith(
+                fontSize: 13,
+                color: context.textColor.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+          const SizedBox(height: AppTheme.spacingSm),
+          Row(
+            children: [
+              if (activity.location != null) ...[
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 14,
+                  color: context.textColor.withValues(alpha: 0.5),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    activity.location!,
+                    style: context.bodyStyle.copyWith(
+                      fontSize: 12,
+                      color: context.textColor.withValues(alpha: 0.5),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+              if (activity.estimatedCost != null) ...[
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingSm,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                  ),
+                  child: Text(
+                    '₹${activity.estimatedCost!.toStringAsFixed(0)}',
+                    style: context.bodyStyle.copyWith(
+                      fontSize: 11,
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (activity.tip != null) ...[
+            const SizedBox(height: AppTheme.spacingSm),
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.lightbulb_outline,
+                    size: 14,
+                    color: Colors.amber,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      activity.tip!,
+                      style: context.bodyStyle.copyWith(
+                        fontSize: 11,
+                        color: Colors.amber.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPackingTab(BuildContext context) {
+    if (itinerary.packingList.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.checklist_outlined,
+              size: 64,
+              color: AppTheme.neutral300,
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              'No packing suggestions',
+              style: context.titleStyle.copyWith(
+                color: context.textColor.withValues(alpha: 0.5),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Group by category
+    final categories = <String, List<AiPackingItem>>{};
+    for (final item in itinerary.packingList) {
+      final category = item.category ?? 'Other';
+      categories.putIfAbsent(category, () => []).add(item);
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        final category = categories.keys.elementAt(index);
+        final items = categories[category]!;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                child: Row(
+                  children: [
+                    Text(
+                      category.toUpperCase(),
+                      style: context.titleStyle.copyWith(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: context.textColor.withValues(alpha: 0.5),
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${items.length} items',
+                      style: context.bodyStyle.copyWith(
+                        fontSize: 12,
+                        color: context.textColor.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              ...items.map((item) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingSm,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          item.isEssential
+                              ? Icons.check_circle
+                              : Icons.circle_outlined,
+                          size: 18,
+                          color: item.isEssential
+                              ? context.primaryColor
+                              : context.textColor.withValues(alpha: 0.4),
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Expanded(
+                          child: Text(
+                            item.item,
+                            style: context.bodyStyle.copyWith(
+                              fontWeight:
+                                  item.isEssential ? FontWeight.w600 : null,
+                            ),
+                          ),
+                        ),
+                        if (item.isEssential)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppTheme.spacingXs,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withValues(alpha: 0.1),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusXs),
+                            ),
+                            child: Text(
+                              'Essential',
+                              style: context.bodyStyle.copyWith(
+                                fontSize: 10,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  )),
+              const SizedBox(height: AppTheme.spacingSm),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTipsTab(BuildContext context) {
+    if (itinerary.tips.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.lightbulb_outline,
+              size: 64,
+              color: AppTheme.neutral300,
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              'No tips available',
+              style: context.titleStyle.copyWith(
+                color: context.textColor.withValues(alpha: 0.5),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      itemCount: itinerary.tips.length,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '${index + 1}',
+                  style: context.titleStyle.copyWith(
+                    color: Colors.amber.shade700,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
+              Expanded(
+                child: Text(
+                  itinerary.tips[index],
+                  style: context.bodyStyle.copyWith(
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

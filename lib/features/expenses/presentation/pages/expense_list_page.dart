@@ -7,8 +7,12 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/utils/trip_permissions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../shared/models/expense_model.dart';
+import '../../../../shared/models/trip_model.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/expense_providers.dart';
 import '../widgets/payment_options_sheet.dart';
 
@@ -22,6 +26,16 @@ class ExpenseListPage extends ConsumerWidget {
     final expensesAsync = ref.watch(tripExpensesProvider(tripId));
     final balancesAsync = ref.watch(tripBalancesProvider(tripId));
     final themeData = context.appThemeData;
+    final tripAsync = ref.watch(tripProvider(tripId));
+    final currentUserId = ref.watch(authStateProvider).value;
+
+    // Check if user can add expenses (all trip members can add)
+    final canAddExpenses = tripAsync.whenOrNull(
+      data: (tripWithMembers) => TripPermissions.canAddExpenses(
+        currentUserId: currentUserId,
+        tripWithMembers: tripWithMembers,
+      ),
+    ) ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +55,7 @@ class ExpenseListPage extends ConsumerWidget {
           if (expenses.isEmpty) {
             return _buildEmptyState(context);
           }
-          return _buildExpensesList(context, expenses, ref);
+          return _buildExpensesList(context, expenses, ref, tripAsync, currentUserId);
         },
         loading: () => const Center(
           child: AppLoadingIndicator(
@@ -64,47 +78,50 @@ class ExpenseListPage extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButton: ScaleAnimation(
-        duration: AppAnimations.slow,
-        curve: AppAnimations.spring,
-        child: AnimatedScaleButton(
-          onTap: () => context.push('/trips/$tripId/expenses/add'),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: themeData.glossyGradient,
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              boxShadow: themeData.glossyShadow,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withValues(alpha: 0.2),
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              ),
-              child: FloatingActionButton.extended(
-                onPressed: null, // Handled by AnimatedScaleButton
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                icon: Icon(Icons.add, color: context.surfaceColor, size: 24),
-                label: Text(
-                  'Add Expense',
-                  style: context.titleMedium.copyWith(
-                    color: context.surfaceColor,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+      // All trip members can add expenses
+      floatingActionButton: canAddExpenses
+          ? ScaleAnimation(
+              duration: AppAnimations.slow,
+              curve: AppAnimations.spring,
+              child: AnimatedScaleButton(
+                onTap: () => context.push('/trips/$tripId/expenses/add'),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: themeData.glossyGradient,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    boxShadow: themeData.glossyShadow,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withValues(alpha: 0.2),
+                          Colors.white.withValues(alpha: 0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    ),
+                    child: FloatingActionButton.extended(
+                      onPressed: null, // Handled by AnimatedScaleButton
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      icon: Icon(Icons.add, color: context.surfaceColor, size: 24),
+                      label: Text(
+                        'Add Expense',
+                        style: context.titleMedium.copyWith(
+                          color: context.surfaceColor,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
+            )
+          : null,
     );
   }
 
@@ -151,6 +168,8 @@ class ExpenseListPage extends ConsumerWidget {
     BuildContext context,
     List<ExpenseWithSplits> expenses,
     WidgetRef ref,
+    AsyncValue<TripWithMembers> tripAsync,
+    String? currentUserId,
   ) {
     // Calculate total
     final total = expenses.fold<double>(0, (sum, e) => sum + e.expense.amount);
@@ -203,7 +222,7 @@ class ExpenseListPage extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: InkWell(
                   onTap: () {
-                    _showExpenseDetails(context, expenseWithSplits, ref);
+                    _showExpenseDetails(context, expenseWithSplits, ref, tripAsync, currentUserId);
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
@@ -328,9 +347,20 @@ class ExpenseListPage extends ConsumerWidget {
     BuildContext context,
     ExpenseWithSplits expenseWithSplits,
     WidgetRef ref,
+    AsyncValue<TripWithMembers> tripAsync,
+    String? currentUserId,
   ) {
     final expense = expenseWithSplits.expense;
     final splits = expenseWithSplits.splits;
+
+    // Check if user can edit/delete this expense
+    final canEditExpense = tripAsync.whenOrNull(
+      data: (tripWithMembers) => TripPermissions.canEditExpense(
+        currentUserId: currentUserId,
+        expenseCreatedBy: expense.paidBy, // The payer is considered the creator
+        tripWithMembers: tripWithMembers,
+      ),
+    ) ?? false;
 
     showModalBottomSheet(
       context: context,
@@ -447,79 +477,81 @@ class ExpenseListPage extends ConsumerWidget {
                 ),
               ),
 
-              // Delete button
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Delete Expense'),
-                        content: const Text(
-                          'Are you sure you want to delete this expense?',
+              // Delete button - only show if user can edit this expense
+              if (canEditExpense) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Delete Expense'),
+                          content: const Text(
+                            'Are you sure you want to delete this expense?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: TextButton.styleFrom(
+                                foregroundColor: context.errorColor,
+                              ),
+                              child: const Text('Delete'),
+                            ),
+                          ],
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            style: TextButton.styleFrom(
-                              foregroundColor: context.errorColor,
-                            ),
-                            child: const Text('Delete'),
-                          ),
-                        ],
-                      ),
-                    );
+                      );
 
-                    if (confirm == true && context.mounted) {
-                      try {
-                        await ref
-                            .read(expenseControllerProvider.notifier)
-                            .deleteExpense(expense.id);
-                        ref.invalidate(tripExpensesProvider(tripId));
-                        ref.invalidate(tripBalancesProvider(tripId));
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Expense deleted successfully'),
-                              backgroundColor: context.successColor,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error: ${e.toString()}'),
-                              backgroundColor: context.errorColor,
-                            ),
-                          );
+                      if (confirm == true && context.mounted) {
+                        try {
+                          await ref
+                              .read(expenseControllerProvider.notifier)
+                              .deleteExpense(expense.id);
+                          ref.invalidate(tripExpensesProvider(tripId));
+                          ref.invalidate(tripBalancesProvider(tripId));
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('Expense deleted successfully'),
+                                backgroundColor: context.successColor,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${e.toString()}'),
+                                backgroundColor: context.errorColor,
+                              ),
+                            );
+                          }
                         }
                       }
-                    }
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: context.errorColor),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.delete, color: context.errorColor),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Delete Expense',
-                        style: TextStyle(color: context.errorColor),
-                      ),
-                    ],
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: context.errorColor),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete, color: context.errorColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Delete Expense',
+                          style: TextStyle(color: context.errorColor),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

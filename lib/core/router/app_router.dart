@@ -34,6 +34,9 @@ import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/emergency/presentation/pages/emergency_page.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/admin/presentation/pages/admin_user_detail_page.dart';
+import '../../features/templates/presentation/pages/browse_templates_page.dart';
+import '../../features/templates/presentation/pages/template_detail_page.dart';
+import '../../features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
 import '../presentation/main_scaffold.dart';
 
 // Custom page builder that removes the white transition overlay
@@ -92,6 +95,9 @@ class AppRoutes {
   static const String tripHistory = '/trip-history';
   static const String emergency = '/emergency';
   static const String onboarding = '/onboarding';
+  static const String templates = '/templates';
+  static const String templateDetail = '/templates/:templateId';
+  static const String aiItinerary = '/ai-itinerary';
 }
 
 // Router provider with auth and onboarding redirect
@@ -204,10 +210,23 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.createTrip,
         name: 'createTrip',
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const CreateTripPage(),
-        ),
+        pageBuilder: (context, state) {
+          // Extract query parameters for pre-filling from AI Itinerary
+          final destination = state.uri.queryParameters['destination'];
+          final startDateStr = state.uri.queryParameters['startDate'];
+          final endDateStr = state.uri.queryParameters['endDate'];
+          final budgetStr = state.uri.queryParameters['budget'];
+
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: CreateTripPage(
+              prefillDestination: destination,
+              prefillStartDate: startDateStr != null ? DateTime.tryParse(startDateStr) : null,
+              prefillEndDate: endDateStr != null ? DateTime.tryParse(endDateStr) : null,
+              prefillBudget: budgetStr != null ? double.tryParse(budgetStr) : null,
+            ),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.addStandaloneExpense,
@@ -508,6 +527,47 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.onboarding,
         name: 'onboarding',
         builder: (context, state) => const OnboardingPage(),
+      ),
+      // Trip Templates routes
+      GoRoute(
+        path: AppRoutes.templates,
+        name: 'templates',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const BrowseTemplatesPage(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.templateDetail,
+        name: 'templateDetail',
+        builder: (context, state) {
+          final templateId = state.pathParameters['templateId']!;
+          return TemplateDetailPage(templateId: templateId);
+        },
+      ),
+      // AI Itinerary Generator route
+      GoRoute(
+        path: AppRoutes.aiItinerary,
+        name: 'aiItinerary',
+        pageBuilder: (context, state) {
+          // Extract query parameters (for launching from itinerary page)
+          final tripId = state.uri.queryParameters['tripId'];
+          final destination = state.uri.queryParameters['destination'];
+          final startDateStr = state.uri.queryParameters['startDate'];
+          final endDateStr = state.uri.queryParameters['endDate'];
+          final budgetStr = state.uri.queryParameters['budget'];
+
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: AiItineraryGeneratorPage(
+              tripId: tripId,
+              prefillDestination: destination,
+              prefillStartDate: startDateStr != null ? DateTime.tryParse(startDateStr) : null,
+              prefillEndDate: endDateStr != null ? DateTime.tryParse(endDateStr) : null,
+              prefillBudget: budgetStr != null ? double.tryParse(budgetStr) : null,
+            ),
+          );
+        },
       ),
     ],
     errorBuilder: (context, state) =>

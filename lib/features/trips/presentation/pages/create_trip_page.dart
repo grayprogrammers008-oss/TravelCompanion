@@ -16,7 +16,20 @@ import '../providers/trip_providers.dart';
 class CreateTripPage extends ConsumerStatefulWidget {
   final String? tripId; // If provided, page is in edit mode
 
-  const CreateTripPage({super.key, this.tripId});
+  // Pre-fill parameters from AI Itinerary Generator
+  final String? prefillDestination;
+  final DateTime? prefillStartDate;
+  final DateTime? prefillEndDate;
+  final double? prefillBudget;
+
+  const CreateTripPage({
+    super.key,
+    this.tripId,
+    this.prefillDestination,
+    this.prefillStartDate,
+    this.prefillEndDate,
+    this.prefillBudget,
+  });
 
   @override
   ConsumerState<CreateTripPage> createState() => _CreateTripPageState();
@@ -57,6 +70,37 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         }
         _loadTripData();
       });
+    } else {
+      // Pre-fill form fields from AI Itinerary Generator (for new trips)
+      _applyPrefillData();
+    }
+  }
+
+  /// Apply pre-fill data from AI Itinerary Generator
+  void _applyPrefillData() {
+    if (widget.prefillDestination != null) {
+      _destinationController.text = widget.prefillDestination!;
+      if (kDebugMode) {
+        debugPrint('DEBUG: Pre-filled destination: ${widget.prefillDestination}');
+      }
+    }
+    if (widget.prefillStartDate != null) {
+      _startDate = widget.prefillStartDate;
+      if (kDebugMode) {
+        debugPrint('DEBUG: Pre-filled start date: ${widget.prefillStartDate}');
+      }
+    }
+    if (widget.prefillEndDate != null) {
+      _endDate = widget.prefillEndDate;
+      if (kDebugMode) {
+        debugPrint('DEBUG: Pre-filled end date: ${widget.prefillEndDate}');
+      }
+    }
+    if (widget.prefillBudget != null) {
+      _budgetController.text = _formatCurrency(widget.prefillBudget!);
+      if (kDebugMode) {
+        debugPrint('DEBUG: Pre-filled budget: ${widget.prefillBudget}');
+      }
     }
   }
 

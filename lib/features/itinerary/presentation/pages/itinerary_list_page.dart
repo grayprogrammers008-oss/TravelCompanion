@@ -8,8 +8,10 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/utils/trip_permissions.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/itinerary_providers.dart';
 
 class ItineraryListPage extends ConsumerStatefulWidget {
@@ -91,6 +93,15 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     final themeData = context.appThemeData;
     final itineraryAsync = ref.watch(itineraryByDaysProvider(widget.tripId));
     final tripAsync = ref.watch(tripProvider(widget.tripId));
+    final currentUserId = ref.watch(authStateProvider).value;
+
+    // Check edit permissions
+    final canEditItinerary = tripAsync.whenOrNull(
+      data: (tripWithMembers) => TripPermissions.canEditItinerary(
+        currentUserId: currentUserId,
+        tripWithMembers: tripWithMembers,
+      ),
+    ) ?? false;
 
     // Get today's day number from trip data
     final todaysDayNumber = tripAsync.whenOrNull(
@@ -194,6 +205,12 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
               });
             },
           ),
+          // AI Generate button
+          IconButton(
+            icon: const Icon(Icons.auto_awesome),
+            tooltip: 'Generate with AI',
+            onPressed: () => _navigateToAiGenerator(context),
+          ),
         ],
       ),
       body: itineraryAsync.when(
@@ -248,41 +265,44 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                 final day = filteredDays[index];
                 final isToday = todaysDayNumber != null && day.dayNumber == todaysDayNumber;
                 final dayDate = _getDateForDay(day.dayNumber, tripStartDate);
-                return _buildDaySection(context, ref, day, isToday: isToday, dayDate: dayDate);
+                return _buildDaySection(context, ref, day, isToday: isToday, dayDate: dayDate, canEdit: canEditItinerary);
               },
             ),
           );
         },
       ),
-      floatingActionButton: ScaleAnimation(
-        duration: AppAnimations.slow,
-        curve: AppAnimations.spring,
-        child: AnimatedScaleButton(
-          onTap: () => _navigateToAddItem(context),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: themeData.glossyGradient,
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              boxShadow: themeData.glossyShadow,
-            ),
-            child: FloatingActionButton.extended(
-              onPressed: null, // Handled by AnimatedScaleButton
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              icon: Icon(Icons.add, color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white, size: 24),
-              label: Text(
-                'Add Activity',
-                style: TextStyle(
-                  color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  letterSpacing: 0.5,
+      // Only show FAB if user can edit itinerary
+      floatingActionButton: canEditItinerary
+          ? ScaleAnimation(
+              duration: AppAnimations.slow,
+              curve: AppAnimations.spring,
+              child: AnimatedScaleButton(
+                onTap: () => _navigateToAddItem(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: themeData.glossyGradient,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    boxShadow: themeData.glossyShadow,
+                  ),
+                  child: FloatingActionButton.extended(
+                    onPressed: null, // Handled by AnimatedScaleButton
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    icon: Icon(Icons.add, color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white, size: 24),
+                    label: Text(
+                      'Add Activity',
+                      style: TextStyle(
+                        color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
+            )
+          : null,
     );
   }
 
@@ -315,11 +335,22 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
+              // AI Generate button - primary action
               ElevatedButton.icon(
+                onPressed: () => _navigateToAiGenerator(context),
+                icon: const Icon(Icons.auto_awesome),
+                label: const Text('Generate with AI'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Manual add button - secondary action
+              OutlinedButton.icon(
                 onPressed: () => _navigateToAddItem(context),
                 icon: const Icon(Icons.add),
-                label: const Text('Add First Activity'),
-                style: ElevatedButton.styleFrom(
+                label: const Text('Add Manually'),
+                style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 ),
               ),
@@ -385,6 +416,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     ItineraryDay day, {
     bool isToday = false,
     DateTime? dayDate,
+    bool canEdit = false,
   }) {
     // Colors for today highlighting
     final todayColor = Colors.orange;
@@ -481,18 +513,29 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
           ),
 
           // Day Items
-          ReorderableListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: day.items.length,
-            onReorder: (oldIndex, newIndex) {
-              _handleReorder(ref, day, oldIndex, newIndex);
-            },
-            itemBuilder: (context, index) {
-              final item = day.items[index];
-              return _buildItineraryItem(context, ref, item, key: ValueKey(item.id));
-            },
-          ),
+          if (canEdit)
+            ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: day.items.length,
+              onReorder: (oldIndex, newIndex) {
+                _handleReorder(ref, day, oldIndex, newIndex);
+              },
+              itemBuilder: (context, index) {
+                final item = day.items[index];
+                return _buildItineraryItem(context, ref, item, key: ValueKey(item.id), canEdit: canEdit);
+              },
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: day.items.length,
+              itemBuilder: (context, index) {
+                final item = day.items[index];
+                return _buildItineraryItem(context, ref, item, key: ValueKey(item.id), canEdit: canEdit);
+              },
+            ),
         ],
       ),
     );
@@ -503,132 +546,146 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     WidgetRef ref,
     ItineraryItemModel item, {
     Key? key,
+    bool canEdit = false,
   }) {
-    return Dismissible(
-      key: key ?? ValueKey(item.id),
-      background: Container(
-        color: context.errorColor,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Activity'),
-            content: const Text('Are you sure you want to delete this activity?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+    // Build the item content widget
+    final itemContent = Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Time indicator
+          if (item.startTime != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: context.accentColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                style: TextButton.styleFrom(foregroundColor: context.errorColor),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-        );
-      },
-      onDismissed: (direction) {
-        ref.read(itineraryControllerProvider.notifier).deleteItem(item.id);
-      },
-      child: InkWell(
-        onTap: () => _navigateToEditItem(context, item.id),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Time indicator
-              if (item.startTime != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: context.accentColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    DateFormat.Hm().format(item.startTime!),
-                    style: context.bodySmall.copyWith(
-                      color: context.accentColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-              else
-                const SizedBox(width: 52),
-
-              const SizedBox(width: 12),
-
-              // Item details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: context.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (item.location != null) ...[
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 16,
-                            color: context.textColor.withValues(alpha: 0.6),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              item.location!,
-                              style: context.bodyMedium.copyWith(
-                                color: context.textColor.withValues(alpha: 0.6),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                    if (item.description != null && item.description!.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        item.description!,
-                        style: context.bodyMedium.copyWith(
-                          color: context.textColor.withValues(alpha: 0.8),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                    if (item.endTime != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Until ${DateFormat.Hm().format(item.endTime!)}',
-                        style: context.bodySmall.copyWith(
-                          color: context.textColor.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ],
-                  ],
+              child: Text(
+                DateFormat.Hm().format(item.startTime!),
+                style: context.bodySmall.copyWith(
+                  color: context.accentColor,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+            )
+          else
+            const SizedBox(width: 52),
 
-              // Reorder handle
-              Icon(
-                Icons.drag_handle,
-                color: context.textColor.withValues(alpha: 0.3),
-              ),
-            ],
+          const SizedBox(width: 12),
+
+          // Item details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: context.titleMedium.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (item.location != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: context.textColor.withValues(alpha: 0.6),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          item.location!,
+                          style: context.bodyMedium.copyWith(
+                            color: context.textColor.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (item.description != null && item.description!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    item.description!,
+                    style: context.bodyMedium.copyWith(
+                      color: context.textColor.withValues(alpha: 0.8),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                if (item.endTime != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Until ${DateFormat.Hm().format(item.endTime!)}',
+                    style: context.bodySmall.copyWith(
+                      color: context.textColor.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-        ),
+
+          // Reorder handle - only show if can edit
+          if (canEdit)
+            Icon(
+              Icons.drag_handle,
+              color: context.textColor.withValues(alpha: 0.3),
+            ),
+        ],
       ),
+    );
+
+    // If user can edit, wrap with Dismissible for swipe-to-delete
+    if (canEdit) {
+      return Dismissible(
+        key: key ?? ValueKey(item.id),
+        background: Container(
+          color: context.errorColor,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 16),
+          child: const Icon(Icons.delete, color: Colors.white),
+        ),
+        direction: DismissDirection.endToStart,
+        confirmDismiss: (direction) async {
+          return await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Delete Activity'),
+              content: const Text('Are you sure you want to delete this activity?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  style: TextButton.styleFrom(foregroundColor: context.errorColor),
+                  child: const Text('Delete'),
+                ),
+              ],
+            ),
+          );
+        },
+        onDismissed: (direction) {
+          ref.read(itineraryControllerProvider.notifier).deleteItem(item.id);
+        },
+        child: InkWell(
+          onTap: () => _navigateToEditItem(context, item.id),
+          child: itemContent,
+        ),
+      );
+    }
+
+    // Read-only view for members without edit permission
+    return Container(
+      key: key ?? ValueKey(item.id),
+      child: itemContent,
     );
   }
 
@@ -660,5 +717,33 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
 
   void _navigateToEditItem(BuildContext context, String itemId) {
     context.push('/trips/${widget.tripId}/itinerary/$itemId/edit');
+  }
+
+  void _navigateToAiGenerator(BuildContext context) {
+    // Get trip data to pre-fill the AI generator
+    final tripAsync = ref.read(tripProvider(widget.tripId));
+
+    final queryParams = <String, String>{
+      'tripId': widget.tripId,
+    };
+
+    tripAsync.whenData((tripData) {
+      final trip = tripData.trip;
+      if (trip.destination != null && trip.destination!.isNotEmpty) {
+        queryParams['destination'] = trip.destination!;
+      }
+      if (trip.startDate != null) {
+        queryParams['startDate'] = trip.startDate!.toIso8601String();
+      }
+      if (trip.endDate != null) {
+        queryParams['endDate'] = trip.endDate!.toIso8601String();
+      }
+      if (trip.budget != null) {
+        queryParams['budget'] = trip.budget.toString();
+      }
+    });
+
+    final uri = Uri(path: '/ai-itinerary', queryParameters: queryParams);
+    context.push(uri.toString());
   }
 }
