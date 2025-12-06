@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +14,7 @@ import '../../../../shared/models/itinerary_model.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/itinerary_providers.dart';
+import '../widgets/timeline_view.dart';
 
 class ItineraryListPage extends ConsumerStatefulWidget {
   final String tripId;
@@ -29,6 +31,7 @@ class ItineraryListPage extends ConsumerStatefulWidget {
 class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   final _searchController = TextEditingController();
   bool _isSearching = false;
+  bool _isTimelineView = false; // Toggle between cards and timeline view
 
   @override
   void dispose() {
@@ -206,6 +209,17 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             : const Text('Itinerary'),
         elevation: 0,
         actions: [
+          // View toggle button (Cards vs Timeline)
+          IconButton(
+            icon: Icon(_isTimelineView ? Icons.view_agenda : Icons.view_timeline),
+            tooltip: _isTimelineView ? 'Card View' : 'Timeline View',
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              setState(() {
+                _isTimelineView = !_isTimelineView;
+              });
+            },
+          ),
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
             onPressed: () {
@@ -267,6 +281,24 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             return _buildNoSearchResults(context);
           }
 
+          // Timeline View
+          if (_isTimelineView) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(itineraryByDaysProvider);
+              },
+              child: TimelineView(
+                days: filteredDays,
+                initialDay: todaysDayNumber ?? 1,
+                todaysDayNumber: todaysDayNumber,
+                tripStartDate: tripStartDate,
+                canEdit: canEditItinerary,
+                onItemTap: (item) => _navigateToEditItem(context, item.id),
+              ),
+            );
+          }
+
+          // Card View (default)
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(itineraryByDaysProvider);
