@@ -163,7 +163,14 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                 backgroundColor: themeData.primaryColor,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => context.pop(),
+                  onPressed: () {
+                    // Check if we can pop, otherwise go to dashboard
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/dashboard');
+                    }
+                  },
                 ),
                 actions: [
                   // Search Icon

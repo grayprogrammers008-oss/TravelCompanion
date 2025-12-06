@@ -37,6 +37,8 @@ import '../../features/templates/presentation/pages/browse_templates_page.dart';
 import '../../features/templates/presentation/pages/template_detail_page.dart';
 import '../../features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
 import '../../features/trips/presentation/pages/quick_trip_page.dart';
+import '../../features/onboarding/presentation/pages/welcome_choice_page.dart';
+import '../../features/trips/presentation/providers/trip_providers.dart';
 import '../presentation/main_scaffold.dart';
 
 // Custom page builder that removes the white transition overlay
@@ -96,6 +98,7 @@ class AppRoutes {
   static const String tripHistory = '/trip-history';
   static const String emergency = '/emergency';
   static const String onboarding = '/onboarding';
+  static const String welcomeChoice = '/welcome';
   static const String templates = '/templates';
   static const String templateDetail = '/templates/:templateId';
   static const String aiItinerary = '/ai-itinerary';
@@ -105,6 +108,7 @@ class AppRoutes {
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final onboardingState = ref.watch(onboardingStateProvider);
+  final hasTripsState = ref.watch(hasTripsProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.login,
@@ -117,6 +121,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isResetPasswordRoute = state.matchedLocation.startsWith('/auth/reset-password');
       final isOnboardingRoute = state.matchedLocation == AppRoutes.onboarding;
       final isInviteRoute = state.matchedLocation.startsWith('/invite/');
+      final isWelcomeChoiceRoute = state.matchedLocation == AppRoutes.welcomeChoice;
 
       // Allow reset password route without authentication
       if (isResetPasswordRoute) {
@@ -138,13 +143,27 @@ final routerProvider = Provider<GoRouter>((ref) {
         return AppRoutes.onboarding;
       }
 
-      // If authenticated, completed onboarding, and on onboarding page, go to dashboard
+      // Check if user has trips to determine redirect destination
+      // Use .value which returns null if loading/error, default to false
+      final hasTrips = hasTripsState.value ?? false;
+
+      // If authenticated, completed onboarding, and on onboarding page
       if (isAuthenticated && !needsOnboarding && isOnboardingRoute) {
-        return AppRoutes.dashboard;
+        // New users (no trips) → Welcome Choice page
+        // Returning users (has trips) → Dashboard
+        return hasTrips ? AppRoutes.dashboard : AppRoutes.welcomeChoice;
       }
 
-      // If authenticated and on login/signup, redirect to dashboard
+      // If authenticated and on login/signup, redirect based on trip status
       if (isAuthenticated && (isLoginRoute || isSignupRoute)) {
+        // New users (no trips) → Welcome Choice page
+        // Returning users (has trips) → Dashboard
+        return hasTrips ? AppRoutes.dashboard : AppRoutes.welcomeChoice;
+      }
+
+      // If user has trips but is on welcome choice page, redirect to dashboard
+      // (This handles returning users who navigate back to welcome page)
+      if (isAuthenticated && hasTrips && isWelcomeChoiceRoute) {
         return AppRoutes.dashboard;
       }
 
@@ -542,6 +561,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.onboarding,
         name: 'onboarding',
         builder: (context, state) => const OnboardingPage(),
+      ),
+      // Welcome choice page for new users
+      GoRoute(
+        path: AppRoutes.welcomeChoice,
+        name: 'welcomeChoice',
+        builder: (context, state) => const WelcomeChoicePage(),
       ),
       // Trip Templates routes
       GoRoute(

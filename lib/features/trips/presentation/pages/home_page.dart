@@ -617,6 +617,20 @@ class _HomePageState extends ConsumerState<HomePage>
                                             color: Colors.white70,
                                             size: 18,
                                           ),
+                                          suffixIcon: _searchController.text.isNotEmpty
+                                              ? IconButton(
+                                                  icon: const Icon(
+                                                    Icons.clear,
+                                                    color: Colors.white70,
+                                                    size: 18,
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _searchController.clear();
+                                                    });
+                                                  },
+                                                )
+                                              : null,
                                         ),
                                         onChanged: (_) => setState(() {}),
                                       ),
