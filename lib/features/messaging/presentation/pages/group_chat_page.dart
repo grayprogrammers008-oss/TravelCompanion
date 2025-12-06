@@ -12,6 +12,7 @@ import '../../data/services/image_picker_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../domain/entities/conversation_entity.dart';
 import '../../domain/entities/message_entity.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/conversation_providers.dart';
 
 /// Group Chat Page - Main chat interface for a conversation
@@ -39,6 +40,19 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   bool _isSending = false;
   bool _isUploadingImage = false;
 
+  // Selection mode state
+  bool _isSelectionMode = false;
+  final Set<String> _selectedMessageIds = {};
+  bool _isDeleting = false;
+
+  /// Get effective userId - from widget param or auth provider if empty
+  String get _effectiveUserId {
+    if (widget.currentUserId.isNotEmpty) {
+      return widget.currentUserId;
+    }
+    return ref.read(authStateProvider).value ?? '';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,10 +68,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   }
 
   Future<void> _markAsRead() async {
+    final userId = _effectiveUserId;
+    if (userId.isEmpty) return; // Skip if no valid userId yet
+
     final useCase = ref.read(markConversationAsReadUseCaseProvider);
     await useCase.execute(
       conversationId: widget.conversationId,
-      userId: widget.currentUserId,
+      userId: userId,
     );
   }
 
@@ -171,11 +188,17 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       await repository.sendConversationMessage(
         conversationId: widget.conversationId,
         tripId: widget.tripId,
-        senderId: widget.currentUserId,
+        senderId: _effectiveUserId,
         message: '📷 Photo',
         messageType: MessageType.image,
         attachmentUrl: imageUrl,
       );
+
+      // Invalidate conversations list to refresh last message
+      ref.invalidate(tripConversationsProvider(TripConversationsParams(
+        tripId: widget.tripId,
+        userId: _effectiveUserId,
+      )));
 
       // Scroll to bottom after sending
       if (_scrollController.hasClients) {
@@ -212,6 +235,113 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     }
   }
 
+  // ============================================================================
+  // SELECTION MODE METHODS
+  // ============================================================================
+
+  void _enterSelectionMode(String messageId) {
+    setState(() {
+      _isSelectionMode = true;
+      _selectedMessageIds.add(messageId);
+    });
+  }
+
+  void _exitSelectionMode() {
+    setState(() {
+      _isSelectionMode = false;
+      _selectedMessageIds.clear();
+    });
+  }
+
+  void _toggleMessageSelection(String messageId) {
+    setState(() {
+      if (_selectedMessageIds.contains(messageId)) {
+        _selectedMessageIds.remove(messageId);
+        if (_selectedMessageIds.isEmpty) {
+          _isSelectionMode = false;
+        }
+      } else {
+        _selectedMessageIds.add(messageId);
+      }
+    });
+  }
+
+  Future<void> _deleteSelectedMessages() async {
+    if (_selectedMessageIds.isEmpty || _isDeleting) return;
+
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Messages'),
+        content: Text(
+          'Delete ${_selectedMessageIds.length} message${_selectedMessageIds.length > 1 ? 's' : ''}? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _isDeleting = true);
+
+    try {
+      final repository = ref.read(conversationRepositoryProvider);
+      final result = await repository.deleteMessages(
+        messageIds: _selectedMessageIds.toList(),
+        senderId: _effectiveUserId,
+      );
+
+      if (mounted) {
+        if (result.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${_selectedMessageIds.length} message${_selectedMessageIds.length > 1 ? 's' : ''} deleted',
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          _exitSelectionMode();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to delete: ${result.error}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error deleting messages: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isDeleting = false);
+      }
+    }
+  }
+
+  // ============================================================================
+  // MESSAGE METHODS
+  // ============================================================================
+
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty || _isSending) return;
@@ -223,12 +353,18 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       await repository.sendConversationMessage(
         conversationId: widget.conversationId,
         tripId: widget.tripId,
-        senderId: widget.currentUserId,
+        senderId: _effectiveUserId,
         message: text,
         messageType: MessageType.text,
       );
 
       _messageController.clear();
+
+      // Invalidate conversations list to refresh last message
+      ref.invalidate(tripConversationsProvider(TripConversationsParams(
+        tripId: widget.tripId,
+        userId: _effectiveUserId,
+      )));
 
       // Scroll to bottom after sending
       if (_scrollController.hasClients) {
@@ -256,10 +392,23 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get userId from widget or fall back to auth provider if empty
+    final currentUserId = _effectiveUserId;
+
+    // Guard against empty userId - show loading until we have a valid user
+    if (currentUserId.isEmpty) {
+      // Watch auth state to rebuild when user becomes available
+      ref.watch(authStateProvider);
+      return Scaffold(
+        appBar: AppBar(title: const Text('Loading...')),
+        body: const Center(child: AppLoadingIndicator()),
+      );
+    }
+
     final conversationAsync = ref.watch(
       conversationProvider(ConversationParams(
         conversationId: widget.conversationId,
-        userId: widget.currentUserId,
+        userId: currentUserId,
       )),
     );
     final messagesAsync = ref.watch(
@@ -289,6 +438,42 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     BuildContext context,
     AsyncValue<ConversationEntity> conversationAsync,
   ) {
+    // Selection mode app bar
+    if (_isSelectionMode) {
+      return AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: _exitSelectionMode,
+          tooltip: 'Cancel selection',
+        ),
+        title: Text('${_selectedMessageIds.length} selected'),
+        actions: [
+          if (_isDeleting)
+            const Padding(
+              padding: EdgeInsets.all(12),
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: _selectedMessageIds.isNotEmpty
+                  ? _deleteSelectedMessages
+                  : null,
+              tooltip: 'Delete selected messages',
+              color: Colors.red.shade300,
+            ),
+        ],
+      );
+    }
+
+    // Normal app bar
     return AppBar(
       titleSpacing: 0,
       title: conversationAsync.when(
@@ -303,7 +488,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      conversation.getDisplayName(widget.currentUserId),
+                      conversation.getDisplayName(_effectiveUserId),
                       style: const TextStyle(fontSize: 16),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -343,7 +528,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
     if (conversation.isDirectMessage && conversation.members.isNotEmpty) {
       final otherMember = conversation.members.firstWhere(
-        (m) => m.userId != widget.currentUserId,
+        (m) => m.userId != _effectiveUserId,
         orElse: () => conversation.members.first,
       );
       return UserAvatarWidget(
@@ -402,7 +587,8 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final message = messages[index];
-        final isMe = message.senderId == widget.currentUserId;
+        final isMe = message.senderId == _effectiveUserId;
+        final isSelected = _selectedMessageIds.contains(message.id);
 
         // Check if we should show date header
         final showDateHeader = index == messages.length - 1 ||
@@ -419,10 +605,43 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         return Column(
           children: [
             if (showDateHeader) _buildDateHeader(message.createdAt),
-            _MessageBubble(
-              message: message,
-              isMe: isMe,
-              showSenderName: showSenderName,
+            GestureDetector(
+              onLongPress: isMe
+                  ? () => _enterSelectionMode(message.id)
+                  : null,
+              onTap: _isSelectionMode && isMe
+                  ? () => _toggleMessageSelection(message.id)
+                  : null,
+              child: Container(
+                color: isSelected
+                    ? context.primaryColor.withValues(alpha: 0.15)
+                    : null,
+                child: Row(
+                  children: [
+                    // Selection checkbox (only in selection mode for own messages)
+                    if (_isSelectionMode)
+                      SizedBox(
+                        width: 40,
+                        child: isMe
+                            ? Checkbox(
+                                value: isSelected,
+                                onChanged: (_) =>
+                                    _toggleMessageSelection(message.id),
+                                activeColor: context.primaryColor,
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    // Message bubble
+                    Expanded(
+                      child: _MessageBubble(
+                        message: message,
+                        isMe: isMe,
+                        showSenderName: showSenderName,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         );
@@ -583,7 +802,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   void _navigateToInfo(BuildContext context) {
     context.push(
-      '/trips/${widget.tripId}/conversations/${widget.conversationId}/info',
+      '/trips/${widget.tripId}/conversations/${widget.conversationId}/info?userId=$_effectiveUserId&isDefaultGroup=true',
     );
   }
 

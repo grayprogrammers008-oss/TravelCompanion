@@ -411,10 +411,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           final tripId = state.pathParameters['tripId']!;
           final conversationId = state.pathParameters['conversationId']!;
           final currentUserId = state.uri.queryParameters['userId'] ?? '';
+          final isDefaultGroup = state.uri.queryParameters['isDefaultGroup'] == 'true';
           return ConversationInfoPage(
             tripId: tripId,
             conversationId: conversationId,
             currentUserId: currentUserId,
+            isDefaultGroup: isDefaultGroup,
           );
         },
       ),

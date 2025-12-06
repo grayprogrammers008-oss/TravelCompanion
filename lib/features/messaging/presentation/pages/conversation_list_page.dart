@@ -4,14 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
-import '../../../../core/widgets/destination_image.dart';
 import '../../domain/entities/conversation_entity.dart';
 import '../providers/conversation_providers.dart';
 
-/// Filter type for conversations
-enum ConversationFilter { all, directMessages, groups }
-
-/// Page displaying all conversations (DMs and Groups) for a trip
+/// Page displaying group chats for a trip (Groups Only - No DMs)
 class ConversationListPage extends ConsumerStatefulWidget {
   final String tripId;
   final String tripName;
@@ -30,12 +26,11 @@ class ConversationListPage extends ConsumerStatefulWidget {
 }
 
 class _ConversationListPageState extends ConsumerState<ConversationListPage> {
-  ConversationFilter _filter = ConversationFilter.all;
-
   @override
   Widget build(BuildContext context) {
+    // Use stream provider for real-time updates when messages change
     final conversationsAsync = ref.watch(
-      tripConversationsProvider(TripConversationsParams(
+      tripConversationsStreamProvider(TripConversationsParams(
         tripId: widget.tripId,
         userId: widget.currentUserId,
       )),
@@ -46,7 +41,7 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Chats'),
+            const Text('Group Chats'),
             Text(
               widget.tripName,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -61,150 +56,37 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
             onPressed: () {
               // TODO: Implement search
             },
-            tooltip: 'Search conversations',
+            tooltip: 'Search groups',
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Filter chips
-          _buildFilterChips(),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(tripConversationsStreamProvider(TripConversationsParams(
+            tripId: widget.tripId,
+            userId: widget.currentUserId,
+          )));
+        },
+        child: conversationsAsync.when(
+          data: (conversations) {
+            // Filter to show only group chats (exclude DMs)
+            final groupChats = conversations
+                .where((c) => !c.isDirectMessage)
+                .toList();
 
-          // Conversation list
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                ref.invalidate(tripConversationsProvider(TripConversationsParams(
-                  tripId: widget.tripId,
-                  userId: widget.currentUserId,
-                )));
-              },
-              child: conversationsAsync.when(
-                data: (conversations) {
-                  final filteredConversations = _filterConversations(conversations);
-                  if (filteredConversations.isEmpty) {
-                    return _buildEmptyState(context);
-                  }
-                  return _buildConversationList(context, filteredConversations);
-                },
-                loading: () => const Center(child: AppLoadingIndicator()),
-                error: (error, stack) => _buildErrorState(context, error),
-              ),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showNewChatOptions(context),
-        child: const Icon(Icons.add),
+            if (groupChats.isEmpty) {
+              return _buildEmptyState(context);
+            }
+            return _buildGroupList(context, groupChats);
+          },
+          loading: () => const Center(child: AppLoadingIndicator()),
+          error: (error, stack) => _buildErrorState(context, error),
+        ),
       ),
     );
-  }
-
-  Widget _buildFilterChips() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd,
-        vertical: AppTheme.spacingSm,
-      ),
-      child: Row(
-        children: [
-          _buildFilterChip(
-            label: 'All',
-            filter: ConversationFilter.all,
-            icon: Icons.chat_bubble_outline,
-          ),
-          const SizedBox(width: AppTheme.spacingSm),
-          _buildFilterChip(
-            label: 'Direct',
-            filter: ConversationFilter.directMessages,
-            icon: Icons.person_outline,
-          ),
-          const SizedBox(width: AppTheme.spacingSm),
-          _buildFilterChip(
-            label: 'Groups',
-            filter: ConversationFilter.groups,
-            icon: Icons.groups_outlined,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip({
-    required String label,
-    required ConversationFilter filter,
-    required IconData icon,
-  }) {
-    final isSelected = _filter == filter;
-
-    return FilterChip(
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: isSelected ? Colors.white : Colors.grey.shade700,
-          ),
-          const SizedBox(width: 4),
-          Text(label),
-        ],
-      ),
-      selected: isSelected,
-      onSelected: (selected) {
-        setState(() {
-          _filter = filter;
-        });
-      },
-      selectedColor: context.primaryColor,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.grey.shade700,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      ),
-      showCheckmark: false,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-    );
-  }
-
-  List<ConversationEntity> _filterConversations(List<ConversationEntity> conversations) {
-    switch (_filter) {
-      case ConversationFilter.all:
-        return conversations;
-      case ConversationFilter.directMessages:
-        return conversations.where((c) => c.isDirectMessage).toList();
-      case ConversationFilter.groups:
-        return conversations.where((c) => !c.isDirectMessage).toList();
-    }
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    String title;
-    String subtitle;
-    String buttonText;
-    VoidCallback onButtonPressed;
-
-    switch (_filter) {
-      case ConversationFilter.all:
-        title = 'No Chats Yet';
-        subtitle = 'Start a conversation with your trip members';
-        buttonText = 'Start Chatting';
-        onButtonPressed = () => _showNewChatOptions(context);
-        break;
-      case ConversationFilter.directMessages:
-        title = 'No Direct Messages';
-        subtitle = 'Start a private conversation with a trip member';
-        buttonText = 'New Direct Message';
-        onButtonPressed = () => _navigateToCreateConversation(context);
-        break;
-      case ConversationFilter.groups:
-        title = 'No Group Chats';
-        subtitle = 'Create a group to chat with multiple members at once';
-        buttonText = 'Create Group';
-        onButtonPressed = () => _navigateToCreateConversation(context);
-        break;
-    }
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -212,34 +94,24 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              _filter == ConversationFilter.directMessages
-                  ? Icons.person_outline
-                  : _filter == ConversationFilter.groups
-                      ? Icons.groups_outlined
-                      : Icons.chat_bubble_outline,
+              Icons.groups_outlined,
               size: 80,
               color: Colors.grey.shade400,
             ),
             const SizedBox(height: AppTheme.spacingLg),
             Text(
-              title,
+              'No Group Chats Yet',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: AppTheme.spacingSm),
             Text(
-              subtitle,
+              'The "All Members" group is created automatically when a trip is made.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                   ),
-            ),
-            const SizedBox(height: AppTheme.spacingXl),
-            ElevatedButton.icon(
-              onPressed: onButtonPressed,
-              icon: const Icon(Icons.add),
-              label: Text(buttonText),
             ),
           ],
         ),
@@ -247,119 +119,34 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
     );
   }
 
-  Widget _buildConversationList(
+  Widget _buildGroupList(
     BuildContext context,
-    List<ConversationEntity> conversations,
+    List<ConversationEntity> groups,
   ) {
-    // Separate DMs and Groups for better organization
-    final dms = conversations.where((c) => c.isDirectMessage).toList();
-    final groups = conversations.where((c) => !c.isDirectMessage).toList();
+    // Sort: Default group first, then by last message time
+    groups.sort((a, b) {
+      // Default group always first
+      if (a.isDefaultGroup && !b.isDefaultGroup) return -1;
+      if (b.isDefaultGroup && !a.isDefaultGroup) return 1;
 
-    if (_filter != ConversationFilter.all) {
-      // Just show filtered list without sections
-      return ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
-        itemCount: conversations.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final conversation = conversations[index];
-          return _ConversationTile(
-            conversation: conversation,
-            currentUserId: widget.currentUserId,
-            onTap: () => _navigateToChat(context, conversation),
-          );
-        },
-      );
-    }
+      // Then by last message time (most recent first)
+      final aTime = a.lastMessageAt ?? a.createdAt;
+      final bTime = b.lastMessageAt ?? b.createdAt;
+      return bTime.compareTo(aTime);
+    });
 
-    // Show with sections for "All" filter
-    return ListView(
+    return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
-      children: [
-        if (dms.isNotEmpty) ...[
-          _buildSectionHeader(
-            context,
-            'Direct Messages',
-            Icons.person,
-            Colors.blue,
-            dms.length,
-          ),
-          ...dms.map((conversation) => Column(
-                children: [
-                  _ConversationTile(
-                    conversation: conversation,
-                    currentUserId: widget.currentUserId,
-                    onTap: () => _navigateToChat(context, conversation),
-                  ),
-                  const Divider(height: 1),
-                ],
-              )),
-        ],
-        if (groups.isNotEmpty) ...[
-          _buildSectionHeader(
-            context,
-            'Group Chats',
-            Icons.groups,
-            Colors.purple,
-            groups.length,
-          ),
-          ...groups.map((conversation) => Column(
-                children: [
-                  _ConversationTile(
-                    conversation: conversation,
-                    currentUserId: widget.currentUserId,
-                    onTap: () => _navigateToChat(context, conversation),
-                  ),
-                  const Divider(height: 1),
-                ],
-              )),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSectionHeader(
-    BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    int count,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd,
-        vertical: AppTheme.spacingSm,
-      ),
-      color: Colors.grey.shade100,
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(width: AppTheme.spacingSm),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700,
-                ),
-          ),
-          const SizedBox(width: AppTheme.spacingSm),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              count.toString(),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ),
-        ],
-      ),
+      itemCount: groups.length,
+      separatorBuilder: (context, index) => const Divider(height: 1),
+      itemBuilder: (context, index) {
+        final group = groups[index];
+        return _GroupChatTile(
+          group: group,
+          currentUserId: widget.currentUserId,
+          onTap: () => _navigateToChat(context, group),
+        );
+      },
     );
   }
 
@@ -377,7 +164,7 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
             Text(
-              'Failed to load conversations',
+              'Failed to load group chats',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: AppTheme.spacingSm),
@@ -391,7 +178,7 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
             const SizedBox(height: AppTheme.spacingLg),
             ElevatedButton.icon(
               onPressed: () {
-                ref.invalidate(tripConversationsProvider(TripConversationsParams(
+                ref.invalidate(tripConversationsStreamProvider(TripConversationsParams(
                   tripId: widget.tripId,
                   userId: widget.currentUserId,
                 )));
@@ -405,64 +192,6 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
     );
   }
 
-  void _showNewChatOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingLg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'New Chat',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.blue.shade100,
-                  child: Icon(Icons.person, color: Colors.blue.shade700),
-                ),
-                title: const Text('Direct Message'),
-                subtitle: const Text('Chat privately with one person'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _navigateToCreateConversation(context);
-                },
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.purple.shade100,
-                  child: Icon(Icons.groups, color: Colors.purple.shade700),
-                ),
-                title: const Text('Group Chat'),
-                subtitle: const Text('Chat with multiple trip members'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _navigateToCreateConversation(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _navigateToCreateConversation(BuildContext context) {
-    context.push(
-      '/trips/${widget.tripId}/conversations/create?userId=${widget.currentUserId}',
-    );
-  }
-
   void _navigateToChat(BuildContext context, ConversationEntity conversation) {
     context.push(
       '/trips/${widget.tripId}/conversations/${conversation.id}?userId=${widget.currentUserId}',
@@ -470,22 +199,21 @@ class _ConversationListPageState extends ConsumerState<ConversationListPage> {
   }
 }
 
-/// Individual conversation tile widget
-class _ConversationTile extends StatelessWidget {
-  final ConversationEntity conversation;
+/// Individual group chat tile widget
+class _GroupChatTile extends StatelessWidget {
+  final ConversationEntity group;
   final String currentUserId;
   final VoidCallback onTap;
 
-  const _ConversationTile({
-    required this.conversation,
+  const _GroupChatTile({
+    required this.group,
     required this.currentUserId,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final hasUnread = conversation.unreadCount > 0;
-    final displayName = conversation.getDisplayName(currentUserId);
+    final hasUnread = group.unreadCount > 0;
 
     return ListTile(
       onTap: onTap,
@@ -496,28 +224,27 @@ class _ConversationTile extends StatelessWidget {
       leading: _buildAvatar(context),
       title: Row(
         children: [
-          // Chat type indicator
-          if (conversation.isDirectMessage)
-            Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: Icon(
-                Icons.person,
-                size: 14,
-                color: Colors.blue.shade400,
+          // Default group badge
+          if (group.isDefaultGroup)
+            Container(
+              margin: const EdgeInsets.only(right: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius: BorderRadius.circular(4),
               ),
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: Icon(
-                Icons.groups,
-                size: 14,
-                color: Colors.purple.shade400,
+              child: Text(
+                'ALL',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade700,
+                ),
               ),
             ),
           Expanded(
             child: Text(
-              displayName,
+              group.name,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
                   ),
@@ -525,9 +252,9 @@ class _ConversationTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          if (conversation.lastMessageAt != null)
+          if (group.lastMessageAt != null)
             Text(
-              _formatTime(conversation.lastMessageAt!),
+              _formatTime(group.lastMessageAt!),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: hasUnread
                         ? context.primaryColor
@@ -562,9 +289,9 @@ class _ConversationTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                conversation.unreadCount > 99
+                group.unreadCount > 99
                     ? '99+'
-                    : conversation.unreadCount.toString(),
+                    : group.unreadCount.toString(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -578,52 +305,42 @@ class _ConversationTile extends StatelessWidget {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    if (conversation.isDirectMessage && conversation.members.isNotEmpty) {
-      // For DM, show the other person's avatar
-      final otherMember = conversation.members.firstWhere(
-        (m) => m.userId != currentUserId,
-        orElse: () => conversation.members.first,
-      );
-      return UserAvatarWidget(
-        imageUrl: otherMember.userAvatarUrl,
-        userName: otherMember.userName ?? 'User',
-        size: 50,
+    // Show group avatar or default icon
+    if (group.avatarUrl != null) {
+      return CircleAvatar(
+        radius: 25,
+        backgroundImage: NetworkImage(group.avatarUrl!),
       );
     }
 
-    // For group chat, show group icon or avatar
-    if (conversation.avatarUrl != null) {
-      return CircleAvatar(
-        radius: 25,
-        backgroundImage: NetworkImage(conversation.avatarUrl!),
-      );
-    }
+    // Different color for default "All Members" group
+    final bgColor = group.isDefaultGroup
+        ? Colors.green.shade100
+        : Colors.purple.shade100;
+    final iconColor = group.isDefaultGroup
+        ? Colors.green.shade600
+        : Colors.purple.shade600;
+    final icon = group.isDefaultGroup
+        ? Icons.campaign // Megaphone for announcements
+        : Icons.groups;
 
     return CircleAvatar(
       radius: 25,
-      backgroundColor: Colors.purple.shade100,
+      backgroundColor: bgColor,
       child: Icon(
-        Icons.groups,
-        color: Colors.purple.shade600,
+        icon,
+        color: iconColor,
         size: 28,
       ),
     );
   }
 
   String _getSubtitleText() {
-    if (conversation.lastMessageText != null) {
-      if (conversation.isDirectMessage) {
-        // For DM, don't show sender name prefix
-        return conversation.lastMessageText!;
-      }
-      final sender = conversation.lastMessageSenderName ?? 'Someone';
-      return '$sender: ${conversation.lastMessageText}';
+    if (group.lastMessageText != null) {
+      final sender = group.lastMessageSenderName ?? 'Someone';
+      return '$sender: ${group.lastMessageText}';
     }
-
-    if (conversation.isDirectMessage) {
-      return 'Start a conversation';
-    }
-    return '${conversation.memberCount} members';
+    return '${group.memberCount} members';
   }
 
   String _formatTime(DateTime time) {

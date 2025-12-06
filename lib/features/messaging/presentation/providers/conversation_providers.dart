@@ -102,6 +102,27 @@ final tripConversationsProvider = FutureProvider.autoDispose
   );
 });
 
+/// Stream provider for trip conversations with real-time updates
+/// Listens to message changes and refreshes conversation list automatically
+/// Usage: ref.watch(tripConversationsStreamProvider(TripConversationsParams(...)))
+final tripConversationsStreamProvider = StreamProvider.autoDispose
+    .family<List<ConversationEntity>, TripConversationsParams>((ref, params) {
+  final dataSource = ref.read(conversationRemoteDataSourceProvider);
+  final repository = ref.read(conversationRepositoryProvider);
+
+  // Listen to trip messages stream and refresh conversations on any change
+  return dataSource.subscribeToTripMessages(params.tripId).asyncMap((_) async {
+    final result = await repository.getTripConversations(
+      tripId: params.tripId,
+      userId: params.userId,
+    );
+    return result.fold(
+      onSuccess: (conversations) => conversations,
+      onFailure: (error) => throw Exception(error),
+    );
+  });
+});
+
 /// Parameters for single conversation provider
 class ConversationParams {
   final String conversationId;
@@ -259,3 +280,55 @@ final createConversationNotifierProvider =
     NotifierProvider.autoDispose<CreateConversationNotifier, CreateConversationState>(
   CreateConversationNotifier.new,
 );
+
+// ============================================================================
+// DEFAULT GROUP PROVIDER
+// ============================================================================
+
+/// Provider to get the default "All Members" group for a trip
+/// Usage: ref.watch(defaultGroupProvider(TripConversationsParams(...)))
+final defaultGroupProvider = FutureProvider.autoDispose
+    .family<ConversationEntity, TripConversationsParams>((ref, params) async {
+  final repository = ref.read(conversationRepositoryProvider);
+  final result = await repository.getDefaultGroup(
+    tripId: params.tripId,
+    userId: params.userId,
+  );
+
+  return result.fold(
+    onSuccess: (conversation) => conversation,
+    onFailure: (error) => throw Exception(error),
+  );
+});
+
+// ============================================================================
+// UNREAD COUNT PROVIDER
+// ============================================================================
+
+/// Provider to get total unread message count for a trip (all conversations)
+/// Usage: ref.watch(tripUnreadCountProvider(TripConversationsParams(...)))
+final tripUnreadCountProvider = StreamProvider.autoDispose
+    .family<int, TripConversationsParams>((ref, params) {
+  // Guard against empty userId or tripId to prevent PostgreSQL UUID errors
+  if (params.userId.isEmpty || params.tripId.isEmpty) {
+    return Stream.value(0);
+  }
+
+  final dataSource = ref.read(conversationRemoteDataSourceProvider);
+  final repository = ref.read(conversationRepositoryProvider);
+
+  // Listen to trip messages stream and calculate total unread count
+  return dataSource.subscribeToTripMessages(params.tripId).asyncMap((_) async {
+    final result = await repository.getTripConversations(
+      tripId: params.tripId,
+      userId: params.userId,
+    );
+    return result.fold(
+      onSuccess: (conversations) {
+        // Sum up all unread counts from all conversations
+        return conversations.fold<int>(0, (sum, conv) => sum + conv.unreadCount);
+      },
+      onFailure: (error) => 0,
+    );
+  });
+});

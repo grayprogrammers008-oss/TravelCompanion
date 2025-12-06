@@ -21,6 +21,7 @@ import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
+import '../../../messaging/presentation/providers/conversation_providers.dart';
 import '../providers/dashboard_providers.dart';
 
 /// Model for suggested settlement between two users
@@ -904,28 +905,62 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            // Group Chat button for this trip
-                            Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
-                                  context.push('/trips/${trip.id}/chat?tripName=${Uri.encodeComponent(trip.name)}&userId=$currentUserId');
-                                },
-                                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                                child: Container(
-                                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                                  decoration: BoxDecoration(
-                                    color: themeData.primaryColor.withValues(alpha: 0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.chat_bubble_outline,
-                                    size: 16,
-                                    color: themeData.primaryColor,
-                                  ),
-                                ),
-                              ),
+                            // Group Chat button for this trip - opens default "All Members" group
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final unreadAsync = ref.watch(tripUnreadCountProvider(
+                                  TripConversationsParams(tripId: trip.id, userId: currentUserId ?? ''),
+                                ));
+                                final unreadCount = unreadAsync.value ?? 0;
+                                return Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () => _openDefaultGroupChat(trip.id),
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(AppTheme.spacingXs),
+                                          decoration: BoxDecoration(
+                                            color: themeData.primaryColor.withValues(alpha: 0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.chat_bubble_outline,
+                                            size: 16,
+                                            color: themeData.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    if (unreadCount > 0)
+                                      Positioned(
+                                        top: -4,
+                                        right: -4,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: Colors.white, width: 1),
+                                          ),
+                                          constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                                          child: Center(
+                                            child: Text(
+                                              unreadCount > 99 ? '99+' : unreadCount.toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -1869,14 +1904,20 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 color: AppTheme.warning,
                 onTap: () => context.push('/trips/${trip.id}/checklists'),
               ),
-              _buildActionButton(
-                context,
-                icon: Icons.chat_bubble_outline,
-                label: 'Chat',
-                color: context.primaryColor,
-                onTap: () {
-                  final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
-                  context.push('/trips/${trip.id}/chat?tripName=${Uri.encodeComponent(trip.name)}&userId=$currentUserId');
+              Consumer(
+                builder: (context, ref, child) {
+                  final userId = ref.watch(currentUserProvider).value?.id ?? '';
+                  final unreadAsync = ref.watch(tripUnreadCountProvider(
+                    TripConversationsParams(tripId: trip.id, userId: userId),
+                  ));
+                  return _buildActionButton(
+                    context,
+                    icon: Icons.chat_bubble_outline,
+                    label: 'Chat',
+                    color: context.primaryColor,
+                    badgeCount: unreadAsync.value,
+                    onTap: () => _openDefaultGroupChat(trip.id),
+                  );
                 },
               ),
               _buildActionButton(
@@ -1927,6 +1968,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     required String label,
     required Color color,
     required VoidCallback onTap,
+    int? badgeCount,
   }) {
     return Padding(
       padding: const EdgeInsets.only(right: AppTheme.spacingMd),
@@ -1934,12 +1976,61 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         icon: icon,
         label: label,
         color: color,
+        badgeCount: badgeCount,
         onTap: () {
           HapticFeedback.lightImpact();
           onTap();
         },
       ),
     );
+  }
+
+  /// Navigate directly to the default "All Members" group chat for a trip
+  /// Uses fast getDefaultGroupId method to avoid loading full conversation details
+  Future<void> _openDefaultGroupChat(String tripId) async {
+    final currentUserId = ref.read(currentUserProvider).value?.id ?? '';
+
+    try {
+      final repository = ref.read(conversationRepositoryProvider);
+      // Use fast method that only fetches the ID (no heavy RPC call)
+      final result = await repository.getDefaultGroupId(tripId: tripId);
+
+      result.fold(
+        onSuccess: (conversationId) {
+          if (conversationId != null && mounted) {
+            context.push(
+              '/trips/$tripId/conversations/$conversationId?userId=$currentUserId',
+            );
+          } else if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No group chat found for this trip'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        },
+        onFailure: (error) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to open chat: $error'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showProfileMenu(BuildContext context, WidgetRef ref) {
@@ -2177,12 +2268,14 @@ class _AnimatedActionButton extends StatefulWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
+  final int? badgeCount;
 
   const _AnimatedActionButton({
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
+    this.badgeCount,
   });
 
   @override
@@ -2220,33 +2313,63 @@ class _AnimatedActionButtonState extends State<_AnimatedActionButton> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Circular icon button with glow effect
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      widget.color,
-                      widget.color.withValues(alpha: 0.8),
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.color.withValues(alpha: 0.4),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+              // Circular icon button with glow effect and optional badge
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          widget.color,
+                          widget.color.withValues(alpha: 0.8),
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: widget.color.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Icon(
-                  widget.icon,
-                  color: Colors.white,
-                  size: 22,
-                ),
+                    child: Icon(
+                      widget.icon,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                  // Badge for unread count
+                  if (widget.badgeCount != null && widget.badgeCount! > 0)
+                    Positioned(
+                      top: -4,
+                      right: -4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                        child: Center(
+                          child: Text(
+                            widget.badgeCount! > 99 ? '99+' : widget.badgeCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 6),
               // Label below

@@ -263,6 +263,40 @@ class ConversationRepositoryImpl implements ConversationRepository {
     }
   }
 
+  @override
+  Future<Result<void>> deleteMessage({
+    required String messageId,
+    required String senderId,
+  }) async {
+    try {
+      await _remoteDataSource.deleteMessage(
+        messageId: messageId,
+        senderId: senderId,
+      );
+      return Result.success(null);
+    } catch (e) {
+      debugPrint('Error deleting message: $e');
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<void>> deleteMessages({
+    required List<String> messageIds,
+    required String senderId,
+  }) async {
+    try {
+      await _remoteDataSource.deleteMessages(
+        messageIds: messageIds,
+        senderId: senderId,
+      );
+      return Result.success(null);
+    } catch (e) {
+      debugPrint('Error deleting messages: $e');
+      return Result.failure(e.toString());
+    }
+  }
+
   // ============================================================================
   // REAL-TIME STREAMS
   // ============================================================================
@@ -346,6 +380,7 @@ class ConversationRepositoryImpl implements ConversationRepository {
       avatarUrl: model.avatarUrl,
       createdBy: model.createdBy,
       isDirectMessage: model.isDirectMessage,
+      isDefaultGroup: model.isDefaultGroup,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
       lastMessageText: model.lastMessageText,
@@ -353,8 +388,39 @@ class ConversationRepositoryImpl implements ConversationRepository {
       lastMessageSenderName: model.lastMessageSenderName,
       unreadCount: model.unreadCount,
       memberCount: model.memberCount,
+      dmOtherMemberName: model.dmOtherMemberName,
+      dmOtherMemberAvatar: model.dmOtherMemberAvatar,
       members: model.members.map(_mapMemberModelToEntity).toList(),
     );
+  }
+
+  @override
+  Future<Result<ConversationEntity>> getDefaultGroup({
+    required String tripId,
+    required String userId,
+  }) async {
+    try {
+      final model = await _remoteDataSource.getDefaultGroup(
+        tripId: tripId,
+        userId: userId,
+      );
+      return Result.success(_mapModelToEntity(model));
+    } catch (e) {
+      return Result.failure('Failed to get default group: $e');
+    }
+  }
+
+  @override
+  Future<Result<String?>> getDefaultGroupId({
+    required String tripId,
+  }) async {
+    try {
+      final id = await _remoteDataSource.getDefaultGroupId(tripId: tripId);
+      return Result.success(id);
+    } catch (e) {
+      debugPrint('Error getting default group ID: $e');
+      return Result.failure('Failed to get default group ID: $e');
+    }
   }
 
   ConversationMemberEntity _mapMemberModelToEntity(ConversationMemberModel model) {

@@ -97,6 +97,11 @@ class ConversationRemoteDataSource {
     String conversationId,
     String userId,
   ) async {
+    // Guard against empty UUIDs
+    if (conversationId.isEmpty || userId.isEmpty) {
+      throw Exception('Invalid conversationId or userId: cannot be empty');
+    }
+
     try {
       // Get conversation with details via RPC
       final response = await _client.rpc(
@@ -355,6 +360,50 @@ class ConversationRemoteDataSource {
     }
   }
 
+  /// Delete a single message (soft delete - sets is_deleted to true)
+  /// Only the sender can delete their own message
+  Future<void> deleteMessage({
+    required String messageId,
+    required String senderId,
+  }) async {
+    try {
+      await _client
+          .from('messages')
+          .update({'is_deleted': true})
+          .eq('id', messageId)
+          .eq('sender_id', senderId);
+    } catch (e) {
+      debugPrint('Error deleting message: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete multiple messages (soft delete - sets is_deleted to true)
+  /// Only the sender can delete their own messages
+  Future<void> deleteMessages({
+    required List<String> messageIds,
+    required String senderId,
+  }) async {
+    try {
+      debugPrint('Deleting messages: $messageIds for sender: $senderId');
+
+      // Delete messages one by one to ensure proper error handling
+      for (final messageId in messageIds) {
+        await _client
+            .from('messages')
+            .update({'is_deleted': true})
+            .eq('id', messageId)
+            .eq('sender_id', senderId);
+        debugPrint('Deleted message: $messageId');
+      }
+
+      debugPrint('Successfully deleted ${messageIds.length} messages');
+    } catch (e) {
+      debugPrint('Error deleting messages: $e');
+      rethrow;
+    }
+  }
+
   /// Send a message to a conversation
   Future<MessageModel> sendMessage({
     required String conversationId,
@@ -476,6 +525,16 @@ class ConversationRemoteDataSource {
         });
   }
 
+  /// Subscribe to all messages in a trip to detect new activity
+  /// Returns a stream that emits whenever any message changes in the trip
+  Stream<void> subscribeToTripMessages(String tripId) {
+    return _client
+        .from('messages')
+        .stream(primaryKey: ['id'])
+        .eq('trip_id', tripId)
+        .map((_) {}); // We only care about the trigger, not the data
+  }
+
   // ============================================================================
   // UTILITY
   // ============================================================================
@@ -523,6 +582,70 @@ class ConversationRemoteDataSource {
       );
     } catch (e) {
       debugPrint('Error finding/creating DM: $e');
+      rethrow;
+    }
+  }
+
+  /// Get or ensure the default "All Members" group for a trip (FAST - just returns ID)
+  /// Uses a simple query to find the default group quickly
+  Future<String?> getDefaultGroupId({
+    required String tripId,
+  }) async {
+    try {
+      // Fast query to just get the ID of the default group
+      final response = await _client
+          .from('conversations')
+          .select('id')
+          .eq('trip_id', tripId)
+          .eq('is_default_group', true)
+          .limit(1)
+          .maybeSingle();
+
+      if (response != null) {
+        debugPrint('Found default group ID: ${response['id']}');
+        return response['id'] as String;
+      }
+
+      // Try to ensure default group exists via RPC
+      try {
+        final result = await _client.rpc(
+          'ensure_trip_default_group',
+          params: {'p_trip_id': tripId},
+        );
+
+        final conversationId = result as String?;
+        if (conversationId != null && conversationId.isNotEmpty) {
+          debugPrint('Created default group: $conversationId');
+          return conversationId;
+        }
+      } catch (rpcError) {
+        debugPrint('ensure_trip_default_group RPC failed: $rpcError');
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('Error getting default group ID: $e');
+      rethrow;
+    }
+  }
+
+  /// Get or ensure the default "All Members" group for a trip (FULL - returns model)
+  /// Uses the database function to get or create the default group
+  Future<ConversationModel> getDefaultGroup({
+    required String tripId,
+    required String userId,
+  }) async {
+    try {
+      // First try fast ID lookup
+      final defaultGroupId = await getDefaultGroupId(tripId: tripId);
+
+      if (defaultGroupId != null) {
+        return getConversation(defaultGroupId, userId);
+      }
+
+      throw Exception('No default group found for this trip');
+    } catch (e) {
+      debugPrint('Error getting default group: $e');
       rethrow;
     }
   }

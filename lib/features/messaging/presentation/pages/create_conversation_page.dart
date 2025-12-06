@@ -9,11 +9,11 @@ import '../../../../shared/models/trip_model.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/conversation_providers.dart';
 
-/// Page for creating a new group conversation or direct message
+/// Page for creating a new group chat (Groups Only - No DMs)
 class CreateConversationPage extends ConsumerStatefulWidget {
   final String tripId;
   final String currentUserId;
-  final String? preselectedUserId; // For starting a DM directly
+  final String? preselectedUserId; // Kept for compatibility but not used
 
   const CreateConversationPage({
     super.key,
@@ -35,20 +35,11 @@ class _CreateConversationPageState
   final Set<String> _selectedMemberIds = {};
   bool _isLoading = false;
 
-  /// Returns true if this should be a direct message (only 1 other person selected)
-  bool get _isDirectMessage =>
-      _selectedMemberIds.length == 2 &&
-      _selectedMemberIds.contains(widget.currentUserId);
-
   @override
   void initState() {
     super.initState();
     // Auto-select the current user
     _selectedMemberIds.add(widget.currentUserId);
-    // If there's a preselected user (for DM), add them
-    if (widget.preselectedUserId != null) {
-      _selectedMemberIds.add(widget.preselectedUserId!);
-    }
   }
 
   @override
@@ -58,10 +49,10 @@ class _CreateConversationPageState
     super.dispose();
   }
 
-  Future<void> _createConversation() async {
-    // For group chats, validate form. For DMs, skip name validation
-    if (!_isDirectMessage && !_formKey.currentState!.validate()) return;
+  Future<void> _createGroup() async {
+    if (!_formKey.currentState!.validate()) return;
 
+    // Require at least 2 members (including current user) for a group
     if (_selectedMemberIds.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -75,77 +66,35 @@ class _CreateConversationPageState
     setState(() => _isLoading = true);
 
     try {
-      if (_isDirectMessage) {
-        // Create/find DM
-        await _createDirectMessage();
-      } else {
-        // Create group chat
-        await _createGroupChat();
+      final notifier = ref.read(createConversationNotifierProvider.notifier);
+      final result = await notifier.createConversation(
+        tripId: widget.tripId,
+        name: _nameController.text.trim(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        memberUserIds: _selectedMemberIds.toList(),
+        createdBy: widget.currentUserId,
+        isDirectMessage: false,
+      );
+
+      if (mounted) {
+        setState(() => _isLoading = false);
+
+        if (result != null) {
+          context.go(
+            '/trips/${widget.tripId}/conversations/${result.id}?userId=${widget.currentUserId}',
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create chat: $e'),
+            content: Text('Failed to create group: $e'),
             backgroundColor: Colors.red,
           ),
-        );
-      }
-    }
-  }
-
-  Future<void> _createDirectMessage() async {
-    final otherUserId = _selectedMemberIds
-        .firstWhere((id) => id != widget.currentUserId);
-
-    final repository = ref.read(conversationRepositoryProvider);
-    final result = await repository.findOrCreateDirectMessage(
-      tripId: widget.tripId,
-      currentUserId: widget.currentUserId,
-      otherUserId: otherUserId,
-    );
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-
-      result.fold(
-        onSuccess: (conversation) {
-          context.go(
-            '/trips/${widget.tripId}/conversations/${conversation.id}?userId=${widget.currentUserId}',
-          );
-        },
-        onFailure: (error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create chat: $error'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-      );
-    }
-  }
-
-  Future<void> _createGroupChat() async {
-    final notifier = ref.read(createConversationNotifierProvider.notifier);
-    final result = await notifier.createConversation(
-      tripId: widget.tripId,
-      name: _nameController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      memberUserIds: _selectedMemberIds.toList(),
-      createdBy: widget.currentUserId,
-      isDirectMessage: false,
-    );
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-
-      if (result != null) {
-        context.go(
-          '/trips/${widget.tripId}/conversations/${result.id}?userId=${widget.currentUserId}',
         );
       }
     }
@@ -164,13 +113,28 @@ class _CreateConversationPageState
     });
   }
 
+  void _selectAllMembers(List<TripMemberModel> members) {
+    setState(() {
+      for (final member in members) {
+        _selectedMemberIds.add(member.userId);
+      }
+    });
+  }
+
+  void _clearSelection(List<TripMemberModel> members) {
+    setState(() {
+      _selectedMemberIds.clear();
+      _selectedMemberIds.add(widget.currentUserId); // Keep current user
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final tripAsync = ref.watch(tripProvider(widget.tripId));
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isDirectMessage ? 'New Chat' : 'New Group Chat'),
+        title: const Text('New Group Chat'),
         actions: [
           if (_isLoading)
             const Padding(
@@ -186,10 +150,10 @@ class _CreateConversationPageState
             )
           else
             TextButton(
-              onPressed: _createConversation,
-              child: Text(
-                _isDirectMessage ? 'Start Chat' : 'Create',
-                style: const TextStyle(
+              onPressed: _createGroup,
+              child: const Text(
+                'Create',
+                style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -202,68 +166,85 @@ class _CreateConversationPageState
         child: ListView(
           padding: const EdgeInsets.all(AppTheme.spacingMd),
           children: [
-            // Chat Type Indicator
-            _buildChatTypeIndicator(),
+            // Group Info Card
+            _buildGroupInfoCard(),
 
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: AppTheme.spacingLg),
 
-            // Group Name (only for group chats)
-            if (!_isDirectMessage) ...[
-              _buildSectionTitle('Group Name'),
-              const SizedBox(height: AppTheme.spacingSm),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  hintText: 'Enter group name',
-                  prefixIcon: const Icon(Icons.group),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  ),
+            // Group Name
+            _buildSectionTitle('Group Name *'),
+            const SizedBox(height: AppTheme.spacingSm),
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                hintText: 'e.g., Planning Team, Adventure Squad',
+                prefixIcon: const Icon(Icons.group),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a group name';
-                  }
-                  if (value.trim().length < 3) {
-                    return 'Group name must be at least 3 characters';
-                  }
-                  return null;
-                },
-                textCapitalization: TextCapitalization.words,
               ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter a group name';
+                }
+                if (value.trim().length < 3) {
+                  return 'Group name must be at least 3 characters';
+                }
+                return null;
+              },
+              textCapitalization: TextCapitalization.words,
+            ),
 
-              const SizedBox(height: AppTheme.spacingLg),
+            const SizedBox(height: AppTheme.spacingLg),
 
-              // Description (Optional)
-              _buildSectionTitle('Description (Optional)'),
-              const SizedBox(height: AppTheme.spacingSm),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  hintText: 'What is this group about?',
-                  prefixIcon: const Icon(Icons.description_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  ),
+            // Description (Optional)
+            _buildSectionTitle('Description (Optional)'),
+            const SizedBox(height: AppTheme.spacingSm),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: InputDecoration(
+                hintText: 'What is this group about?',
+                prefixIcon: const Icon(Icons.description_outlined),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
-                maxLines: 2,
-                textCapitalization: TextCapitalization.sentences,
               ),
+              maxLines: 2,
+              textCapitalization: TextCapitalization.sentences,
+            ),
 
-              const SizedBox(height: AppTheme.spacingXl),
-            ],
+            const SizedBox(height: AppTheme.spacingXl),
 
-            // Member Selection
-            _buildSectionTitle(
-              _isDirectMessage ? 'Select Person to Chat With' : 'Select Members',
+            // Member Selection Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildSectionTitle('Select Members'),
+                tripAsync.maybeWhen(
+                  data: (trip) => Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => _selectAllMembers(trip.members),
+                        child: const Text('Select All'),
+                      ),
+                      TextButton(
+                        onPressed: () => _clearSelection(trip.members),
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  ),
+                  orElse: () => const SizedBox.shrink(),
+                ),
+              ],
             ),
             const SizedBox(height: AppTheme.spacingXs),
             Text(
-              _isDirectMessage
-                  ? 'Select one person for a direct message'
-                  : '${_selectedMemberIds.length} member${_selectedMemberIds.length == 1 ? '' : 's'} selected (3+ for group)',
+              '${_selectedMemberIds.length} member${_selectedMemberIds.length == 1 ? '' : 's'} selected',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: _selectedMemberIds.length < 2
+                        ? Colors.orange
+                        : Colors.green.shade600,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
             const SizedBox(height: AppTheme.spacingMd),
@@ -285,50 +266,50 @@ class _CreateConversationPageState
     );
   }
 
-  Widget _buildChatTypeIndicator() {
+  Widget _buildGroupInfoCard() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
-        color: _isDirectMessage
-            ? Colors.blue.shade50
-            : Colors.purple.shade50,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: _isDirectMessage
-              ? Colors.blue.shade200
-              : Colors.purple.shade200,
+        gradient: LinearGradient(
+          colors: [
+            Colors.purple.shade50,
+            Colors.purple.shade100,
+          ],
         ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(color: Colors.purple.shade200),
       ),
       child: Row(
         children: [
-          Icon(
-            _isDirectMessage ? Icons.person : Icons.groups,
-            color: _isDirectMessage
-                ? Colors.blue.shade600
-                : Colors.purple.shade600,
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.purple.shade100,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.groups,
+              color: Colors.purple.shade600,
+              size: 28,
+            ),
           ),
-          const SizedBox(width: AppTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _isDirectMessage ? 'Direct Message' : 'Group Chat',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  'Create Group Chat',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: _isDirectMessage
-                            ? Colors.blue.shade700
-                            : Colors.purple.shade700,
+                        color: Colors.purple.shade700,
                       ),
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  _isDirectMessage
-                      ? 'Private conversation with one person'
-                      : 'Chat with multiple trip members',
+                  'Start a conversation with multiple trip members. All selected members can send and receive messages.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: _isDirectMessage
-                            ? Colors.blue.shade600
-                            : Colors.purple.shade600,
+                        color: Colors.purple.shade600,
                       ),
                 ),
               ],

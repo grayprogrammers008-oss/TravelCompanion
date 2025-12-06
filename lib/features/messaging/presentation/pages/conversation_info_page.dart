@@ -5,6 +5,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/destination_image.dart';
+import '../../../../shared/models/trip_model.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../domain/entities/conversation_entity.dart';
 import '../providers/conversation_providers.dart';
 
@@ -13,12 +15,14 @@ class ConversationInfoPage extends ConsumerStatefulWidget {
   final String tripId;
   final String conversationId;
   final String currentUserId;
+  final bool isDefaultGroup; // Pass true to show trip members directly
 
   const ConversationInfoPage({
     super.key,
     required this.tripId,
     required this.conversationId,
     required this.currentUserId,
+    this.isDefaultGroup = false,
   });
 
   @override
@@ -31,6 +35,11 @@ class _ConversationInfoPageState extends ConsumerState<ConversationInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    // If this is marked as default group, show trip members directly
+    if (widget.isDefaultGroup) {
+      return _buildDefaultGroupPage(context);
+    }
+
     final conversationAsync = ref.watch(
       conversationProvider(ConversationParams(
         conversationId: widget.conversationId,
@@ -64,8 +73,142 @@ class _ConversationInfoPageState extends ConsumerState<ConversationInfoPage> {
       body: conversationAsync.when(
         data: (conversation) => _buildContent(context, conversation, membersAsync),
         loading: () => const Center(child: AppLoadingIndicator()),
-        error: (error, stack) => _buildErrorState(error),
+        error: (error, stack) => _buildDefaultGroupBody(context), // Show trip members on error
       ),
+    );
+  }
+
+  /// Build body content for default "All Members" group - shows trip members directly
+  /// Used when conversation loading fails or isDefaultGroup is true
+  Widget _buildDefaultGroupBody(BuildContext context) {
+    final tripAsync = ref.watch(tripProvider(widget.tripId));
+
+    return tripAsync.when(
+      data: (trip) => ListView(
+        children: [
+          // Group Header
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacingXl),
+            child: Column(
+              children: [
+                // Group Avatar
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: context.primaryColor.withValues(alpha: 0.2),
+                  child: Icon(
+                    Icons.groups,
+                    color: context.primaryColor,
+                    size: 50,
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
+                Text(
+                  '📢 All Members',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTheme.spacingXs),
+                Text(
+                  '${trip.members.length} members',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingXs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade100,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  ),
+                  child: Text(
+                    'Everyone in ${trip.trip.name}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          // Trip Members Section
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Row(
+              children: [
+                Text(
+                  'Trip Members',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade700,
+                      ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingSm,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade100,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Text(
+                    'ALL MEMBERS',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Members list
+          ...trip.members.map((member) {
+            final isCurrentUser = member.userId == widget.currentUserId;
+            return _TripMemberTile(
+              member: member,
+              isCurrentUser: isCurrentUser,
+            );
+          }),
+          const SizedBox(height: AppTheme.spacingXl),
+        ],
+      ),
+      loading: () => const Center(child: AppLoadingIndicator()),
+      error: (error, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
+            const SizedBox(height: AppTheme.spacingMd),
+            const Text('Failed to load trip members'),
+            const SizedBox(height: AppTheme.spacingMd),
+            TextButton.icon(
+              onPressed: () => ref.invalidate(tripProvider(widget.tripId)),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build full page for default "All Members" group - shows trip members directly
+  Widget _buildDefaultGroupPage(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('All Members'),
+      ),
+      body: _buildDefaultGroupBody(context),
     );
   }
 
@@ -91,7 +234,7 @@ class _ConversationInfoPageState extends ConsumerState<ConversationInfoPage> {
         ],
 
         // Members Section
-        _buildMembersSection(context, membersAsync, isAdmin),
+        _buildMembersSection(context, membersAsync, isAdmin, conversation.isDefaultGroup),
 
         const Divider(height: 1),
 
@@ -203,7 +346,13 @@ class _ConversationInfoPageState extends ConsumerState<ConversationInfoPage> {
     BuildContext context,
     AsyncValue<List<ConversationMemberEntity>> membersAsync,
     bool isAdmin,
+    bool isDefaultGroup,
   ) {
+    // For default "All Members" group, show trip members instead
+    if (isDefaultGroup) {
+      return _buildTripMembersSection(context, isAdmin);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -250,6 +399,71 @@ class _ConversationInfoPageState extends ConsumerState<ConversationInfoPage> {
             padding: const EdgeInsets.all(AppTheme.spacingMd),
             child: Text(
               'Failed to load members',
+              style: TextStyle(color: Colors.red.shade400),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build members section showing all trip members for the default group
+  Widget _buildTripMembersSection(BuildContext context, bool isAdmin) {
+    final tripAsync = ref.watch(tripProvider(widget.tripId));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          child: Row(
+            children: [
+              Text(
+                'Trip Members',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade700,
+                    ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingSm,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+                child: Text(
+                  'ALL MEMBERS',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        tripAsync.when(
+          data: (trip) => Column(
+            children: trip.members.map((member) {
+              final isCurrentUser = member.userId == widget.currentUserId;
+              return _TripMemberTile(
+                member: member,
+                isCurrentUser: isCurrentUser,
+              );
+            }).toList(),
+          ),
+          loading: () => const Padding(
+            padding: EdgeInsets.all(AppTheme.spacingMd),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (error, _) => Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Text(
+              'Failed to load trip members',
               style: TextStyle(color: Colors.red.shade400),
             ),
           ),
@@ -324,39 +538,6 @@ class _ConversationInfoPageState extends ConsumerState<ConversationInfoPage> {
           ),
         ],
       ],
-    );
-  }
-
-  Widget _buildErrorState(Object error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: Colors.red.shade400,
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          Text(
-            'Failed to load group info',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          TextButton.icon(
-            onPressed: () {
-              ref.invalidate(
-                conversationProvider(ConversationParams(
-                  conversationId: widget.conversationId,
-                  userId: widget.currentUserId,
-                )),
-              );
-            },
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -708,5 +889,96 @@ class _MemberTile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Trip member tile widget for the default "All Members" group
+class _TripMemberTile extends StatelessWidget {
+  final TripMemberModel member;
+  final bool isCurrentUser;
+
+  const _TripMemberTile({
+    required this.member,
+    required this.isCurrentUser,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName = member.fullName ?? 'Unknown User';
+
+    return ListTile(
+      leading: UserAvatarWidget(
+        imageUrl: member.avatarUrl,
+        userName: displayName,
+        size: 40,
+      ),
+      title: Row(
+        children: [
+          Flexible(
+            child: Text(
+              displayName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (isCurrentUser) ...[
+            const SizedBox(width: AppTheme.spacingXs),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingSm,
+                vertical: 2,
+              ),
+              decoration: BoxDecoration(
+                color: context.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: Text(
+                'You',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: context.primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+          ],
+        ],
+      ),
+      subtitle: member.email != null
+          ? Text(
+              member.email!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            )
+          : null,
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingSm,
+          vertical: 2,
+        ),
+        decoration: BoxDecoration(
+          color: _getRoleColor(member.role).withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        ),
+        child: Text(
+          member.role.toUpperCase(),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: _getRoleColor(member.role),
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+      ),
+    );
+  }
+
+  Color _getRoleColor(String role) {
+    switch (role.toLowerCase()) {
+      case 'owner':
+        return Colors.purple.shade700;
+      case 'admin':
+        return Colors.blue.shade700;
+      default:
+        return Colors.grey.shade700;
+    }
   }
 }

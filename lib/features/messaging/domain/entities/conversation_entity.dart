@@ -9,6 +9,7 @@ class ConversationEntity extends Equatable {
   final String? avatarUrl;
   final String createdBy;
   final bool isDirectMessage;
+  final bool isDefaultGroup; // True for auto-created "All Members" group
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -18,6 +19,10 @@ class ConversationEntity extends Equatable {
   final String? lastMessageSenderName;
   final int unreadCount;
   final int memberCount;
+
+  // DM-specific fields (other member's info for display)
+  final String? dmOtherMemberName;
+  final String? dmOtherMemberAvatar;
 
   // Members list
   final List<ConversationMemberEntity> members;
@@ -30,6 +35,7 @@ class ConversationEntity extends Equatable {
     this.avatarUrl,
     required this.createdBy,
     this.isDirectMessage = false,
+    this.isDefaultGroup = false,
     required this.createdAt,
     required this.updatedAt,
     this.lastMessageText,
@@ -37,18 +43,27 @@ class ConversationEntity extends Equatable {
     this.lastMessageSenderName,
     this.unreadCount = 0,
     this.memberCount = 0,
+    this.dmOtherMemberName,
+    this.dmOtherMemberAvatar,
     this.members = const [],
   });
 
   /// Get display name for the conversation
   /// For direct messages, shows the other person's name
   String getDisplayName(String currentUserId) {
-    if (isDirectMessage && members.isNotEmpty) {
-      final otherMember = members.firstWhere(
-        (m) => m.userId != currentUserId,
-        orElse: () => members.first,
-      );
-      return otherMember.userName ?? name;
+    if (isDirectMessage) {
+      // First try to use the pre-fetched DM member name from SQL function
+      if (dmOtherMemberName != null && dmOtherMemberName!.isNotEmpty) {
+        return dmOtherMemberName!;
+      }
+      // Fall back to searching members list
+      if (members.isNotEmpty) {
+        final otherMember = members.firstWhere(
+          (m) => m.userId != currentUserId,
+          orElse: () => members.first,
+        );
+        return otherMember.userName ?? name;
+      }
     }
     return name;
   }
@@ -72,6 +87,7 @@ class ConversationEntity extends Equatable {
         avatarUrl,
         createdBy,
         isDirectMessage,
+        isDefaultGroup,
         createdAt,
         updatedAt,
         lastMessageText,
@@ -79,6 +95,8 @@ class ConversationEntity extends Equatable {
         lastMessageSenderName,
         unreadCount,
         memberCount,
+        dmOtherMemberName,
+        dmOtherMemberAvatar,
         members,
       ];
 
@@ -90,6 +108,7 @@ class ConversationEntity extends Equatable {
     String? avatarUrl,
     String? createdBy,
     bool? isDirectMessage,
+    bool? isDefaultGroup,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? lastMessageText,
@@ -97,6 +116,8 @@ class ConversationEntity extends Equatable {
     String? lastMessageSenderName,
     int? unreadCount,
     int? memberCount,
+    String? dmOtherMemberName,
+    String? dmOtherMemberAvatar,
     List<ConversationMemberEntity>? members,
   }) {
     return ConversationEntity(
@@ -107,6 +128,7 @@ class ConversationEntity extends Equatable {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       createdBy: createdBy ?? this.createdBy,
       isDirectMessage: isDirectMessage ?? this.isDirectMessage,
+      isDefaultGroup: isDefaultGroup ?? this.isDefaultGroup,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       lastMessageText: lastMessageText ?? this.lastMessageText,
@@ -114,6 +136,8 @@ class ConversationEntity extends Equatable {
       lastMessageSenderName: lastMessageSenderName ?? this.lastMessageSenderName,
       unreadCount: unreadCount ?? this.unreadCount,
       memberCount: memberCount ?? this.memberCount,
+      dmOtherMemberName: dmOtherMemberName ?? this.dmOtherMemberName,
+      dmOtherMemberAvatar: dmOtherMemberAvatar ?? this.dmOtherMemberAvatar,
       members: members ?? this.members,
     );
   }

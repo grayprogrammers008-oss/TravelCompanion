@@ -21,6 +21,7 @@ import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../checklists/presentation/providers/checklist_providers.dart';
+import '../../../messaging/presentation/providers/conversation_providers.dart';
 
 class TripDetailPage extends ConsumerStatefulWidget {
   final String tripId;
@@ -56,6 +57,54 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     _scrollController.dispose();
     _memberSearchController.dispose();
     super.dispose();
+  }
+
+  /// Navigate directly to the default "All Members" group chat
+  /// Uses fast getDefaultGroupId method to avoid loading full conversation details
+  Future<void> _openDefaultGroupChat() async {
+    final currentUserId = ref.read(authStateProvider).value ?? '';
+
+    try {
+      final repository = ref.read(conversationRepositoryProvider);
+      // Use fast method that only fetches the ID (no heavy RPC call)
+      final result = await repository.getDefaultGroupId(tripId: widget.tripId);
+
+      result.fold(
+        onSuccess: (conversationId) {
+          if (conversationId != null && mounted) {
+            context.push(
+              '/trips/${widget.tripId}/conversations/$conversationId?userId=$currentUserId',
+            );
+          } else if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No group chat found for this trip'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        },
+        onFailure: (error) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to open chat: $error'),
+                backgroundColor: AppTheme.error,
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open chat: $e'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -1344,6 +1393,13 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     final themeData = context.appThemeData;
     final isCompleted = trip.trip.isCompleted;
 
+    // Get unread message count for badge
+    final currentUserId = ref.watch(currentUserProvider).value?.id ?? '';
+    final unreadCountAsync = ref.watch(tripUnreadCountProvider(
+      TripConversationsParams(tripId: widget.tripId, userId: currentUserId),
+    ));
+    final unreadCount = unreadCountAsync.value ?? 0;
+
     // Build contextual actions based on trip status
     final List<Widget> actions = [];
 
@@ -1373,14 +1429,10 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           icon: Icons.chat_bubble_rounded,
           label: 'Chats',
           color: const Color(0xFF7E57C2), // Soft purple
+          badgeCount: unreadCount,
           onTap: () {
             HapticFeedback.mediumImpact();
-            final currentUserId = ref.read(authStateProvider).value ?? '';
-            context.push(
-              '/trips/${widget.tripId}/conversations'
-              '?tripName=${Uri.encodeComponent(trip.trip.name)}'
-              '&userId=$currentUserId',
-            );
+            _openDefaultGroupChat();
           },
         ),
         _QuickActionCard(
@@ -1436,14 +1488,10 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           icon: Icons.chat_bubble_rounded,
           label: 'Chats',
           color: const Color(0xFF7E57C2), // Soft purple
+          badgeCount: unreadCount,
           onTap: () {
             HapticFeedback.mediumImpact();
-            final currentUserId = ref.read(authStateProvider).value ?? '';
-            context.push(
-              '/trips/${widget.tripId}/conversations'
-              '?tripName=${Uri.encodeComponent(trip.trip.name)}'
-              '&userId=$currentUserId',
-            );
+            _openDefaultGroupChat();
           },
         ),
         _QuickActionCard(
@@ -2225,12 +2273,14 @@ class _QuickActionCard extends StatefulWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
+  final int? badgeCount; // Optional badge for unread count
 
   const _QuickActionCard({
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
+    this.badgeCount,
   });
 
   @override
@@ -2341,6 +2391,41 @@ class _QuickActionCardState extends State<_QuickActionCard> {
                     ),
                   ),
                 ),
+                // Unread count badge
+                if (widget.badgeCount != null && widget.badgeCount! > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        widget.badgeCount! > 99 ? '99+' : widget.badgeCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

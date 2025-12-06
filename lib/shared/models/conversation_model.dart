@@ -7,6 +7,7 @@ class ConversationModel {
   final String? avatarUrl;
   final String createdBy;
   final bool isDirectMessage;
+  final bool isDefaultGroup; // True for auto-created "All Members" group
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -16,6 +17,10 @@ class ConversationModel {
   final String? lastMessageSenderName;
   final int unreadCount;
   final int memberCount;
+
+  // DM-specific fields (other member's info for display)
+  final String? dmOtherMemberName;
+  final String? dmOtherMemberAvatar;
 
   // Members (loaded separately or via join)
   final List<ConversationMemberModel> members;
@@ -28,6 +33,7 @@ class ConversationModel {
     this.avatarUrl,
     required this.createdBy,
     this.isDirectMessage = false,
+    this.isDefaultGroup = false,
     required this.createdAt,
     required this.updatedAt,
     this.lastMessageText,
@@ -35,6 +41,8 @@ class ConversationModel {
     this.lastMessageSenderName,
     this.unreadCount = 0,
     this.memberCount = 0,
+    this.dmOtherMemberName,
+    this.dmOtherMemberAvatar,
     this.members = const [],
   });
 
@@ -46,6 +54,7 @@ class ConversationModel {
     String? avatarUrl,
     String? createdBy,
     bool? isDirectMessage,
+    bool? isDefaultGroup,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? lastMessageText,
@@ -53,6 +62,8 @@ class ConversationModel {
     String? lastMessageSenderName,
     int? unreadCount,
     int? memberCount,
+    String? dmOtherMemberName,
+    String? dmOtherMemberAvatar,
     List<ConversationMemberModel>? members,
   }) {
     return ConversationModel(
@@ -63,6 +74,7 @@ class ConversationModel {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       createdBy: createdBy ?? this.createdBy,
       isDirectMessage: isDirectMessage ?? this.isDirectMessage,
+      isDefaultGroup: isDefaultGroup ?? this.isDefaultGroup,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       lastMessageText: lastMessageText ?? this.lastMessageText,
@@ -70,6 +82,8 @@ class ConversationModel {
       lastMessageSenderName: lastMessageSenderName ?? this.lastMessageSenderName,
       unreadCount: unreadCount ?? this.unreadCount,
       memberCount: memberCount ?? this.memberCount,
+      dmOtherMemberName: dmOtherMemberName ?? this.dmOtherMemberName,
+      dmOtherMemberAvatar: dmOtherMemberAvatar ?? this.dmOtherMemberAvatar,
       members: members ?? this.members,
     );
   }
@@ -96,6 +110,7 @@ class ConversationModel {
       'avatar_url': avatarUrl,
       'created_by': createdBy,
       'is_direct_message': isDirectMessage,
+      'is_default_group': isDefaultGroup,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'last_message_text': lastMessageText,
@@ -103,6 +118,8 @@ class ConversationModel {
       'last_message_sender_name': lastMessageSenderName,
       'unread_count': unreadCount,
       'member_count': memberCount,
+      'dm_other_member_name': dmOtherMemberName,
+      'dm_other_member_avatar': dmOtherMemberAvatar,
     };
   }
 
@@ -116,6 +133,7 @@ class ConversationModel {
       avatarUrl: json['avatar_url'] as String?,
       createdBy: json['created_by'] as String,
       isDirectMessage: json['is_direct_message'] as bool? ?? false,
+      isDefaultGroup: json['is_default_group'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastMessageText: json['last_message_text'] as String?,
@@ -125,6 +143,8 @@ class ConversationModel {
       lastMessageSenderName: json['last_message_sender_name'] as String?,
       unreadCount: (json['unread_count'] as num?)?.toInt() ?? 0,
       memberCount: (json['member_count'] as num?)?.toInt() ?? 0,
+      dmOtherMemberName: json['dm_other_member_name'] as String?,
+      dmOtherMemberAvatar: json['dm_other_member_avatar'] as String?,
       members: (json['members'] as List<dynamic>?)
               ?.map((m) => ConversationMemberModel.fromJson(m as Map<String, dynamic>))
               .toList() ??

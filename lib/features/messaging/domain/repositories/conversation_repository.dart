@@ -105,6 +105,20 @@ abstract class ConversationRepository {
     String? attachmentUrl,
   });
 
+  /// Delete a single message (soft delete)
+  /// Only the sender can delete their own message
+  Future<Result<void>> deleteMessage({
+    required String messageId,
+    required String senderId,
+  });
+
+  /// Delete multiple messages (soft delete)
+  /// Only the sender can delete their own messages
+  Future<Result<void>> deleteMessages({
+    required List<String> messageIds,
+    required String senderId,
+  });
+
   // ============================================================================
   // REAL-TIME STREAMS
   // ============================================================================
@@ -138,5 +152,17 @@ abstract class ConversationRepository {
     required String tripId,
     required String currentUserId,
     required String otherUserId,
+  });
+
+  /// Get or ensure the default "All Members" group for a trip
+  Future<Result<ConversationEntity>> getDefaultGroup({
+    required String tripId,
+    required String userId,
+  });
+
+  /// Get the default group ID quickly (just the ID, no details)
+  /// This is much faster than getDefaultGroup for navigation purposes
+  Future<Result<String?>> getDefaultGroupId({
+    required String tripId,
   });
 }
