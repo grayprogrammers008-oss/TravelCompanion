@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/auth/presentation/pages/reset_password_page.dart';
-import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/trips/presentation/pages/trip_filter_page.dart';
 import '../../features/trips/presentation/pages/browse_trips_page.dart';
@@ -37,6 +36,7 @@ import '../../features/admin/presentation/pages/admin_user_detail_page.dart';
 import '../../features/templates/presentation/pages/browse_templates_page.dart';
 import '../../features/templates/presentation/pages/template_detail_page.dart';
 import '../../features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
+import '../../features/trips/presentation/pages/quick_trip_page.dart';
 import '../presentation/main_scaffold.dart';
 
 // Custom page builder that removes the white transition overlay
@@ -66,6 +66,7 @@ class AppRoutes {
   static const String expenses = '/expenses';
   static const String tripDetail = '/trips/:tripId';
   static const String createTrip = '/trips/create';
+  static const String quickTrip = '/trips/quick';
   static const String editTrip = '/trips/:tripId/edit';
   static const String tripMembers = '/trips/:tripId/members';
   static const String tripFilter = '/trips/filter';
@@ -211,11 +212,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.createTrip,
         name: 'createTrip',
         pageBuilder: (context, state) {
-          // Extract query parameters for pre-filling from AI Itinerary
+          // Extract query parameters for pre-filling from AI Itinerary or Template
           final destination = state.uri.queryParameters['destination'];
           final startDateStr = state.uri.queryParameters['startDate'];
           final endDateStr = state.uri.queryParameters['endDate'];
           final budgetStr = state.uri.queryParameters['budget'];
+          final templateId = state.uri.queryParameters['templateId'];
+          final durationDaysStr = state.uri.queryParameters['durationDays'];
 
           return NoTransitionPage(
             key: state.pageKey,
@@ -224,9 +227,19 @@ final routerProvider = Provider<GoRouter>((ref) {
               prefillStartDate: startDateStr != null ? DateTime.tryParse(startDateStr) : null,
               prefillEndDate: endDateStr != null ? DateTime.tryParse(endDateStr) : null,
               prefillBudget: budgetStr != null ? double.tryParse(budgetStr) : null,
+              templateId: templateId,
+              templateDurationDays: durationDaysStr != null ? int.tryParse(durationDaysStr) : null,
             ),
           );
         },
+      ),
+      GoRoute(
+        path: AppRoutes.quickTrip,
+        name: 'quickTrip',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const QuickTripPage(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.addStandaloneExpense,
@@ -268,7 +281,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           final tripId = state.pathParameters['tripId']!;
           return NoTransitionPage(
             key: state.pageKey,
-            child: TripDetailPage(tripId: tripId),
+            child: TripDetailShell(tripId: tripId),
           );
         },
       ),

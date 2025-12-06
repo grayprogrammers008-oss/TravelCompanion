@@ -2,6 +2,7 @@
 //
 // Riverpod providers for trip templates and AI usage.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/datasources/template_remote_datasource.dart';
@@ -142,8 +143,12 @@ class TemplateController extends Notifier<TemplateControllerState> {
     required String tripId,
   }) async {
     final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return false;
+    if (userId == null) {
+      debugPrint('❌ Template: Cannot apply - user not authenticated');
+      return false;
+    }
 
+    debugPrint('🎯 Template: Applying template $templateId to trip $tripId');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -154,6 +159,8 @@ class TemplateController extends Notifier<TemplateControllerState> {
         userId: userId,
       );
 
+      debugPrint('✅ Template: Apply result = $success');
+
       if (success) {
         // Invalidate template to update use count
         ref.invalidate(templateByIdProvider(templateId));
@@ -161,7 +168,9 @@ class TemplateController extends Notifier<TemplateControllerState> {
 
       state = state.copyWith(isLoading: false);
       return success;
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('❌ Template: Error applying template: $e');
+      debugPrint('Stack trace: $stack');
       state = state.copyWith(isLoading: false, error: e.toString());
       return false;
     }

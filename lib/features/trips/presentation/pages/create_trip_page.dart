@@ -12,6 +12,7 @@ import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/place_search_delegate.dart';
 import '../../../../core/services/place_search_service.dart';
 import '../providers/trip_providers.dart';
+import '../../../templates/presentation/providers/template_providers.dart';
 
 class CreateTripPage extends ConsumerStatefulWidget {
   final String? tripId; // If provided, page is in edit mode
@@ -22,6 +23,10 @@ class CreateTripPage extends ConsumerStatefulWidget {
   final DateTime? prefillEndDate;
   final double? prefillBudget;
 
+  // Template parameters
+  final String? templateId;
+  final int? templateDurationDays;
+
   const CreateTripPage({
     super.key,
     this.tripId,
@@ -29,6 +34,8 @@ class CreateTripPage extends ConsumerStatefulWidget {
     this.prefillStartDate,
     this.prefillEndDate,
     this.prefillBudget,
+    this.templateId,
+    this.templateDurationDays,
   });
 
   @override
@@ -47,6 +54,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   String _currency = 'INR'; // Default currency
   bool _isPublic = true; // Trip visibility: true = public, false = private
   bool _isLoading = false;
+
+  // Template-related state
+  int? _templateDurationDays;
+  bool _hasTemplateWarning = false;
 
   late AnimationController _animationController;
 
@@ -76,8 +87,16 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     }
   }
 
-  /// Apply pre-fill data from AI Itinerary Generator
+  /// Apply pre-fill data from AI Itinerary Generator or Template
   void _applyPrefillData() {
+    if (kDebugMode) {
+      debugPrint('DEBUG: ========== PREFILL DATA ==========');
+      debugPrint('DEBUG: templateId: ${widget.templateId}');
+      debugPrint('DEBUG: templateDurationDays: ${widget.templateDurationDays}');
+      debugPrint('DEBUG: prefillDestination: ${widget.prefillDestination}');
+      debugPrint('DEBUG: prefillBudget: ${widget.prefillBudget}');
+    }
+
     if (widget.prefillDestination != null) {
       _destinationController.text = widget.prefillDestination!;
       if (kDebugMode) {
@@ -100,6 +119,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       _budgetController.text = _formatCurrency(widget.prefillBudget!);
       if (kDebugMode) {
         debugPrint('DEBUG: Pre-filled budget: ${widget.prefillBudget}');
+      }
+    }
+
+    // Template-specific: Store duration for auto-calculating end date
+    if (widget.templateDurationDays != null) {
+      _templateDurationDays = widget.templateDurationDays;
+      if (kDebugMode) {
+        debugPrint('DEBUG: Template duration: ${widget.templateDurationDays} days');
       }
     }
   }
@@ -217,7 +244,19 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
     if (picked != null) {
-      setState(() => _startDate = picked);
+      setState(() {
+        _startDate = picked;
+
+        // Auto-calculate end date when template is active
+        if (_templateDurationDays != null && _templateDurationDays! > 0) {
+          _endDate = picked.add(Duration(days: _templateDurationDays! - 1));
+          _hasTemplateWarning = false;
+
+          if (kDebugMode) {
+            debugPrint('DEBUG: Template auto-calculated end date: $_endDate ($_templateDurationDays days)');
+          }
+        }
+      });
     }
   }
 
@@ -234,7 +273,19 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
     if (picked != null) {
-      setState(() => _endDate = picked);
+      setState(() {
+        _endDate = picked;
+
+        // Check if duration matches template and show warning if not
+        if (_templateDurationDays != null && _startDate != null) {
+          final selectedDuration = picked.difference(_startDate!).inDays + 1;
+          _hasTemplateWarning = selectedDuration != _templateDurationDays;
+
+          if (_hasTemplateWarning && kDebugMode) {
+            debugPrint('DEBUG: Template warning - selected $selectedDuration days, template has $_templateDurationDays days');
+          }
+        }
+      });
     }
   }
 
@@ -337,6 +388,32 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Trip Budget: ${trip.budget ?? "NULL"}');
           debugPrint('DEBUG: Trip Currency: ${trip.currency}');
         }
+
+        // Apply template if one was selected
+        if (kDebugMode) {
+          debugPrint('DEBUG: Checking for template - widget.templateId = ${widget.templateId}');
+        }
+
+        if (widget.templateId != null) {
+          if (kDebugMode) {
+            debugPrint('DEBUG: Applying template ${widget.templateId} to trip ${trip.id}');
+          }
+
+          final success = await ref
+              .read(templateControllerProvider.notifier)
+              .applyTemplateToTrip(
+                templateId: widget.templateId!,
+                tripId: trip.id,
+              );
+
+          if (kDebugMode) {
+            debugPrint('DEBUG: Template applied: $success');
+          }
+        } else {
+          if (kDebugMode) {
+            debugPrint('DEBUG: No template to apply (templateId is null)');
+          }
+        }
       }
 
       if (mounted) {
@@ -369,10 +446,18 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         // The invalidation above will cause pages to rebuild with fresh data
         context.pop();
 
+        String successMessage;
+        if (isEditMode) {
+          successMessage = 'Trip updated successfully!';
+        } else if (widget.templateId != null) {
+          successMessage = 'Trip created with template applied!';
+        } else {
+          successMessage = 'Trip created successfully!';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                isEditMode ? 'Trip updated successfully!' : 'Trip created successfully!'),
+            content: Text(successMessage),
             backgroundColor: AppTheme.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -545,25 +630,77 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 // Date Section
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 6,
-                  child: Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: _buildDateField(
-                          label: 'Start Date',
-                          icon: Icons.calendar_today,
-                          date: _startDate,
-                          onTap: _selectStartDate,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDateField(
+                              label: 'Start Date',
+                              icon: Icons.calendar_today,
+                              date: _startDate,
+                              onTap: _selectStartDate,
+                            ),
+                          ),
+                          const SizedBox(width: AppTheme.spacingMd),
+                          Expanded(
+                            child: _buildDateField(
+                              label: 'End Date',
+                              icon: Icons.event,
+                              date: _endDate,
+                              onTap: _selectEndDate,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: _buildDateField(
-                          label: 'End Date',
-                          icon: Icons.event,
-                          date: _endDate,
-                          onTap: _selectEndDate,
+                      // Template duration info/warning
+                      if (_templateDurationDays != null) ...[
+                        const SizedBox(height: AppTheme.spacingSm),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingMd,
+                            vertical: AppTheme.spacingSm,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _hasTemplateWarning
+                                ? AppTheme.warning.withValues(alpha: 0.1)
+                                : context.primaryColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                            border: Border.all(
+                              color: _hasTemplateWarning
+                                  ? AppTheme.warning.withValues(alpha: 0.3)
+                                  : context.primaryColor.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _hasTemplateWarning
+                                    ? Icons.warning_amber_rounded
+                                    : Icons.auto_awesome,
+                                size: 18,
+                                color: _hasTemplateWarning
+                                    ? AppTheme.warning
+                                    : context.primaryColor,
+                              ),
+                              const SizedBox(width: AppTheme.spacingSm),
+                              Expanded(
+                                child: Text(
+                                  _hasTemplateWarning
+                                      ? 'Selected dates don\'t match template duration ($_templateDurationDays days). Template itinerary may not align perfectly.'
+                                      : 'Template: $_templateDurationDays days - End date auto-calculated',
+                                  style: context.bodyStyle.copyWith(
+                                    fontSize: 12,
+                                    color: _hasTemplateWarning
+                                        ? AppTheme.warning
+                                        : context.primaryColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),

@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 import '../../data/datasources/profile_photo_service.dart';
 import '../../data/repositories/auth_repository_impl.dart';
@@ -11,6 +13,59 @@ import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
 import '../../domain/usecases/update_profile_usecase.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
+import '../../../expenses/presentation/providers/expense_providers.dart';
+
+/// Model for login user selection
+class LoginUserModel {
+  final String id;
+  final String email;
+  final String? fullName;
+
+  const LoginUserModel({
+    required this.id,
+    required this.email,
+    this.fullName,
+  });
+
+  String get displayName => fullName ?? email.split('@').first;
+
+  factory LoginUserModel.fromJson(Map<String, dynamic> json) {
+    return LoginUserModel(
+      id: json['id'] as String,
+      email: json['email'] as String? ?? '',
+      fullName: json['full_name'] as String?,
+    );
+  }
+}
+
+/// Provider to fetch all users for login dropdown (development/testing only)
+final allUsersForLoginProvider = FutureProvider<List<LoginUserModel>>((ref) async {
+  try {
+    final client = Supabase.instance.client;
+
+    // Fetch all users from profiles table
+    // This query uses the public RLS policy (anyone can view profiles with is_active = true)
+    final response = await client
+        .from('profiles')
+        .select('id, email, full_name')
+        .order('full_name', ascending: true);
+
+    final users = (response as List)
+        .map((json) => LoginUserModel.fromJson(json))
+        .toList();
+
+    if (kDebugMode) {
+      debugPrint('📋 Loaded ${users.length} users for login dropdown');
+    }
+
+    return users;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('❌ Error fetching users for login: $e');
+    }
+    return [];
+  }
+});
 
 // Remote Data Source Provider - Supabase Only
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
@@ -190,6 +245,12 @@ class AuthController extends Notifier<AuthState> {
       // Invalidate trips provider to clear trips data
       ref.invalidate(userTripsProvider);
       ref.invalidate(tripHistoryProvider);
+
+      // Invalidate expense providers to clear expense data
+      ref.invalidate(userExpensesProvider);
+      ref.invalidate(standaloneExpensesProvider);
+      ref.invalidate(expenseSummaryProvider);
+      ref.invalidate(userBalancesProvider);
 
       state = AuthState(); // Reset to initial state
     } catch (e) {

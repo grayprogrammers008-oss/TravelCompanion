@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
@@ -11,7 +13,9 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';
+import '../../../../shared/models/itinerary_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../providers/trip_providers.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -40,6 +44,9 @@ class _HomePageState extends ConsumerState<HomePage>
   // Sort options: 'recent', 'name', 'startDate', 'budget'
   String _sortBy = 'recent';
 
+  // Simplified view state
+  bool _pastTripsExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +66,249 @@ class _HomePageState extends ConsumerState<HomePage>
     _searchController.dispose();
     _animationController.dispose();
     super.dispose();
+  }
+
+  /// Show bottom sheet with trip creation options
+  void _showCreateTripOptions(BuildContext context, AppThemeData themeData) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppTheme.radiusXl),
+            topRight: Radius.circular(AppTheme.radiusXl),
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.neutral300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Title
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+                child: Row(
+                  children: [
+                    Icon(Icons.add_circle, color: themeData.primaryColor, size: 28),
+                    const SizedBox(width: AppTheme.spacingMd),
+                    const Text(
+                      'Create New Trip',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+
+              // Option 0: Quick Trip (NEW - Highlighted)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      themeData.primaryColor.withValues(alpha: 0.1),
+                      themeData.primaryColor.withValues(alpha: 0.05),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: themeData.primaryColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: _buildCreateOption(
+                  context: context,
+                  icon: Icons.rocket_launch,
+                  iconColor: themeData.primaryColor,
+                  title: 'Quick Trip',
+                  subtitle: 'Just destination & dates - create in 3 taps!',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/trips/quick');
+                  },
+                  showBadge: true,
+                ),
+              ),
+
+              const SizedBox(height: AppTheme.spacingSm),
+
+              // Divider with "or" text
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingLg,
+                  vertical: AppTheme.spacingSm,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(child: Divider(color: AppTheme.neutral200)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                      child: Text(
+                        'or customize',
+                        style: TextStyle(
+                          color: AppTheme.neutral400,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: AppTheme.neutral200)),
+                  ],
+                ),
+              ),
+
+              // Option 1: From Scratch
+              _buildCreateOption(
+                context: context,
+                icon: Icons.edit_note,
+                iconColor: AppTheme.neutral600,
+                title: 'Start from Scratch',
+                subtitle: 'Create a blank trip and customize everything',
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/trips/create');
+                },
+              ),
+
+              // Option 2: Use Template
+              _buildCreateOption(
+                context: context,
+                icon: Icons.dashboard_customize,
+                iconColor: const Color(0xFF9C27B0),
+                title: 'Use a Template',
+                subtitle: 'Browse pre-built itineraries for popular destinations',
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/templates');
+                },
+              ),
+
+              // Option 3: AI Generate
+              _buildCreateOption(
+                context: context,
+                icon: Icons.auto_awesome,
+                iconColor: const Color(0xFFFF9800),
+                title: 'AI Itinerary Generator',
+                subtitle: 'Let AI create a personalized itinerary for you',
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/ai-itinerary');
+                },
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build a single create option tile
+  Widget _buildCreateOption({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool showBadge = false,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingLg,
+          vertical: AppTheme.spacingMd,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              ),
+              child: Icon(icon, color: iconColor, size: 28),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      if (showBadge) ...[
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'FAST',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppTheme.neutral600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppTheme.neutral400,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Get trip status category
@@ -449,7 +699,7 @@ class _HomePageState extends ConsumerState<HomePage>
         duration: AppAnimations.slow,
         curve: AppAnimations.spring,
         child: AnimatedScaleButton(
-          onTap: () => context.push('/trips/create'),
+          onTap: () => _showCreateTripOptions(context, themeData),
           child: Container(
             decoration: BoxDecoration(
               gradient: themeData.glossyGradient,
@@ -793,7 +1043,7 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  /// Build grouped trip list with section headers (Active → Upcoming → Completed)
+  /// Build simplified grouped trip list focusing on what matters NOW
   List<Widget> _buildGroupedTripList(
     BuildContext context,
     List<TripWithMembers> trips,
@@ -819,98 +1069,428 @@ class _HomePageState extends ConsumerState<HomePage>
       }
     }
 
+    // Sort upcoming by start date
+    upcomingTrips.sort((a, b) {
+      final aDate = a.trip.startDate ?? DateTime(2100);
+      final bDate = b.trip.startDate ?? DateTime(2100);
+      return aDate.compareTo(bDate);
+    });
+
     final slivers = <Widget>[];
-    int animationIndex = 0;
 
-    // Active trips section
+    // 1. HAPPENING NOW - Hero card for active trip(s)
     if (activeTrips.isNotEmpty) {
-      slivers.add(_buildSectionHeader(
-        context,
-        'Active Now',
-        Icons.directions_walk,
-        const Color(0xFFFF7043),
-        activeTrips.length,
+      slivers.add(SliverToBoxAdapter(
+        child: _buildHappeningNowSection(context, activeTrips, themeData),
       ));
-      slivers.add(_buildTripSection(context, activeTrips, animationIndex));
-      animationIndex += activeTrips.length;
     }
 
-    // Upcoming trips section
+    // 2. QUICK ACTIONS - Big buttons when no active trip
+    if (activeTrips.isEmpty) {
+      slivers.add(SliverToBoxAdapter(
+        child: _buildQuickActionsSection(context, themeData),
+      ));
+    }
+
+    // 3. COMING UP - Compact list of upcoming trips
     if (upcomingTrips.isNotEmpty) {
-      slivers.add(_buildSectionHeader(
-        context,
-        'Upcoming',
-        Icons.schedule,
-        const Color(0xFF5C6BC0),
-        upcomingTrips.length,
+      slivers.add(SliverToBoxAdapter(
+        child: _buildComingUpSection(context, upcomingTrips, themeData),
       ));
-      slivers.add(_buildTripSection(context, upcomingTrips, animationIndex));
-      animationIndex += upcomingTrips.length;
     }
 
-    // Completed trips section
+    // 4. PAST TRIPS - Collapsible section
     if (completedTrips.isNotEmpty) {
-      slivers.add(_buildSectionHeader(
-        context,
-        'Completed',
-        Icons.check_circle,
-        AppTheme.success,
-        completedTrips.length,
+      slivers.add(SliverToBoxAdapter(
+        child: _buildPastTripsSection(context, completedTrips, themeData),
       ));
-      slivers.add(_buildTripSection(context, completedTrips, animationIndex));
     }
 
     return slivers;
   }
 
-  Widget _buildSectionHeader(
+  /// Build "Happening Now" hero section for active trips
+  Widget _buildHappeningNowSection(
     BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    int count,
+    List<TripWithMembers> activeTrips,
+    AppThemeData themeData,
   ) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppTheme.spacingMd,
-          AppTheme.spacingMd,
-          AppTheme.spacingMd,
-          AppTheme.spacingXs,
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+    // Take the first active trip as the primary
+    final primaryTrip = activeTrips.first;
+    final trip = primaryTrip.trip;
+
+    // Calculate trip day
+    int currentDay = 1;
+    int totalDays = 1;
+    if (trip.startDate != null) {
+      final now = DateTime.now();
+      currentDay = now.difference(trip.startDate!).inDays + 1;
+      if (trip.endDate != null) {
+        totalDays = trip.endDate!.difference(trip.startDate!).inDays + 1;
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF7043).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.local_fire_department, size: 16, color: Color(0xFFFF7043)),
               ),
-              child: Icon(icon, size: 16, color: color),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.neutral800,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
+              const SizedBox(width: 10),
+              const Text(
+                'HAPPENING NOW',
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: color,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.2,
+                  color: Color(0xFFFF7043),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+
+          // Hero trip card
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              context.push('/trips/${trip.id}');
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    themeData.primaryColor,
+                    themeData.primaryColor.withValues(alpha: 0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                boxShadow: [
+                  BoxShadow(
+                    color: themeData.primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Background image with overlay
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      child: Stack(
+                        children: [
+                          DestinationImage(
+                            tripName: trip.destination ?? trip.name,
+                            height: double.infinity,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            showOverlay: false,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: 0.2),
+                                  Colors.black.withValues(alpha: 0.7),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Content
+                  Padding(
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Day badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                          ),
+                          child: Text(
+                            'Day $currentDay of $totalDays',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+
+                        // Trip name
+                        Text(
+                          trip.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+
+                        // Destination
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, color: Colors.white70, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              trip.destination ?? 'No destination',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+
+                        // What's Next section
+                        _buildWhatsNextPreview(context, trip.id, themeData),
+
+                        const SizedBox(height: AppTheme.spacingMd),
+
+                        // Members and Open button
+                        Row(
+                          children: [
+                            // Member avatars
+                            Row(
+                              children: [
+                                const Icon(Icons.people, color: Colors.white70, size: 16),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '${primaryTrip.members.length} travelers',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            // Open trip button
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Open Trip',
+                                    style: TextStyle(
+                                      color: themeData.primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(Icons.arrow_forward, size: 16, color: themeData.primaryColor),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Show other active trips if any
+          if (activeTrips.length > 1) ...[
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              '+${activeTrips.length - 1} more active ${activeTrips.length == 2 ? 'trip' : 'trips'}',
+              style: TextStyle(
+                color: AppTheme.neutral600,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Build "What's Next" preview from itinerary
+  Widget _buildWhatsNextPreview(BuildContext context, String tripId, AppThemeData themeData) {
+    final itineraryAsync = ref.watch(tripItineraryProvider(tripId));
+
+    return itineraryAsync.when(
+      data: (items) {
+        // Find the next upcoming activity
+        final now = DateTime.now();
+        ItineraryItemModel? nextItem;
+
+        for (final item in items) {
+          if (item.startTime != null && item.startTime!.isAfter(now)) {
+            if (nextItem == null || item.startTime!.isBefore(nextItem.startTime!)) {
+              nextItem = item;
+            }
+          }
+        }
+
+        if (nextItem == null) {
+          return const SizedBox.shrink();
+        }
+
+        final timeFormat = DateFormat('h:mm a');
+
+        return Container(
+          padding: const EdgeInsets.all(AppTheme.spacingSm),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Icon(Icons.schedule, color: Colors.white, size: 16),
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "What's Next",
+                      style: TextStyle(
+                        color: Colors.white60,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      '${nextItem.title} @ ${timeFormat.format(nextItem.startTime!)}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+    );
+  }
+
+  /// Build quick actions section when no active trip
+  Widget _buildQuickActionsSection(BuildContext context, AppThemeData themeData) {
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      child: Row(
+        children: [
+          // New Trip button
+          Expanded(
+            child: _buildBigActionButton(
+              context,
+              icon: Icons.add_circle,
+              label: 'New Trip',
+              color: themeData.primaryColor,
+              onTap: () => _showCreateTripOptions(context, themeData),
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingMd),
+          // Ideas/Templates button
+          Expanded(
+            child: _buildBigActionButton(
+              context,
+              icon: Icons.lightbulb_outline,
+              label: 'Get Ideas',
+              color: const Color(0xFFFF9800),
+              onTap: () => context.push('/templates'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build a big action button
+  Widget _buildBigActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 28),
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
               ),
             ),
           ],
@@ -919,31 +1499,267 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _buildTripSection(
+  /// Build "Coming Up" section for upcoming trips
+  Widget _buildComingUpSection(
     BuildContext context,
-    List<TripWithMembers> trips,
-    int startIndex,
+    List<TripWithMembers> upcomingTrips,
+    AppThemeData themeData,
   ) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final tripWithMembers = trips[index];
-            return FadeSlideAnimation(
-              delay: AppAnimations.staggerMedium * (startIndex + index),
-              duration: AppAnimations.medium,
-              child: TripCard(
-                key: ValueKey(tripWithMembers.trip.id),
-                tripWithMembers: tripWithMembers,
-                onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
-                onEdit: () => _editTrip(context, tripWithMembers.trip),
-                onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF5C6BC0).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.schedule, size: 16, color: Color(0xFF5C6BC0)),
               ),
-            );
-          },
-          childCount: trips.length,
+              const SizedBox(width: 10),
+              const Text(
+                'COMING UP',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.2,
+                  color: Color(0xFF5C6BC0),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${upcomingTrips.length} ${upcomingTrips.length == 1 ? 'trip' : 'trips'}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppTheme.neutral500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+
+          // Compact trip list
+          ...upcomingTrips.take(3).map((tripWithMembers) {
+            return _buildCompactTripRow(context, tripWithMembers, themeData);
+          }),
+
+          // Show more if needed
+          if (upcomingTrips.length > 3)
+            Padding(
+              padding: const EdgeInsets.only(top: AppTheme.spacingSm),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() => _statusFilter = 'upcoming');
+                },
+                child: Text(
+                  'See all ${upcomingTrips.length} upcoming trips →',
+                  style: TextStyle(
+                    color: themeData.primaryColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Build compact trip row for upcoming/past trips
+  Widget _buildCompactTripRow(
+    BuildContext context,
+    TripWithMembers tripWithMembers,
+    AppThemeData themeData,
+  ) {
+    final trip = tripWithMembers.trip;
+    final dateFormat = DateFormat('MMM d');
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        context.push('/trips/${trip.id}');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppTheme.spacingXs),
+        padding: const EdgeInsets.all(AppTheme.spacingSm),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(color: AppTheme.neutral200),
         ),
+        child: Row(
+          children: [
+            // Thumbnail
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: DestinationImage(
+                  tripName: trip.destination ?? trip.name,
+                  height: 48,
+                  width: 48,
+                  fit: BoxFit.cover,
+                  showOverlay: false,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    trip.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    children: [
+                      if (trip.startDate != null) ...[
+                        Text(
+                          dateFormat.format(trip.startDate!),
+                          style: TextStyle(
+                            color: AppTheme.neutral600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(
+                        '${tripWithMembers.members.length} travelers',
+                        style: TextStyle(
+                          color: AppTheme.neutral500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Arrow
+            Icon(Icons.chevron_right, color: AppTheme.neutral400, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build "Past Trips" collapsible section
+  Widget _buildPastTripsSection(
+    BuildContext context,
+    List<TripWithMembers> completedTrips,
+    AppThemeData themeData,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header (tappable to expand/collapse)
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              setState(() => _pastTripsExpanded = !_pastTripsExpanded);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.success.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.check_circle, size: 16, color: AppTheme.success),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'PAST TRIPS',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                      color: AppTheme.success,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.neutral100,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '${completedTrips.length}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral600,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  AnimatedRotation(
+                    turns: _pastTripsExpanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: AppTheme.neutral500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Collapsed or expanded content
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: _pastTripsExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox.shrink(),
+            secondChild: Column(
+              children: [
+                const SizedBox(height: AppTheme.spacingSm),
+                ...completedTrips.take(5).map((tripWithMembers) {
+                  return _buildCompactTripRow(context, tripWithMembers, themeData);
+                }),
+                if (completedTrips.length > 5)
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppTheme.spacingSm),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() => _statusFilter = 'completed');
+                      },
+                      child: Text(
+                        'See all ${completedTrips.length} past trips →',
+                        style: TextStyle(
+                          color: themeData.primaryColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

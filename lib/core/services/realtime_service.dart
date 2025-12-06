@@ -11,8 +11,112 @@ class RealtimeService {
   final SupabaseClient _client;
   final Map<String, RealtimeChannel> _channels = {};
   final Map<String, StreamController> _controllers = {};
+  StreamSubscription<AuthState>? _authSubscription;
+  bool _isReconnecting = false;
 
-  RealtimeService() : _client = SupabaseClientWrapper.client;
+  RealtimeService() : _client = SupabaseClientWrapper.client {
+    _setupAuthListener();
+  }
+
+  /// Setup auth state listener to handle token refresh and reconnection
+  void _setupAuthListener() {
+    _authSubscription = _client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+
+      if (kDebugMode) {
+        debugPrint('🔐 RealtimeService: Auth state changed: $event');
+      }
+
+      if (event == AuthChangeEvent.tokenRefreshed) {
+        // Token was refreshed, reconnect all channels
+        if (kDebugMode) {
+          debugPrint('🔄 Token refreshed, reconnecting all realtime channels...');
+        }
+        _reconnectAllChannels();
+      } else if (event == AuthChangeEvent.signedOut) {
+        // User signed out, cleanup all subscriptions
+        if (kDebugMode) {
+          debugPrint('🔕 User signed out, cleaning up all realtime channels...');
+        }
+        unsubscribeAll();
+      }
+    });
+  }
+
+  /// Reconnect all active channels after token refresh
+  Future<void> _reconnectAllChannels() async {
+    if (_isReconnecting) {
+      if (kDebugMode) {
+        debugPrint('⏳ Already reconnecting, skipping...');
+      }
+      return;
+    }
+
+    _isReconnecting = true;
+    final channelNames = List<String>.from(_channels.keys);
+
+    if (kDebugMode) {
+      debugPrint('🔄 Reconnecting ${channelNames.length} channels...');
+    }
+
+    // Unsubscribe all channels first
+    for (final channelName in channelNames) {
+      try {
+        await _channels[channelName]?.unsubscribe();
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('⚠️ Error unsubscribing $channelName: $e');
+        }
+      }
+    }
+    _channels.clear();
+
+    // Wait a bit for cleanup
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Note: Channels will be re-created on next subscription request
+    // The controllers are kept so existing stream listeners continue to work
+
+    if (kDebugMode) {
+      debugPrint('✅ Channels cleared, ready for reconnection on next access');
+    }
+
+    _isReconnecting = false;
+  }
+
+  /// Check if error is a JWT token error and trigger reconnection if needed
+  bool _handlePossibleTokenError(dynamic error) {
+    final errorStr = error.toString();
+    if (errorStr.contains('InvalidJWTToken') ||
+        errorStr.contains('Token has expired') ||
+        errorStr.contains('JWT')) {
+      if (kDebugMode) {
+        debugPrint('🔐 JWT token error detected, attempting token refresh...');
+      }
+      // Trigger a session refresh
+      _refreshSession();
+      return true;
+    }
+    return false;
+  }
+
+  /// Refresh the auth session
+  Future<void> _refreshSession() async {
+    try {
+      final response = await _client.auth.refreshSession();
+      if (kDebugMode) {
+        if (response.session != null) {
+          debugPrint('✅ Session refreshed successfully');
+        } else {
+          debugPrint('⚠️ Session refresh returned null session');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to refresh session: $e');
+      }
+    }
+  }
 
   /// Subscribe to trip changes
   ///
@@ -61,8 +165,10 @@ class RealtimeService {
               debugPrint('✅ Successfully subscribed to trip:$tripId');
             } else if (status == RealtimeSubscribeStatus.timedOut) {
               debugPrint('❌ Subscription TIMED OUT for trip:$tripId');
+              _refreshSession();
             } else if (status == RealtimeSubscribeStatus.channelError) {
               debugPrint('❌ Channel ERROR for trip:$tripId - Error: $error');
+              _handlePossibleTokenError(error);
             }
           }
         });
@@ -317,8 +423,14 @@ class RealtimeService {
               debugPrint('✅ Successfully subscribed to user trips for user:$userId');
             } else if (status == RealtimeSubscribeStatus.timedOut) {
               debugPrint('❌ User trips subscription TIMED OUT for user:$userId');
+              // Attempt session refresh on timeout
+              _refreshSession();
             } else if (status == RealtimeSubscribeStatus.channelError) {
               debugPrint('❌ User trips channel ERROR for user:$userId - Error: $error');
+              // Check if it's a JWT error and handle it
+              if (_handlePossibleTokenError(error)) {
+                debugPrint('🔄 JWT error detected, will reconnect after token refresh');
+              }
             }
           }
         });
@@ -368,6 +480,8 @@ class RealtimeService {
 
   /// Dispose the service
   void dispose() {
+    _authSubscription?.cancel();
+    _authSubscription = null;
     unsubscribeAll();
   }
 }

@@ -2,6 +2,7 @@
 //
 // Handles Supabase operations for trip templates and AI usage.
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/trip_template.dart';
 import '../../domain/entities/ai_usage.dart';
@@ -172,16 +173,28 @@ class TemplateRemoteDataSource {
     required String tripId,
     required String userId,
   }) async {
-    final response = await _client.rpc(
-      'apply_template_to_trip',
-      params: {
-        'p_template_id': templateId,
-        'p_trip_id': tripId,
-        'p_user_id': userId,
-      },
-    );
+    debugPrint('📋 DataSource: Calling apply_template_to_trip RPC');
+    debugPrint('   templateId: $templateId');
+    debugPrint('   tripId: $tripId');
+    debugPrint('   userId: $userId');
 
-    return response == true;
+    try {
+      final response = await _client.rpc(
+        'apply_template_to_trip',
+        params: {
+          'p_template_id': templateId,
+          'p_trip_id': tripId,
+          'p_user_id': userId,
+        },
+      );
+
+      debugPrint('📋 DataSource: RPC response = $response (type: ${response.runtimeType})');
+      return response == true;
+    } catch (e, stack) {
+      debugPrint('❌ DataSource: RPC error: $e');
+      debugPrint('Stack: $stack');
+      rethrow;
+    }
   }
 
   /// Increment template use count

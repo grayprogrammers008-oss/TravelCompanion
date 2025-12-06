@@ -83,7 +83,7 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
             slivers: [
               // App Bar
               SliverAppBar(
-                expandedHeight: _isSearching ? 200 : 160,
+                expandedHeight: _isSearching ? 210 : 180,
                 floating: false,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
@@ -116,9 +116,9 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(
                           AppTheme.spacing3xl,
+                          AppTheme.spacingSm,
                           AppTheme.spacingLg,
-                          AppTheme.spacingLg,
-                          AppTheme.spacingMd,
+                          AppTheme.spacingSm,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

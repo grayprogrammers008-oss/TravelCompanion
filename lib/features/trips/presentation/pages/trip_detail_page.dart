@@ -20,6 +20,7 @@ import '../providers/trip_providers.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
+import '../../../expenses/presentation/widgets/quick_expense_sheet.dart';
 import '../../../checklists/presentation/providers/checklist_providers.dart';
 import '../../../messaging/presentation/providers/conversation_providers.dart';
 
@@ -126,13 +127,30 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   stretch: true,
                   backgroundColor: themeData.primaryColor,
                   foregroundColor: Colors.white,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/trips');
+                      }
+                    },
+                  ),
                   flexibleSpace: FlexibleSpaceBar(
+                    titlePadding: const EdgeInsets.only(
+                      left: 50, // Account for back button
+                      right: 50, // Account for action buttons
+                      bottom: 16,
+                    ),
                     title: Text(
                       trip.trip.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 18,
+                        fontSize: 16,
                         shadows: [
                           Shadow(
                             color: Colors.black87,
@@ -181,6 +199,12 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                               top: MediaQuery.of(context).padding.top + 60,
                               left: AppTheme.spacingMd,
                               child: _buildTripStatusBadge(context, trip),
+                            ),
+                            // Member avatars (top right) - with padding to prevent corner clipping
+                            Positioned(
+                              top: MediaQuery.of(context).padding.top + 70, // Moved down for corner clearance
+                              right: AppTheme.spacingMd + 24, // Larger padding for rounded corner clearance
+                              child: _buildHeroMemberAvatars(trip.members),
                             ),
                             // Glassmorphic info card at bottom
                             Positioned(
@@ -361,6 +385,79 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
+  /// Build overlapping member avatars for the hero section
+  Widget _buildHeroMemberAvatars(List<TripMemberModel> members) {
+    const maxVisible = 3;
+    final visibleMembers = members.take(maxVisible).toList();
+    final remainingCount = members.length - maxVisible;
+
+    if (visibleMembers.isEmpty) return const SizedBox.shrink();
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Overlapping avatars
+        SizedBox(
+          width: visibleMembers.length == 1
+              ? 36.0
+              : (visibleMembers.length * 24.0) + 12.0,
+          height: 36,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: List.generate(visibleMembers.length, (index) {
+              final member = visibleMembers[index];
+              return Positioned(
+                left: index * 24.0,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: UserAvatarWidget(
+                      imageUrl: member.avatarUrl,
+                      userName: member.fullName ?? member.email,
+                      size: 32,
+                      showBorder: false,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+        // "+N more" badge if there are more members
+        if (remainingCount > 0) ...[
+          const SizedBox(width: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              '+$remainingCount',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _buildHeroInfoCard(BuildContext context, dynamic trip) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppTheme.radiusLg),
@@ -498,7 +595,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               error: (e, s) => '₹0',
             ),
             subtitle: expensesAsync.when(
-              data: (expenses) => '${expenses.length} items',
+              data: (expenses) => '${expenses.length} items • Tap to view',
               loading: () => 'Loading',
               error: (e, s) => 'Error',
             ),
@@ -1467,21 +1564,16 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
       // Active/Upcoming trip: Show add/action focused actions
       actions.addAll([
         _QuickActionCard(
-          icon: Icons.add_card,
-          label: 'Add Expense',
+          icon: Icons.bolt,
+          label: 'Quick Expense',
           color: const Color(0xFF4CAF93), // Soft teal green
           onTap: () {
             HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/expenses/add');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.event_note,
-          label: 'Add Activity',
-          color: const Color(0xFF64B5F6), // Soft sky blue
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/itinerary/add');
+            showQuickExpenseSheet(
+              context: context,
+              tripId: widget.tripId,
+              trip: trip,
+            );
           },
         ),
         _QuickActionCard(
@@ -2224,10 +2316,17 @@ class _StatCardState extends State<_StatCard> {
                     child: Icon(widget.icon, size: 14, color: Colors.white),
                   ),
                   const Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 10,
-                    color: AppTheme.neutral400,
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: widget.iconColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 10,
+                      color: widget.iconColor,
+                    ),
                   ),
                 ],
               ),

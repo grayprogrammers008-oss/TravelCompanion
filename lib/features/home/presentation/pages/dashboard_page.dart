@@ -306,10 +306,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   top: AppTheme.spacingMd,
                   child: _buildProgressBadge(context, dayNumber, totalDays, themeData),
                 ),
-              // Member Avatars - Top Right
+              // Member Avatars - Top Right (aligned with Day badge on left)
               Positioned(
                 right: AppTheme.spacingMd,
-                top: AppTheme.spacingMd,
+                top: AppTheme.spacingMd, // Same as left badge
                 child: _buildMemberAvatars(members),
               ),
               // Content with glassmorphism card
@@ -577,55 +577,49 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         // Stacked avatars
         SizedBox(
           // Calculate width: first avatar + (overlap * remaining avatars) + optional +N badge
-          width: 32.0 + (displayMembers.length - 1) * 22.0 + (remainingCount > 0 ? 22.0 : 0),
+          width: 36.0 + (displayMembers.length - 1) * 26.0 + (remainingCount > 0 ? 26.0 : 0),
           height: 36,
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
               for (int i = 0; i < displayMembers.length; i++)
                 Positioned(
-                  left: i * 22.0,
+                  left: i * 26.0,
                   child: Container(
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 4,
-                        ),
-                      ],
                     ),
-                    child: UserAvatarWidget(
-                      imageUrl: displayMembers[i].avatarUrl,
-                      userName: displayMembers[i].fullName ?? displayMembers[i].email,
-                      size: 32,
+                    child: ClipOval(
+                      child: UserAvatarWidget(
+                        imageUrl: displayMembers[i].avatarUrl,
+                        userName: displayMembers[i].fullName ?? displayMembers[i].email,
+                        size: 32,
+                        showBorder: false,
+                      ),
                     ),
                   ),
                 ),
               // +N indicator
               if (remainingCount > 0)
                 Positioned(
-                  left: displayMembers.length * 22.0,
+                  left: displayMembers.length * 26.0,
                   child: Container(
-                    width: 32,
-                    height: 32,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 4,
-                        ),
-                      ],
                     ),
                     child: Center(
                       child: Text(
                         '+$remainingCount',
                         style: TextStyle(
                           color: AppTheme.neutral700,
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

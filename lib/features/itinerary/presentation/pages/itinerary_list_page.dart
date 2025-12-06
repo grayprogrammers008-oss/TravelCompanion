@@ -138,6 +138,18 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Check if we can pop, otherwise go to trip detail
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              // Navigate to trip detail page if no history
+              context.go('/trips/${widget.tripId}');
+            }
+          },
+        ),
         title: _isSearching
             ? TextField(
                 controller: _searchController,

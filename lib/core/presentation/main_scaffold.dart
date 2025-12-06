@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/home/presentation/pages/dashboard_page.dart';
 import '../../features/trips/presentation/pages/home_page.dart';
 import '../../features/trips/presentation/pages/browse_trips_page.dart';
+import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/expenses/presentation/pages/expenses_home_page.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
 
@@ -129,6 +130,21 @@ class ProfileShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MainScaffold(currentIndex: 4, child: ProfilePage());
+  }
+}
+
+/// Shell route for trip detail page - keeps bottom nav visible
+class TripDetailShell extends StatelessWidget {
+  final String tripId;
+
+  const TripDetailShell({super.key, required this.tripId});
+
+  @override
+  Widget build(BuildContext context) {
+    return MainScaffold(
+      currentIndex: 1, // Trips tab
+      child: TripDetailPage(tripId: tripId),
+    );
   }
 }
 

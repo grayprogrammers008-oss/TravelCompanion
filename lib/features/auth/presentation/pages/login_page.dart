@@ -30,8 +30,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // Test user dropdown state
-  String? _selectedTestUser;
+  // User dropdown state
+  String? _selectedUserId;
   bool _configLoaded = false;
 
   @override
@@ -54,7 +54,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
     ));
     _animationController.forward();
 
-    // Load test users configuration
+    // Load test users configuration (for password lookup)
     _loadTestConfig();
   }
 
@@ -63,10 +63,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
     if (mounted) {
       setState(() {
         _configLoaded = true;
-        // Set initial selected user to the first one in the list
-        if (TestUsersConfig.testUsers.isNotEmpty) {
-          _selectedTestUser = TestUsersConfig.testUsers.first['name'];
-        }
       });
     }
   }
@@ -79,23 +75,35 @@ class _LoginPageState extends ConsumerState<LoginPage>
     super.dispose();
   }
 
-  void _onTestUserSelected(String? userName) {
-    if (userName == null) return;
+  void _onUserSelected(String? userId, List<LoginUserModel> users) {
+    if (userId == null) return;
 
     setState(() {
-      _selectedTestUser = userName;
+      _selectedUserId = userId;
 
       // Check if it's the empty placeholder option
-      if (userName == 'Select User' || userName.isEmpty) {
+      if (userId.isEmpty) {
         _emailController.clear();
         _passwordController.clear();
         return;
       }
 
-      // Fill in the selected user's credentials
-      final user = TestUsersConfig.testUsers.firstWhere((u) => u['name'] == userName);
-      _emailController.text = user['email']!;
-      _passwordController.text = user['password']!;
+      // Find the selected user from database users
+      final user = users.firstWhere(
+        (u) => u.id == userId,
+        orElse: () => const LoginUserModel(id: '', email: ''),
+      );
+
+      if (user.email.isNotEmpty) {
+        _emailController.text = user.email;
+
+        // Try to find password from test config (if available)
+        final testUser = TestUsersConfig.testUsers.firstWhere(
+          (u) => u['email']?.toLowerCase() == user.email.toLowerCase(),
+          orElse: () => {'password': ''},
+        );
+        _passwordController.text = testUser['password'] ?? '';
+      }
     });
   }
 
@@ -439,65 +447,110 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                   ),
                                   const SizedBox(height: AppTheme.spacingXl),
 
-                                  // TEMPORARY: Test User Selector (only shown if enabled and config loaded)
+                                  // User Selector - fetches all users from database
                                   if (_configLoaded && TestUsersConfig.enableTestUserDropdown) ...[
-                                    Container(
-                                      padding: const EdgeInsets.all(AppTheme.spacingMd),
-                                      decoration: BoxDecoration(
-                                        color: Colors.amber.withValues(alpha: 0.1),
-                                        border: Border.all(color: Colors.amber),
-                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.bug_report, color: Colors.amber, size: 16),
-                                              const SizedBox(width: AppTheme.spacingXs),
-                                              Text(
-                                                'Testing Mode',
-                                                style: context.bodySmall.copyWith(
-                                                  color: Colors.amber.shade900,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                    Consumer(
+                                      builder: (context, ref, child) {
+                                        final usersAsync = ref.watch(allUsersForLoginProvider);
+
+                                        return usersAsync.when(
+                                          data: (users) {
+                                            if (users.isEmpty) {
+                                              return const SizedBox.shrink();
+                                            }
+
+                                            return Container(
+                                              padding: const EdgeInsets.all(AppTheme.spacingMd),
+                                              decoration: BoxDecoration(
+                                                color: Colors.amber.withValues(alpha: 0.1),
+                                                border: Border.all(color: Colors.amber),
+                                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                                               ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: AppTheme.spacingSm),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: AppTheme.spacingMd,
-                                              vertical: AppTheme.spacingSm,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                              border: Border.all(color: Colors.grey.shade300),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.person, size: 20, color: Colors.grey),
-                                                const SizedBox(width: AppTheme.spacingSm),
-                                                Expanded(
-                                                  child: DropdownButton<String>(
-                                                    value: _selectedTestUser,
-                                                    isExpanded: true,
-                                                    underline: const SizedBox(),
-                                                    items: TestUsersConfig.testUsers
-                                                        .map((user) => DropdownMenuItem<String>(
-                                                              value: user['name'],
-                                                              child: Text(user['name']!),
-                                                            ))
-                                                        .toList(),
-                                                    onChanged: authState.isLoading ? null : _onTestUserSelected,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Icon(Icons.bug_report, color: Colors.amber, size: 16),
+                                                      const SizedBox(width: AppTheme.spacingXs),
+                                                      Text(
+                                                        'Quick Login (${users.length} users)',
+                                                        style: context.bodySmall.copyWith(
+                                                          color: Colors.amber.shade900,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
+                                                  const SizedBox(height: AppTheme.spacingSm),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: AppTheme.spacingMd,
+                                                      vertical: AppTheme.spacingSm,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                                      border: Border.all(color: Colors.grey.shade300),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        const Icon(Icons.person, size: 20, color: Colors.grey),
+                                                        const SizedBox(width: AppTheme.spacingSm),
+                                                        Expanded(
+                                                          child: DropdownButton<String>(
+                                                            value: _selectedUserId,
+                                                            isExpanded: true,
+                                                            underline: const SizedBox(),
+                                                            hint: const Text('Select a user...'),
+                                                            items: [
+                                                              const DropdownMenuItem<String>(
+                                                                value: '',
+                                                                child: Text('Select User'),
+                                                              ),
+                                                              ...users.map((user) => DropdownMenuItem<String>(
+                                                                value: user.id,
+                                                                child: Text(
+                                                                  user.displayName,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                ),
+                                                              )),
+                                                            ],
+                                                            onChanged: authState.isLoading
+                                                                ? null
+                                                                : (userId) => _onUserSelected(userId, users),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                          loading: () => Container(
+                                            padding: const EdgeInsets.all(AppTheme.spacingMd),
+                                            decoration: BoxDecoration(
+                                              color: Colors.amber.withValues(alpha: 0.1),
+                                              border: Border.all(color: Colors.amber),
+                                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                            ),
+                                            child: const Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: CircularProgressIndicator(strokeWidth: 2),
                                                 ),
+                                                SizedBox(width: AppTheme.spacingSm),
+                                                Text('Loading users...'),
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                          error: (error, _) => const SizedBox.shrink(),
+                                        );
+                                      },
                                     ),
                                     const SizedBox(height: AppTheme.spacingMd),
                                   ],

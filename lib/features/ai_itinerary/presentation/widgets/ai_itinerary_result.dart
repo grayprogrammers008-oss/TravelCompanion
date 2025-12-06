@@ -2,6 +2,7 @@
 //
 // Displays the generated AI itinerary with option to apply to trip.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,9 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/services/share_service.dart';
+import '../../../../core/network/supabase_client.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
+import '../../../checklists/presentation/providers/checklist_providers.dart';
 import '../../domain/entities/ai_itinerary.dart';
 
 class AiItineraryResultPage extends ConsumerWidget {
@@ -40,7 +43,8 @@ class AiItineraryResultPage extends ConsumerWidget {
         backgroundColor: themeData.primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: onBack,
+          onPressed: () => _showDiscardDialog(context),
+          tooltip: 'Go back',
         ),
         title: const Text(
           'Your AI Itinerary',
@@ -260,6 +264,21 @@ class AiItineraryResultPage extends ConsumerWidget {
         ),
         child: Row(
           children: [
+            // Close button to exit without creating trip
+            OutlinedButton.icon(
+              onPressed: () => _showDiscardDialog(context),
+              icon: const Icon(Icons.close),
+              label: const Text('Discard'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.neutral600,
+                side: const BorderSide(color: AppTheme.neutral300),
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppTheme.spacingMd,
+                  horizontal: AppTheme.spacingMd,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
             // If we have a tripId, show "Apply to Trip" as primary action
             // Otherwise show "Create Trip" as primary action
             if (tripId != null) ...[
@@ -291,6 +310,45 @@ class AiItineraryResultPage extends ConsumerWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  /// Show discard confirmation dialog
+  void _showDiscardDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber, color: Colors.orange),
+            SizedBox(width: 12),
+            Text('Discard Itinerary?'),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to discard this AI-generated itinerary? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              // Clear the itinerary and navigate back to home
+              onBack();
+              if (context.mounted) {
+                context.go('/home');
+              }
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('Discard'),
+          ),
+        ],
       ),
     );
   }
@@ -427,8 +485,13 @@ class AiItineraryResultPage extends ConsumerWidget {
     );
 
     try {
-      final controller = ref.read(itineraryControllerProvider.notifier);
-      int createdCount = 0;
+      final itineraryController = ref.read(itineraryControllerProvider.notifier);
+      final checklistController = ref.read(checklistControllerProvider.notifier);
+      final currentUserId = SupabaseClientWrapper.currentUserId;
+
+      int activitiesCount = 0;
+      int checklistsCount = 0;
+      int checklistItemsCount = 0;
 
       // Create itinerary items for each activity
       for (final day in itinerary.days) {
@@ -457,7 +520,7 @@ class AiItineraryResultPage extends ConsumerWidget {
                 : '💡 Tip: ${activity.tip}';
           }
 
-          await controller.createItem(
+          await itineraryController.createItem(
             tripId: tripId!,
             title: activity.title,
             description: fullDescription,
@@ -468,14 +531,91 @@ class AiItineraryResultPage extends ConsumerWidget {
             orderIndex: orderIndex,
           );
 
-          createdCount++;
+          activitiesCount++;
           orderIndex++;
+        }
+      }
+
+      // Create checklists from packing list (grouped by category)
+      if (kDebugMode) {
+        debugPrint('📋 Packing list count: ${itinerary.packingList.length}');
+        debugPrint('📋 Current user ID: $currentUserId');
+      }
+
+      if (itinerary.packingList.isNotEmpty && currentUserId != null) {
+        // Group packing items by category
+        final categories = <String, List<AiPackingItem>>{};
+        for (final item in itinerary.packingList) {
+          final category = item.category ?? 'Other';
+          categories.putIfAbsent(category, () => []).add(item);
+        }
+
+        if (kDebugMode) {
+          debugPrint('📋 Creating ${categories.length} checklists from AI packing list');
+          debugPrint('📋 Categories: ${categories.keys.toList()}');
+        }
+
+        // Create a checklist for each category
+        for (final entry in categories.entries) {
+          final categoryName = entry.key;
+          final items = entry.value;
+
+          if (kDebugMode) {
+            debugPrint('📋 Creating checklist for category: $categoryName with ${items.length} items');
+          }
+
+          // Create the checklist
+          final checklist = await checklistController.createChecklist(
+            tripId: tripId!,
+            name: 'Packing: $categoryName',
+            createdBy: currentUserId,
+          );
+
+          if (kDebugMode) {
+            debugPrint('📋 Checklist created: ${checklist?.id ?? "NULL - FAILED!"}');
+            if (checklist == null) {
+              debugPrint('❌ Failed to create checklist! Check controller state for error.');
+              final controllerState = ref.read(checklistControllerProvider);
+              debugPrint('❌ Controller error: ${controllerState.error}');
+            }
+          }
+
+          if (checklist != null) {
+            checklistsCount++;
+
+            // Add items to the checklist
+            for (final packingItem in items) {
+              // Include "Essential" marker in title if item is essential
+              final itemTitle = packingItem.isEssential
+                  ? '⭐ ${packingItem.item}'
+                  : packingItem.item;
+
+              final addedItem = await checklistController.addItem(
+                checklistId: checklist.id,
+                title: itemTitle,
+              );
+
+              if (kDebugMode && addedItem == null) {
+                debugPrint('❌ Failed to add item: $itemTitle');
+              }
+
+              checklistItemsCount++;
+            }
+
+            if (kDebugMode) {
+              debugPrint('✅ Created checklist "$categoryName" with ${items.length} items');
+            }
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('⚠️ Skipping checklist creation: packingList empty=${itinerary.packingList.isEmpty}, userId null=${currentUserId == null}');
         }
       }
 
       // Clear the success message from controller to prevent repeated SnackBars
       // on the itinerary list page (which listens for successMessage changes)
-      controller.clearSuccessMessage();
+      itineraryController.clearSuccessMessage();
 
       // Close loading dialog
       if (context.mounted) {
@@ -484,10 +624,17 @@ class AiItineraryResultPage extends ConsumerWidget {
 
       // Show success message
       if (context.mounted) {
+        String message = 'Successfully added $activitiesCount activities';
+        if (checklistsCount > 0) {
+          message += ' and $checklistItemsCount packing items in $checklistsCount checklists';
+        }
+        message += ' to your trip!';
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Successfully added $createdCount activities to your trip!'),
+            content: Text(message),
             backgroundColor: Colors.green,
+            duration: const Duration(seconds: 4),
           ),
         );
 

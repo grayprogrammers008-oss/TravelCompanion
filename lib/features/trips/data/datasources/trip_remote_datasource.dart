@@ -418,8 +418,16 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
               debugPrint('✅ Successfully subscribed to trips table updates');
             } else if (status == RealtimeSubscribeStatus.timedOut) {
               debugPrint('❌ Trips table subscription TIMED OUT');
+              // Attempt to refresh session on timeout
+              _client.auth.refreshSession();
             } else if (status == RealtimeSubscribeStatus.channelError) {
               debugPrint('❌ Trips table subscription ERROR: $error');
+              // Check if JWT error and attempt refresh
+              final errorStr = error.toString();
+              if (errorStr.contains('InvalidJWTToken') || errorStr.contains('Token has expired')) {
+                debugPrint('🔄 JWT error detected, refreshing session...');
+                _client.auth.refreshSession();
+              }
             }
           }
         });

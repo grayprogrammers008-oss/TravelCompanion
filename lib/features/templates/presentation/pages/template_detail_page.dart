@@ -916,8 +916,19 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
-                  // Navigate to create trip with template
-                  context.push('/trips/create?templateId=${template.id}');
+                  // Navigate to create trip with template params
+                  final queryParams = <String, String>{
+                    'templateId': template.id,
+                    'destination': template.destination,
+                    'durationDays': template.durationDays.toString(),
+                  };
+                  if (template.budgetMax != null) {
+                    queryParams['budget'] = template.budgetMax.toString();
+                  }
+                  final queryString = queryParams.entries
+                      .map((e) => '${e.key}=${Uri.encodeComponent(e.value)}')
+                      .join('&');
+                  context.push('/trips/create?$queryString');
                 },
                 icon: const Icon(Icons.add_circle_outline),
                 label: const Text('Create New Trip'),
