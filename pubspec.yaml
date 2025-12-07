@@ -95,7 +95,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
 
   # Speech Recognition (on-device, free)
-  speech_to_text: ^6.6.2
+  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:

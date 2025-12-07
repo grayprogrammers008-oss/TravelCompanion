@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/services/voice_input_service.dart';
-import '../../../../core/widgets/voice_wave_animation.dart';
+import '../../../../core/widgets/ai_sphere_animation.dart';
 import '../providers/trip_providers.dart';
 
 class VoiceTripPage extends ConsumerStatefulWidget {
@@ -31,6 +31,7 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
   bool _isListening = false;
   bool _isProcessing = false;
   bool _hasError = false;
+  bool _isSimulator = false;
   String _errorMessage = '';
   String _transcribedText = '';
   String _interimText = '';
@@ -146,12 +147,22 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
     };
 
     final initialized = await _voiceService.initialize();
-    setState(() => _isInitialized = initialized);
 
-    if (!initialized && mounted) {
+    setState(() {
+      _isInitialized = initialized;
+      _isSimulator = _voiceService.isRunningOnSimulator;
+    });
+
+    // On simulator, show demo mode message instead of error
+    if (!initialized && _isSimulator && mounted) {
+      setState(() {
+        _hasError = false; // Not an error, just demo mode
+        _isInitialized = true; // Allow interaction for demo
+      });
+    } else if (!initialized && mounted) {
       setState(() {
         _hasError = true;
-        _errorMessage = 'Speech recognition not available on this device';
+        _errorMessage = 'Speech recognition not available on this device.';
       });
     }
   }
@@ -167,8 +178,83 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
         _transcribedText = '';
         _parsedDetails = null;
       });
-      await _voiceService.startListening();
+
+      // Use demo mode on simulator
+      if (_isSimulator) {
+        await _voiceService.runDemoMode();
+      } else {
+        await _voiceService.startListening();
+      }
     }
+  }
+
+  /// Random trip ideas for "Surprise Me" feature
+  static const List<Map<String, dynamic>> _randomTripIdeas = [
+    {'destination': 'Goa', 'duration': 3, 'type': 'Beach vacation'},
+    {'destination': 'Manali', 'duration': 5, 'type': 'Mountain adventure'},
+    {'destination': 'Kerala', 'duration': 4, 'type': 'Backwaters & nature'},
+    {'destination': 'Jaipur', 'duration': 3, 'type': 'Heritage & culture'},
+    {'destination': 'Rishikesh', 'duration': 4, 'type': 'Adventure & wellness'},
+    {'destination': 'Udaipur', 'duration': 3, 'type': 'Romantic getaway'},
+    {'destination': 'Andaman Islands', 'duration': 6, 'type': 'Island paradise'},
+    {'destination': 'Ladakh', 'duration': 7, 'type': 'Ultimate road trip'},
+    {'destination': 'Varanasi', 'duration': 3, 'type': 'Spiritual journey'},
+    {'destination': 'Darjeeling', 'duration': 4, 'type': 'Hill station escape'},
+    {'destination': 'Hampi', 'duration': 3, 'type': 'Historical exploration'},
+    {'destination': 'Munnar', 'duration': 4, 'type': 'Tea gardens & nature'},
+    {'destination': 'Coorg', 'duration': 3, 'type': 'Coffee plantation retreat'},
+    {'destination': 'Ooty', 'duration': 3, 'type': 'Queen of hill stations'},
+    {'destination': 'Shimla', 'duration': 4, 'type': 'Colonial charm'},
+    {'destination': 'Pondicherry', 'duration': 3, 'type': 'French Riviera of India'},
+    {'destination': 'Rann of Kutch', 'duration': 4, 'type': 'White desert wonder'},
+    {'destination': 'Kaziranga', 'duration': 3, 'type': 'Wildlife safari'},
+    {'destination': 'Spiti Valley', 'duration': 6, 'type': 'Cold desert adventure'},
+    {'destination': 'Alleppey', 'duration': 3, 'type': 'Houseboat experience'},
+    {'destination': 'Bali, Indonesia', 'duration': 5, 'type': 'Tropical paradise'},
+    {'destination': 'Bangkok, Thailand', 'duration': 4, 'type': 'City & culture'},
+    {'destination': 'Singapore', 'duration': 4, 'type': 'Modern Asian city'},
+    {'destination': 'Dubai', 'duration': 5, 'type': 'Luxury & adventure'},
+    {'destination': 'Maldives', 'duration': 5, 'type': 'Island luxury'},
+  ];
+
+  /// Generate a random trip idea
+  void _generateRandomTrip() {
+    HapticFeedback.mediumImpact();
+
+    final random = math.Random();
+    final idea = _randomTripIdeas[random.nextInt(_randomTripIdeas.length)];
+
+    // Create a simulated voice input phrase
+    final phrases = [
+      'Plan a trip to ${idea['destination']} for ${idea['duration']} days',
+      '${idea['duration']} day ${idea['type'].toString().toLowerCase()} to ${idea['destination']}',
+      'Let\'s go to ${idea['destination']} for a ${idea['type'].toString().toLowerCase()}',
+      'Book a ${idea['duration']} day trip to ${idea['destination']}',
+    ];
+    final phrase = phrases[random.nextInt(phrases.length)];
+
+    // Calculate dates
+    final startDaysFromNow = random.nextInt(30) + 7; // 7-37 days from now
+    final startDate = DateTime.now().add(Duration(days: startDaysFromNow));
+    final endDate = startDate.add(Duration(days: (idea['duration'] as int) - 1));
+
+    setState(() {
+      _hasError = false;
+      _transcribedText = phrase;
+      _parsedDetails = VoiceTripDetails(
+        destination: idea['destination'] as String,
+        startDate: startDate,
+        endDate: endDate,
+        numberOfDays: idea['duration'] as int,
+        tripType: idea['type'] as String?,
+        companions: const [],
+        rawText: phrase,
+      );
+    });
+
+    // Show a subtle animation by triggering the pulse
+    _scaleController.reset();
+    _scaleController.forward();
   }
 
   Future<void> _createTrip() async {
@@ -304,39 +390,47 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
                   opacity: _fadeAnimation,
                   child: SlideTransition(
                     position: _slideAnimation,
-                    child: Column(
-                      children: [
-                        const Spacer(flex: 1),
+                    child: SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: size.height - 150, // Account for app bar and safe area
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const SizedBox(height: 16),
 
-                        // Voice animation orb
-                        _buildVoiceOrb(themeData, size),
+                            // Voice animation orb
+                            _buildVoiceOrb(themeData, size),
 
-                        const SizedBox(height: 32),
+                            const SizedBox(height: 24),
 
-                        // Status text
-                        _buildStatusText(themeData),
+                            // Status text
+                            _buildStatusText(themeData),
 
-                        const Spacer(flex: 1),
+                            const SizedBox(height: 16),
 
-                        // Transcribed text area
-                        if (_transcribedText.isNotEmpty || _interimText.isNotEmpty)
-                          _buildTranscriptionArea(themeData),
+                            // Transcribed text area
+                            if (_transcribedText.isNotEmpty || _interimText.isNotEmpty)
+                              _buildTranscriptionArea(themeData),
 
-                        // Parsed details
-                        if (_parsedDetails != null && _parsedDetails!.hasDestination)
-                          _buildParsedDetails(themeData),
+                            // Parsed details
+                            if (_parsedDetails != null && _parsedDetails!.hasDestination)
+                              _buildParsedDetails(themeData),
 
-                        const Spacer(flex: 1),
+                            const SizedBox(height: 16),
 
-                        // Hint text
-                        if (!_isListening && _transcribedText.isEmpty)
-                          _buildHintText(),
+                            // Hint text
+                            if (!_isListening && _transcribedText.isEmpty)
+                              _buildHintText(),
 
-                        // Action buttons
-                        _buildActionButtons(themeData),
+                            // Action buttons
+                            _buildActionButtons(themeData),
 
-                        const SizedBox(height: 24),
-                      ],
+                            const SizedBox(height: 24),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -401,84 +495,54 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
   }
 
   Widget _buildVoiceOrb(AppThemeData themeData, Size size) {
+    final sphereSize = size.width * 0.7;
+
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
         onTap: _isInitialized ? _toggleListening : null,
-        child: AnimatedBuilder(
-          animation: _pulseAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _isListening ? _pulseAnimation.value : 1.0,
-              child: Container(
-                width: size.width * 0.6,
-                height: size.width * 0.6,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: themeData.primaryColor.withValues(alpha: 0.3),
-                      blurRadius: _isListening ? 60 : 30,
-                      spreadRadius: _isListening ? 10 : 5,
+        child: SizedBox(
+          width: sphereSize,
+          height: sphereSize,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // AI Sphere Animation - Sci-Fi mesh sphere
+              AISphereAnimation(
+                size: sphereSize,
+                isActive: _isListening,
+                soundLevel: _soundLevel,
+                primaryColor: const Color(0xFF00D9FF), // Cyan
+                glowColor: const Color(0xFF00D9FF),
+              ),
+              // Microphone icon overlay when not listening
+              if (!_isListening)
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black.withValues(alpha: 0.3),
+                    border: Border.all(
+                      color: const Color(0xFF00D9FF).withValues(alpha: 0.5),
+                      width: 2,
                     ),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF00D9FF).withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.mic,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                 ),
-                child: _isListening
-                    ? VoiceWaveAnimation(
-                        soundLevel: _soundLevel,
-                        isListening: _isListening,
-                        primaryColor: themeData.primaryColor,
-                        secondaryColor: const Color(0xFF8B5CF6),
-                        size: size.width * 0.6,
-                      )
-                    : _buildIdleOrb(themeData, size),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIdleOrb(AppThemeData themeData, Size size) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            themeData.primaryColor.withValues(alpha: 0.8),
-            themeData.primaryColor.withValues(alpha: 0.4),
-            themeData.primaryColor.withValues(alpha: 0.1),
-          ],
-          stops: const [0.0, 0.6, 1.0],
-        ),
-      ),
-      child: Center(
-        child: Container(
-          width: size.width * 0.25,
-          height: size.width * 0.25,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.3),
-                themeData.primaryColor,
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: themeData.primaryColor.withValues(alpha: 0.5),
-                blurRadius: 20,
-                spreadRadius: 2,
-              ),
+              // When listening, just show the ring animation without any center overlay
             ],
-          ),
-          child: Icon(
-            Icons.mic,
-            size: 48,
-            color: Colors.white.withValues(alpha: 0.9),
           ),
         ),
       ),
@@ -488,25 +552,37 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
   Widget _buildStatusText(AppThemeData themeData) {
     String statusText;
     Color statusColor;
+    IconData? statusIcon;
+    bool isSimulatorError = _errorMessage.contains('simulator') ||
+                            _errorMessage.contains('physical device');
 
     if (_hasError) {
       statusText = _errorMessage;
-      statusColor = Colors.redAccent;
+      statusColor = isSimulatorError ? Colors.orangeAccent : Colors.redAccent;
+      statusIcon = isSimulatorError ? Icons.phone_iphone : Icons.error_outline;
     } else if (_isProcessing) {
       statusText = 'Creating your trip...';
       statusColor = Colors.amber;
+      statusIcon = Icons.auto_awesome;
     } else if (_isListening) {
       statusText = 'Listening...';
       statusColor = themeData.primaryColor;
+      statusIcon = Icons.hearing;
     } else if (_parsedDetails != null && _parsedDetails!.hasDestination) {
       statusText = 'Trip details ready';
       statusColor = Colors.greenAccent;
+      statusIcon = Icons.check_circle;
     } else if (_transcribedText.isNotEmpty) {
       statusText = 'Processing...';
       statusColor = Colors.amber;
+      statusIcon = Icons.psychology;
     } else if (!_isInitialized) {
       statusText = 'Initializing...';
       statusColor = Colors.white54;
+    } else if (_isSimulator) {
+      statusText = 'Demo Mode - Tap to simulate voice input';
+      statusColor = Colors.cyanAccent;
+      statusIcon = Icons.play_circle_outline;
     } else {
       statusText = 'Tap to start speaking';
       statusColor = Colors.white70;
@@ -514,14 +590,48 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      child: Text(
-        statusText,
+      child: Container(
         key: ValueKey(statusText),
-        style: TextStyle(
-          color: statusColor,
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.5,
+        padding: _hasError
+            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 12)
+            : EdgeInsets.zero,
+        margin: _hasError
+            ? const EdgeInsets.symmetric(horizontal: 24)
+            : EdgeInsets.zero,
+        decoration: _hasError
+            ? BoxDecoration(
+                color: statusColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: statusColor.withValues(alpha: 0.3),
+                ),
+              )
+            : null,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (statusIcon != null) ...[
+              Icon(
+                statusIcon,
+                color: statusColor,
+                size: _hasError ? 22 : 20,
+              ),
+              const SizedBox(width: 8),
+            ],
+            Flexible(
+              child: Text(
+                statusText,
+                style: TextStyle(
+                  color: statusColor,
+                  fontSize: _hasError ? 14 : 18,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -729,7 +839,68 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
           _buildHintItem('"Family vacation to Kerala for 5 days"'),
           const SizedBox(height: 8),
           _buildHintItem('"Solo trip to Manali next month"'),
+          const SizedBox(height: 16),
+          // Surprise Me button
+          _buildSurpriseMeButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSurpriseMeButton() {
+    return GestureDetector(
+      onTap: _generateRandomTrip,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+              const Color(0xFF00D9FF).withValues(alpha: 0.3),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              blurRadius: 15,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.shuffle_rounded,
+              color: Colors.white.withValues(alpha: 0.9),
+              size: 20,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Surprise Me!',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.auto_awesome,
+              color: Colors.amber.withValues(alpha: 0.8),
+              size: 16,
+            ),
+          ],
+        ),
       ),
     );
   }

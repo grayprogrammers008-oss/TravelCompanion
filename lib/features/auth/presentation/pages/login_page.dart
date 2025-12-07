@@ -130,11 +130,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
           ),
         );
 
-        // Navigate to home page
+        // Navigate to welcome choice page
         // Small delay to show the success message
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
-          context.go(AppRoutes.home);
+          // TEMPORARY: Go to welcome choice page for design review
+          context.go(AppRoutes.welcomeChoice);
         }
       }
     } catch (e) {

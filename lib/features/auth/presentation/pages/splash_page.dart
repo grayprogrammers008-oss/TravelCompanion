@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
+import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/core/router/app_router.dart';
 import 'package:travel_crew/core/constants/app_constants.dart';
 import 'package:travel_crew/core/theme/theme_extensions.dart';
@@ -32,8 +33,28 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final authState = ref.read(authControllerProvider);
 
     if (authState.user != null) {
-      // User is logged in, go to home
-      context.go(AppRoutes.home);
+      // User is logged in - check if they have trips
+      try {
+        final hasTrips = await ref.read(hasTripsProvider.future);
+
+        if (!mounted) return;
+
+        if (hasTrips) {
+          // User has trips, go directly to dashboard
+          debugPrint('🏠 User has trips, navigating to dashboard');
+          context.go(AppRoutes.dashboard);
+        } else {
+          // User has no trips, show welcome choice page
+          debugPrint('👋 User has no trips, navigating to welcome choice');
+          context.go(AppRoutes.welcomeChoice);
+        }
+      } catch (e) {
+        // On error, default to welcome choice
+        debugPrint('⚠️ Error checking trips: $e, defaulting to welcome choice');
+        if (mounted) {
+          context.go(AppRoutes.welcomeChoice);
+        }
+      }
     } else {
       // User is not logged in, go to login
       context.go(AppRoutes.login);

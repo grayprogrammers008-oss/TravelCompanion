@@ -122,6 +122,22 @@ final userTripsProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref
   }
 });
 
+// Has Trips Provider - Quick check if user has any trips (for routing)
+// Returns true if user has at least one trip, false otherwise
+// Used to decide whether to show Welcome Choice page or Dashboard
+final hasTripsProvider = FutureProvider<bool>((ref) async {
+  final authState = ref.watch(authStateProvider);
+
+  // Not authenticated = no trips
+  if (authState.value == null) {
+    return false;
+  }
+
+  final repository = ref.watch(tripRepositoryProvider);
+  final trips = await repository.getUserTrips();
+  return trips.isNotEmpty;
+});
+
 // Discoverable Trips Provider - Public trips that user can join
 final discoverableTripsProvider = FutureProvider.autoDispose<List<TripWithMembers>>((ref) async {
   final useCase = ref.watch(getDiscoverableTripsUseCaseProvider);

@@ -270,11 +270,23 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<void> deleteTrip(String tripId) async {
     try {
-      await _client
-          .from('trips')
-          .delete()
-          .eq('id', tripId);
+      // Use the admin_delete_trip RPC function to properly cascade delete all related data
+      // This function handles: trip_members, expenses, checklists, itinerary_items, then the trip
+      final result = await _client.rpc('admin_delete_trip', params: {
+        'p_trip_id': tripId,
+      });
+
+      if (result == false) {
+        throw Exception('Trip not found or you do not have permission to delete it');
+      }
+
+      if (kDebugMode) {
+        debugPrint('🗑️ Trip deleted successfully: $tripId');
+      }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to delete trip: $e');
+      }
       throw Exception('Failed to delete trip: $e');
     }
   }

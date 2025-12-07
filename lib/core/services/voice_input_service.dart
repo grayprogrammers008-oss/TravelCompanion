@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 /// Voice input service for speech-to-text functionality
 /// Uses on-device recognition (free, no API costs)
@@ -9,6 +11,7 @@ class VoiceInputService {
   final SpeechToText _speech = SpeechToText();
   bool _isInitialized = false;
   bool _isListening = false;
+  bool _isSimulator = false;
 
   /// Current recognized text
   String _recognizedText = '';
@@ -19,6 +22,9 @@ class VoiceInputService {
 
   /// Whether the service is initialized and available
   bool get isAvailable => _isInitialized;
+
+  /// Whether running on simulator (for demo mode)
+  bool get isRunningOnSimulator => _isSimulator;
 
   /// Sound level for visualization (0.0 to 1.0)
   double _soundLevel = 0.0;
@@ -31,11 +37,35 @@ class VoiceInputService {
   Function()? onListeningStarted;
   Function()? onListeningStopped;
 
+  /// Check if running on simulator/emulator
+  Future<bool> _checkIsSimulator() async {
+    try {
+      if (Platform.isIOS) {
+        final deviceInfo = DeviceInfoPlugin();
+        final iosInfo = await deviceInfo.iosInfo;
+        return !iosInfo.isPhysicalDevice;
+      } else if (Platform.isAndroid) {
+        final deviceInfo = DeviceInfoPlugin();
+        final androidInfo = await deviceInfo.androidInfo;
+        return !androidInfo.isPhysicalDevice;
+      }
+    } catch (e) {
+      debugPrint('⚠️ Could not determine if running on simulator: $e');
+    }
+    return false;
+  }
+
   /// Initialize the speech recognition service
   Future<bool> initialize() async {
     if (_isInitialized) return true;
 
     try {
+      // Check if running on simulator
+      _isSimulator = await _checkIsSimulator();
+      if (_isSimulator) {
+        debugPrint('⚠️ Running on simulator - speech recognition may not work');
+      }
+
       _isInitialized = await _speech.initialize(
         onStatus: _onStatus,
         onError: _onError,
@@ -46,11 +76,17 @@ class VoiceInputService {
         debugPrint('🎤 Voice input service initialized successfully');
       } else {
         debugPrint('❌ Voice input service failed to initialize');
+        if (_isSimulator) {
+          onError?.call('Voice input requires a physical device. Simulators do not have microphone access.');
+        }
       }
 
       return _isInitialized;
     } catch (e) {
       debugPrint('❌ Voice input initialization error: $e');
+      if (_isSimulator) {
+        onError?.call('Voice input requires a physical device. Simulators do not have microphone access.');
+      }
       return false;
     }
   }
@@ -168,12 +204,100 @@ class VoiceInputService {
     }
   }
 
-  /// Handle errors
+  /// Handle errors with user-friendly messages
   void _onError(SpeechRecognitionError error) {
-    debugPrint('❌ Speech error: ${error.errorMsg}');
+    debugPrint('❌ Speech error: ${error.errorMsg} (permanent: ${error.permanent})');
     _isListening = false;
     _soundLevel = 0.0;
-    onError?.call(error.errorMsg);
+
+    // Provide user-friendly error messages
+    String friendlyMessage = _getFriendlyErrorMessage(error.errorMsg);
+    onError?.call(friendlyMessage);
+    onListeningStopped?.call();
+  }
+
+  /// Convert technical error codes to user-friendly messages
+  String _getFriendlyErrorMessage(String errorCode) {
+    // Handle common speech recognition error codes
+    switch (errorCode.toLowerCase()) {
+      case 'error_audio':
+        if (_isSimulator) {
+          return 'Voice input requires a physical device. The simulator cannot access the microphone.';
+        }
+        return 'Microphone error. Please check your microphone permissions.';
+
+      case 'error_no_match':
+        return 'Could not understand. Please speak clearly and try again.';
+
+      case 'error_speech_timeout':
+        return 'No speech detected. Please try again.';
+
+      case 'error_network':
+        return 'Network error. Please check your connection.';
+
+      case 'error_network_timeout':
+        return 'Network timeout. Please try again.';
+
+      case 'error_permission':
+        return 'Microphone permission denied. Please enable it in Settings.';
+
+      case 'error_busy':
+        return 'Speech recognition is busy. Please wait and try again.';
+
+      case 'error_not_recognized':
+      case 'error_retry':
+        if (_isSimulator) {
+          return 'Voice input requires a physical device. The simulator cannot access the microphone.';
+        }
+        return 'Speech not recognized. Please try again.';
+
+      case 'error_server':
+        return 'Speech recognition server error. Please try again later.';
+
+      default:
+        if (_isSimulator) {
+          return 'Voice input requires a physical device. The simulator cannot access the microphone.';
+        }
+        return 'Speech recognition error. Please try again.';
+    }
+  }
+
+  /// Run demo mode with simulated voice input (for simulator testing)
+  Future<void> runDemoMode() async {
+    if (!_isSimulator) return;
+
+    // Simulate listening state
+    _isListening = true;
+    _recognizedText = '';
+    onListeningStarted?.call();
+
+    // Demo phrases to simulate
+    final demoPhrase = 'Plan a trip to Goa for this weekend with family';
+    final words = demoPhrase.split(' ');
+
+    // Simulate speaking word by word with varying sound levels
+    for (int i = 0; i < words.length; i++) {
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      // Simulate sound level
+      _soundLevel = 0.3 + (i % 3) * 0.25;
+      onSoundLevelChange?.call(_soundLevel);
+
+      // Build interim result
+      final interim = words.sublist(0, i + 1).join(' ');
+      onResult?.call(interim, false);
+
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    // Final result
+    await Future.delayed(const Duration(milliseconds: 300));
+    _soundLevel = 0.0;
+    onSoundLevelChange?.call(_soundLevel);
+    _recognizedText = demoPhrase;
+    onResult?.call(demoPhrase, true);
+
+    _isListening = false;
     onListeningStopped?.call();
   }
 
