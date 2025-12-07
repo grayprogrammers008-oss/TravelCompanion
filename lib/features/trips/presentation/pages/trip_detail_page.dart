@@ -23,6 +23,7 @@ import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../expenses/presentation/widgets/quick_expense_sheet.dart';
 import '../../../checklists/presentation/providers/checklist_providers.dart';
 import '../../../messaging/presentation/providers/conversation_providers.dart';
+import '../widgets/trip_qr_share.dart';
 
 class TripDetailPage extends ConsumerStatefulWidget {
   final String tripId;
@@ -1741,6 +1742,29 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
       ),
     );
+    menuItems.add(
+      PopupMenuItem(
+        value: 'share_qr',
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXs),
+              decoration: BoxDecoration(
+                color: Colors.purple.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+              ),
+              child: const Icon(
+                Icons.qr_code_2,
+                color: Colors.purple,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            const Text('Share QR Code'),
+          ],
+        ),
+      ),
+    );
     menuItems.add(const PopupMenuDivider());
 
     // Complete/Reopen options - only for trip owner
@@ -1853,6 +1877,12 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         } else if (value == 'share_general') {
           final text = ShareService.formatTrip(trip.trip);
           await ShareService.shareGeneral(text, subject: 'Trip: ${trip.trip.name}');
+        } else if (value == 'share_qr') {
+          TripQrShare.show(
+            context: context,
+            tripId: widget.tripId,
+            tripName: trip.trip.name,
+          );
         } else if (value == 'complete') {
           _showCompleteDialog(context, ref);
         } else if (value == 'reopen') {
