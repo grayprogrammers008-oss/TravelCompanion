@@ -528,11 +528,15 @@ class ConversationRemoteDataSource {
   /// Subscribe to all messages in a trip to detect new activity
   /// Returns a stream that emits whenever any message changes in the trip
   Stream<void> subscribeToTripMessages(String tripId) {
+    debugPrint('🔔 subscribeToTripMessages: Setting up realtime subscription for tripId=$tripId');
     return _client
         .from('messages')
         .stream(primaryKey: ['id'])
         .eq('trip_id', tripId)
-        .map((_) {}); // We only care about the trigger, not the data
+        .map((data) {
+          debugPrint('🔔 subscribeToTripMessages: Received ${data.length} messages event for tripId=$tripId');
+          return; // We only care about the trigger, not the data
+        });
   }
 
   // ============================================================================
