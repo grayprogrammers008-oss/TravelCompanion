@@ -11,6 +11,7 @@ import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/theme/theme_access.dart';
+import 'core/theme/easy_mode_provider.dart';
 import 'core/services/notification_initialization.dart';
 import 'features/messaging/data/initialization/messaging_initialization.dart';
 
@@ -118,6 +119,9 @@ class TravelCrewApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     final themeData = ref.watch(currentThemeDataProvider);
 
+    // Watch Easy Mode state for text scaling
+    final easyModeConfig = ref.watch(easyModeConfigProvider);
+
     return AppThemeProvider(
       themeData: themeData,
       child: MaterialApp.router(
@@ -125,14 +129,25 @@ class TravelCrewApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         routerConfig: router,
         theme: themeData.toThemeData(),
-        // Premium scrolling physics
+        // Premium scrolling physics and Easy Mode text scaling
         builder: (context, child) {
-          return ScrollConfiguration(
-            behavior: const MaterialScrollBehavior().copyWith(
-              physics: const BouncingScrollPhysics(),
-              scrollbars: false,
+          // Apply Easy Mode text scale factor
+          final mediaQuery = MediaQuery.of(context);
+          final scaledMediaQuery = mediaQuery.copyWith(
+            textScaler: TextScaler.linear(
+              mediaQuery.textScaler.scale(1.0) * easyModeConfig.textScaleFactor,
             ),
-            child: child!,
+          );
+
+          return MediaQuery(
+            data: scaledMediaQuery,
+            child: ScrollConfiguration(
+              behavior: const MaterialScrollBehavior().copyWith(
+                physics: const BouncingScrollPhysics(),
+                scrollbars: false,
+              ),
+              child: child!,
+            ),
           );
         },
       ),

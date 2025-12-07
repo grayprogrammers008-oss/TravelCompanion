@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/theme_extensions.dart';
+import '../../../../core/theme/easy_mode_provider.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
@@ -264,6 +266,15 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
               ],
             ),
 
+            // Accessibility Section
+            _buildSection(
+              context,
+              title: 'Accessibility',
+              items: [
+                _buildEasyModeToggle(context, ref),
+              ],
+            ),
+
             // Account Settings
             _buildSection(
               context,
@@ -484,6 +495,103 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
       activeTrackColor: context.primaryColor.withValues(alpha: 0.5),
       thumbColor: WidgetStateProperty.resolveWith<Color>((states) => context.primaryColor),
       onChanged: onChanged,
+    );
+  }
+
+  Widget _buildEasyModeToggle(BuildContext context, WidgetRef ref) {
+    final isEasyMode = ref.watch(easyModeEnabledProvider);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      decoration: BoxDecoration(
+        color: isEasyMode ? Colors.orange.withValues(alpha: 0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: isEasyMode
+            ? Border.all(color: Colors.orange.withValues(alpha: 0.3), width: 2)
+            : null,
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.orange.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          ),
+          child: const Icon(Icons.accessibility_new, color: Colors.orange),
+        ),
+        title: Row(
+          children: [
+            const Text(
+              'Easy Mode',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+            if (isEasyMode) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'ON',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+        subtitle: Text(
+          isEasyMode
+              ? 'Larger text & buttons for easier use'
+              : 'Tap to enable larger text & buttons',
+          style: TextStyle(
+            color: isEasyMode ? Colors.orange.shade700 : AppTheme.neutral600,
+            fontSize: 13,
+          ),
+        ),
+        trailing: Switch(
+          value: isEasyMode,
+          activeThumbColor: Colors.orange,
+          activeTrackColor: Colors.orange.withValues(alpha: 0.5),
+          onChanged: (value) {
+            HapticFeedback.mediumImpact();
+            ref.read(easyModeEnabledProvider.notifier).setEnabled(value);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Icon(
+                      value ? Icons.accessibility_new : Icons.accessibility,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(value
+                        ? 'Easy Mode enabled - Larger text & buttons'
+                        : 'Easy Mode disabled'),
+                  ],
+                ),
+                backgroundColor: value ? Colors.orange : AppTheme.neutral700,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+              ),
+            );
+          },
+        ),
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          ref.read(easyModeEnabledProvider.notifier).toggle();
+        },
+      ),
     );
   }
 

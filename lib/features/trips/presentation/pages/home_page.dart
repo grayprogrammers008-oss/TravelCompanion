@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
+import '../../../../core/theme/easy_mode_provider.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
@@ -462,6 +463,7 @@ class _HomePageState extends ConsumerState<HomePage>
     final userTripsAsync = ref.watch(userTripsProvider);
     final currentUser = ref.watch(currentUserProvider);
     final themeData = ref.watch(theme_provider.currentThemeDataProvider);
+    final easyModeConfig = ref.watch(easyModeConfigProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.neutral50,
@@ -715,9 +717,15 @@ class _HomePageState extends ConsumerState<HomePage>
         child: AnimatedScaleButton(
           onTap: () => _showCreateTripOptions(context, themeData),
           child: Container(
+            // Easy Mode: ensure minimum touch target size
+            constraints: BoxConstraints(
+              minHeight: easyModeConfig.minTouchTargetSize,
+            ),
             decoration: BoxDecoration(
               gradient: themeData.glossyGradient,
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              borderRadius: BorderRadius.circular(
+                easyModeConfig.scaleBorderRadius(AppTheme.radiusLg),
+              ),
               boxShadow: themeData.glossyShadow,
             ),
             child: Container(
@@ -730,19 +738,25 @@ class _HomePageState extends ConsumerState<HomePage>
                     Colors.white.withValues(alpha: 0.05),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                borderRadius: BorderRadius.circular(
+                  easyModeConfig.scaleBorderRadius(AppTheme.radiusLg),
+                ),
               ),
               child: FloatingActionButton.extended(
                 onPressed: null, // Handled by AnimatedScaleButton
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                icon: const Icon(Icons.add, color: Colors.white, size: 24),
-                label: const Text(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: easyModeConfig.scaleIconSize(24),
+                ),
+                label: Text(
                   'New Trip',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                    fontSize: 16 * easyModeConfig.textScaleFactor,
                     letterSpacing: 0.5,
                   ),
                 ),
