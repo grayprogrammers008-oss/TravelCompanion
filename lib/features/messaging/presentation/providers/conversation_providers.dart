@@ -328,6 +328,17 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
   final dataSource = ref.read(conversationRemoteDataSourceProvider);
   final repository = ref.read(conversationRepositoryProvider);
 
+  debugPrint('📊 tripUnreadCountProvider: Starting for tripId=${params.tripId}, userId=${params.userId}');
+
+  // First, ensure the default group exists and user is a member
+  // This is important for trips created before the auto-create migration
+  try {
+    final defaultGroupId = await dataSource.getDefaultGroupId(tripId: params.tripId);
+    debugPrint('📊 tripUnreadCountProvider: Default group ID = $defaultGroupId');
+  } catch (e) {
+    debugPrint('📊 tripUnreadCountProvider: Error ensuring default group - $e');
+  }
+
   // Helper function to calculate unread count
   Future<int> calculateUnreadCount() async {
     final result = await repository.getTripConversations(
@@ -350,8 +361,6 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
       },
     );
   }
-
-  debugPrint('📊 tripUnreadCountProvider: Starting for tripId=${params.tripId}, userId=${params.userId}');
 
   // Emit initial count immediately
   yield await calculateUnreadCount();
