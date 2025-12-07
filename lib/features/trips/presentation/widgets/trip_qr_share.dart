@@ -48,7 +48,11 @@ class _TripQrShareState extends ConsumerState<TripQrShare> {
   @override
   void initState() {
     super.initState();
-    _generateInviteCode();
+    // Defer the invite code generation to after the build phase
+    // to avoid "modifying provider while building" error
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _generateInviteCode();
+    });
   }
 
   Future<void> _generateInviteCode() async {
