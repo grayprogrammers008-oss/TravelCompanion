@@ -62,6 +62,16 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   @override
   void dispose() {
+    // Invalidate the conversations provider to refresh unread counts
+    // when returning to the conversation list
+    ref.invalidate(tripConversationsStreamProvider(TripConversationsParams(
+      tripId: widget.tripId,
+      userId: _effectiveUserId,
+    )));
+    ref.invalidate(tripUnreadCountProvider(TripConversationsParams(
+      tripId: widget.tripId,
+      userId: _effectiveUserId,
+    )));
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -295,6 +305,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
     setState(() => _isDeleting = true);
 
+    // Debug logging
+    debugPrint('🗑️ Deleting messages...');
+    debugPrint('🗑️ Selected IDs: $_selectedMessageIds');
+    debugPrint('🗑️ Sender ID: $_effectiveUserId');
+
     try {
       final repository = ref.read(conversationRepositoryProvider);
       final result = await repository.deleteMessages(
@@ -302,8 +317,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         senderId: _effectiveUserId,
       );
 
+      debugPrint('🗑️ Delete result: isSuccess=${result.isSuccess}, error=${result.error}');
+
       if (mounted) {
         if (result.isSuccess) {
+          // Refresh messages to remove deleted ones
+          ref.invalidate(conversationMessagesStreamProvider(widget.conversationId));
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
