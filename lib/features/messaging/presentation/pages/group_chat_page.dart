@@ -1096,8 +1096,10 @@ class _MessageBubble extends StatelessWidget {
   }
 
   String _formatTime(DateTime time) {
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
+    // Convert UTC to local time
+    final localTime = time.toLocal();
+    final hour = localTime.hour.toString().padLeft(2, '0');
+    final minute = localTime.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
   }
 }
@@ -1178,11 +1180,13 @@ class _FullScreenImageView extends StatelessWidget {
   }
 
   String _formatDateTime(DateTime time) {
-    final day = time.day.toString().padLeft(2, '0');
-    final month = time.month.toString().padLeft(2, '0');
-    final year = time.year;
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
+    // Convert UTC to local time for display
+    final localTime = time.toLocal();
+    final day = localTime.day.toString().padLeft(2, '0');
+    final month = localTime.month.toString().padLeft(2, '0');
+    final year = localTime.year;
+    final hour = localTime.hour.toString().padLeft(2, '0');
+    final minute = localTime.minute.toString().padLeft(2, '0');
     return '$day/$month/$year at $hour:$minute';
   }
 }
