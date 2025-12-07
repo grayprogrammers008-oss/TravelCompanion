@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/models/conversation_model.dart';
@@ -541,16 +543,51 @@ class ConversationRemoteDataSource {
 
   /// Subscribe to all messages in a trip to detect new activity
   /// Returns a stream that emits whenever any message changes in the trip
+  /// Uses Postgres Changes channel for reliable real-time updates
   Stream<void> subscribeToTripMessages(String tripId) {
-    debugPrint('🔔 subscribeToTripMessages: Setting up realtime subscription for tripId=$tripId');
-    return _client
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .eq('trip_id', tripId)
-        .map((data) {
-          debugPrint('🔔 subscribeToTripMessages: Received ${data.length} messages event for tripId=$tripId');
-          return; // We only care about the trigger, not the data
+    debugPrint('🔔 subscribeToTripMessages: Setting up realtime channel for tripId=$tripId');
+
+    // Use StreamController to create a more reliable stream
+    final controller = StreamController<void>.broadcast();
+
+    // Create a unique channel name for this trip
+    final channelName = 'trip_messages_$tripId';
+
+    // Set up Postgres Changes subscription
+    final channel = _client.channel(channelName);
+
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'messages',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'trip_id',
+            value: tripId,
+          ),
+          callback: (payload) {
+            debugPrint('🔔 subscribeToTripMessages: Postgres change detected - ${payload.eventType} for tripId=$tripId');
+            debugPrint('🔔   New record: ${payload.newRecord}');
+            controller.add(null);
+          },
+        )
+        .subscribe((status, [error]) {
+          debugPrint('🔔 subscribeToTripMessages: Channel status: $status ${error != null ? '- Error: $error' : ''}');
+          if (status == RealtimeSubscribeStatus.subscribed) {
+            debugPrint('🔔 subscribeToTripMessages: Successfully subscribed to trip messages');
+            // Emit initial event to trigger first calculation
+            controller.add(null);
+          }
         });
+
+    // Clean up when stream is cancelled
+    controller.onCancel = () {
+      debugPrint('🔔 subscribeToTripMessages: Unsubscribing from channel $channelName');
+      _client.removeChannel(channel);
+    };
+
+    return controller.stream;
   }
 
   // ============================================================================
