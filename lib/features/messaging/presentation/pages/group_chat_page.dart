@@ -831,16 +831,18 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   }
 
   String _formatDateHeader(DateTime date) {
+    // Convert UTC to local time for display
+    final localDate = date.toLocal();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final messageDate = DateTime(date.year, date.month, date.day);
+    final messageDate = DateTime(localDate.year, localDate.month, localDate.day);
 
     if (messageDate == today) {
       return 'Today';
     } else if (messageDate == yesterday) {
       return 'Yesterday';
-    } else if (now.difference(date).inDays < 7) {
+    } else if (now.difference(localDate).inDays < 7) {
       const weekdays = [
         'Monday',
         'Tuesday',
@@ -850,9 +852,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         'Saturday',
         'Sunday'
       ];
-      return weekdays[date.weekday - 1];
+      return weekdays[localDate.weekday - 1];
     } else {
-      return '${date.day}/${date.month}/${date.year}';
+      return '${localDate.day}/${localDate.month}/${localDate.year}';
     }
   }
 }
