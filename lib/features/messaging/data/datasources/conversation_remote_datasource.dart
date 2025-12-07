@@ -267,20 +267,34 @@ class ConversationRemoteDataSource {
     }
   }
 
-  /// Update last read timestamp
+  /// Update last read timestamp using server-side time
+  /// This ensures consistent timezone handling
   Future<void> markAsRead({
     required String conversationId,
     required String userId,
   }) async {
     try {
-      await _client
-          .from('conversation_members')
-          .update({'last_read_at': DateTime.now().toIso8601String()})
-          .eq('conversation_id', conversationId)
-          .eq('user_id', userId);
+      // Use RPC to set last_read_at on the server side
+      // This ensures proper timezone handling and uses database NOW()
+      await _client.rpc('mark_conversation_as_read', params: {
+        'p_conversation_id': conversationId,
+        'p_user_id': userId,
+      });
+      debugPrint('✅ Marked conversation $conversationId as read for user $userId');
     } catch (e) {
-      debugPrint('Error marking as read: $e');
-      rethrow;
+      debugPrint('Error marking as read via RPC: $e');
+      // Fallback to client-side update with UTC time
+      try {
+        await _client
+            .from('conversation_members')
+            .update({'last_read_at': DateTime.now().toUtc().toIso8601String()})
+            .eq('conversation_id', conversationId)
+            .eq('user_id', userId);
+        debugPrint('✅ Marked conversation as read (fallback)');
+      } catch (e2) {
+        debugPrint('Error marking as read (fallback): $e2');
+        rethrow;
+      }
     }
   }
 
