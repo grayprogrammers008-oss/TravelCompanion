@@ -590,6 +590,39 @@ class ConversationRemoteDataSource {
     }
   }
 
+  /// Ensure user is a member of the default group and return the group ID
+  /// This calls the RPC function that adds the user if they're not already a member
+  Future<String?> ensureUserInDefaultGroup({
+    required String tripId,
+    required String userId,
+  }) async {
+    try {
+      debugPrint('🔐 ensureUserInDefaultGroup: tripId=$tripId, userId=$userId');
+
+      // Call the RPC function that ensures user is in default group
+      final result = await _client.rpc(
+        'ensure_user_in_default_group',
+        params: {
+          'p_trip_id': tripId,
+          'p_user_id': userId,
+        },
+      );
+
+      final conversationId = result as String?;
+      if (conversationId != null && conversationId.isNotEmpty) {
+        debugPrint('🔐 ensureUserInDefaultGroup: User is now in default group: $conversationId');
+        return conversationId;
+      }
+
+      debugPrint('🔐 ensureUserInDefaultGroup: No default group returned (user may not be trip member)');
+      return null;
+    } catch (e) {
+      debugPrint('🔐 ensureUserInDefaultGroup: Error - $e');
+      // Fall back to the old method if the new RPC doesn't exist
+      return getDefaultGroupId(tripId: tripId);
+    }
+  }
+
   /// Get or ensure the default "All Members" group for a trip (FAST - just returns ID)
   /// Uses a simple query to find the default group quickly
   Future<String?> getDefaultGroupId({

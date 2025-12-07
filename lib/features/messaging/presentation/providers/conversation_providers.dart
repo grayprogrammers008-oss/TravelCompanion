@@ -330,13 +330,17 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
 
   debugPrint('📊 tripUnreadCountProvider: Starting for tripId=${params.tripId}, userId=${params.userId}');
 
-  // First, ensure the default group exists and user is a member
-  // This is important for trips created before the auto-create migration
+  // First, ensure the user is a member of the default group
+  // This is CRITICAL for users who were added to trips before the auto-create migration
+  // Without this, the user won't see any conversations and unread count will be 0
   try {
-    final defaultGroupId = await dataSource.getDefaultGroupId(tripId: params.tripId);
-    debugPrint('📊 tripUnreadCountProvider: Default group ID = $defaultGroupId');
+    final defaultGroupId = await dataSource.ensureUserInDefaultGroup(
+      tripId: params.tripId,
+      userId: params.userId,
+    );
+    debugPrint('📊 tripUnreadCountProvider: User ensured in default group, ID = $defaultGroupId');
   } catch (e) {
-    debugPrint('📊 tripUnreadCountProvider: Error ensuring default group - $e');
+    debugPrint('📊 tripUnreadCountProvider: Error ensuring user in default group - $e');
   }
 
   // Helper function to calculate unread count
