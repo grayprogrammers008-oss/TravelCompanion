@@ -248,6 +248,36 @@ class _QuickTripPageState extends ConsumerState<QuickTripPage> {
           'Quick Trip',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
+        actions: [
+          // Voice input button
+          IconButton(
+            onPressed: () => context.push('/trips/voice'),
+            tooltip: 'Voice Input',
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.mic, color: Colors.white, size: 18),
+                  const SizedBox(width: 4),
+                  Text(
+                    'AI',
+                    style: TextStyle(
+                      color: Colors.amber.shade200,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: themeData.primaryGradient,

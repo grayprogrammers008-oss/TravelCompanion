@@ -200,14 +200,23 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
   Widget _buildChoiceCards(BuildContext context, dynamic themeData) {
     return Column(
       children: [
-        // Create Trip Card - Primary
+        // Voice Trip Card - AI Feature (Primary)
+        _buildAICard(
+          context: context,
+          themeData: themeData,
+          onTap: () => context.push('/trips/voice'),
+        ),
+
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Create Trip Card
         _buildCompactCard(
           context: context,
           themeData: themeData,
           icon: Icons.add_location_alt,
           title: 'Create a New Trip',
           subtitle: 'Start planning your next adventure',
-          isPrimary: true,
+          isPrimary: false,
           onTap: () => context.push('/trips/quick'),
         ),
 
@@ -237,6 +246,129 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
           onTap: () => context.push('/trips/browse'),
         ),
       ],
+    );
+  }
+
+  Widget _buildAICard({
+    required BuildContext context,
+    required dynamic themeData,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingMd,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              themeData.primaryColor,
+              const Color(0xFF8B5CF6), // Purple accent
+            ],
+          ),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          boxShadow: [
+            BoxShadow(
+              color: themeData.primaryColor.withValues(alpha: 0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Animated mic icon container
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: const Icon(
+                Icons.mic,
+                size: 28,
+                color: Colors.white,
+              ),
+            ),
+
+            const SizedBox(width: AppTheme.spacingMd),
+
+            // Text content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Voice Trip',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 12,
+                              color: Colors.amber.shade200,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'AI',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.amber.shade200,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Just speak your trip idea naturally',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Arrow
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.white.withValues(alpha: 0.7),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

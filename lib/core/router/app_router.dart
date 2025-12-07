@@ -37,6 +37,7 @@ import '../../features/templates/presentation/pages/browse_templates_page.dart';
 import '../../features/templates/presentation/pages/template_detail_page.dart';
 import '../../features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
 import '../../features/trips/presentation/pages/quick_trip_page.dart';
+import '../../features/trips/presentation/pages/voice_trip_page.dart';
 import '../../features/onboarding/presentation/pages/welcome_choice_page.dart';
 import '../../features/trips/presentation/providers/trip_providers.dart';
 import '../presentation/main_scaffold.dart';
@@ -69,6 +70,7 @@ class AppRoutes {
   static const String tripDetail = '/trips/:tripId';
   static const String createTrip = '/trips/create';
   static const String quickTrip = '/trips/quick';
+  static const String voiceTrip = '/trips/voice';
   static const String editTrip = '/trips/:tripId/edit';
   static const String tripMembers = '/trips/:tripId/members';
   static const String tripFilter = '/trips/filter';
@@ -258,6 +260,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const QuickTripPage(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.voiceTrip,
+        name: 'voiceTrip',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const VoiceTripPage(),
         ),
       ),
       GoRoute(

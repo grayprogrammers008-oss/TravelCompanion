@@ -42,7 +42,7 @@
 - [x] 2.4 Visual Trip Timeline ✅ Completed Dec 6, 2025
 
 ### Phase 3: Advanced Features (Medium-High Impact, Higher Effort)
-- [ ] 3.1 Voice Input for Trip Creation
+- [x] 3.1 Voice Input for Trip Creation ✅ Completed Dec 7, 2025
 - [ ] 3.2 Trip Assistant Chat Bot
 - [ ] 3.3 Home Screen Widget
 - [ ] 3.4 Proactive Smart Notifications
@@ -559,7 +559,7 @@ Visual timeline view:
 ---
 
 ### 3.1 Voice Input for Trip Creation
-**Status:** ⬜ Not Started
+**Status:** ✅ Completed (Dec 7, 2025)
 **Priority:** High
 **Effort:** High
 
@@ -592,22 +592,61 @@ Shows confirmation:
 ```
 
 #### Implementation Notes
-- Use `speech_to_text` package
-- Send transcript to AI for entity extraction
+- Use `speech_to_text` package (on-device, FREE, no API costs)
+- Local text parsing for entity extraction
 - Show parsed entities for confirmation
-- Allow voice corrections
+- Allow retry with voice
 
-#### Files to Modify
-- `pubspec.yaml` - Add speech_to_text dependency
-- `lib/core/services/voice_input_service.dart` - NEW FILE
-- `lib/features/trips/presentation/widgets/voice_trip_creator.dart` - NEW FILE
+#### Files Created/Modified
+- `pubspec.yaml` - Added `speech_to_text: ^6.6.2` dependency
+- `lib/core/services/voice_input_service.dart` - NEW: Voice recognition service with local parsing
+- `lib/core/widgets/voice_wave_animation.dart` - NEW: Perplexity-like physics-based animation
+- `lib/features/trips/presentation/pages/voice_trip_page.dart` - NEW: Voice trip creation page
+- `lib/core/router/app_router.dart` - Added `/trips/voice` route
+- `lib/features/onboarding/presentation/pages/welcome_choice_page.dart` - Added Voice Trip as primary option
+- `lib/features/trips/presentation/pages/quick_trip_page.dart` - Added AI voice button in app bar
+
+#### Features
+- **Stunning Visual Design:**
+  - Animated dark gradient background with subtle motion
+  - Perplexity-inspired voice orb with physics-based animations
+  - Multiple animation controllers: pulse, wave, rotation, particle
+  - Expanding circular waves responsive to sound level
+  - Floating particles with spiral movement
+  - Rotating segmented ring with frequency visualization
+  - Circular frequency bars that react to voice
+  - Gradient main orb with highlight effects
+  - Pulsing inner core with glow
+
+- **Voice Recognition:**
+  - On-device speech recognition (100% free, no API costs)
+  - Real-time sound level visualization
+  - Interim text display while speaking
+  - Final transcription with parsing
+
+- **Smart Text Parsing:**
+  - Extracts destination from natural speech
+  - Recognizes duration patterns (days, nights, weekend, week)
+  - Understands relative dates (tomorrow, next weekend, next month)
+  - Identifies companions (family, friends, spouse, kids, parents)
+  - Detects trip type (family, solo, business, romantic, adventure)
+
+- **User Experience:**
+  - Prominent "Voice Trip" card with AI badge on welcome page
+  - AI microphone button in Quick Trip app bar
+  - Haptic feedback throughout
+  - Clear status indicators
+  - Parsed details shown with icons
+  - Try Again option to re-record
+  - Smooth animations and transitions
 
 #### Acceptance Criteria
-- [ ] Microphone button on home/create screens
-- [ ] Voice converted to text
-- [ ] AI extracts trip details
-- [ ] User confirms before creation
-- [ ] Works for basic trip info (destination, dates, duration)
+- [x] Microphone button on home/create screens
+- [x] Voice converted to text
+- [x] AI extracts trip details locally (no API needed)
+- [x] User confirms before creation
+- [x] Works for basic trip info (destination, dates, duration)
+- [x] Stunning Perplexity-like animated visualization
 
 ---
 
@@ -749,6 +788,7 @@ Use this section to track progress on each feature.
 | 2.1 Simplified Home Screen | Dec 6, 2025 | Happening Now hero section |
 | 2.2 Easy/Accessibility Mode | Dec 7, 2025 | 30% larger text, 72dp touch targets |
 | 2.4 Visual Trip Timeline | Dec 6, 2025 | Toggle view with NOW indicator |
+| 3.1 Voice Input for Trip Creation | Dec 7, 2025 | Perplexity-like animations, on-device speech recognition |
 
 ### In Progress
 | Feature | Started | Status | Blockers |
@@ -770,6 +810,7 @@ Use this section to track progress on each feature.
 | Dec 6, 2025 | Initial roadmap created |
 | Dec 6, 2025 | Completed: 1.1, 1.2, 1.3, 2.1, 2.4 |
 | Dec 7, 2025 | Completed: 2.2 Easy/Accessibility Mode |
+| Dec 7, 2025 | Completed: 3.1 Voice Input for Trip Creation |
 
 ---
 
@@ -805,7 +846,7 @@ Use this section to track progress on each feature.
 | 2.3 | Smart FAB with Context | Medium | Medium | ⬜ Not Started | - |
 | 2.4 | Visual Trip Timeline | Medium | Medium | ✅ Done | Dec 6 |
 | **Phase 3: Advanced** |||||
-| 3.1 | Voice Input for Trip Creation | High | High | ⬜ Not Started | - |
+| 3.1 | Voice Input for Trip Creation | High | High | ✅ Done | Dec 7 |
 | 3.2 | Trip Assistant Chat Bot | Medium | High | ⬜ Not Started | - |
 | 3.3 | Home Screen Widget | Medium | High | ⬜ Not Started | - |
 | 3.4 | Proactive Smart Notifications | Medium | Medium | ⬜ Not Started | - |
@@ -815,16 +856,16 @@ Use this section to track progress on each feature.
 | Metric | Count |
 |--------|-------|
 | **Total Features** | 12 |
-| **Completed** | 6 (50%) |
+| **Completed** | 7 (58%) |
 | **In Progress** | 0 |
-| **Not Started** | 6 (50%) |
+| **Not Started** | 5 (42%) |
 | **Phase 1 Complete** | 3/4 (75%) |
 | **Phase 2 Complete** | 3/4 (75%) |
-| **Phase 3 Complete** | 0/4 (0%) |
+| **Phase 3 Complete** | 1/4 (25%) |
 
 ### What's Next (Recommended Order)
 
 1. **1.4 Trip Readiness Score** - Low effort, completes Phase 1
 2. **2.3 Smart FAB** - Medium effort, completes Phase 2
-3. **3.1 Voice Input** - High priority for accessibility
-4. **3.4 Smart Notifications** - Medium effort, high engagement impact
+3. **3.4 Smart Notifications** - Medium effort, high engagement impact
+4. **3.2 Trip Assistant** - High effort, help system
