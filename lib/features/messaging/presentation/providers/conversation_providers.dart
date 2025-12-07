@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/datasources/conversation_remote_datasource.dart';
 import '../../data/repositories/conversation_repository_impl.dart';
@@ -319,6 +320,7 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
     .family<int, TripConversationsParams>((ref, params) async* {
   // Guard against empty userId or tripId to prevent PostgreSQL UUID errors
   if (params.userId.isEmpty || params.tripId.isEmpty) {
+    debugPrint('📊 tripUnreadCountProvider: Empty userId or tripId - userId=${params.userId}, tripId=${params.tripId}');
     yield 0;
     return;
   }
@@ -335,17 +337,28 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
     return result.fold(
       onSuccess: (conversations) {
         // Sum up all unread counts from all conversations
-        return conversations.fold<int>(0, (sum, conv) => sum + conv.unreadCount);
+        final total = conversations.fold<int>(0, (sum, conv) => sum + conv.unreadCount);
+        debugPrint('📊 tripUnreadCountProvider: Calculated unread count = $total from ${conversations.length} conversations');
+        for (final conv in conversations) {
+          debugPrint('   - ${conv.name}: ${conv.unreadCount} unread');
+        }
+        return total;
       },
-      onFailure: (error) => 0,
+      onFailure: (error) {
+        debugPrint('📊 tripUnreadCountProvider: Error calculating unread count - $error');
+        return 0;
+      },
     );
   }
+
+  debugPrint('📊 tripUnreadCountProvider: Starting for tripId=${params.tripId}, userId=${params.userId}');
 
   // Emit initial count immediately
   yield await calculateUnreadCount();
 
   // Then listen to trip messages stream and recalculate on any change
   await for (final _ in dataSource.subscribeToTripMessages(params.tripId)) {
+    debugPrint('📊 tripUnreadCountProvider: Message change detected, recalculating...');
     yield await calculateUnreadCount();
   }
 });
