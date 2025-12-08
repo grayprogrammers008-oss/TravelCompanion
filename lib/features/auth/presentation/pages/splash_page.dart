@@ -17,48 +17,80 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
+  bool _hasNavigated = false;
+
   @override
   void initState() {
     super.initState();
-    _checkAuthAndNavigate();
+    _startNavigationTimer();
+  }
+
+  void _startNavigationTimer() {
+    // Show splash for minimum 2 seconds, then navigate based on auth state
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted && !_hasNavigated) {
+        _checkAuthAndNavigate();
+      }
+    });
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    // Wait a bit to show splash screen
-    await Future.delayed(const Duration(seconds: 2));
+    if (_hasNavigated) return;
 
-    if (!mounted) return;
+    // Use authStateProvider (stream-based) which is what the router uses
+    // This properly waits for Supabase auth initialization
+    final authState = ref.read(authStateProvider);
 
-    // Check if user is authenticated
-    final authState = ref.read(authControllerProvider);
+    await authState.when(
+      data: (userId) async {
+        if (!mounted || _hasNavigated) return;
 
-    if (authState.user != null) {
-      // User is logged in - check if they have trips
-      try {
-        final hasTrips = await ref.read(hasTripsProvider.future);
+        if (userId != null) {
+          // User is logged in - check if they have trips
+          try {
+            final hasTrips = await ref.read(hasTripsProvider.future);
 
-        if (!mounted) return;
+            if (!mounted || _hasNavigated) return;
+            _hasNavigated = true;
 
-        if (hasTrips) {
-          // User has trips, go directly to dashboard
-          debugPrint('🏠 User has trips, navigating to dashboard');
-          context.go(AppRoutes.dashboard);
+            if (hasTrips) {
+              // User has trips, go directly to dashboard
+              context.go(AppRoutes.dashboard);
+            } else {
+              // User has no trips, show welcome choice page
+              context.go(AppRoutes.welcomeChoice);
+            }
+          } catch (e) {
+            // On error, default to welcome choice
+            if (mounted && !_hasNavigated) {
+              _hasNavigated = true;
+              context.go(AppRoutes.welcomeChoice);
+            }
+          }
         } else {
-          // User has no trips, show welcome choice page
-          debugPrint('👋 User has no trips, navigating to welcome choice');
-          context.go(AppRoutes.welcomeChoice);
+          // User is not logged in, go to login
+          if (!_hasNavigated) {
+            _hasNavigated = true;
+            context.go(AppRoutes.login);
+          }
         }
-      } catch (e) {
-        // On error, default to welcome choice
-        debugPrint('⚠️ Error checking trips: $e, defaulting to welcome choice');
-        if (mounted) {
-          context.go(AppRoutes.welcomeChoice);
+      },
+      loading: () {
+        // Still loading auth state, wait a bit and try again
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted && !_hasNavigated) {
+            _checkAuthAndNavigate();
+          }
+        });
+      },
+      error: (error, stack) {
+        // On error, go to login
+        if (!_hasNavigated) {
+          _hasNavigated = true;
+          context.go(AppRoutes.login);
         }
-      }
-    } else {
-      // User is not logged in, go to login
-      context.go(AppRoutes.login);
-    }
+      },
+    );
   }
 
   @override

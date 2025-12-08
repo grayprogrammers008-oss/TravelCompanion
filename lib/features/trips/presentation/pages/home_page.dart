@@ -153,7 +153,48 @@ class _HomePageState extends ConsumerState<HomePage>
 
               const SizedBox(height: AppTheme.spacingSm),
 
-              // Divider with "or" text
+              // Option: AI Trip Wizard (Most powerful - creates everything!)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF00D9FF).withValues(alpha: 0.2),
+                      const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: _buildCreateOption(
+                  context: context,
+                  icon: Icons.auto_awesome,
+                  iconColor: const Color(0xFF8B5CF6),
+                  title: 'AI Trip Wizard',
+                  subtitle: 'Voice → Trip + Itinerary + Packing List in one!',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/trips/ai-wizard');
+                  },
+                  showAiBadge: true,
+                ),
+              ),
+
+              const SizedBox(height: AppTheme.spacingMd),
+
+              // Divider with "or manual" text
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppTheme.spacingLg,
@@ -165,7 +206,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
                       child: Text(
-                        'or customize',
+                        'or manual',
                         style: TextStyle(
                           color: AppTheme.neutral400,
                           fontSize: 12,
@@ -203,19 +244,6 @@ class _HomePageState extends ConsumerState<HomePage>
                 },
               ),
 
-              // Option 3: AI Generate
-              _buildCreateOption(
-                context: context,
-                icon: Icons.auto_awesome,
-                iconColor: const Color(0xFFFF9800),
-                title: 'AI Itinerary Generator',
-                subtitle: 'Let AI create a personalized itinerary for you',
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push('/ai-itinerary');
-                },
-              ),
-
               const SizedBox(height: AppTheme.spacingLg),
               ],
             ),
@@ -234,6 +262,7 @@ class _HomePageState extends ConsumerState<HomePage>
     required String subtitle,
     required VoidCallback onTap,
     bool showBadge = false,
+    bool showAiBadge = false,
   }) {
     return InkWell(
       onTap: onTap,
@@ -280,6 +309,30 @@ class _HomePageState extends ConsumerState<HomePage>
                           ),
                           child: const Text(
                             'FAST',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (showAiBadge) ...[
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF00D9FF), Color(0xFF8B5CF6)],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'AI',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 9,
@@ -1868,9 +1921,9 @@ class _HomePageState extends ConsumerState<HomePage>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // AI Planner button
+                // AI Wizard button
                 OutlinedButton.icon(
-                  onPressed: () => context.push('/ai-itinerary'),
+                  onPressed: () => context.push('/trips/ai-wizard'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.deepPurple,
                     side: const BorderSide(color: Colors.deepPurple),
@@ -1880,7 +1933,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     ),
                   ),
                   icon: const Icon(Icons.auto_awesome, size: 18),
-                  label: const Text('AI Planner'),
+                  label: const Text('AI Wizard'),
                 ),
                 const SizedBox(width: AppTheme.spacingSm),
                 // Browse Templates button

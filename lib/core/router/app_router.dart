@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/auth/presentation/pages/reset_password_page.dart';
+import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/trips/presentation/pages/trip_filter_page.dart';
 import '../../features/trips/presentation/pages/browse_trips_page.dart';
@@ -38,6 +39,7 @@ import '../../features/templates/presentation/pages/template_detail_page.dart';
 import '../../features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
 import '../../features/trips/presentation/pages/quick_trip_page.dart';
 import '../../features/trips/presentation/pages/voice_trip_page.dart';
+import '../../features/trips/presentation/pages/ai_trip_wizard_page.dart';
 import '../../features/onboarding/presentation/pages/welcome_choice_page.dart';
 import '../../features/trips/presentation/providers/trip_providers.dart';
 import '../presentation/main_scaffold.dart';
@@ -59,7 +61,8 @@ Page<void> buildPageWithoutTransition<T>({
 
 // Route names
 class AppRoutes {
-  static const String login = '/';
+  static const String splash = '/';
+  static const String login = '/login';
   static const String signup = '/signup';
   static const String resetPassword = '/auth/reset-password';
   static const String dashboard = '/dashboard';
@@ -71,6 +74,7 @@ class AppRoutes {
   static const String createTrip = '/trips/create';
   static const String quickTrip = '/trips/quick';
   static const String voiceTrip = '/trips/voice';
+  static const String aiTripWizard = '/trips/ai-wizard';
   static const String editTrip = '/trips/:tripId/edit';
   static const String tripMembers = '/trips/:tripId/members';
   static const String tripFilter = '/trips/filter';
@@ -113,11 +117,12 @@ final routerProvider = Provider<GoRouter>((ref) {
   final hasTripsState = ref.watch(hasTripsProvider);
 
   return GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.splash, // Start at splash screen
     redirect: (context, state) {
       // Check if user is authenticated
       final isAuthenticated = authState.value != null;
       final needsOnboarding = onboardingState.value == false;
+      final isSplashRoute = state.matchedLocation == AppRoutes.splash;
       final isLoginRoute = state.matchedLocation == AppRoutes.login;
       final isSignupRoute = state.matchedLocation == AppRoutes.signup;
       final isResetPasswordRoute = state.matchedLocation.startsWith('/auth/reset-password');
@@ -125,12 +130,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isInviteRoute = state.matchedLocation.startsWith('/invite/');
       final isWelcomeChoiceRoute = state.matchedLocation == AppRoutes.welcomeChoice;
 
+      // Allow splash screen to handle its own routing (no redirect)
+      if (isSplashRoute) {
+        return null;
+      }
+
       // Allow reset password route without authentication
       if (isResetPasswordRoute) {
         return null;
       }
 
-      // If not authenticated and not on login/signup, redirect to login
+      // If not authenticated and not on login/signup/splash, redirect to login
       // Store invite code in query parameter to redirect after login
       if (!isAuthenticated && !isLoginRoute && !isSignupRoute) {
         // If user is trying to access an invite, save the path for after login
@@ -146,11 +156,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       // Check if user has trips to determine redirect destination
-      // Use .value which returns null if loading/error, default to false
+      // IMPORTANT: Wait for hasTripsProvider to resolve before redirecting
+      // This prevents the flash of Welcome page for returning users
+      final hasTripsLoading = hasTripsState.isLoading;
       final hasTrips = hasTripsState.value ?? false;
 
       // If authenticated, completed onboarding, and on onboarding page
       if (isAuthenticated && !needsOnboarding && isOnboardingRoute) {
+        // Wait for trips data to load before deciding where to go
+        if (hasTripsLoading) {
+          return null; // Stay on onboarding while loading
+        }
         // New users (no trips) → Welcome Choice page
         // Returning users (has trips) → Dashboard
         return hasTrips ? AppRoutes.dashboard : AppRoutes.welcomeChoice;
@@ -158,6 +174,11 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // If authenticated and on login/signup, redirect based on trip status
       if (isAuthenticated && (isLoginRoute || isSignupRoute)) {
+        // Wait for trips data to load before deciding where to go
+        // This prevents the flash of Welcome page for returning users
+        if (hasTripsLoading) {
+          return null; // Stay on login page while loading (shows loading indicator)
+        }
         // New users (no trips) → Welcome Choice page
         // Returning users (has trips) → Dashboard
         return hasTrips ? AppRoutes.dashboard : AppRoutes.welcomeChoice;
@@ -172,6 +193,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null; // No redirect needed
     },
     routes: [
+      // Splash screen - handles initial auth check and routing
+      GoRoute(
+        path: AppRoutes.splash,
+        name: 'splash',
+        builder: (context, state) => const SplashPage(),
+      ),
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
@@ -268,6 +295,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const VoiceTripPage(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.aiTripWizard,
+        name: 'aiTripWizard',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const AiTripWizardPage(),
         ),
       ),
       GoRoute(
@@ -606,6 +641,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           final startDateStr = state.uri.queryParameters['startDate'];
           final endDateStr = state.uri.queryParameters['endDate'];
           final budgetStr = state.uri.queryParameters['budget'];
+          final voicePrompt = state.uri.queryParameters['voicePrompt'];
 
           return NoTransitionPage(
             key: state.pageKey,
@@ -615,6 +651,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               prefillStartDate: startDateStr != null ? DateTime.tryParse(startDateStr) : null,
               prefillEndDate: endDateStr != null ? DateTime.tryParse(endDateStr) : null,
               prefillBudget: budgetStr != null ? double.tryParse(budgetStr) : null,
+              voicePrompt: voicePrompt,
             ),
           );
         },

@@ -249,10 +249,10 @@ class _QuickTripPageState extends ConsumerState<QuickTripPage> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         actions: [
-          // Voice input button
+          // AI Wizard button
           IconButton(
-            onPressed: () => context.push('/trips/voice'),
-            tooltip: 'Voice Input',
+            onPressed: () => context.push('/trips/ai-wizard'),
+            tooltip: 'AI Trip Wizard',
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(

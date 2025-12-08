@@ -25,6 +25,9 @@ class AiItineraryGeneratorPage extends ConsumerStatefulWidget {
   final DateTime? prefillEndDate;
   final double? prefillBudget;
 
+  // Voice prompt from voice input - adds context to AI generation
+  final String? voicePrompt;
+
   const AiItineraryGeneratorPage({
     super.key,
     this.tripId,
@@ -32,6 +35,7 @@ class AiItineraryGeneratorPage extends ConsumerStatefulWidget {
     this.prefillStartDate,
     this.prefillEndDate,
     this.prefillBudget,
+    this.voicePrompt,
   });
 
   @override
@@ -93,6 +97,9 @@ class _AiItineraryGeneratorPageState
       if (kDebugMode) {
         debugPrint('DEBUG: Pre-filled budget: ${widget.prefillBudget}');
       }
+    }
+    if (widget.voicePrompt != null && kDebugMode) {
+      debugPrint('DEBUG: Voice prompt received: ${widget.voicePrompt}');
     }
   }
 
@@ -165,6 +172,9 @@ class _AiItineraryGeneratorPageState
     debugPrint('📅 Dates: $_startDate to $_endDate ($_durationDays days)');
     debugPrint('💰 Budget: ${_budgetController.text}');
     debugPrint('🎯 Interests: $_selectedInterests');
+    if (widget.voicePrompt != null) {
+      debugPrint('🎤 Voice prompt: ${widget.voicePrompt}');
+    }
 
     final request = AiItineraryRequest(
       destination: _destinationController.text.trim(),
@@ -175,6 +185,7 @@ class _AiItineraryGeneratorPageState
       interests: _selectedInterests.toList(),
       travelStyle: _travelStyle.toLowerCase(),
       groupSize: _groupSize,
+      voicePrompt: widget.voicePrompt,
     );
 
     debugPrint('📤 Calling generateItinerary...');
@@ -395,6 +406,75 @@ class _AiItineraryGeneratorPageState
                 error: (_, __) => const SizedBox.shrink(),
               ),
             ),
+
+            // Voice Prompt Banner (if provided)
+            if (widget.voicePrompt != null)
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(
+                    AppTheme.spacingMd,
+                    0,
+                    AppTheme.spacingMd,
+                    AppTheme.spacingMd,
+                  ),
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF00D9FF).withValues(alpha: 0.15),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    border: Border.all(
+                      color: const Color(0xFF00D9FF).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00D9FF).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.mic,
+                          color: Color(0xFF00D9FF),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingSm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Your Request',
+                              style: context.bodyStyle.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF00D9FF),
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '"${widget.voicePrompt}"',
+                              style: context.bodyStyle.copyWith(
+                                fontStyle: FontStyle.italic,
+                                color: context.textColor.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
             // Form
             SliverToBoxAdapter(

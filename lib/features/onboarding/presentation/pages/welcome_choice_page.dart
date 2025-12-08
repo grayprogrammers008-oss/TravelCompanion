@@ -200,11 +200,11 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
   Widget _buildChoiceCards(BuildContext context, dynamic themeData) {
     return Column(
       children: [
-        // Voice Trip Card - AI Feature (Primary)
+        // AI Trip Wizard Card - Creates Trip + Itinerary + Packing List (Primary)
         _buildAICard(
           context: context,
           themeData: themeData,
-          onTap: () => context.push('/trips/voice'),
+          onTap: () => context.push('/trips/ai-wizard'),
         ),
 
         const SizedBox(height: AppTheme.spacingSm),
@@ -281,7 +281,7 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
         ),
         child: Row(
           children: [
-            // Animated mic icon container
+            // Animated wizard icon container
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -293,7 +293,7 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
                 ),
               ),
               child: const Icon(
-                Icons.mic,
+                Icons.auto_awesome,
                 size: 28,
                 color: Colors.white,
               ),
@@ -309,7 +309,7 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
                   Row(
                     children: [
                       const Text(
-                        'Voice Trip',
+                        'AI Trip Wizard',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
@@ -350,7 +350,7 @@ class _WelcomeChoicePageState extends ConsumerState<WelcomeChoicePage>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Just speak your trip idea naturally',
+                    'Voice → Trip + Itinerary + Packing List',
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.85),

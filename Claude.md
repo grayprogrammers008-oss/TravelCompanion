@@ -1,10 +1,64 @@
 # TravelCompanion - Development Notes
 
-**Last Updated:** December 7, 2025
+**Last Updated:** December 8, 2025
 
 ---
 
-## Recent Development Session (December 7, 2025)
+## Recent Development Session (December 8, 2025)
+
+### Feature: Tamil Language Support for Voice Recognition
+
+**Status:** ✅ Complete - Added multi-language support with explicit language selection
+
+**Problem:** Tamil language voice recognition wasn't working. The auto-detect mode (setting locale to `null` for device default) defaulted to English even when Tamil was enabled on the device.
+
+**Solution:** Implemented explicit language selection UI that allows users to choose their preferred language before speaking.
+
+#### What Was Implemented
+
+**1. Language Selection State** ([ai_trip_wizard_page.dart:47-53](lib/features/trips/presentation/pages/ai_trip_wizard_page.dart#L47-L53))
+```dart
+String _selectedLanguage = 'en_IN'; // Default to English
+static const Map<String, String> _languages = {
+  'en_IN': 'English',
+  'ta_IN': 'தமிழ்',
+  'hi_IN': 'हिंदी',
+};
+```
+
+**2. Language Change Methods** ([ai_trip_wizard_page.dart:193-209](lib/features/trips/presentation/pages/ai_trip_wizard_page.dart#L193-L209))
+- `_changeLanguage(String locale)` - Changes speech recognition language with haptic feedback
+- `_cycleLanguage()` - Cycles through English → Tamil → Hindi → English...
+
+**3. Language Selector UI** ([ai_trip_wizard_page.dart:916-956](lib/features/trips/presentation/pages/ai_trip_wizard_page.dart#L916-L956))
+- Added language selector button in the app bar (top-right corner)
+- Shows current language name (English/தமிழ்/हिंदी)
+- Tap to cycle through available languages
+- Visual indicators: translate icon + swap arrows
+- Styled to match the dark theme of AI Trip Wizard
+
+#### How to Use
+1. Open AI Trip Wizard
+2. Tap the language button in the top-right (shows "English" by default)
+3. Tap to cycle to "தமிழ்" (Tamil)
+4. Now speak in Tamil - speech recognition uses `ta_IN` locale
+5. AI understands Tamil input and creates the trip
+
+#### Files Modified
+1. `lib/features/trips/presentation/pages/ai_trip_wizard_page.dart`
+   - Added language state variables
+   - Added `_changeLanguage()` and `_cycleLanguage()` methods
+   - Added `_buildLanguageSelector()` widget
+   - Integrated language selector into app bar
+
+#### Technical Notes
+- Uses device-native speech recognition (iOS Speech Framework / Android SpeechRecognizer)
+- Locale codes: `en_IN` (English), `ta_IN` (Tamil), `hi_IN` (Hindi)
+- User must have Tamil language enabled on Android: Settings → System → Languages → Add Tamil
+
+---
+
+## Previous Development Session (December 7, 2025)
 
 ### Feature: AI Voice Trip Page - Organic Ring Animation & UX Improvements
 

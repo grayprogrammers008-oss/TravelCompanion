@@ -278,6 +278,7 @@ class AiItineraryRequest {
   final bool includeFood;
   final bool includeAccommodation;
   final bool includeTransport;
+  final String? voicePrompt; // Additional context from voice input
 
   const AiItineraryRequest({
     required this.destination,
@@ -290,6 +291,7 @@ class AiItineraryRequest {
     this.includeFood = true,
     this.includeAccommodation = true,
     this.includeTransport = true,
+    this.voicePrompt,
   });
 
   Map<String, dynamic> toJson() {
@@ -304,6 +306,7 @@ class AiItineraryRequest {
       'include_food': includeFood,
       'include_accommodation': includeAccommodation,
       'include_transport': includeTransport,
+      if (voicePrompt != null) 'voice_prompt': voicePrompt,
     };
   }
 }

@@ -9,6 +9,7 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/voice_input_bottom_sheet.dart';
 import '../../../../core/utils/trip_permissions.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
@@ -32,6 +33,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   final _searchController = TextEditingController();
   bool _isSearching = false;
   bool _isTimelineView = false; // Toggle between cards and timeline view
+  bool _isFabExpanded = false;
 
   @override
   void dispose() {
@@ -317,37 +319,206 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
       ),
       // Only show FAB if user can edit itinerary
       floatingActionButton: canEditItinerary
-          ? ScaleAnimation(
-              duration: AppAnimations.slow,
-              curve: AppAnimations.spring,
-              child: AnimatedScaleButton(
-                onTap: () => _navigateToAddItem(context),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: themeData.glossyGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                    boxShadow: themeData.glossyShadow,
-                  ),
-                  child: FloatingActionButton.extended(
-                    onPressed: null, // Handled by AnimatedScaleButton
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    icon: Icon(Icons.add, color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white, size: 24),
-                    label: Text(
-                      'Add Activity',
-                      style: TextStyle(
-                        color: context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+          ? _buildExpandableFab(context, themeData)
+          : null,
+    );
+  }
+
+  Widget _buildExpandableFab(BuildContext context, dynamic themeData) {
+    final textColor = context.primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        // Voice input option
+        if (_isFabExpanded) ...[
+          _buildFabOption(
+            context: context,
+            icon: Icons.mic,
+            label: 'Voice Input',
+            color: const Color(0xFF00D9FF),
+            onTap: () {
+              setState(() => _isFabExpanded = false);
+              _showVoiceInput(context);
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildFabOption(
+            context: context,
+            icon: Icons.edit,
+            label: 'Add Manually',
+            color: context.primaryColor,
+            onTap: () {
+              setState(() => _isFabExpanded = false);
+              _navigateToAddItem(context);
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildFabOption(
+            context: context,
+            icon: Icons.auto_awesome,
+            label: 'AI Generate',
+            color: Colors.purple,
+            onTap: () {
+              setState(() => _isFabExpanded = false);
+              _navigateToAiGenerator(context);
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+        // Main FAB
+        ScaleAnimation(
+          duration: AppAnimations.slow,
+          curve: AppAnimations.spring,
+          child: AnimatedScaleButton(
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              setState(() => _isFabExpanded = !_isFabExpanded);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: themeData.glossyGradient,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                boxShadow: themeData.glossyShadow,
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: null,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                icon: AnimatedRotation(
+                  turns: _isFabExpanded ? 0.125 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(Icons.add, color: textColor, size: 24),
+                ),
+                label: Text(
+                  _isFabExpanded ? 'Close' : 'Add Activity',
+                  style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
-            )
-          : null,
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  Widget _buildFabOption({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.grey[900],
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.4),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showVoiceInput(BuildContext context) async {
+    final voiceText = await VoiceInputBottomSheet.show(
+      context: context,
+      title: 'Plan with AI Voice',
+      hintText: 'Describe what you want to do',
+      exampleText: 'I want to explore temples and beaches, have local food',
+      icon: Icons.auto_awesome,
+      primaryColor: const Color(0xFF00D9FF),
+      demoPhrase: 'I want to visit temples in the morning, try local seafood for lunch, and watch sunset at the beach',
+    );
+
+    if (voiceText != null && voiceText.isNotEmpty && mounted) {
+      // Navigate to AI generator with voice input as additional context
+      _navigateToAiGeneratorWithVoice(context, voiceText);
+    }
+  }
+
+  void _navigateToAiGeneratorWithVoice(BuildContext context, String voicePrompt) {
+    // Get trip data to pre-fill the AI generator
+    final tripAsync = ref.read(tripProvider(widget.tripId));
+
+    final queryParams = <String, String>{
+      'tripId': widget.tripId,
+      'voicePrompt': voicePrompt, // Pass voice input as additional context
+    };
+
+    tripAsync.whenData((tripData) {
+      final trip = tripData.trip;
+      if (trip.destination != null && trip.destination!.isNotEmpty) {
+        queryParams['destination'] = trip.destination!;
+      }
+      if (trip.startDate != null) {
+        queryParams['startDate'] = trip.startDate!.toIso8601String();
+      }
+      if (trip.endDate != null) {
+        queryParams['endDate'] = trip.endDate!.toIso8601String();
+      }
+      if (trip.budget != null) {
+        queryParams['budget'] = trip.budget.toString();
+      }
+    });
+
+    final uri = Uri(path: '/ai-itinerary', queryParameters: queryParams);
+    context.push(uri.toString());
   }
 
   Widget _buildEmptyState(BuildContext context) {

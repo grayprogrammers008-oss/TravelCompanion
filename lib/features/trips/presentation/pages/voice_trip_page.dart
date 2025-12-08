@@ -153,16 +153,22 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
       _isSimulator = _voiceService.isRunningOnSimulator;
     });
 
+    debugPrint('🎤 Voice Trip Page: initialized=$initialized, isSimulator=$_isSimulator');
+
     // On simulator, show demo mode message instead of error
     if (!initialized && _isSimulator && mounted) {
+      // ONLY enable demo mode for actual simulators/emulators
+      debugPrint('🎤 Enabling demo mode for simulator/emulator');
       setState(() {
         _hasError = false; // Not an error, just demo mode
         _isInitialized = true; // Allow interaction for demo
       });
-    } else if (!initialized && mounted) {
+    } else if (!initialized && !_isSimulator && mounted) {
+      // Physical device but speech failed - show error, DO NOT enable demo mode
+      debugPrint('❌ Speech recognition failed on PHYSICAL device - NOT enabling demo mode');
       setState(() {
         _hasError = true;
-        _errorMessage = 'Speech recognition not available on this device.';
+        _errorMessage = 'Speech recognition not available. Please check microphone permissions in Settings.';
       });
     }
   }
@@ -189,32 +195,160 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
   }
 
   /// Random trip ideas for "Surprise Me" feature
+  /// Covers all regions of India: North, South, East, West, Northeast, Central + Islands
+  /// 100+ diverse destinations across the country
   static const List<Map<String, dynamic>> _randomTripIdeas = [
-    {'destination': 'Goa', 'duration': 3, 'type': 'Beach vacation'},
+    // === NORTH INDIA ===
+    // Himachal Pradesh
     {'destination': 'Manali', 'duration': 5, 'type': 'Mountain adventure'},
-    {'destination': 'Kerala', 'duration': 4, 'type': 'Backwaters & nature'},
-    {'destination': 'Jaipur', 'duration': 3, 'type': 'Heritage & culture'},
-    {'destination': 'Rishikesh', 'duration': 4, 'type': 'Adventure & wellness'},
-    {'destination': 'Udaipur', 'duration': 3, 'type': 'Romantic getaway'},
-    {'destination': 'Andaman Islands', 'duration': 6, 'type': 'Island paradise'},
-    {'destination': 'Ladakh', 'duration': 7, 'type': 'Ultimate road trip'},
-    {'destination': 'Varanasi', 'duration': 3, 'type': 'Spiritual journey'},
-    {'destination': 'Darjeeling', 'duration': 4, 'type': 'Hill station escape'},
-    {'destination': 'Hampi', 'duration': 3, 'type': 'Historical exploration'},
-    {'destination': 'Munnar', 'duration': 4, 'type': 'Tea gardens & nature'},
-    {'destination': 'Coorg', 'duration': 3, 'type': 'Coffee plantation retreat'},
-    {'destination': 'Ooty', 'duration': 3, 'type': 'Queen of hill stations'},
-    {'destination': 'Shimla', 'duration': 4, 'type': 'Colonial charm'},
-    {'destination': 'Pondicherry', 'duration': 3, 'type': 'French Riviera of India'},
-    {'destination': 'Rann of Kutch', 'duration': 4, 'type': 'White desert wonder'},
-    {'destination': 'Kaziranga', 'duration': 3, 'type': 'Wildlife safari'},
+    {'destination': 'Shimla', 'duration': 4, 'type': 'Colonial hill station'},
+    {'destination': 'Dharamshala', 'duration': 4, 'type': 'Tibetan culture & peace'},
+    {'destination': 'Kasol', 'duration': 3, 'type': 'Backpacker paradise'},
     {'destination': 'Spiti Valley', 'duration': 6, 'type': 'Cold desert adventure'},
-    {'destination': 'Alleppey', 'duration': 3, 'type': 'Houseboat experience'},
-    {'destination': 'Bali, Indonesia', 'duration': 5, 'type': 'Tropical paradise'},
-    {'destination': 'Bangkok, Thailand', 'duration': 4, 'type': 'City & culture'},
-    {'destination': 'Singapore', 'duration': 4, 'type': 'Modern Asian city'},
-    {'destination': 'Dubai', 'duration': 5, 'type': 'Luxury & adventure'},
-    {'destination': 'Maldives', 'duration': 5, 'type': 'Island luxury'},
+    {'destination': 'Bir Billing', 'duration': 3, 'type': 'Paragliding capital'},
+    {'destination': 'Dalhousie', 'duration': 3, 'type': 'Quiet hill retreat'},
+    {'destination': 'Kullu', 'duration': 4, 'type': 'Valley of Gods'},
+    {'destination': 'Kinnaur', 'duration': 5, 'type': 'Apple orchards & temples'},
+    // Uttarakhand
+    {'destination': 'Rishikesh', 'duration': 4, 'type': 'Adventure & yoga'},
+    {'destination': 'Haridwar', 'duration': 2, 'type': 'Spiritual gateway'},
+    {'destination': 'Nainital', 'duration': 3, 'type': 'Lake district charm'},
+    {'destination': 'Mussoorie', 'duration': 3, 'type': 'Queen of hills'},
+    {'destination': 'Auli', 'duration': 4, 'type': 'Skiing paradise'},
+    {'destination': 'Chopta', 'duration': 3, 'type': 'Mini Switzerland trek'},
+    {'destination': 'Valley of Flowers', 'duration': 5, 'type': 'UNESCO floral trek'},
+    {'destination': 'Jim Corbett', 'duration': 3, 'type': 'Tiger safari'},
+    // Jammu & Kashmir / Ladakh
+    {'destination': 'Srinagar', 'duration': 4, 'type': 'Dal Lake houseboat'},
+    {'destination': 'Gulmarg', 'duration': 3, 'type': 'Meadow of flowers'},
+    {'destination': 'Pahalgam', 'duration': 3, 'type': 'Valley of shepherds'},
+    {'destination': 'Ladakh', 'duration': 7, 'type': 'Ultimate road trip'},
+    {'destination': 'Leh', 'duration': 5, 'type': 'High altitude adventure'},
+    {'destination': 'Nubra Valley', 'duration': 4, 'type': 'Double hump camels'},
+    {'destination': 'Pangong Lake', 'duration': 3, 'type': 'Blue waters wonder'},
+    // Rajasthan
+    {'destination': 'Jaipur', 'duration': 3, 'type': 'Pink city heritage'},
+    {'destination': 'Udaipur', 'duration': 3, 'type': 'City of lakes'},
+    {'destination': 'Jodhpur', 'duration': 3, 'type': 'Blue city magic'},
+    {'destination': 'Jaisalmer', 'duration': 4, 'type': 'Golden desert city'},
+    {'destination': 'Pushkar', 'duration': 2, 'type': 'Holy lake & camels'},
+    {'destination': 'Mount Abu', 'duration': 3, 'type': 'Rajasthan\'s only hill station'},
+    {'destination': 'Bikaner', 'duration': 2, 'type': 'Camel country'},
+    {'destination': 'Ranthambore', 'duration': 3, 'type': 'Tiger territory'},
+    // Punjab & Haryana
+    {'destination': 'Amritsar', 'duration': 2, 'type': 'Golden Temple & food'},
+    // Delhi & UP
+    {'destination': 'Agra', 'duration': 2, 'type': 'Taj Mahal wonder'},
+    {'destination': 'Varanasi', 'duration': 3, 'type': 'Spiritual awakening'},
+    {'destination': 'Lucknow', 'duration': 3, 'type': 'Nawabi heritage & food'},
+    {'destination': 'Allahabad', 'duration': 2, 'type': 'Sangam pilgrimage'},
+
+    // === SOUTH INDIA ===
+    // Kerala
+    {'destination': 'Munnar', 'duration': 4, 'type': 'Tea gardens paradise'},
+    {'destination': 'Alleppey', 'duration': 3, 'type': 'Backwater houseboat'},
+    {'destination': 'Kumarakom', 'duration': 3, 'type': 'Luxury backwaters'},
+    {'destination': 'Thekkady', 'duration': 3, 'type': 'Periyar wildlife'},
+    {'destination': 'Wayanad', 'duration': 3, 'type': 'Misty hill forests'},
+    {'destination': 'Kochi', 'duration': 2, 'type': 'Queen of Arabian Sea'},
+    {'destination': 'Kovalam', 'duration': 3, 'type': 'Beach & ayurveda'},
+    {'destination': 'Varkala', 'duration': 3, 'type': 'Cliff beach vibes'},
+    // Tamil Nadu
+    {'destination': 'Ooty', 'duration': 3, 'type': 'Nilgiri toy train'},
+    {'destination': 'Kodaikanal', 'duration': 3, 'type': 'Princess of hills'},
+    {'destination': 'Mahabalipuram', 'duration': 2, 'type': 'Shore temple heritage'},
+    {'destination': 'Pondicherry', 'duration': 3, 'type': 'French colony charm'},
+    {'destination': 'Madurai', 'duration': 2, 'type': 'Temple city'},
+    {'destination': 'Rameswaram', 'duration': 2, 'type': 'Island pilgrimage'},
+    {'destination': 'Kanyakumari', 'duration': 2, 'type': 'Land\'s end sunrise'},
+    {'destination': 'Chettinad', 'duration': 2, 'type': 'Heritage mansions & cuisine'},
+    // Karnataka
+    {'destination': 'Coorg', 'duration': 3, 'type': 'Coffee plantation bliss'},
+    {'destination': 'Hampi', 'duration': 3, 'type': 'Boulder wonderland'},
+    {'destination': 'Mysore', 'duration': 3, 'type': 'Palace city'},
+    {'destination': 'Gokarna', 'duration': 3, 'type': 'Beach & temples'},
+    {'destination': 'Chikmagalur', 'duration': 3, 'type': 'Coffee hills retreat'},
+    {'destination': 'Badami', 'duration': 2, 'type': 'Cave temple heritage'},
+    {'destination': 'Kabini', 'duration': 3, 'type': 'Luxury wildlife'},
+    // Andhra Pradesh & Telangana
+    {'destination': 'Hyderabad', 'duration': 3, 'type': 'Biryani & heritage'},
+    {'destination': 'Tirupati', 'duration': 2, 'type': 'Divine darshan'},
+    {'destination': 'Araku Valley', 'duration': 3, 'type': 'Eastern Ghats beauty'},
+    {'destination': 'Vizag', 'duration': 3, 'type': 'City of destiny'},
+
+    // === WEST INDIA ===
+    // Goa
+    {'destination': 'North Goa', 'duration': 4, 'type': 'Beach party vibes'},
+    {'destination': 'South Goa', 'duration': 4, 'type': 'Serene beach escape'},
+    // Maharashtra
+    {'destination': 'Mumbai', 'duration': 3, 'type': 'Maximum city experience'},
+    {'destination': 'Lonavala', 'duration': 2, 'type': 'Monsoon getaway'},
+    {'destination': 'Mahabaleshwar', 'duration': 3, 'type': 'Strawberry hills'},
+    {'destination': 'Ajanta Ellora', 'duration': 2, 'type': 'Cave art wonder'},
+    {'destination': 'Kolhapur', 'duration': 2, 'type': 'Temple & misal pav'},
+    {'destination': 'Alibaug', 'duration': 2, 'type': 'Beach weekend'},
+    {'destination': 'Panchgani', 'duration': 2, 'type': 'Table land views'},
+    {'destination': 'Nashik', 'duration': 2, 'type': 'Wine capital'},
+    {'destination': 'Tarkarli', 'duration': 3, 'type': 'Scuba & beaches'},
+    // Gujarat
+    {'destination': 'Rann of Kutch', 'duration': 4, 'type': 'White desert wonder'},
+    {'destination': 'Gir Forest', 'duration': 3, 'type': 'Asiatic lion safari'},
+    {'destination': 'Dwarka', 'duration': 2, 'type': 'Krishna\'s kingdom'},
+    {'destination': 'Somnath', 'duration': 2, 'type': 'Jyotirlinga pilgrimage'},
+    {'destination': 'Ahmedabad', 'duration': 2, 'type': 'Heritage city walk'},
+    {'destination': 'Statue of Unity', 'duration': 2, 'type': 'World\'s tallest statue'},
+    {'destination': 'Saputara', 'duration': 2, 'type': 'Gujarat\'s hill station'},
+    {'destination': 'Diu', 'duration': 3, 'type': 'Beach & Portuguese heritage'},
+
+    // === EAST INDIA ===
+    // West Bengal
+    {'destination': 'Kolkata', 'duration': 3, 'type': 'City of joy'},
+    {'destination': 'Darjeeling', 'duration': 4, 'type': 'Tea & toy train'},
+    {'destination': 'Kalimpong', 'duration': 3, 'type': 'Orchid paradise'},
+    {'destination': 'Sundarbans', 'duration': 3, 'type': 'Mangrove tiger safari'},
+    {'destination': 'Shantiniketan', 'duration': 2, 'type': 'Tagore\'s abode'},
+    {'destination': 'Digha', 'duration': 2, 'type': 'Beach weekend'},
+    // Odisha
+    {'destination': 'Puri', 'duration': 3, 'type': 'Jagannath & beach'},
+    {'destination': 'Konark', 'duration': 2, 'type': 'Sun temple marvel'},
+    {'destination': 'Bhubaneswar', 'duration': 2, 'type': 'Temple city'},
+    {'destination': 'Chilika Lake', 'duration': 2, 'type': 'Bird watching paradise'},
+    // Bihar & Jharkhand
+    {'destination': 'Bodh Gaya', 'duration': 2, 'type': 'Buddha\'s enlightenment'},
+    {'destination': 'Rajgir', 'duration': 2, 'type': 'Ancient Buddhist site'},
+    {'destination': 'Deoghar', 'duration': 2, 'type': 'Baidyanath pilgrimage'},
+    {'destination': 'Netarhat', 'duration': 3, 'type': 'Queen of Chotanagpur'},
+
+    // === NORTHEAST INDIA ===
+    {'destination': 'Shillong', 'duration': 4, 'type': 'Scotland of the East'},
+    {'destination': 'Cherrapunji', 'duration': 3, 'type': 'Living root bridges'},
+    {'destination': 'Kaziranga', 'duration': 3, 'type': 'One-horned rhino safari'},
+    {'destination': 'Majuli', 'duration': 3, 'type': 'World\'s largest river island'},
+    {'destination': 'Tawang', 'duration': 5, 'type': 'Monastery & mountains'},
+    {'destination': 'Ziro Valley', 'duration': 4, 'type': 'Music festival & tribes'},
+    {'destination': 'Gangtok', 'duration': 4, 'type': 'Sikkim capital charm'},
+    {'destination': 'Pelling', 'duration': 3, 'type': 'Kanchenjunga views'},
+    {'destination': 'Imphal', 'duration': 3, 'type': 'Loktak Lake floating'},
+    {'destination': 'Kohima', 'duration': 3, 'type': 'WWII history & hornbill'},
+    {'destination': 'Dimapur', 'duration': 2, 'type': 'Gateway to Nagaland'},
+    {'destination': 'Agartala', 'duration': 2, 'type': 'Ujjayanta Palace'},
+    {'destination': 'Dawki', 'duration': 2, 'type': 'Crystal clear river'},
+
+    // === CENTRAL INDIA ===
+    {'destination': 'Khajuraho', 'duration': 2, 'type': 'Temple sculptures'},
+    {'destination': 'Orchha', 'duration': 2, 'type': 'Medieval town frozen'},
+    {'destination': 'Pachmarhi', 'duration': 3, 'type': 'Queen of Satpura'},
+    {'destination': 'Kanha', 'duration': 3, 'type': 'Jungle Book safari'},
+    {'destination': 'Bandhavgarh', 'duration': 3, 'type': 'White tiger homeland'},
+    {'destination': 'Bhopal', 'duration': 2, 'type': 'City of lakes'},
+    {'destination': 'Sanchi', 'duration': 1, 'type': 'Buddhist stupa'},
+    {'destination': 'Jabalpur', 'duration': 2, 'type': 'Marble rocks wonder'},
+
+    // === ISLANDS ===
+    {'destination': 'Andaman Islands', 'duration': 6, 'type': 'Tropical paradise'},
+    {'destination': 'Havelock Island', 'duration': 4, 'type': 'Radhanagar beach'},
+    {'destination': 'Neil Island', 'duration': 3, 'type': 'Natural bridge'},
+    {'destination': 'Lakshadweep', 'duration': 5, 'type': 'Coral island escape'},
   ];
 
   /// Generate a random trip idea

@@ -1,11 +1,14 @@
 // AI Itinerary Providers
 //
 // Riverpod providers for AI itinerary generation.
+// Uses dual-provider system: Groq (primary) + Gemini (fallback)
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/services/gemini_service.dart';
+import '../../data/services/groq_service.dart';
+import '../../data/services/multi_provider_ai_service.dart';
 import '../../domain/entities/ai_itinerary.dart';
 import '../../../templates/presentation/providers/template_providers.dart';
 
@@ -13,23 +16,48 @@ import '../../../templates/presentation/providers/template_providers.dart';
 // CONFIGURATION
 // =====================================================
 
-/// Gemini API Key - Should be stored securely in production
-/// For development, you can set this directly
-/// In production, use environment variables or secure storage
+/// Groq API Key - Primary provider (1,000 requests/day FREE)
+/// Get your key at: https://console.groq.com
+const String _groqApiKey = String.fromEnvironment(
+  'GROQ_API_KEY',
+  defaultValue: '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',
+);
+
+/// Gemini API Key - Fallback provider (25 requests/day FREE)
+/// Used when Groq is rate-limited
 const String _geminiApiKey = String.fromEnvironment(
   'GEMINI_API_KEY',
   defaultValue: 'AIzaSyBTQDAUYsexJQbtq-sZmMaJ1ypF6dEwn8M',
 );
 
 // =====================================================
-// SERVICE PROVIDER
+// SERVICE PROVIDERS
 // =====================================================
 
+/// Groq Service - Primary AI provider (1,000 RPD)
+final groqServiceProvider = Provider<GroqService>((ref) {
+  if (_groqApiKey.isEmpty) {
+    throw Exception('Groq API key not configured');
+  }
+  return GroqService(_groqApiKey);
+});
+
+/// Gemini Service - Fallback AI provider (25 RPD)
 final geminiServiceProvider = Provider<GeminiService>((ref) {
   if (_geminiApiKey.isEmpty) {
     throw Exception('Gemini API key not configured');
   }
   return GeminiService(_geminiApiKey);
+});
+
+/// Multi-Provider AI Service - Handles automatic failover
+/// Primary: Groq (1,000 RPD) -> Fallback: Gemini (25 RPD)
+/// Total: ~1,025 free AI generations per day!
+final multiProviderAiServiceProvider = Provider<MultiProviderAiService>((ref) {
+  return MultiProviderAiService(
+    groqService: ref.watch(groqServiceProvider),
+    geminiService: ref.watch(geminiServiceProvider),
+  );
 });
 
 // =====================================================
