@@ -380,7 +380,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
       _messageController.clear();
 
-      // Invalidate conversations list to refresh last message
+      // Mark conversation as read after sending (updates last_read_at to now)
+      // This ensures the sender's unread count goes to 0
+      await _markAsRead();
+
+      // Invalidate conversations list to refresh last message and unread count
       ref.invalidate(tripConversationsProvider(TripConversationsParams(
         tripId: widget.tripId,
         userId: _effectiveUserId,
