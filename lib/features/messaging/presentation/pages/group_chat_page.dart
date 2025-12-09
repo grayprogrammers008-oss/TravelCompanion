@@ -62,45 +62,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   @override
   void dispose() {
-    // Mark as read one final time before leaving to ensure all messages are marked
-    // This runs async but the invalidate will trigger a fresh fetch from DB
-    _markAsReadAndInvalidate();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  /// Mark as read and then invalidate providers to refresh unread counts
-  Future<void> _markAsReadAndInvalidate() async {
-    try {
-      // First mark as read in the database
-      final userId = _effectiveUserId;
-      if (userId.isNotEmpty) {
-        final useCase = ref.read(markConversationAsReadUseCaseProvider);
-        await useCase.execute(
-          conversationId: widget.conversationId,
-          userId: userId,
-        );
-        debugPrint('✅ Marked conversation as read before leaving');
-      }
-    } catch (e) {
-      debugPrint('Error marking as read before leaving: $e');
-    }
-
-    // Then invalidate providers to refresh unread counts
-    ref.invalidate(tripConversationsStreamProvider(TripConversationsParams(
-      tripId: widget.tripId,
-      userId: _effectiveUserId,
-    )));
-    ref.invalidate(tripConversationsProvider(TripConversationsParams(
-      tripId: widget.tripId,
-      userId: _effectiveUserId,
-    )));
-    ref.invalidate(tripUnreadCountProvider(TripConversationsParams(
-      tripId: widget.tripId,
-      userId: _effectiveUserId,
-    )));
-    debugPrint('🔄 Invalidated conversation providers');
   }
 
   Future<void> _markAsRead() async {
@@ -465,21 +429,51 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       conversationMessagesStreamProvider(widget.conversationId),
     );
 
-    return Scaffold(
-      appBar: _buildAppBar(context, conversationAsync),
-      body: Column(
-        children: [
-          // Messages List
-          Expanded(
-            child: messagesAsync.when(
-              data: (messages) => _buildMessagesList(messages),
-              loading: () => const Center(child: AppLoadingIndicator()),
-              error: (error, stack) => _buildErrorState(error),
+    return PopScope(
+      canPop: false, // Intercept back navigation
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        // Mark conversation as read before leaving
+        await _markAsRead();
+        debugPrint('✅ Marked conversation as read before leaving');
+
+        // Invalidate providers to refresh unread counts
+        ref.invalidate(tripConversationsStreamProvider(TripConversationsParams(
+          tripId: widget.tripId,
+          userId: _effectiveUserId,
+        )));
+        ref.invalidate(tripConversationsProvider(TripConversationsParams(
+          tripId: widget.tripId,
+          userId: _effectiveUserId,
+        )));
+        ref.invalidate(tripUnreadCountProvider(TripConversationsParams(
+          tripId: widget.tripId,
+          userId: _effectiveUserId,
+        )));
+        debugPrint('🔄 Invalidated conversation providers before pop');
+
+        // Now actually pop
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(context, conversationAsync),
+        body: Column(
+          children: [
+            // Messages List
+            Expanded(
+              child: messagesAsync.when(
+                data: (messages) => _buildMessagesList(messages),
+                loading: () => const Center(child: AppLoadingIndicator()),
+                error: (error, stack) => _buildErrorState(error),
+              ),
             ),
-          ),
-          // Message Input
-          _buildMessageInput(context),
-        ],
+            // Message Input
+            _buildMessageInput(context),
+          ],
+        ),
       ),
     );
   }
