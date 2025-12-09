@@ -590,6 +590,112 @@ class ConversationRemoteDataSource {
     return controller.stream;
   }
 
+  /// Subscribe to conversation member changes to detect read status updates
+  /// Returns a stream that emits whenever any conversation_members row changes
+  /// This is essential for detecting when messages are marked as read (last_read_at updates)
+  Stream<void> subscribeToConversationMemberChanges(String tripId) {
+    debugPrint('🔔 subscribeToConversationMemberChanges: Setting up realtime channel for tripId=$tripId');
+
+    final controller = StreamController<void>.broadcast();
+    final channelName = 'conversation_members_$tripId';
+    final channel = _client.channel(channelName);
+
+    // Listen for ANY changes to conversation_members table
+    // We can't filter by trip_id directly since conversation_members doesn't have trip_id
+    // But we can listen to all updates and let the provider recalculate
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update, // Only updates (for last_read_at changes)
+          schema: 'public',
+          table: 'conversation_members',
+          callback: (payload) {
+            debugPrint('🔔 subscribeToConversationMemberChanges: Member change detected - ${payload.eventType}');
+            debugPrint('🔔   Old record: ${payload.oldRecord}');
+            debugPrint('🔔   New record: ${payload.newRecord}');
+            controller.add(null);
+          },
+        )
+        .subscribe((status, [error]) {
+          debugPrint('🔔 subscribeToConversationMemberChanges: Channel status: $status ${error != null ? '- Error: $error' : ''}');
+          if (status == RealtimeSubscribeStatus.subscribed) {
+            debugPrint('🔔 subscribeToConversationMemberChanges: Successfully subscribed to member changes');
+          }
+        });
+
+    controller.onCancel = () {
+      debugPrint('🔔 subscribeToConversationMemberChanges: Unsubscribing from channel $channelName');
+      _client.removeChannel(channel);
+    };
+
+    return controller.stream;
+  }
+
+  /// Combined stream that listens to both messages and conversation member changes
+  /// This ensures unread counts update both when new messages arrive AND when messages are read
+  Stream<void> subscribeToTripActivityChanges(String tripId) {
+    debugPrint('🔔 subscribeToTripActivityChanges: Setting up combined realtime channels for tripId=$tripId');
+
+    final controller = StreamController<void>.broadcast();
+    final messageChannelName = 'trip_activity_messages_$tripId';
+    final memberChannelName = 'trip_activity_members_$tripId';
+
+    final messageChannel = _client.channel(messageChannelName);
+    final memberChannel = _client.channel(memberChannelName);
+
+    // Subscribe to message changes for this trip
+    messageChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'messages',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'trip_id',
+            value: tripId,
+          ),
+          callback: (payload) {
+            debugPrint('🔔 subscribeToTripActivityChanges: MESSAGE change - ${payload.eventType}');
+            controller.add(null);
+          },
+        )
+        .subscribe((status, [error]) {
+          debugPrint('🔔 subscribeToTripActivityChanges: Message channel status: $status');
+          if (status == RealtimeSubscribeStatus.subscribed) {
+            // Emit initial event to trigger first calculation
+            controller.add(null);
+          }
+        });
+
+    // Subscribe to conversation member changes (for last_read_at updates)
+    memberChannel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'conversation_members',
+          callback: (payload) {
+            debugPrint('🔔 subscribeToTripActivityChanges: MEMBER change - ${payload.eventType}');
+            // Check if last_read_at was updated (this indicates marking as read)
+            final oldRecord = payload.oldRecord;
+            final newRecord = payload.newRecord;
+            if (oldRecord['last_read_at'] != newRecord['last_read_at']) {
+              debugPrint('🔔   last_read_at changed: ${oldRecord['last_read_at']} -> ${newRecord['last_read_at']}');
+              controller.add(null);
+            }
+          },
+        )
+        .subscribe((status, [error]) {
+          debugPrint('🔔 subscribeToTripActivityChanges: Member channel status: $status');
+        });
+
+    controller.onCancel = () {
+      debugPrint('🔔 subscribeToTripActivityChanges: Unsubscribing from channels');
+      _client.removeChannel(messageChannel);
+      _client.removeChannel(memberChannel);
+    };
+
+    return controller.stream;
+  }
+
   // ============================================================================
   // UTILITY
   // ============================================================================

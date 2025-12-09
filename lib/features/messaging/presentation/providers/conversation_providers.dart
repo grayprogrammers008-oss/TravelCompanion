@@ -104,8 +104,12 @@ final tripConversationsProvider = FutureProvider.autoDispose
 });
 
 /// Stream provider for trip conversations with real-time updates
-/// Listens to message changes and refreshes conversation list automatically
+/// Listens to BOTH message changes AND read status updates
 /// Usage: ref.watch(tripConversationsStreamProvider(TripConversationsParams(...)))
+///
+/// This ensures conversation list updates when:
+/// - New messages arrive (last_message_* fields update)
+/// - Messages are marked as read (unread_count updates)
 final tripConversationsStreamProvider = StreamProvider.autoDispose
     .family<List<ConversationEntity>, TripConversationsParams>((ref, params) async* {
   final dataSource = ref.read(conversationRemoteDataSourceProvider);
@@ -126,8 +130,8 @@ final tripConversationsStreamProvider = StreamProvider.autoDispose
   // Emit initial data immediately
   yield await fetchConversations();
 
-  // Then listen to trip messages stream and refresh on any change
-  await for (final _ in dataSource.subscribeToTripMessages(params.tripId)) {
+  // Listen to BOTH message changes AND member changes (for read status)
+  await for (final _ in dataSource.subscribeToTripActivityChanges(params.tripId)) {
     yield await fetchConversations();
   }
 });
@@ -316,6 +320,14 @@ final defaultGroupProvider = FutureProvider.autoDispose
 
 /// Provider to get total unread message count for a trip (all conversations)
 /// Usage: ref.watch(tripUnreadCountProvider(TripConversationsParams(...)))
+///
+/// This provider listens to BOTH:
+/// 1. New messages in the trip (messages table changes)
+/// 2. Read status updates (conversation_members.last_read_at changes)
+///
+/// This ensures the unread count updates when:
+/// - Someone sends a new message (count increases)
+/// - User reads messages (count decreases to 0)
 final tripUnreadCountProvider = StreamProvider.autoDispose
     .family<int, TripConversationsParams>((ref, params) async* {
   // Guard against empty userId or tripId to prevent PostgreSQL UUID errors
@@ -369,9 +381,10 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
   // Emit initial count immediately
   yield await calculateUnreadCount();
 
-  // Then listen to trip messages stream and recalculate on any change
-  await for (final _ in dataSource.subscribeToTripMessages(params.tripId)) {
-    debugPrint('📊 tripUnreadCountProvider: Message change detected, recalculating...');
+  // Listen to BOTH message changes AND conversation member changes (for read status)
+  // This uses the combined stream that watches both tables
+  await for (final _ in dataSource.subscribeToTripActivityChanges(params.tripId)) {
+    debugPrint('📊 tripUnreadCountProvider: Activity change detected (message or read status), recalculating...');
     yield await calculateUnreadCount();
   }
 });
