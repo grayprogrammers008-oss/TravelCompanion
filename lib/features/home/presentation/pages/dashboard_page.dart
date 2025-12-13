@@ -64,9 +64,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           },
           child: CustomScrollView(
             slivers: [
-              // App Bar with greeting
+              // Compact App Bar with greeting
               SliverAppBar(
-                expandedHeight: 120,
+                expandedHeight: 90,
                 floating: false,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
@@ -78,10 +78,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     child: SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(
-                          AppTheme.spacingLg,
-                          AppTheme.spacingLg,
-                          AppTheme.spacingLg,
                           AppTheme.spacingMd,
+                          AppTheme.spacingSm,
+                          AppTheme.spacingMd,
+                          AppTheme.spacingSm,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,33 +94,29 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                   child: UserAvatarWidget(
                                     imageUrl: currentUser.value?.avatarUrl,
                                     userName: currentUser.value?.fullName,
-                                    size: 48,
+                                    size: 40,
                                     showBorder: true,
                                   ),
                                 ),
-                                const SizedBox(width: AppTheme.spacingMd),
+                                const SizedBox(width: AppTheme.spacingSm),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         _getGreeting(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: Colors.white.withValues(alpha: 0.9),
-                                            ),
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.8),
+                                          fontSize: 12,
+                                        ),
                                       ),
                                       Text(
                                         currentUser.value?.fullName?.split(' ').first ?? 'Traveler',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -131,6 +127,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                 IconButton(
                                   icon: const Icon(Icons.more_vert, color: Colors.white),
                                   onPressed: () => _showProfileMenu(context, ref),
+                                  visualDensity: VisualDensity.compact,
                                 ),
                               ],
                             ),
