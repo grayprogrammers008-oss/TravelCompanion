@@ -389,7 +389,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               child: const Icon(
                 Icons.person_outline,
                 color: Colors.white,
-                size: 20,
+                size: 24,
               ),
             ),
             const SizedBox(width: AppTheme.spacingSm),
@@ -397,7 +397,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               isViewingOwnProfile ? 'Profile' : 'User Profile',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
             ),

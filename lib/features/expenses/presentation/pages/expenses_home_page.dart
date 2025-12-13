@@ -66,7 +66,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
               child: const Icon(
                 Icons.account_balance_wallet_outlined,
                 color: Colors.white,
-                size: 20,
+                size: 24,
               ),
             ),
             const SizedBox(width: AppTheme.spacingSm),
@@ -74,7 +74,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
               'Expenses',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
             ),
