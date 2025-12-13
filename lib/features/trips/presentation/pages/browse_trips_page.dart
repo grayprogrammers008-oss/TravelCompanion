@@ -26,7 +26,6 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   final _searchController = TextEditingController();
-  bool _isSearching = false;
 
   @override
   void initState() {
@@ -155,16 +154,16 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
           },
           child: CustomScrollView(
             slivers: [
-              // App Bar
+              // Compact header with permanent search bar
               SliverAppBar(
-                expandedHeight: _isSearching ? 160 : 120,
-                floating: false,
+                expandedHeight: 140,
+                floating: true,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
+                elevation: 0,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    // Check if we can pop, otherwise go to dashboard
                     if (context.canPop()) {
                       context.pop();
                     } else {
@@ -172,41 +171,25 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                     }
                   },
                 ),
-                actions: [
-                  // Search Icon
-                  IconButton(
-                    icon: Icon(
-                      _isSearching ? Icons.close : Icons.search,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isSearching = !_isSearching;
-                        if (!_isSearching) {
-                          _searchController.clear();
-                        }
-                      });
-                    },
-                  ),
-                ],
                 flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
                   background: Container(
                     decoration: BoxDecoration(
                       gradient: themeData.primaryGradient,
                     ),
                     child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppTheme.spacing3xl,
-                          AppTheme.spacingLg,
-                          AppTheme.spacingLg,
-                          AppTheme.spacingMd,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
+                      bottom: false,
+                      child: Column(
+                        children: [
+                          // Top row: Back button space + Title
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              56, // Space for back button
+                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
+                              0,
+                            ),
+                            child: Row(
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(AppTheme.spacingSm),
@@ -217,88 +200,92 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                   child: const Icon(
                                     Icons.explore,
                                     color: Colors.white,
-                                    size: 28,
+                                    size: 24,
                                   ),
                                 ),
-                                const SizedBox(width: AppTheme.spacingMd),
+                                const SizedBox(width: AppTheme.spacingSm),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
                                         'Browse Trips',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                       Text(
                                         'Discover and join public trips',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: Colors.white.withValues(alpha: 0.9),
-                                            ),
-                                      ),
-                                      if (_isSearching) ...[
-                                        const SizedBox(height: AppTheme.spacingXs),
-                                        SizedBox(
-                                          height: 42,
-                                          child: TextField(
-                                            controller: _searchController,
-                                            autofocus: true,
-                                            autocorrect: false,
-                                            enableSuggestions: false,
-                                            style: const TextStyle(color: Colors.white),
-                                            decoration: InputDecoration(
-                                              hintText: 'Search trips...',
-                                              hintStyle: TextStyle(
-                                                color: Colors.white.withValues(alpha: 0.6),
-                                              ),
-                                              prefixIcon: const Icon(
-                                                Icons.search,
-                                                color: Colors.white,
-                                              ),
-                                              suffixIcon: _searchController.text.isNotEmpty
-                                                  ? IconButton(
-                                                      icon: const Icon(
-                                                        Icons.clear,
-                                                        color: Colors.white,
-                                                      ),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _searchController.clear();
-                                                        });
-                                                      },
-                                                    )
-                                                  : null,
-                                              filled: true,
-                                              fillColor: Colors.white.withValues(alpha: 0.2),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    AppTheme.radiusFull),
-                                                borderSide: BorderSide.none,
-                                              ),
-                                              contentPadding: const EdgeInsets.symmetric(
-                                                horizontal: AppTheme.spacingMd,
-                                                vertical: AppTheme.spacingSm,
-                                              ),
-                                            ),
-                                            onChanged: (value) => setState(() {}),
-                                          ),
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.8),
+                                          fontSize: 12,
                                         ),
-                                      ],
+                                      ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          // Search bar row
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppTheme.spacingMd,
+                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
+                              AppTheme.spacingSm,
+                            ),
+                            child: Container(
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              ),
+                              child: TextField(
+                                controller: _searchController,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Search trips...',
+                                  hintStyle: TextStyle(
+                                    color: AppTheme.neutral400,
+                                    fontSize: 14,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd,
+                                    vertical: 12,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: AppTheme.neutral400,
+                                    size: 20,
+                                  ),
+                                  suffixIcon: _searchController.text.isNotEmpty
+                                      ? IconButton(
+                                          icon: Icon(
+                                            Icons.clear,
+                                            color: AppTheme.neutral400,
+                                            size: 18,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _searchController.clear();
+                                            });
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                onChanged: (_) => setState(() {}),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
