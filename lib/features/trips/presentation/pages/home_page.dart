@@ -31,7 +31,6 @@ class _HomePageState extends ConsumerState<HomePage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   final _searchController = TextEditingController();
-  bool _isSearching = false;
 
   // Filter state variables
   double? _minBudget;
@@ -507,8 +506,339 @@ class _HomePageState extends ConsumerState<HomePage>
       _statusFilter = 'all';
       _sortBy = 'recent';
       _searchController.clear();
-      _isSearching = false;
     });
+  }
+
+  /// Build floating search bar with filter button
+  Widget _buildFloatingSearchBar(BuildContext context, dynamic themeData) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingSm,
+      ),
+      child: Row(
+        children: [
+          // Search Field
+          Expanded(
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Search trips...',
+                  hintStyle: TextStyle(
+                    color: AppTheme.neutral400,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingMd,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: AppTheme.neutral400,
+                    size: 22,
+                  ),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.clear,
+                            color: AppTheme.neutral400,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                            });
+                          },
+                        )
+                      : null,
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingSm),
+          // Filter Button
+          GestureDetector(
+            onTap: () => _showFilterBottomSheet(context, themeData),
+            child: Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: _hasActiveFilters ? themeData.primaryColor : Colors.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    Icons.tune,
+                    color: _hasActiveFilters ? Colors.white : AppTheme.neutral600,
+                    size: 22,
+                  ),
+                  if (_hasActiveFilters)
+                    Positioned(
+                      right: 10,
+                      top: 10,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: themeData.primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Show filter options in a bottom sheet
+  void _showFilterBottomSheet(BuildContext context, dynamic themeData) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+        ),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppTheme.radiusXl),
+            topRight: Radius.circular(AppTheme.radiusXl),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppTheme.neutral300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Filter & Sort',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  if (_hasAnyFilters)
+                    TextButton(
+                      onPressed: () {
+                        _clearAllFilters();
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Clear All',
+                        style: TextStyle(
+                          color: themeData.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // Sort Options
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sort by',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.neutral600,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingSm),
+                  Wrap(
+                    spacing: AppTheme.spacingSm,
+                    runSpacing: AppTheme.spacingSm,
+                    children: [
+                      _buildSortChip('Recent', 'recent', themeData),
+                      _buildSortChip('Name', 'name', themeData),
+                      _buildSortChip('Start Date', 'startDate', themeData),
+                      _buildSortChip('Budget', 'budget', themeData),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Budget Filter
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Budget Range',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.neutral600,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingSm),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildBudgetField('Min', _minBudget, (value) {
+                          setState(() => _minBudget = value);
+                          Navigator.pop(context);
+                        }),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _buildBudgetField('Max', _maxBudget, (value) {
+                          setState(() => _maxBudget = value);
+                          Navigator.pop(context);
+                        }),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+            // Apply Button
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeData.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    ),
+                  ),
+                  child: const Text(
+                    'Apply Filters',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSortChip(String label, String value, dynamic themeData) {
+    final isSelected = _sortBy == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() => _sortBy = value);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? themeData.primaryColor : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+          border: Border.all(
+            color: isSelected ? themeData.primaryColor : AppTheme.neutral300,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : AppTheme.neutral700,
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBudgetField(String label, double? value, Function(double?) onChanged) {
+    return TextField(
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixText: '₹ ',
+        filled: true,
+        fillColor: AppTheme.neutral100,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+      ),
+      controller: TextEditingController(text: value?.toStringAsFixed(0) ?? ''),
+      onSubmitted: (text) {
+        final parsed = double.tryParse(text);
+        onChanged(parsed);
+      },
+    );
   }
 
   @override
@@ -531,49 +861,14 @@ class _HomePageState extends ConsumerState<HomePage>
           },
           child: CustomScrollView(
             slivers: [
-              // Premium App Bar with gradient
+              // Clean App Bar with just greeting
               SliverAppBar(
-            expandedHeight: _isSearching ? 160 : 120,
+            expandedHeight: 100,
             floating: false,
             pinned: true,
             backgroundColor: themeData.primaryColor,
             actions: [
-              // Search Icon
-              IconButton(
-                icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.white),
-                onPressed: () {
-                  setState(() {
-                    _isSearching = !_isSearching;
-                    if (!_isSearching) {
-                      _searchController.clear();
-                    }
-                  });
-                },
-              ),
-              // Filter Icon
-              Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.filter_list, color: Colors.white),
-                    onPressed: () => _navigateToFilterPage(context),
-                  ),
-                  if (_hasActiveFilters)
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppTheme.error,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              // Menu Icon
+              // Menu Icon only
               IconButton(
                 icon: const Icon(Icons.more_vert, color: Colors.white),
                 onPressed: () => _showProfileMenu(context, ref),
@@ -588,113 +883,49 @@ class _HomePageState extends ConsumerState<HomePage>
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
                       AppTheme.spacingLg,
-                      AppTheme.spacingLg,
+                      AppTheme.spacingMd,
                       AppTheme.spacingLg,
                       AppTheme.spacingMd,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            // User Avatar
-                            UserAvatarWidget(
-                              imageUrl: currentUser.value?.avatarUrl,
-                              userName: currentUser.value?.fullName,
-                              size: 48,
-                              showBorder: true,
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Welcome back,',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.9),
-                                        ),
-                                  ),
-                                  Text(
-                                    currentUser.value?.fullName
-                                            ?.split(' ')
-                                            .first ??
-                                        'Traveler',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  if (_isSearching) ...[
-                                    const SizedBox(height: AppTheme.spacingXs),
-                                    SizedBox(
-                                      height: 42,
-                                      child: TextField(
-                                        controller: _searchController,
-                                        autofocus: true,
-                                        autocorrect: false,
-                                        enableSuggestions: false,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          decoration: TextDecoration.none,
-                                        ),
-                                        cursorColor: Colors.white,
-                                        decoration: InputDecoration(
-                                          hintText: 'Search trips...',
-                                          hintStyle: TextStyle(
-                                            color: Colors.white.withValues(alpha: 0.7),
-                                            fontSize: 14,
-                                          ),
-                                          filled: true,
-                                          fillColor: Colors.white.withValues(alpha: 0.2),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: AppTheme.spacingSm,
-                                            vertical: AppTheme.spacingXs,
-                                          ),
-                                          prefixIcon: const Icon(
-                                            Icons.search,
-                                            color: Colors.white70,
-                                            size: 18,
-                                          ),
-                                          suffixIcon: _searchController.text.isNotEmpty
-                                              ? IconButton(
-                                                  icon: const Icon(
-                                                    Icons.clear,
-                                                    color: Colors.white70,
-                                                    size: 18,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _searchController.clear();
-                                                    });
-                                                  },
-                                                )
-                                              : null,
-                                        ),
-                                        onChanged: (_) => setState(() {}),
-                                      ),
+                        // User Avatar
+                        UserAvatarWidget(
+                          imageUrl: currentUser.value?.avatarUrl,
+                          userName: currentUser.value?.fullName,
+                          size: 44,
+                          showBorder: true,
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Welcome back,',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.white.withValues(alpha: 0.85),
                                     ),
-                                  ],
-                                ],
                               ),
-                            ),
-                          ],
+                              Text(
+                                currentUser.value?.fullName?.split(' ').first ?? 'Traveler',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -703,6 +934,11 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
             ),
           ),
+
+              // Floating Search Bar
+              SliverToBoxAdapter(
+                child: _buildFloatingSearchBar(context, themeData),
+              ),
 
           // Content
           ...userTripsAsync.when(
@@ -2060,7 +2296,6 @@ class _HomePageState extends ConsumerState<HomePage>
                     onPressed: () {
                       setState(() {
                         _searchController.clear();
-                        _isSearching = false;
                       });
                     },
                   ),
