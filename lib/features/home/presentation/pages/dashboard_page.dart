@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -312,110 +310,104 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 top: AppTheme.spacingMd, // Same as left badge
                 child: _buildMemberAvatars(members),
               ),
-              // Content with glassmorphism card
+              // Content card (optimized - no blur for performance)
               Positioned(
                 left: AppTheme.spacingMd,
                 right: AppTheme.spacingMd,
                 bottom: AppTheme.spacingMd,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingMd),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
-                        ),
+                child: Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Trip Name
+                      Text(
+                        trip.name,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.5,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(height: 6),
+                      // Location and Date Row
+                      Row(
                         children: [
-                          // Trip Name
-                          Text(
-                            trip.name,
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.5,
+                          if (trip.destination != null) ...[
+                            Icon(Icons.location_on, size: 14, color: Colors.white.withValues(alpha: 0.8)),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                trip.destination!,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 6),
-                          // Location and Date Row
-                          Row(
-                            children: [
-                              if (trip.destination != null) ...[
-                                Icon(Icons.location_on, size: 14, color: Colors.white.withValues(alpha: 0.8)),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    trip.destination!,
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.9),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                              if (startDate != null) ...[
-                                const SizedBox(width: 12),
-                                Icon(Icons.calendar_today, size: 14, color: Colors.white.withValues(alpha: 0.8)),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${startDate.day}/${startDate.month}',
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          // View Trip Button
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'View Trip',
-                                        style: TextStyle(
-                                          color: themeData.primaryColor,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(
-                                        Icons.arrow_forward,
-                                        size: 16,
-                                        color: themeData.primaryColor,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
+                            ),
+                          ],
+                          if (startDate != null) ...[
+                            const SizedBox(width: 12),
+                            Icon(Icons.calendar_today, size: 14, color: Colors.white.withValues(alpha: 0.8)),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${startDate.day}/${startDate.month}',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      // View Trip Button
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'View Trip',
+                                    style: TextStyle(
+                                      color: themeData.primaryColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    size: 16,
+                                    color: themeData.primaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -427,141 +419,124 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     );
   }
 
-  /// Animated countdown badge for upcoming trips
+  /// Countdown badge for upcoming trips (optimized - no blur, no perpetual animation)
   Widget _buildCountdownBadge(BuildContext context, int daysUntil, dynamic themeData) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.95, end: 1.05),
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-      builder: (context, scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
-      },
-      onEnd: () {
-        // This creates a pulsing effect by rebuilding
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  themeData.primaryColor.withValues(alpha: 0.8),
-                  themeData.primaryColor.withValues(alpha: 0.6),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: themeData.primaryColor.withValues(alpha: 0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.flight_takeoff, size: 18, color: Colors.white),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      daysUntil == 0 ? 'TODAY!' : '$daysUntil',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                      ),
-                    ),
-                    if (daysUntil > 0)
-                      Text(
-                        daysUntil == 1 ? 'day to go' : 'days to go',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+    // Removed TweenAnimationBuilder and BackdropFilter for performance
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            themeData.primaryColor.withValues(alpha: 0.9),
+            themeData.primaryColor.withValues(alpha: 0.75),
+          ],
         ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: themeData.primaryColor.withValues(alpha: 0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.flight_takeoff, size: 18, color: Colors.white),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                daysUntil == 0 ? 'TODAY!' : '$daysUntil',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  height: 1,
+                ),
+              ),
+              if (daysUntil > 0)
+                Text(
+                  daysUntil == 1 ? 'day to go' : 'days to go',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  /// Progress badge for ongoing trips
+  /// Progress badge for ongoing trips (optimized - no blur)
   Widget _buildProgressBadge(BuildContext context, int dayNumber, int totalDays, dynamic themeData) {
     final progress = dayNumber / totalDays;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: AppTheme.success.withValues(alpha: 0.85),
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.3),
-            ),
+    // Removed BackdropFilter for performance
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppTheme.success.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.success.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.explore, size: 18, color: Colors.white),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.explore, size: 18, color: Colors.white),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Day $dayNumber',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Mini progress bar
-                  Container(
-                    width: 50,
-                    height: 4,
+              Text(
+                'Day $dayNumber',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(height: 4),
+              // Mini progress bar
+              Container(
+                width: 50,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: progress,
+                  child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(2),
                     ),
-                    child: FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: progress,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

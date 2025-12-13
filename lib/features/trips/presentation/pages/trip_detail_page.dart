@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -339,49 +337,40 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
       statusIcon = Icons.schedule;
     }
 
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.9, end: 1.0),
-      duration: const Duration(milliseconds: 1000),
-      curve: Curves.easeInOut,
-      builder: (context, scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
-      },
-      child: ClipRRect(
+    // Optimized: removed TweenAnimationBuilder and BackdropFilter for scroll performance
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingSm,
+      ),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingMd,
-              vertical: AppTheme.spacingSm,
-            ),
-            decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(statusIcon, color: Colors.white, size: 16),
-                const SizedBox(width: AppTheme.spacingXs),
-                Text(
-                  statusText,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: statusColor.withValues(alpha: 0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(statusIcon, color: Colors.white, size: 16),
+          const SizedBox(width: AppTheme.spacingXs),
+          Text(
+            statusText,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -460,101 +449,96 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   }
 
   Widget _buildHeroInfoCard(BuildContext context, dynamic trip) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-        child: Container(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
-            children: [
-              // Destination
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingXs),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                      ),
-                      child: const Icon(
-                        Icons.location_on,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.spacingSm),
-                    Expanded(
-                      child: Text(
-                        trip.trip.destination ?? 'No destination',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+    // Optimized: removed BackdropFilter for scroll performance
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Destination
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingXs),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
-              ),
-              // Divider
-              Container(
-                height: 30,
-                width: 1,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              // Members
-              Row(
-                children: [
-                  const Icon(Icons.people, color: Colors.white, size: 18),
-                  const SizedBox(width: AppTheme.spacingXs),
-                  Text(
-                    '${trip.members.length}',
+                const SizedBox(width: AppTheme.spacingSm),
+                Expanded(
+                  child: Text(
+                    trip.trip.destination ?? 'No destination',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              // Dates
-              if (trip.trip.startDate != null) ...[
-                Container(
-                  height: 30,
-                  width: 1,
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today, color: Colors.white, size: 16),
-                    const SizedBox(width: AppTheme.spacingXs),
-                    Text(
-                      DateFormat('MMM d').format(trip.trip.startDate!),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
                 ),
               ],
+            ),
+          ),
+          // Divider
+          Container(
+            height: 30,
+            width: 1,
+            color: Colors.white.withValues(alpha: 0.3),
+          ),
+          const SizedBox(width: AppTheme.spacingMd),
+          // Members
+          Row(
+            children: [
+              const Icon(Icons.people, color: Colors.white, size: 18),
+              const SizedBox(width: AppTheme.spacingXs),
+              Text(
+                '${trip.members.length}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
-        ),
+          const SizedBox(width: AppTheme.spacingMd),
+          // Dates
+          if (trip.trip.startDate != null) ...[
+            Container(
+              height: 30,
+              width: 1,
+              color: Colors.white.withValues(alpha: 0.3),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            Row(
+              children: [
+                const Icon(Icons.calendar_today, color: Colors.white, size: 16),
+                const SizedBox(width: AppTheme.spacingXs),
+                Text(
+                  DateFormat('MMM d').format(trip.trip.startDate!),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }

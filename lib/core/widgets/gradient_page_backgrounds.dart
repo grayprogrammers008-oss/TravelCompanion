@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import '../theme/theme_access.dart';
 
 /// Beautiful mesh gradient background with animated blobs
+/// Performance optimized: pauses animation during scroll
 class MeshGradientBackground extends StatefulWidget {
   final Widget child;
   final bool animated;
@@ -11,7 +12,7 @@ class MeshGradientBackground extends StatefulWidget {
   const MeshGradientBackground({
     super.key,
     required this.child,
-    this.animated = true,
+    this.animated = false, // Disabled by default for performance
     this.intensity = 0.7,
   });
 
@@ -22,6 +23,7 @@ class MeshGradientBackground extends StatefulWidget {
 class _MeshGradientBackgroundState extends State<MeshGradientBackground>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  bool _isScrolling = false;
 
   @override
   void initState() {
@@ -41,128 +43,202 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
     super.dispose();
   }
 
+  /// Pause animation during scroll to improve performance
+  void _handleScrollNotification(ScrollNotification notification) {
+    if (!widget.animated) return;
+
+    if (notification is ScrollStartNotification) {
+      if (!_isScrolling) {
+        _isScrolling = true;
+        _controller.stop();
+      }
+    } else if (notification is ScrollEndNotification) {
+      if (_isScrolling) {
+        _isScrolling = false;
+        // Resume animation after scroll ends
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (mounted && !_isScrolling) {
+            _controller.repeat();
+          }
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
     final size = MediaQuery.of(context).size;
 
-    return Stack(
-      children: [
-        // Base gradient background
-        Container(
-          decoration: BoxDecoration(
-            gradient: themeData.backgroundGradient,
+    // Cache blob positions to avoid recalculating during static state
+    final blob1Offset = widget.animated && !_isScrolling
+        ? Offset(
+            math.sin(_controller.value * 2 * math.pi) * 50,
+            math.cos(_controller.value * 2 * math.pi) * 50,
+          )
+        : Offset.zero;
+    final blob2Offset = widget.animated && !_isScrolling
+        ? Offset(
+            math.cos(_controller.value * 2 * math.pi + 2) * 60,
+            math.sin(_controller.value * 2 * math.pi + 2) * 60,
+          )
+        : Offset.zero;
+    final blob3Offset = widget.animated && !_isScrolling
+        ? Offset(
+            math.sin(_controller.value * 2 * math.pi + 4) * 40,
+            math.cos(_controller.value * 2 * math.pi + 4) * 40,
+          )
+        : Offset.zero;
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        _handleScrollNotification(notification);
+        return false; // Don't block the notification
+      },
+      child: Stack(
+        children: [
+          // Base gradient background - wrapped in RepaintBoundary
+          RepaintBoundary(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: themeData.backgroundGradient,
+              ),
+            ),
           ),
-        ),
 
-        // Animated blob 1 (top-left)
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final offset = widget.animated
-                ? Offset(
-                    math.sin(_controller.value * 2 * math.pi) * 50,
-                    math.cos(_controller.value * 2 * math.pi) * 50,
-                  )
-                : Offset.zero;
-
-            return Positioned(
-              left: -size.width * 0.3 + offset.dx,
-              top: -size.height * 0.2 + offset.dy,
-              child: Container(
+          // Static blobs when not animated (much better performance)
+          if (!widget.animated) ...[
+            // Static blob 1 (top-left)
+            Positioned(
+              left: -size.width * 0.3,
+              top: -size.height * 0.2,
+              child: _StaticBlob(
                 width: size.width * 0.8,
                 height: size.height * 0.6,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      themeData.primaryLight
-                          .withValues(alpha: 0.15 * widget.intensity),
-                      themeData.primaryColor
-                          .withValues(alpha: 0.08 * widget.intensity),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
-                  ),
-                ),
+                colors: [
+                  themeData.primaryLight.withValues(alpha: 0.15 * widget.intensity),
+                  themeData.primaryColor.withValues(alpha: 0.08 * widget.intensity),
+                  Colors.transparent,
+                ],
               ),
-            );
-          },
-        ),
-
-        // Animated blob 2 (bottom-right)
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final offset = widget.animated
-                ? Offset(
-                    math.cos(_controller.value * 2 * math.pi + 2) * 60,
-                    math.sin(_controller.value * 2 * math.pi + 2) * 60,
-                  )
-                : Offset.zero;
-
-            return Positioned(
-              right: -size.width * 0.2 + offset.dx,
-              bottom: -size.height * 0.15 + offset.dy,
-              child: Container(
+            ),
+            // Static blob 2 (bottom-right)
+            Positioned(
+              right: -size.width * 0.2,
+              bottom: -size.height * 0.15,
+              child: _StaticBlob(
                 width: size.width * 0.7,
                 height: size.height * 0.5,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      themeData.accentColor
-                          .withValues(alpha: 0.12 * widget.intensity),
-                      themeData.primaryDeep
-                          .withValues(alpha: 0.06 * widget.intensity),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
-                  ),
-                ),
+                colors: [
+                  themeData.accentColor.withValues(alpha: 0.12 * widget.intensity),
+                  themeData.primaryDeep.withValues(alpha: 0.06 * widget.intensity),
+                  Colors.transparent,
+                ],
               ),
-            );
-          },
-        ),
-
-        // Animated blob 3 (center)
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final offset = widget.animated
-                ? Offset(
-                    math.sin(_controller.value * 2 * math.pi + 4) * 40,
-                    math.cos(_controller.value * 2 * math.pi + 4) * 40,
-                  )
-                : Offset.zero;
-
-            return Positioned(
-              left: size.width * 0.5 + offset.dx - size.width * 0.3,
-              top: size.height * 0.4 + offset.dy - size.height * 0.25,
-              child: Container(
+            ),
+            // Static blob 3 (center)
+            Positioned(
+              left: size.width * 0.2,
+              top: size.height * 0.15,
+              child: _StaticBlob(
                 width: size.width * 0.6,
                 height: size.height * 0.5,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      themeData.primaryColor
-                          .withValues(alpha: 0.1 * widget.intensity),
-                      themeData.primaryLight
-                          .withValues(alpha: 0.05 * widget.intensity),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.6, 1.0],
-                  ),
-                ),
+                colors: [
+                  themeData.primaryColor.withValues(alpha: 0.1 * widget.intensity),
+                  themeData.primaryLight.withValues(alpha: 0.05 * widget.intensity),
+                  Colors.transparent,
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          ] else ...[
+            // Animated blobs - wrapped in RepaintBoundary
+            RepaintBoundary(
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Stack(
+                    children: [
+                      // Blob 1 (top-left)
+                      Positioned(
+                        left: -size.width * 0.3 + blob1Offset.dx,
+                        top: -size.height * 0.2 + blob1Offset.dy,
+                        child: _StaticBlob(
+                          width: size.width * 0.8,
+                          height: size.height * 0.6,
+                          colors: [
+                            themeData.primaryLight.withValues(alpha: 0.15 * widget.intensity),
+                            themeData.primaryColor.withValues(alpha: 0.08 * widget.intensity),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      // Blob 2 (bottom-right)
+                      Positioned(
+                        right: -size.width * 0.2 + blob2Offset.dx,
+                        bottom: -size.height * 0.15 + blob2Offset.dy,
+                        child: _StaticBlob(
+                          width: size.width * 0.7,
+                          height: size.height * 0.5,
+                          colors: [
+                            themeData.accentColor.withValues(alpha: 0.12 * widget.intensity),
+                            themeData.primaryDeep.withValues(alpha: 0.06 * widget.intensity),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      // Blob 3 (center)
+                      Positioned(
+                        left: size.width * 0.5 + blob3Offset.dx - size.width * 0.3,
+                        top: size.height * 0.4 + blob3Offset.dy - size.height * 0.25,
+                        child: _StaticBlob(
+                          width: size.width * 0.6,
+                          height: size.height * 0.5,
+                          colors: [
+                            themeData.primaryColor.withValues(alpha: 0.1 * widget.intensity),
+                            themeData.primaryLight.withValues(alpha: 0.05 * widget.intensity),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
 
-        // Content
-        widget.child,
-      ],
+          // Content
+          widget.child,
+        ],
+      ),
+    );
+  }
+}
+
+/// Static blob widget for better performance (no animation overhead)
+class _StaticBlob extends StatelessWidget {
+  final double width;
+  final double height;
+  final List<Color> colors;
+
+  const _StaticBlob({
+    required this.width,
+    required this.height,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: colors,
+          stops: const [0.0, 0.5, 1.0],
+        ),
+      ),
     );
   }
 }
