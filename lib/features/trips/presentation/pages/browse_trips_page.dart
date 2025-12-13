@@ -209,9 +209,9 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        'Browse Trips',
-                                        style: const TextStyle(
+                                      const Text(
+                                        'Explore',
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
@@ -226,6 +226,20 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                       ),
                                     ],
                                   ),
+                                ),
+                                // Filter button
+                                IconButton(
+                                  icon: const Icon(Icons.filter_list, color: Colors.white),
+                                  onPressed: () {
+                                    // TODO: Implement filter functionality
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Filter coming soon'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  },
+                                  visualDensity: VisualDensity.compact,
                                 ),
                               ],
                             ),

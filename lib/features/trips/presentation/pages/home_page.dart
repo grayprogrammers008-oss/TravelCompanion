@@ -747,7 +747,16 @@ class _HomePageState extends ConsumerState<HomePage>
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
                 elevation: 0,
-                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/dashboard');
+                    }
+                  },
+                ),
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Container(
@@ -758,10 +767,10 @@ class _HomePageState extends ConsumerState<HomePage>
                       bottom: false,
                       child: Column(
                         children: [
-                          // Top row: Title + Menu
+                          // Top row: Back button space + Title + Menu
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
-                              AppTheme.spacingMd,
+                              56, // Space for back button
                               AppTheme.spacingSm,
                               AppTheme.spacingXs,
                               0,
