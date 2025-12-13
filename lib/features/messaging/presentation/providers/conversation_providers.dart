@@ -357,6 +357,7 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
 
   // Helper function to calculate unread count
   Future<int> calculateUnreadCount() async {
+    debugPrint('📊 tripUnreadCountProvider: Fetching conversations for SPECIFIC tripId=${params.tripId}');
     final result = await repository.getTripConversations(
       tripId: params.tripId,
       userId: params.userId,
@@ -365,9 +366,9 @@ final tripUnreadCountProvider = StreamProvider.autoDispose
       onSuccess: (conversations) {
         // Sum up all unread counts from all conversations
         final total = conversations.fold<int>(0, (sum, conv) => sum + conv.unreadCount);
-        debugPrint('📊 tripUnreadCountProvider: Calculated unread count = $total from ${conversations.length} conversations');
+        debugPrint('📊 tripUnreadCountProvider [tripId=${params.tripId}]: Calculated unread count = $total from ${conversations.length} conversations');
         for (final conv in conversations) {
-          debugPrint('   - ${conv.name}: ${conv.unreadCount} unread');
+          debugPrint('   - ${conv.name} (convId=${conv.id}, tripId=${conv.tripId}): ${conv.unreadCount} unread');
         }
         return total;
       },

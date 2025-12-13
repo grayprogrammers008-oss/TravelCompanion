@@ -76,6 +76,7 @@ class ConversationRemoteDataSource {
     String userId,
   ) async {
     try {
+      debugPrint('🔍 getTripConversations: Calling RPC with tripId=$tripId, userId=$userId');
       final response = await _client.rpc(
         'get_trip_conversations',
         params: {
@@ -85,6 +86,14 @@ class ConversationRemoteDataSource {
       );
 
       final data = response as List<dynamic>;
+      debugPrint('🔍 getTripConversations: RPC returned ${data.length} conversations');
+
+      // Debug: Log each conversation's tripId to verify filtering
+      for (final json in data) {
+        final convJson = json as Map<String, dynamic>;
+        debugPrint('🔍   - Conv "${convJson['name']}" has tripId=${convJson['trip_id']}');
+      }
+
       return data
           .map((json) => ConversationModel.fromJson(json as Map<String, dynamic>))
           .toList();
@@ -667,20 +676,19 @@ class ConversationRemoteDataSource {
         });
 
     // Subscribe to conversation member changes (for last_read_at updates)
+    // Note: We trigger on ANY update since REPLICA IDENTITY FULL may not be set,
+    // which means oldRecord could be empty. The only updates to this table in
+    // normal usage are for marking as read (last_read_at) or muting (is_muted).
     memberChannel
         .onPostgresChanges(
           event: PostgresChangeEvent.update,
           schema: 'public',
           table: 'conversation_members',
           callback: (payload) {
-            debugPrint('🔔 subscribeToTripActivityChanges: MEMBER change - ${payload.eventType}');
-            // Check if last_read_at was updated (this indicates marking as read)
-            final oldRecord = payload.oldRecord;
-            final newRecord = payload.newRecord;
-            if (oldRecord['last_read_at'] != newRecord['last_read_at']) {
-              debugPrint('🔔   last_read_at changed: ${oldRecord['last_read_at']} -> ${newRecord['last_read_at']}');
-              controller.add(null);
-            }
+            debugPrint('🔔 subscribeToTripActivityChanges: MEMBER UPDATE detected');
+            debugPrint('🔔   newRecord: ${payload.newRecord}');
+            // Trigger recalculation on ANY member update (most likely last_read_at change)
+            controller.add(null);
           },
         )
         .subscribe((status, [error]) {
