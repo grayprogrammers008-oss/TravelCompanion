@@ -31,7 +31,6 @@ class ItineraryListPage extends ConsumerStatefulWidget {
 
 class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   final _searchController = TextEditingController();
-  bool _isSearching = false;
   bool _isTimelineView = false; // Toggle between cards and timeline view
   bool _isFabExpanded = false;
 
@@ -146,69 +145,14 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Check if we can pop, otherwise go to trip detail
             if (context.canPop()) {
               context.pop();
             } else {
-              // Navigate to trip detail page if no history
               context.go('/trips/${widget.tripId}');
             }
           },
         ),
-        title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                autocorrect: false,
-                enableSuggestions: false,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  decoration: TextDecoration.none,
-                ),
-                cursorColor: Colors.white,
-                decoration: InputDecoration(
-                  hintText: 'Search activities...',
-                  hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 14,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.2),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Colors.white70,
-                    size: 18,
-                  ),
-                ),
-                onChanged: (_) => setState(() {}),
-              )
-            : const Text('Itinerary'),
+        title: const Text('Itinerary'),
         elevation: 0,
         actions: [
           // View toggle button (Cards vs Timeline)
@@ -222,17 +166,6 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
               });
             },
           ),
-          IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  _searchController.clear();
-                }
-              });
-            },
-          ),
           // AI Generate button
           IconButton(
             icon: const Icon(Icons.auto_awesome),
@@ -240,6 +173,63 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             onPressed: () => _navigateToAiGenerator(context),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(
+              AppTheme.spacingMd,
+              0,
+              AppTheme.spacingMd,
+              AppTheme.spacingSm,
+            ),
+            child: Container(
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              ),
+              child: TextField(
+                controller: _searchController,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Search activities...',
+                  hintStyle: TextStyle(
+                    color: AppTheme.neutral400,
+                    fontSize: 14,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: 12,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: AppTheme.neutral400,
+                    size: 20,
+                  ),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.clear,
+                            color: AppTheme.neutral400,
+                            size: 18,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                            });
+                          },
+                        )
+                      : null,
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+            ),
+          ),
+        ),
       ),
       body: itineraryAsync.when(
         loading: () => const Center(
@@ -609,7 +599,6 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                 onPressed: () {
                   setState(() {
                     _searchController.clear();
-                    _isSearching = false;
                   });
                 },
                 icon: const Icon(Icons.clear),

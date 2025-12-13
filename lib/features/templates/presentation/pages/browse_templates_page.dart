@@ -30,7 +30,6 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
   late Animation<double> _fadeAnimation;
   final _searchController = TextEditingController();
   TemplateCategory? _selectedCategory;
-  bool _isSearching = false;
 
   @override
   void initState() {
@@ -81,50 +80,42 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
           },
           child: CustomScrollView(
             slivers: [
-              // App Bar
+              // Compact header with permanent search bar
               SliverAppBar(
-                expandedHeight: _isSearching ? 210 : 180,
-                floating: false,
+                expandedHeight: 180,
+                floating: true,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
+                elevation: 0,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => context.pop(),
+                  onPressed: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
                 ),
-                actions: [
-                  IconButton(
-                    icon: Icon(
-                      _isSearching ? Icons.close : Icons.search,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isSearching = !_isSearching;
-                        if (!_isSearching) {
-                          _searchController.clear();
-                        }
-                      });
-                    },
-                  ),
-                ],
                 flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
                   background: Container(
                     decoration: BoxDecoration(
                       gradient: themeData.primaryGradient,
                     ),
                     child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppTheme.spacing3xl,
-                          AppTheme.spacingSm,
-                          AppTheme.spacingLg,
-                          AppTheme.spacingSm,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
+                      bottom: false,
+                      child: Column(
+                        children: [
+                          // Top row: Back button space + Title
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              56, // Space for back button
+                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
+                              0,
+                            ),
+                            child: Row(
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(AppTheme.spacingSm),
@@ -135,89 +126,101 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
                                   child: const Icon(
                                     Icons.auto_awesome,
                                     color: Colors.white,
-                                    size: 28,
+                                    size: 24,
                                   ),
                                 ),
-                                const SizedBox(width: AppTheme.spacingMd),
+                                const SizedBox(width: AppTheme.spacingSm),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Trip Templates',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                       Text(
-                                        'Pre-built itineraries for popular destinations',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: Colors.white.withValues(alpha: 0.9),
-                                            ),
+                                        'Pre-built itineraries',
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.8),
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                            if (_isSearching) ...[
-                              const SizedBox(height: AppTheme.spacingMd),
-                              SizedBox(
-                                height: 42,
-                                child: TextField(
-                                  controller: _searchController,
-                                  autofocus: true,
-                                  autocorrect: false,
-                                  enableSuggestions: false,
-                                  style: const TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    hintText: 'Search destinations...',
-                                    hintStyle: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.6),
-                                    ),
-                                    prefixIcon: const Icon(
-                                      Icons.search,
-                                      color: Colors.white,
-                                    ),
-                                    suffixIcon: _searchController.text.isNotEmpty
-                                        ? IconButton(
-                                            icon: const Icon(
-                                              Icons.clear,
-                                              color: Colors.white,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _searchController.clear();
-                                              });
-                                            },
-                                          )
-                                        : null,
-                                    filled: true,
-                                    fillColor: Colors.white.withValues(alpha: 0.2),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: AppTheme.spacingMd,
-                                      vertical: AppTheme.spacingSm,
-                                    ),
-                                  ),
-                                  onChanged: (value) => setState(() {}),
-                                ),
+                          ),
+                          // Search bar row
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppTheme.spacingMd,
+                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
+                              AppTheme.spacingSm,
+                            ),
+                            child: Container(
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                               ),
-                            ],
-                            const SizedBox(height: AppTheme.spacingMd),
-                            // Category Filters
-                            SizedBox(
-                              height: 36,
+                              child: TextField(
+                                controller: _searchController,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Search templates...',
+                                  hintStyle: TextStyle(
+                                    color: AppTheme.neutral400,
+                                    fontSize: 14,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd,
+                                    vertical: 12,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: AppTheme.neutral400,
+                                    size: 20,
+                                  ),
+                                  suffixIcon: _searchController.text.isNotEmpty
+                                      ? IconButton(
+                                          icon: Icon(
+                                            Icons.clear,
+                                            color: AppTheme.neutral400,
+                                            size: 18,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _searchController.clear();
+                                            });
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                onChanged: (_) => setState(() {}),
+                              ),
+                            ),
+                          ),
+                          // Category Filters
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppTheme.spacingMd,
+                              0,
+                              0,
+                              AppTheme.spacingSm,
+                            ),
+                            child: SizedBox(
+                              height: 32,
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: [
@@ -242,8 +245,8 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
