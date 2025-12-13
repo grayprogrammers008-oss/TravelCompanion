@@ -227,10 +227,72 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                     ],
                                   ),
                                 ),
-                                // Filter button
-                                IconButton(
-                                  icon: const Icon(Icons.filter_list, color: Colors.white),
-                                  onPressed: () {
+                              ],
+                            ),
+                          ),
+                          // Search bar row with filter button (aligned like Home Page)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppTheme.spacingMd,
+                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
+                              AppTheme.spacingSm,
+                            ),
+                            child: Row(
+                              children: [
+                                // Search Field
+                                Expanded(
+                                  child: Container(
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    ),
+                                    child: TextField(
+                                      controller: _searchController,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: 'Search trips...',
+                                        hintStyle: TextStyle(
+                                          color: AppTheme.neutral400,
+                                          fontSize: 14,
+                                        ),
+                                        border: InputBorder.none,
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: AppTheme.spacingMd,
+                                          vertical: 12,
+                                        ),
+                                        prefixIcon: Icon(
+                                          Icons.search,
+                                          color: AppTheme.neutral400,
+                                          size: 20,
+                                        ),
+                                        suffixIcon: _searchController.text.isNotEmpty
+                                            ? IconButton(
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  color: AppTheme.neutral400,
+                                                  size: 18,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _searchController.clear();
+                                                  });
+                                                },
+                                              )
+                                            : null,
+                                      ),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: AppTheme.spacingSm),
+                                // Filter Button (aligned like Home Page)
+                                GestureDetector(
+                                  onTap: () {
                                     // TODO: Implement filter functionality
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -239,64 +301,21 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                       ),
                                     );
                                   },
-                                  visualDensity: VisualDensity.compact,
+                                  child: Container(
+                                    height: 44,
+                                    width: 44,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    ),
+                                    child: Icon(
+                                      Icons.filter_list,
+                                      color: AppTheme.neutral600,
+                                      size: 20,
+                                    ),
+                                  ),
                                 ),
                               ],
-                            ),
-                          ),
-                          // Search bar row
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppTheme.spacingMd,
-                              AppTheme.spacingSm,
-                              AppTheme.spacingMd,
-                              AppTheme.spacingSm,
-                            ),
-                            child: Container(
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                              ),
-                              child: TextField(
-                                controller: _searchController,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: 'Search trips...',
-                                  hintStyle: TextStyle(
-                                    color: AppTheme.neutral400,
-                                    fontSize: 14,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd,
-                                    vertical: 12,
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: AppTheme.neutral400,
-                                    size: 20,
-                                  ),
-                                  suffixIcon: _searchController.text.isNotEmpty
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.clear,
-                                            color: AppTheme.neutral400,
-                                            size: 18,
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              _searchController.clear();
-                                            });
-                                          },
-                                        )
-                                      : null,
-                                ),
-                                onChanged: (_) => setState(() {}),
-                              ),
                             ),
                           ),
                         ],
