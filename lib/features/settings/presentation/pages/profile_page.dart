@@ -380,12 +380,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.person_outline, color: Colors.white),
-            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              ),
+              child: const Icon(
+                Icons.person_outline,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(
               isViewingOwnProfile ? 'Profile' : 'User Profile',
               style: const TextStyle(
                 color: Colors.white,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
             ),

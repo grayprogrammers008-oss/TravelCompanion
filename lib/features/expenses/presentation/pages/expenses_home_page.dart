@@ -37,7 +37,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -46,22 +46,48 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
             }
           },
         ),
-        title: const Row(
+        backgroundColor: themeData.primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeData.primaryGradient,
+          ),
+        ),
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.account_balance_wallet_outlined),
-            SizedBox(width: 8),
-            Text('Expenses'),
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              ),
+              child: const Icon(
+                Icons.account_balance_wallet_outlined,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            const Text(
+              'Expenses',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_balance_wallet),
+            icon: const Icon(Icons.account_balance_wallet, color: Colors.white),
             onPressed: () => _showBalancesSheet(context, ref),
             tooltip: 'View Balances',
           ),
           PopupMenuButton<ExpenseFilter>(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list, color: Colors.white),
             onSelected: (filter) {
               setState(() {
                 _selectedFilter = filter;
