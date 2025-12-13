@@ -724,7 +724,6 @@ class _HomePageState extends ConsumerState<HomePage>
   @override
   Widget build(BuildContext context) {
     final userTripsAsync = ref.watch(userTripsProvider);
-    final currentUser = ref.watch(currentUserProvider);
     final themeData = ref.watch(theme_provider.currentThemeDataProvider);
     final easyModeConfig = ref.watch(easyModeConfigProvider);
 
@@ -759,7 +758,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       bottom: false,
                       child: Column(
                         children: [
-                          // Top row: Avatar + Name + Menu
+                          // Top row: Title + Menu
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
                               AppTheme.spacingMd,
@@ -769,36 +768,40 @@ class _HomePageState extends ConsumerState<HomePage>
                             ),
                             child: Row(
                               children: [
-                                // User Avatar
-                                UserAvatarWidget(
-                                  imageUrl: currentUser.value?.avatarUrl,
-                                  userName: currentUser.value?.fullName,
-                                  size: 40,
-                                  showBorder: true,
+                                // Trip icon
+                                Container(
+                                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                  ),
+                                  child: const Icon(
+                                    Icons.luggage,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
                                 ),
                                 const SizedBox(width: AppTheme.spacingSm),
-                                // Greeting
+                                // Title
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      const Text(
+                                        'My Trips',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                       Text(
-                                        'Welcome back,',
+                                        'Plan your next adventure',
                                         style: TextStyle(
                                           color: Colors.white.withValues(alpha: 0.8),
                                           fontSize: 12,
                                         ),
-                                      ),
-                                      Text(
-                                        currentUser.value?.fullName?.split(' ').first ?? 'Traveler',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),
