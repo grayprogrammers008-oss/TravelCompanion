@@ -406,6 +406,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         backgroundColor: themeData.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        titleSpacing: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: themeData.primaryGradient,
