@@ -377,12 +377,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             }
           },
         ),
-        title: Text(
-          isViewingOwnProfile ? 'Profile' : 'User Profile',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.person_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(
+              isViewingOwnProfile ? 'Profile' : 'User Profile',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
         backgroundColor: themeData.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),

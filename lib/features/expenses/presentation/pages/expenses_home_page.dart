@@ -46,7 +46,14 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
             }
           },
         ),
-        title: const Text('Expenses'),
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.account_balance_wallet_outlined),
+            SizedBox(width: 8),
+            Text('Expenses'),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.account_balance_wallet),
