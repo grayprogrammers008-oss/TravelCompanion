@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
@@ -39,6 +41,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final _storageService = StorageService();
   bool _isSending = false;
   bool _isUploadingImage = false;
+  bool _isUploadingDocument = false;
 
   // Selection mode state
   bool _isSelectionMode = false;
@@ -116,6 +119,18 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                     _pickImageFromCamera();
                   },
                 ),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.orange.shade100,
+                  child: const Icon(Icons.insert_drive_file, color: Colors.orange),
+                ),
+                title: const Text('Document'),
+                subtitle: const Text('PDF, Word, Excel, and more'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickDocument();
+                },
+              ),
             ],
           ),
         ),
@@ -231,6 +246,128 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     } finally {
       if (mounted) {
         setState(() => _isUploadingImage = false);
+      }
+    }
+  }
+
+  /// Pick document and send
+  Future<void> _pickDocument() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [
+          'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+          'txt', 'csv', 'rtf', 'zip', 'rar'
+        ],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final platformFile = result.files.first;
+
+        // Check file size (max 25MB)
+        if (platformFile.size > 25 * 1024 * 1024) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('File too large. Maximum size is 25MB.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+
+        if (platformFile.path != null) {
+          final file = File(platformFile.path!);
+          await _sendDocumentMessage(file, platformFile.name);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking document: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick document: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Upload document and send as message
+  Future<void> _sendDocumentMessage(File documentFile, String fileName) async {
+    if (_isUploadingDocument) return;
+
+    setState(() => _isUploadingDocument = true);
+
+    try {
+      // Generate message ID for storage path
+      final messageId = const Uuid().v4();
+
+      // Upload document to Supabase Storage
+      debugPrint('Uploading document: $fileName');
+      final documentUrl = await _storageService.uploadFile(
+        file: documentFile,
+        tripId: widget.tripId,
+        messageId: messageId,
+      );
+
+      debugPrint('Document uploaded: $documentUrl');
+
+      // Get file extension for icon
+      final extension = fileName.split('.').last.toLowerCase();
+      final fileIcon = StorageService.getFileIcon(extension);
+
+      // Send message with document URL (include filename in message)
+      final repository = ref.read(conversationRepositoryProvider);
+      await repository.sendConversationMessage(
+        conversationId: widget.conversationId,
+        tripId: widget.tripId,
+        senderId: _effectiveUserId,
+        message: '$fileIcon $fileName',
+        messageType: MessageType.document,
+        attachmentUrl: documentUrl,
+      );
+
+      // Invalidate conversations list to refresh last message
+      ref.invalidate(tripConversationsProvider(TripConversationsParams(
+        tripId: widget.tripId,
+        userId: _effectiveUserId,
+      )));
+
+      // Scroll to bottom after sending
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Document sent!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending document: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send document: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingDocument = false);
       }
     }
   }
@@ -898,6 +1035,9 @@ class _MessageBubble extends StatelessWidget {
   bool get _isImageMessage =>
       message.messageType == MessageType.image && message.attachmentUrl != null;
 
+  bool get _isDocumentMessage =>
+      message.messageType == MessageType.document && message.attachmentUrl != null;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -942,6 +1082,8 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 if (_isImageMessage)
                   _buildImageBubble(context)
+                else if (_isDocumentMessage)
+                  _buildDocumentBubble(context)
                 else
                   _buildTextBubble(context),
               ],
@@ -995,6 +1137,165 @@ class _MessageBubble extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildDocumentBubble(BuildContext context) {
+    // Extract filename from message (format: "📄 filename.pdf")
+    final fileName = message.message?.replaceFirst(RegExp(r'^[^\s]+\s'), '') ?? 'Document';
+    final extension = fileName.split('.').last.toLowerCase();
+    final fileTypeName = StorageService.getFileTypeName(extension);
+
+    return GestureDetector(
+      onTap: () => _openDocument(context),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 280),
+        padding: const EdgeInsets.all(AppTheme.spacingSm),
+        decoration: BoxDecoration(
+          color: isMe ? context.primaryColor : Colors.grey.shade200,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(AppTheme.radiusMd),
+            topRight: const Radius.circular(AppTheme.radiusMd),
+            bottomLeft: Radius.circular(
+              isMe ? AppTheme.radiusMd : AppTheme.radiusXs,
+            ),
+            bottomRight: Radius.circular(
+              isMe ? AppTheme.radiusXs : AppTheme.radiusMd,
+            ),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // Document icon
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                  decoration: BoxDecoration(
+                    color: isMe
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : Colors.orange.shade100,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Icon(
+                    _getDocumentIcon(extension),
+                    color: isMe ? Colors.white : Colors.orange.shade700,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingSm),
+                // File info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        fileName,
+                        style: TextStyle(
+                          color: isMe ? Colors.white : Colors.black87,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        fileTypeName,
+                        style: TextStyle(
+                          color: isMe
+                              ? Colors.white.withValues(alpha: 0.7)
+                              : Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Download icon
+                Icon(
+                  Icons.download_rounded,
+                  color: isMe
+                      ? Colors.white.withValues(alpha: 0.7)
+                      : Colors.grey.shade500,
+                  size: 20,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacingXs),
+            // Time
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                _formatTime(message.createdAt),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isMe
+                      ? Colors.white.withValues(alpha: 0.7)
+                      : Colors.grey.shade600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getDocumentIcon(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      case 'ppt':
+      case 'pptx':
+        return Icons.slideshow;
+      case 'txt':
+        return Icons.article;
+      case 'csv':
+        return Icons.grid_on;
+      case 'zip':
+      case 'rar':
+        return Icons.folder_zip;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
+  Future<void> _openDocument(BuildContext context) async {
+    final url = message.attachmentUrl;
+    if (url == null) return;
+
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cannot open this file'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error opening document: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening document: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildImageBubble(BuildContext context) {

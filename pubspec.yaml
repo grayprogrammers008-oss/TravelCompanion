@@ -75,6 +75,9 @@ dependencies:
   # Image Picker
   image_picker: ^1.0.7
 
+  # File Picker (for documents)
+  file_picker: ^8.0.0+1
+
   # Connectivity
   connectivity_plus: ^6.0.0
 

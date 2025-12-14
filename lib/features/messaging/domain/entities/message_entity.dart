@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 enum MessageType {
   text,
   image,
+  document,
   location,
   expenseLink,
 }
