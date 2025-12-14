@@ -151,6 +151,8 @@ class MessageModel {
         return MessageType.text;
       case 'image':
         return MessageType.image;
+      case 'document':
+        return MessageType.document;
       case 'location':
         return MessageType.location;
       case 'expense_link':
@@ -167,6 +169,8 @@ class MessageModel {
         return 'text';
       case MessageType.image:
         return 'image';
+      case MessageType.document:
+        return 'document';
       case MessageType.location:
         return 'location';
       case MessageType.expenseLink:

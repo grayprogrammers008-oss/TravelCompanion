@@ -117,6 +117,11 @@
                 <data
                     android:scheme="pathio"
                     android:host="auth" />
+
+                <!-- travelcrew scheme for password reset (matches Supabase redirect) -->
+                <data
+                    android:scheme="travelcrew"
+                    android:host="auth" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

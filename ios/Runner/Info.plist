@@ -80,6 +80,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>travelcompanion</string>
+				<string>travelcrew</string>
+				<string>pathio</string>
 			</array>
 		</dict>
 	</array>

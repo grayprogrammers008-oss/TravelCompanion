@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/auth/presentation/pages/reset_password_page.dart';
+import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/trips/presentation/pages/create_trip_page.dart';
 import '../../features/trips/presentation/pages/trip_filter_page.dart';
@@ -64,6 +65,7 @@ class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
   static const String signup = '/signup';
+  static const String forgotPassword = '/forgot-password';
   static const String resetPassword = '/auth/reset-password';
   static const String dashboard = '/dashboard';
   static const String home = '/home'; // Legacy - redirects to dashboard
@@ -115,10 +117,33 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final onboardingState = ref.watch(onboardingStateProvider);
   final hasTripsState = ref.watch(hasTripsProvider);
+  // Watch password reset state to prevent redirects during OTP verification
+  final passwordResetState = ref.watch(passwordResetProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.splash, // Start at splash screen
     redirect: (context, state) {
+      final isForgotPasswordRoute = state.matchedLocation == AppRoutes.forgotPassword;
+
+      // CRITICAL: Password reset flow check MUST be first, before ANY other logic
+      // This prevents redirects after OTP verification creates a session
+      // The router rebuilds when authState changes, but we must stay on forgot-password
+      if (passwordResetState.isInFlow) {
+        debugPrint('🔐 [Router] Password reset flow active - BLOCKING ALL REDIRECTS');
+        debugPrint('   isInFlow: ${passwordResetState.isInFlow}');
+        debugPrint('   currentStep: ${passwordResetState.currentStep}');
+        debugPrint('   evaluating route: ${state.matchedLocation}');
+        debugPrint('   authState: ${authState.value != null ? "authenticated" : "not authenticated"}');
+
+        // If evaluating any route while in flow, force to forgot-password
+        if (!isForgotPasswordRoute) {
+          debugPrint('   → Redirecting to forgot-password');
+          return AppRoutes.forgotPassword;
+        }
+        debugPrint('   → Staying on forgot-password (no redirect)');
+        return null;
+      }
+
       // Check if user is authenticated
       final isAuthenticated = authState.value != null;
       final needsOnboarding = onboardingState.value == false;
@@ -135,8 +160,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // Allow reset password route without authentication
-      if (isResetPasswordRoute) {
+      // Allow reset password and forgot password routes without authentication
+      if (isResetPasswordRoute || isForgotPasswordRoute) {
         return null;
       }
 
@@ -208,6 +233,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.signup,
         name: 'signup',
         builder: (context, state) => const SignUpPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        name: 'forgotPassword',
+        builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
         path: AppRoutes.resetPassword,

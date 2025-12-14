@@ -769,6 +769,8 @@ class MessageRepositoryImpl implements MessageRepository {
         return 'text';
       case MessageType.image:
         return 'image';
+      case MessageType.document:
+        return 'document';
       case MessageType.location:
         return 'location';
       case MessageType.expenseLink:

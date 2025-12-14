@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../models/user_model.dart';
@@ -174,6 +174,8 @@ Original error: ${e.message}''';
   /// Reset password
   Future<void> resetPassword(String email) async {
     try {
+      debugPrint('🔐 [ResetPassword] Starting password reset for: $email');
+
       // Use different redirect URLs for web and mobile
       String redirectUrl;
       if (kIsWeb) {
@@ -184,13 +186,23 @@ Original error: ${e.message}''';
         redirectUrl = 'travelcrew://auth/reset-password';
       }
 
+      debugPrint('🔐 [ResetPassword] Redirect URL: $redirectUrl');
+      debugPrint('🔐 [ResetPassword] Sending reset email via Supabase...');
+
       await _client.auth.resetPasswordForEmail(
         email,
         redirectTo: redirectUrl,
       );
+
+      debugPrint('✅ [ResetPassword] Reset email sent successfully!');
+      debugPrint('   ℹ️  Check your inbox and spam folder');
+      debugPrint('   ℹ️  Make sure Supabase has email templates configured');
     } on AuthException catch (e) {
+      debugPrint('❌ [ResetPassword] AuthException: ${e.message}');
+      debugPrint('   Status code: ${e.statusCode}');
       throw Exception('Password reset failed: ${e.message}');
     } catch (e) {
+      debugPrint('❌ [ResetPassword] Unexpected error: $e');
       throw Exception('Password reset failed: $e');
     }
   }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
+import '../../data/services/storage_service.dart';
 import '../../domain/entities/message_entity.dart';
 import 'image_viewer.dart';
 
@@ -285,6 +287,132 @@ class MessageBubble extends StatelessWidget {
             ],
           ),
         );
+
+      case MessageType.document:
+        return _buildDocumentContent(context);
+    }
+  }
+
+  /// Build document message content
+  Widget _buildDocumentContent(BuildContext context) {
+    // Extract filename from message (format: "📄 filename.pdf")
+    final fileName = message.message?.replaceFirst(RegExp(r'^[^\s]+\s'), '') ?? 'Document';
+    final extension = fileName.split('.').last.toLowerCase();
+    final fileTypeName = StorageService.getFileTypeName(extension);
+
+    return GestureDetector(
+      onTap: () => _openDocument(context),
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: _isOwnMessage
+                    ? Colors.white.withValues(alpha: 0.2)
+                    : Colors.orange.shade100,
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: Icon(
+                _getDocumentIcon(extension),
+                color: _isOwnMessage ? Colors.white : Colors.orange.shade700,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileName,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: _isOwnMessage ? Colors.white : AppTheme.neutral900,
+                          fontWeight: FontWeight.w500,
+                        ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    fileTypeName,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: _isOwnMessage
+                              ? Colors.white.withValues(alpha: 0.7)
+                              : AppTheme.neutral600,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.download_rounded,
+              color: _isOwnMessage
+                  ? Colors.white.withValues(alpha: 0.7)
+                  : AppTheme.neutral500,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Get document icon based on file extension
+  IconData _getDocumentIcon(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      case 'ppt':
+      case 'pptx':
+        return Icons.slideshow;
+      case 'txt':
+        return Icons.article;
+      case 'csv':
+        return Icons.grid_on;
+      case 'zip':
+      case 'rar':
+        return Icons.folder_zip;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
+  /// Open document in external application
+  Future<void> _openDocument(BuildContext context) async {
+    final url = message.attachmentUrl;
+    if (url == null) return;
+
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cannot open this file'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening document: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

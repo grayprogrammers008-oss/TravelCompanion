@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/validators.dart';
 import '../providers/auth_providers.dart';
@@ -9,8 +10,12 @@ import '../providers/auth_providers.dart';
 ///
 /// This page is accessed via deep link when user clicks the reset password link
 /// in their email. It allows them to set a new password.
+///
+/// With PKCE flow, Supabase handles authentication automatically when user
+/// clicks the reset link. The user is already authenticated when they reach
+/// this page, so we just need to update their password.
 class ResetPasswordPage extends ConsumerStatefulWidget {
-  /// Access token from the reset password link
+  /// Access token from the reset password link (may be null with PKCE flow)
   final String? accessToken;
 
   const ResetPasswordPage({
@@ -31,6 +36,42 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   bool _isLoading = false;
   String? _errorMessage;
   bool _isSuccess = false;
+  bool _isCheckingSession = true;
+  bool _hasValidSession = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSession();
+  }
+
+  /// Check if user has a valid session (PKCE flow auto-authenticates)
+  Future<void> _checkSession() async {
+    debugPrint('🔐 [ResetPassword] Checking session...');
+    debugPrint('   Access token from URL: ${widget.accessToken ?? "null"}');
+
+    // Give Supabase a moment to process the deep link and set the session
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final session = Supabase.instance.client.auth.currentSession;
+    final user = Supabase.instance.client.auth.currentUser;
+
+    debugPrint('   Session: ${session != null ? "exists" : "null"}');
+    debugPrint('   User: ${user?.email ?? "null"}');
+
+    if (mounted) {
+      setState(() {
+        _isCheckingSession = false;
+        _hasValidSession = session != null && user != null;
+      });
+
+      if (!_hasValidSession && widget.accessToken == null) {
+        setState(() {
+          _errorMessage = 'Invalid or expired reset link. Please request a new password reset email.';
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -44,37 +85,46 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       return;
     }
 
-    // Check if we have the verification code
-    if (widget.accessToken == null || widget.accessToken!.isEmpty) {
-      setState(() {
-        _errorMessage = 'Invalid reset password link. Please request a new one.';
-      });
-      return;
-    }
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      // Verify the OTP code and update password
-      // The accessToken here is actually the verification code from the email
-      await ref.read(authControllerProvider.notifier).verifyOtpAndUpdatePassword(
-            token: widget.accessToken!,
-            newPassword: _passwordController.text.trim(),
-          );
+      debugPrint('🔐 [ResetPassword] Updating password...');
+
+      if (_hasValidSession) {
+        // User is authenticated via PKCE flow - just update password
+        debugPrint('   Using direct password update (user authenticated via PKCE)');
+        await ref.read(authControllerProvider.notifier).updatePassword(
+              newPassword: _passwordController.text.trim(),
+            );
+      } else if (widget.accessToken != null && widget.accessToken!.isNotEmpty) {
+        // Fall back to OTP verification method
+        debugPrint('   Using OTP verification method');
+        await ref.read(authControllerProvider.notifier).verifyOtpAndUpdatePassword(
+              token: widget.accessToken!,
+              newPassword: _passwordController.text.trim(),
+            );
+      } else {
+        throw Exception('No valid session or token. Please request a new reset link.');
+      }
+
+      debugPrint('✅ [ResetPassword] Password updated successfully!');
 
       setState(() {
         _isLoading = false;
         _isSuccess = true;
       });
 
+      // Sign out to force re-login with new password
+      await Supabase.instance.client.auth.signOut();
+
       // Show success message and navigate to login after delay
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Password reset successfully! Redirecting to login...'),
+            content: Text('Password reset successfully! Please login with your new password.'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 3),
           ),
@@ -87,6 +137,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
         }
       }
     } catch (e) {
+      debugPrint('❌ [ResetPassword] Error: $e');
       setState(() {
         _isLoading = false;
         _errorMessage = e.toString().replaceAll('Exception: ', '');
@@ -112,12 +163,21 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.spacing2xl),
-          child: _isSuccess
-              ? _buildSuccessView()
-              : _buildResetForm(),
-        ),
+        child: _isCheckingSession
+            ? const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: AppTheme.spacingLg),
+                    Text('Verifying reset link...'),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(AppTheme.spacing2xl),
+                child: _isSuccess ? _buildSuccessView() : _buildResetForm(),
+              ),
       ),
     );
   }

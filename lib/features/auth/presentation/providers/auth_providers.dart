@@ -356,3 +356,106 @@ class AuthController extends Notifier<AuthState> {
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(() {
   return AuthController();
 });
+
+/// Reset method type - email or phone
+enum ResetMethod { email, phone }
+
+/// Password Reset Flow State
+/// Tracks the current step in the password reset flow so it persists across router rebuilds
+class PasswordResetState {
+  final int currentStep; // 0: Email/Phone, 1: OTP, 2: Password, 3: Success
+  final String? email;
+  final String? phone;
+  final ResetMethod method;
+  final bool isInFlow;
+  final bool isSuccess; // Track success state in provider to survive widget rebuilds
+
+  const PasswordResetState({
+    this.currentStep = 0,
+    this.email,
+    this.phone,
+    this.method = ResetMethod.email,
+    this.isInFlow = false,
+    this.isSuccess = false,
+  });
+
+  /// Get the contact info (email or phone) based on method
+  String? get contactInfo => method == ResetMethod.email ? email : phone;
+
+  PasswordResetState copyWith({
+    int? currentStep,
+    String? email,
+    String? phone,
+    ResetMethod? method,
+    bool? isInFlow,
+    bool? isSuccess,
+  }) {
+    return PasswordResetState(
+      currentStep: currentStep ?? this.currentStep,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      method: method ?? this.method,
+      isInFlow: isInFlow ?? this.isInFlow,
+      isSuccess: isSuccess ?? this.isSuccess,
+    );
+  }
+}
+
+/// Password Reset State Notifier
+class PasswordResetNotifier extends Notifier<PasswordResetState> {
+  @override
+  PasswordResetState build() {
+    return const PasswordResetState();
+  }
+
+  /// Start the password reset flow with email
+  void startFlowWithEmail(String email) {
+    state = PasswordResetState(
+      currentStep: 1, // Move to OTP step after sending
+      email: email,
+      method: ResetMethod.email,
+      isInFlow: true,
+    );
+  }
+
+  /// Start the password reset flow with phone
+  void startFlowWithPhone(String phone) {
+    state = PasswordResetState(
+      currentStep: 1, // Move to OTP step after sending
+      phone: phone,
+      method: ResetMethod.phone,
+      isInFlow: true,
+    );
+  }
+
+  /// Legacy method for backward compatibility
+  void startFlow(String email) => startFlowWithEmail(email);
+
+  /// Move to password step after OTP verification
+  void moveToPasswordStep() {
+    state = state.copyWith(currentStep: 2);
+  }
+
+  /// Mark password reset as successful
+  /// This must be called BEFORE signOut to ensure the success state persists
+  void markSuccess() {
+    state = state.copyWith(isSuccess: true, currentStep: 3);
+  }
+
+  /// Reset the flow (after completion or cancel)
+  void resetFlow() {
+    state = const PasswordResetState();
+  }
+
+  /// Go back one step
+  void goBack() {
+    if (state.currentStep > 0) {
+      state = state.copyWith(currentStep: state.currentStep - 1);
+    }
+  }
+}
+
+/// Password Reset Provider
+final passwordResetProvider = NotifierProvider<PasswordResetNotifier, PasswordResetState>(() {
+  return PasswordResetNotifier();
+});
