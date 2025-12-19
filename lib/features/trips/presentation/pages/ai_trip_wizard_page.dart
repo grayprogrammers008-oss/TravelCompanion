@@ -38,6 +38,8 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   bool _isListening = false;
   bool _hasError = false;
   bool _isSimulator = false;
+  bool _isPermissionDenied = false; // Microphone permission denied
+  bool _isPermissionPermanentlyDenied = false; // User needs to go to Settings
   String _errorMessage = '';
   String _transcribedText = '';
   String _interimText = '';
@@ -125,11 +127,22 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     _voiceService.onResult = (text, isFinal) {
       setState(() {
         if (isFinal) {
-          _transcribedText = text;
+          // If continuing from previous text, append the new text
+          if (_isContinuing && _previousText.isNotEmpty) {
+            _transcribedText = '$_previousText. $text';
+            _isContinuing = false; // Reset after appending
+          } else {
+            _transcribedText = text;
+          }
           _interimText = '';
           // No more local parsing - AI will handle everything
         } else {
-          _interimText = text;
+          // Show interim text (with previous text if continuing)
+          if (_isContinuing && _previousText.isNotEmpty) {
+            _interimText = '$_previousText. $text';
+          } else {
+            _interimText = text;
+          }
         }
       });
     };
@@ -141,8 +154,23 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     _voiceService.onError = (error) {
       setState(() {
         _hasError = true;
-        _errorMessage = error;
         _isListening = false;
+        _isContinuing = false; // Reset on error
+
+        // Handle special permission error codes
+        if (error == 'PERMISSION_DENIED') {
+          _isPermissionDenied = true;
+          _isPermissionPermanentlyDenied = false;
+          _errorMessage = 'Microphone permission required. Tap to allow.';
+        } else if (error == 'PERMISSION_PERMANENTLY_DENIED') {
+          _isPermissionDenied = true;
+          _isPermissionPermanentlyDenied = true;
+          _errorMessage = 'Microphone permission denied. Tap to open Settings.';
+        } else {
+          _isPermissionDenied = false;
+          _isPermissionPermanentlyDenied = false;
+          _errorMessage = error;
+        }
       });
     };
 
@@ -150,15 +178,37 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       setState(() {
         _isListening = true;
         _hasError = false;
-        _transcribedText = '';
+        // Only clear if NOT continuing
+        if (!_isContinuing) {
+          _transcribedText = '';
+        }
         _interimText = '';
       });
       HapticFeedback.mediumImpact();
     };
 
     _voiceService.onListeningStopped = () {
-      setState(() => _isListening = false);
+      setState(() {
+        _isListening = false;
+        _isContinuing = false; // Reset when stopped
+      });
     };
+
+    // Check if we already have microphone permission before initializing
+    final hasPermission = await _voiceService.hasMicrophonePermission();
+    debugPrint('🎤 Current microphone permission: $hasPermission');
+
+    if (!hasPermission) {
+      // Don't initialize yet - wait for user to tap the mic button
+      // This defers permission request to when user actually wants to use voice input
+      debugPrint('🎤 Microphone permission not granted yet - will request on first mic tap');
+      setState(() {
+        _isInitialized = false;
+        _isSimulator = false; // Assume physical device until we check
+        _hasError = false; // Not an error - just not initialized yet
+      });
+      return;
+    }
 
     final initialized = await _voiceService.initialize();
 
@@ -208,15 +258,110 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     _changeLanguage(keys[nextIndex]);
   }
 
+  /// Handle permission button tap - request permission or open settings
+  Future<void> _handlePermissionButtonTap() async {
+    HapticFeedback.lightImpact();
+
+    if (_isPermissionPermanentlyDenied) {
+      // Open app settings so user can enable microphone permission
+      debugPrint('🔧 Opening app settings for microphone permission...');
+      final opened = await _voiceService.openMicrophoneSettings();
+      if (opened) {
+        // Show a snackbar to guide the user
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Enable microphone permission in Settings, then return to the app'),
+              duration: Duration(seconds: 4),
+            ),
+          );
+        }
+      }
+    } else {
+      // Request permission directly
+      debugPrint('🎤 Requesting microphone permission...');
+      final granted = await _voiceService.requestMicrophonePermission();
+      if (granted) {
+        // Permission granted - reinitialize the voice service
+        setState(() {
+          _hasError = false;
+          _isPermissionDenied = false;
+          _isPermissionPermanentlyDenied = false;
+          _errorMessage = '';
+        });
+        await _initVoiceService();
+      } else {
+        // Permission denied - check if permanently denied
+        final isPermanentlyDenied = await _voiceService.isMicrophonePermissionPermanentlyDenied();
+        setState(() {
+          _isPermissionPermanentlyDenied = isPermanentlyDenied;
+          _errorMessage = isPermanentlyDenied
+              ? 'Microphone permission denied. Tap to open Settings.'
+              : 'Microphone permission required. Tap to allow.';
+        });
+      }
+    }
+  }
+
+  /// Track if user is continuing their input (appending to existing text)
+  bool _isContinuing = false;
+  String _previousText = '';
+
   Future<void> _toggleListening() async {
     HapticFeedback.lightImpact();
+    debugPrint('🎤 _toggleListening called: _isListening=$_isListening, _isSimulator=$_isSimulator');
 
     if (_isListening) {
       await _voiceService.stopListening();
     } else {
+      // ALWAYS check and request microphone permission FIRST before anything else
+      // (Skip only for simulators where mic permission doesn't exist)
+      debugPrint('🎤 Checking microphone permission...');
+      final hasPermission = await _voiceService.hasMicrophonePermission();
+      debugPrint('🎤 hasMicrophonePermission: $hasPermission');
+
+      if (!hasPermission) {
+        debugPrint('🎤 Microphone permission not granted, requesting...');
+        final granted = await _voiceService.requestMicrophonePermission();
+        debugPrint('🎤 Permission request result: granted=$granted');
+
+        if (!granted) {
+          // Permission denied - update UI state
+          final isPermanentlyDenied = await _voiceService.isMicrophonePermissionPermanentlyDenied();
+          debugPrint('🎤 Permission denied. isPermanentlyDenied=$isPermanentlyDenied');
+          setState(() {
+            _hasError = true;
+            _isPermissionDenied = true;
+            _isPermissionPermanentlyDenied = isPermanentlyDenied;
+            _errorMessage = isPermanentlyDenied
+                ? 'Microphone permission denied. Tap to open Settings.'
+                : 'Microphone permission required. Tap to allow.';
+          });
+          return; // Don't proceed without permission
+        }
+        debugPrint('✅ Microphone permission granted!');
+        // Re-initialize voice service now that we have permission
+        await _initVoiceService();
+      }
+
+      // If there's already text, we're continuing (appending)
+      // Otherwise, starting fresh
+      if (_transcribedText.isNotEmpty) {
+        _isContinuing = true;
+        _previousText = _transcribedText;
+      } else {
+        _isContinuing = false;
+        _previousText = '';
+      }
+
       setState(() {
         _hasError = false;
-        _transcribedText = '';
+        _isPermissionDenied = false;
+        _isPermissionPermanentlyDenied = false;
+        // Don't clear text if continuing
+        if (!_isContinuing) {
+          _transcribedText = '';
+        }
       });
 
       if (_isSimulator) {
@@ -1027,20 +1172,31 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
 
   Widget _buildStatusText(AppThemeData themeData) {
     String statusText;
+    String? subText;
     Color statusColor;
     IconData? statusIcon;
+    bool showPermissionButton = false;
 
     if (_hasError) {
       statusText = _errorMessage;
       statusColor = Colors.redAccent;
       statusIcon = Icons.error_outline;
+
+      // Show permission button for permission errors
+      if (_isPermissionDenied) {
+        showPermissionButton = true;
+        statusIcon = _isPermissionPermanentlyDenied ? Icons.settings : Icons.mic_off;
+        statusColor = Colors.orangeAccent;
+      }
     } else if (_isListening) {
-      statusText = 'Listening... describe your dream trip';
+      statusText = 'Listening... take your time';
+      subText = 'You have 20 seconds between thoughts';
       statusColor = const Color(0xFF00D9FF);
       statusIcon = Icons.hearing;
     } else if (_transcribedText.isNotEmpty) {
       // Text recognized - AI will parse destination
       statusText = 'Ready! AI will understand your request';
+      subText = 'Tap mic to add more, or tap Create Trip';
       statusColor = Colors.greenAccent;
       statusIcon = Icons.rocket_launch;
     } else if (_isSimulator) {
@@ -1049,6 +1205,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       statusIcon = Icons.play_circle_outline;
     } else {
       statusText = 'Tap to plan your complete trip';
+      subText = 'Take your time - we\'ll wait while you think';
       statusColor = Colors.white70;
     }
 
@@ -1057,25 +1214,64 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       child: Padding(
         key: ValueKey(statusText),
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (statusIcon != null) ...[
-              Icon(statusIcon, color: statusColor, size: 20),
-              const SizedBox(width: 8),
-            ],
-            Flexible(
-              child: Text(
-                statusText,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (statusIcon != null) ...[
+                  Icon(statusIcon, color: statusColor, size: 20),
+                  const SizedBox(width: 8),
+                ],
+                Flexible(
+                  child: Text(
+                    statusText,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            if (subText != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                subText,
                 style: TextStyle(
-                  color: statusColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  color: statusColor.withValues(alpha: 0.6),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
               ),
-            ),
+            ],
+            // Permission button when microphone access is denied
+            if (showPermissionButton) ...[
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _handlePermissionButtonTap,
+                icon: Icon(
+                  _isPermissionPermanentlyDenied ? Icons.settings : Icons.mic,
+                  size: 18,
+                ),
+                label: Text(
+                  _isPermissionPermanentlyDenied ? 'Open Settings' : 'Allow Microphone',
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orangeAccent,
+                  foregroundColor: Colors.black87,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -1248,7 +1444,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       child: Column(
         children: [
           Text(
-            'Describe your dream trip:',
+            'Speak or tap an example to try:',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.5),
               fontSize: 12,
@@ -1261,6 +1457,8 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
           _buildHintItem('"Adventure trip to Ladakh for a week"'),
           const SizedBox(height: 8),
           _buildHintItem('"Romantic getaway to Udaipur for 3 days"'),
+          const SizedBox(height: 8),
+          _buildHintItem('"Weekend trip to Goa with friends"'),
           const SizedBox(height: 16),
           _buildSurpriseMeButton(),
         ],
@@ -1308,21 +1506,44 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   }
 
   Widget _buildHintItem(String text) {
-    return Row(
-      children: [
-        Icon(Icons.lightbulb_outline, color: Colors.amber.withValues(alpha: 0.7), size: 16),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 13,
-              fontStyle: FontStyle.italic,
-            ),
+    // Remove quotes from the display text for cleaner tap action
+    final cleanText = text.replaceAll('"', '');
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        // Set the example as transcribed text so user can see it and create trip
+        setState(() {
+          _transcribedText = cleanText;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
           ),
         ),
-      ],
+        child: Row(
+          children: [
+            Icon(Icons.lightbulb_outline, color: Colors.amber.withValues(alpha: 0.7), size: 16),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+            Icon(Icons.touch_app, color: Colors.white.withValues(alpha: 0.3), size: 14),
+          ],
+        ),
+      ),
     );
   }
 

@@ -37,6 +37,21 @@ target 'Runner' do
   end
 end
 
+# PermissionHandler requires GCC_PREPROCESSOR_DEFINITIONS to enable specific permissions
+# See: https://pub.dev/packages/permission_handler#setup
+# This enables the microphone and speech recognition permissions for iOS
+post_integrate do |installer|
+  installer.generated_aggregate_targets.each do |target|
+    target.xcconfigs.each do |config_name, config_file|
+      # Enable microphone permission
+      config_file.attributes['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config_file.attributes['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_MICROPHONE=1'
+      config_file.attributes['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_SPEECH_RECOGNIZER=1'
+      config_file.save_as(Pathname.new("#{target.xcconfig_relative_path(config_name)}"))
+    end
+  end
+end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)

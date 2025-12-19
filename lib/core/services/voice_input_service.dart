@@ -110,6 +110,49 @@ class VoiceInputService {
     return false;
   }
 
+  /// Check if microphone permission is granted
+  Future<bool> hasMicrophonePermission() async {
+    final status = await Permission.microphone.status;
+    debugPrint('🎤 hasMicrophonePermission check: status=$status, isGranted=${status.isGranted}, isDenied=${status.isDenied}, isPermanentlyDenied=${status.isPermanentlyDenied}, isRestricted=${status.isRestricted}, isLimited=${status.isLimited}');
+    return status.isGranted;
+  }
+
+  /// Check if microphone permission is permanently denied
+  Future<bool> isMicrophonePermissionPermanentlyDenied() async {
+    final status = await Permission.microphone.status;
+    return status.isPermanentlyDenied;
+  }
+
+  /// Request microphone permission (and speech recognition on iOS)
+  /// Returns true if permission is granted, false otherwise
+  Future<bool> requestMicrophonePermission() async {
+    debugPrint('🎤 Requesting microphone permission...');
+    final micStatus = await Permission.microphone.request();
+    debugPrint('🎤 Microphone permission status: $micStatus');
+
+    if (!micStatus.isGranted) {
+      return false;
+    }
+
+    // On iOS, also request speech recognition permission
+    if (Platform.isIOS) {
+      debugPrint('🎤 Requesting speech recognition permission on iOS...');
+      final speechStatus = await Permission.speech.request();
+      debugPrint('🎤 Speech recognition permission status: $speechStatus');
+      // We still return true even if speech permission is denied,
+      // as the main blocking issue is microphone permission.
+      // Speech recognition might still work with device-only recognition.
+    }
+
+    return true;
+  }
+
+  /// Open app settings so user can enable microphone permission
+  Future<bool> openMicrophoneSettings() async {
+    debugPrint('⚙️ Opening app settings for permission...');
+    return await openAppSettings();
+  }
+
   /// Initialize the speech recognition service
   Future<bool> initialize() async {
     if (_isInitialized) return true;
@@ -125,15 +168,45 @@ class VoiceInputService {
       } else {
         debugPrint('📱 Running on PHYSICAL device - real speech recognition will be used');
 
-        // Request microphone permission on physical devices
-        debugPrint('🎤 Requesting microphone permission...');
-        final micStatus = await Permission.microphone.request();
-        debugPrint('🎤 Microphone permission status: $micStatus');
+        // Check current microphone permission status
+        final currentStatus = await Permission.microphone.status;
+        debugPrint('🎤 Current microphone permission status: $currentStatus');
 
-        if (micStatus.isDenied || micStatus.isPermanentlyDenied) {
-          debugPrint('❌ Microphone permission denied');
-          onError?.call('Microphone permission required. Please enable it in Settings.');
+        if (currentStatus.isPermanentlyDenied) {
+          // Permission was permanently denied - user needs to go to Settings
+          debugPrint('❌ Microphone permission permanently denied - user must enable in Settings');
+          onError?.call('PERMISSION_PERMANENTLY_DENIED');
           return false;
+        }
+
+        if (!currentStatus.isGranted) {
+          // Request microphone permission
+          debugPrint('🎤 Requesting microphone permission...');
+          final micStatus = await Permission.microphone.request();
+          debugPrint('🎤 Microphone permission result: $micStatus');
+
+          if (micStatus.isDenied) {
+            debugPrint('❌ Microphone permission denied');
+            onError?.call('PERMISSION_DENIED');
+            return false;
+          }
+
+          if (micStatus.isPermanentlyDenied) {
+            debugPrint('❌ Microphone permission permanently denied');
+            onError?.call('PERMISSION_PERMANENTLY_DENIED');
+            return false;
+          }
+        }
+
+        // Also request speech recognition permission on iOS (needed for iOS 10+)
+        if (Platform.isIOS) {
+          debugPrint('🎤 Checking speech recognition permission on iOS...');
+          final speechStatus = await Permission.speech.status;
+          debugPrint('🎤 Speech permission status: $speechStatus');
+          if (!speechStatus.isGranted) {
+            final result = await Permission.speech.request();
+            debugPrint('🎤 Speech permission result: $result');
+          }
         }
 
         // Also request speech recognition permission on Android (needed for some devices)
@@ -176,7 +249,7 @@ class VoiceInputService {
           onError?.call('Voice input requires a physical device. Simulators do not have microphone access.');
         } else {
           // On physical device, initialization failure usually means permission issue
-          onError?.call('Speech recognition not available. Please check microphone permissions in Settings.');
+          onError?.call('PERMISSION_PERMANENTLY_DENIED');
         }
       }
 
@@ -194,12 +267,18 @@ class VoiceInputService {
   }
 
   /// Start listening for speech
-  /// More patient settings: waits longer for speech and allows longer pauses
+  /// VERY PATIENT settings: waits longer for speech and allows extended pauses
   /// If localeId is null and _currentLocaleId is null, uses device default (auto-detect)
+  ///
+  /// Patient Mode Features:
+  /// - listenFor: 3 minutes total (180 seconds) - plenty of time for detailed descriptions
+  /// - pauseFor: 20 seconds pause tolerance - allows natural thinking time between thoughts
+  /// - Users can form complete sentences without being cut off
   Future<void> startListening({
     String? localeId, // If null, uses _currentLocaleId or device default
     Duration? listenFor,
     Duration? pauseFor,
+    bool veryPatient = true, // Flag for extra patient mode (default: true)
   }) async {
     if (!_isInitialized) {
       final initialized = await initialize();
@@ -222,11 +301,13 @@ class VoiceInputService {
     final effectiveLocale = localeId ?? _currentLocaleId;
 
     try {
-      // More patient listening settings:
-      // - listenFor: 2 minutes total listening time (plenty of time to describe a trip)
-      // - pauseFor: 10 seconds pause tolerance (allows thinking time between sentences)
-      final effectiveListenFor = listenFor ?? const Duration(seconds: 120);
-      final effectivePauseFor = pauseFor ?? const Duration(seconds: 10);
+      // VERY PATIENT listening settings:
+      // - listenFor: 3 minutes total listening time (plenty of time to describe a detailed trip)
+      // - pauseFor: 20 seconds pause tolerance (allows thinking time between sentences)
+      //
+      // This prevents the "cuts off too quickly" problem where users are still forming thoughts
+      final effectiveListenFor = listenFor ?? Duration(seconds: veryPatient ? 180 : 120);
+      final effectivePauseFor = pauseFor ?? Duration(seconds: veryPatient ? 20 : 10);
 
       if (effectiveLocale == null) {
         debugPrint('🎤 Starting speech recognition with DEVICE DEFAULT locale (auto-detect)');
@@ -235,19 +316,20 @@ class VoiceInputService {
         debugPrint('🎤 Starting speech recognition with locale: $effectiveLocale');
         debugPrint('🎤 Language: ${indianLanguages[effectiveLocale] ?? effectiveLocale}');
       }
-      debugPrint('🎤 listenFor: $effectiveListenFor (patient mode)');
-      debugPrint('🎤 pauseFor: $effectivePauseFor (allows thinking time)');
+      debugPrint('🎤 listenFor: $effectiveListenFor (${veryPatient ? "VERY patient" : "patient"} mode)');
+      debugPrint('🎤 pauseFor: $effectivePauseFor (allows ${veryPatient ? "extended" : "natural"} thinking time)');
+      debugPrint('🎤 TIP: Take your time - the mic will wait for you to finish your thoughts');
 
       await _speech.listen(
         onResult: _onResult,
         onSoundLevelChange: _onSoundLevelChange,
         localeId: effectiveLocale, // null = device default
-        listenFor: effectiveListenFor, // 2 minutes - plenty of time
-        pauseFor: effectivePauseFor, // 10 seconds - allows natural thinking pauses
+        listenFor: effectiveListenFor, // 3 minutes - plenty of time for detailed trip planning
+        pauseFor: effectivePauseFor, // 20 seconds - allows natural thinking pauses without cutoff
         listenOptions: SpeechListenOptions(
           cancelOnError: false,
           partialResults: true,
-          listenMode: ListenMode.dictation,
+          listenMode: ListenMode.dictation, // Dictation mode is more patient
           autoPunctuation: true, // Enable auto punctuation for better results
           enableHapticFeedback: true, // Haptic feedback on Android
         ),
