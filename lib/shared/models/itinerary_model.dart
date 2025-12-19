@@ -5,6 +5,9 @@ class ItineraryItemModel {
   final String title;
   final String? description;
   final String? location;
+  final double? latitude;
+  final double? longitude;
+  final String? placeId; // Google Maps Place ID
   final DateTime? startTime;
   final DateTime? endTime;
   final int? dayNumber;
@@ -21,6 +24,9 @@ class ItineraryItemModel {
     required this.title,
     this.description,
     this.location,
+    this.latitude,
+    this.longitude,
+    this.placeId,
     this.startTime,
     this.endTime,
     this.dayNumber,
@@ -31,12 +37,18 @@ class ItineraryItemModel {
     this.creatorName,
   });
 
+  /// Returns true if this item has map coordinates
+  bool get hasMapLocation => latitude != null && longitude != null;
+
   ItineraryItemModel copyWith({
     String? id,
     String? tripId,
     String? title,
     String? description,
     String? location,
+    double? latitude,
+    double? longitude,
+    String? placeId,
     DateTime? startTime,
     DateTime? endTime,
     int? dayNumber,
@@ -52,6 +64,9 @@ class ItineraryItemModel {
       title: title ?? this.title,
       description: description ?? this.description,
       location: location ?? this.location,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      placeId: placeId ?? this.placeId,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       dayNumber: dayNumber ?? this.dayNumber,
@@ -70,6 +85,9 @@ class ItineraryItemModel {
       'title': title,
       'description': description,
       'location': location,
+      'latitude': latitude,
+      'longitude': longitude,
+      'place_id': placeId,
       'start_time': startTime?.toIso8601String(),
       'end_time': endTime?.toIso8601String(),
       'day_number': dayNumber,
@@ -88,6 +106,9 @@ class ItineraryItemModel {
       title: json['title'] as String,
       description: json['description'] as String?,
       location: json['location'] as String?,
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      placeId: json['place_id'] as String?,
       startTime: json['start_time'] != null
           ? DateTime.parse(json['start_time'] as String)
           : null,
@@ -116,6 +137,9 @@ class ItineraryItemModel {
         other.title == title &&
         other.description == description &&
         other.location == location &&
+        other.latitude == latitude &&
+        other.longitude == longitude &&
+        other.placeId == placeId &&
         other.startTime == startTime &&
         other.endTime == endTime &&
         other.dayNumber == dayNumber &&
@@ -134,6 +158,9 @@ class ItineraryItemModel {
       title,
       description,
       location,
+      latitude,
+      longitude,
+      placeId,
       startTime,
       endTime,
       dayNumber,
@@ -141,13 +168,13 @@ class ItineraryItemModel {
       createdBy,
       createdAt,
       updatedAt,
-      creatorName,
+      // Note: hashCode can only take up to 20 arguments
     );
   }
 
   @override
   String toString() {
-    return 'ItineraryItemModel(id: $id, tripId: $tripId, title: $title, description: $description, location: $location, startTime: $startTime, endTime: $endTime, dayNumber: $dayNumber, orderIndex: $orderIndex, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, creatorName: $creatorName)';
+    return 'ItineraryItemModel(id: $id, tripId: $tripId, title: $title, description: $description, location: $location, latitude: $latitude, longitude: $longitude, placeId: $placeId, startTime: $startTime, endTime: $endTime, dayNumber: $dayNumber, orderIndex: $orderIndex, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, creatorName: $creatorName)';
   }
 }
 

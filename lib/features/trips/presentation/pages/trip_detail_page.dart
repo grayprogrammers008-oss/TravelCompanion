@@ -6,11 +6,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
-import '../../../../core/animations/animation_constants.dart';
-import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
-import '../../../../core/widgets/glassmorphic_card.dart';
 import '../../../../core/utils/trip_permissions.dart';
 import '../../../../core/services/share_service.dart';
 import '../../../../shared/models/trip_model.dart';
@@ -33,28 +30,11 @@ class TripDetailPage extends ConsumerStatefulWidget {
 }
 
 class _TripDetailPageState extends ConsumerState<TripDetailPage> {
-  final ScrollController _scrollController = ScrollController();
-  double _scrollOffset = 0.0;
-
-  // Member management state
-  bool _showAddMember = false;
-  bool _showAllMembers = false;
+  // Member management state (for bottom sheet)
   final TextEditingController _memberSearchController = TextEditingController();
-  String _memberSearchQuery = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      setState(() {
-        _scrollOffset = _scrollController.offset;
-      });
-    });
-  }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _memberSearchController.dispose();
     super.dispose();
   }
@@ -111,194 +91,14 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   Widget build(BuildContext context) {
     final tripAsync = ref.watch(tripProvider(widget.tripId));
     final themeData = context.appThemeData;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final safeAreaTop = MediaQuery.of(context).padding.top;
+    final safeAreaBottom = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
       body: tripAsync.when(
-        data: (trip) => CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                // Premium App Bar with Parallax Hero Image
-                SliverAppBar(
-                  expandedHeight: 260,
-                  floating: false,
-                  pinned: true,
-                  stretch: true,
-                  backgroundColor: themeData.primaryColor,
-                  foregroundColor: Colors.white,
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      if (context.canPop()) {
-                        context.pop();
-                      } else {
-                        context.go('/trips');
-                      }
-                    },
-                  ),
-                  flexibleSpace: FlexibleSpaceBar(
-                    titlePadding: const EdgeInsets.only(
-                      left: 50, // Account for back button
-                      right: 50, // Account for action buttons
-                      bottom: 16,
-                    ),
-                    title: Text(
-                      trip.trip.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black87,
-                            offset: Offset(0, 2),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-                    background: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Stack(
-                          children: [
-                            // Parallax Hero Image
-                            Positioned.fill(
-                              child: Transform.translate(
-                                offset: Offset(0, _scrollOffset * 0.5),
-                                child: DestinationImage(
-                                  tripName: trip.trip.destination ?? trip.trip.name,
-                                  height: constraints.maxHeight,
-                                  width: constraints.maxWidth,
-                                  fit: BoxFit.cover,
-                                  showOverlay: false,
-                                ),
-                              ),
-                            ),
-                            // Enhanced gradient overlay
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    stops: const [0.0, 0.5, 1.0],
-                                    colors: [
-                                      Colors.black.withValues(alpha: 0.3),
-                                      Colors.transparent,
-                                      Colors.black.withValues(alpha: 0.8),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Trip status badge (top left)
-                            Positioned(
-                              top: MediaQuery.of(context).padding.top + 60,
-                              left: AppTheme.spacingMd,
-                              child: _buildTripStatusBadge(context, trip),
-                            ),
-                            // Member avatars (top right) - with padding to prevent corner clipping
-                            Positioned(
-                              top: MediaQuery.of(context).padding.top + 70, // Moved down for corner clearance
-                              right: AppTheme.spacingMd + 24, // Larger padding for rounded corner clearance
-                              child: _buildHeroMemberAvatars(trip.members),
-                            ),
-                            // Glassmorphic info card at bottom
-                            Positioned(
-                              bottom: 50,
-                              left: AppTheme.spacingMd,
-                              right: AppTheme.spacingMd,
-                              child: _buildHeroInfoCard(context, trip),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  actions: [
-                    // Only show edit button for trip owner
-                    if (TripPermissions.canEditTrip(
-                      currentUserId: ref.watch(authStateProvider).value,
-                      tripWithMembers: trip,
-                    ))
-                      Container(
-                        margin: const EdgeInsets.only(right: AppTheme.spacingXs),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            context.push('/trips/${widget.tripId}/edit');
-                          },
-                        ),
-                      ),
-                    _buildPopupMenu(context, trip),
-                  ],
-                ),
-
-                // Content
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingMd,
-                      vertical: AppTheme.spacingMd,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Stats Cards Row
-                        FadeSlideAnimation(
-                          delay: Duration.zero,
-                          child: _buildStatsCards(context, trip),
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-
-                        // Trip Info Card
-                        FadeSlideAnimation(
-                          delay: AppAnimations.staggerSmall,
-                          child: _buildInfoSection(context, trip, themeData),
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-
-                        // Description
-                        if (trip.trip.description != null &&
-                            trip.trip.description!.isNotEmpty) ...[
-                          FadeSlideAnimation(
-                            delay: AppAnimations.staggerSmall * 2,
-                            child: _buildDescriptionCard(
-                              context,
-                              trip.trip.description!,
-                            ),
-                          ),
-                          const SizedBox(height: AppTheme.spacingMd),
-                        ],
-
-                        // Members Section
-                        FadeSlideAnimation(
-                          delay: AppAnimations.staggerSmall * 3,
-                          child: _buildMembersSection(context, trip, themeData),
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-
-                        // Quick Actions Grid
-                        FadeSlideAnimation(
-                          delay: AppAnimations.staggerSmall * 4,
-                          child: _buildQuickActionsGrid(context, trip),
-                        ),
-
-                        // Bottom padding
-                        const SizedBox(height: AppTheme.spacingMd),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        data: (trip) => _buildV3Layout(context, trip, themeData, screenHeight, safeAreaTop, safeAreaBottom),
         loading: () => const Center(
           child: AppLoadingIndicator(message: 'Loading trip details...'),
         ),
@@ -307,334 +107,905 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
-  Widget _buildTripStatusBadge(BuildContext context, dynamic trip) {
+  /// V3.0: Zero-scroll "Hub" layout - everything visible at a glance
+  /// Inspired by: Apple Watch complications, Uber home, Linear dashboard
+  Widget _buildV3Layout(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+    double screenHeight,
+    double safeAreaTop,
+    double safeAreaBottom,
+  ) {
+    final heroHeight = screenHeight * 0.28; // 28% for hero image
+
+    return Stack(
+      children: [
+        // Full-screen background with hero image at top
+        Column(
+          children: [
+            // Hero section with image, title, status
+            _buildV3HeroSection(context, trip, themeData, heroHeight, safeAreaTop),
+
+            // Main content area - fills remaining space
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: context.backgroundColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                  child: _buildV3ContentArea(context, trip, themeData, safeAreaBottom),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // Floating back button
+        Positioned(
+          top: safeAreaTop + 8,
+          left: 12,
+          child: _buildFloatingBackButton(context),
+        ),
+
+        // Floating action buttons (edit, more)
+        Positioned(
+          top: safeAreaTop + 8,
+          right: 12,
+          child: _buildFloatingActions(context, trip),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFloatingBackButton(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+        onPressed: () {
+          HapticFeedback.lightImpact();
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/trips');
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildFloatingActions(BuildContext context, dynamic trip) {
+    final canEdit = TripPermissions.canEditTrip(
+      currentUserId: ref.watch(authStateProvider).value,
+      tripWithMembers: trip,
+    );
+
+    return Row(
+      children: [
+        if (canEdit)
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                context.push('/trips/${widget.tripId}/edit');
+              },
+            ),
+          ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: _buildCompactPopupMenu(context, trip),
+        ),
+      ],
+    );
+  }
+
+  /// V3.0: Compact hero with all key info overlaid
+  Widget _buildV3HeroSection(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+    double height,
+    double safeAreaTop,
+  ) {
+    return SizedBox(
+      height: height + safeAreaTop,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          DestinationImage(
+            tripName: trip.trip.destination ?? trip.trip.name,
+            height: height + safeAreaTop,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            showOverlay: false,
+          ),
+          // Gradient overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0.0, 0.3, 0.7, 1.0],
+                colors: [
+                  Colors.black.withValues(alpha: 0.5),
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.8),
+                ],
+              ),
+            ),
+          ),
+          // Content overlay at bottom
+          Positioned(
+            bottom: 32,
+            left: 16,
+            right: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Trip name
+                Text(
+                  trip.trip.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    shadows: [
+                      Shadow(color: Colors.black54, offset: Offset(0, 2), blurRadius: 8),
+                    ],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                // Inline info row: destination • dates • status
+                Row(
+                  children: [
+                    if (trip.trip.destination != null) ...[
+                      const Icon(Icons.location_on, color: Colors.white70, size: 14),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          trip.trip.destination!,
+                          style: const TextStyle(color: Colors.white70, fontSize: 13),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                    if (trip.trip.startDate != null) ...[
+                      const Icon(Icons.calendar_today, color: Colors.white70, size: 12),
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatDateRange(trip.trip.startDate, trip.trip.endDate),
+                        style: const TextStyle(color: Colors.white70, fontSize: 13),
+                      ),
+                    ],
+                    const Spacer(),
+                    _buildCompactStatusBadge(context, trip),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateRange(DateTime? start, DateTime? end) {
+    if (start == null) return '';
+    final startStr = DateFormat('MMM d').format(start);
+    if (end == null) return startStr;
+    final endStr = DateFormat('MMM d').format(end);
+    return '$startStr - $endStr';
+  }
+
+  Widget _buildCompactStatusBadge(BuildContext context, dynamic trip) {
     final now = DateTime.now();
     final startDate = trip.trip.startDate;
     final endDate = trip.trip.endDate;
 
     String statusText;
     Color statusColor;
-    IconData statusIcon;
 
     if (trip.trip.isCompleted) {
-      statusText = 'Completed';
+      statusText = '✓ Done';
       statusColor = AppTheme.success;
-      statusIcon = Icons.check_circle;
     } else if (startDate != null && now.isBefore(startDate)) {
       final daysUntil = startDate.difference(now).inDays;
-      statusText = daysUntil == 0 ? 'Starts Today!' : '$daysUntil days to go';
+      statusText = daysUntil == 0 ? 'Today!' : '${daysUntil}d';
       statusColor = AppTheme.info;
-      statusIcon = Icons.flight_takeoff;
     } else if (startDate != null && endDate != null && now.isAfter(startDate) && now.isBefore(endDate)) {
       final currentDay = now.difference(startDate).inDays + 1;
-      final totalDays = endDate.difference(startDate).inDays + 1;
-      statusText = 'Day $currentDay of $totalDays';
+      statusText = 'Day $currentDay';
       statusColor = AppTheme.success;
-      statusIcon = Icons.explore;
     } else {
       statusText = 'Upcoming';
       statusColor = AppTheme.warning;
-      statusIcon = Icons.schedule;
     }
 
-    // Optimized: removed TweenAnimationBuilder and BackdropFilter for scroll performance
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd,
-        vertical: AppTheme.spacingSm,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.85),
-        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
+        color: statusColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        statusText,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
         ),
+      ),
+    );
+  }
+
+  /// V3.1: "Info First, Actions Second" - prioritize trip information
+  Widget _buildV3ContentArea(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+    double safeAreaBottom,
+  ) {
+    final expensesAsync = ref.watch(tripExpensesProvider(widget.tripId));
+    final checklistsAsync = ref.watch(tripChecklistsProvider(widget.tripId));
+    final currentUserId = ref.watch(currentUserProvider).value?.id ?? '';
+    final unreadCountAsync = ref.watch(tripUnreadCountProvider(
+      TripConversationsParams(tripId: widget.tripId, userId: currentUserId),
+    ));
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(16, 20, 16, safeAreaBottom + 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. ABOUT SECTION - Trip description and key info
+          _buildAboutSection(context, trip, themeData),
+          const SizedBox(height: 20),
+
+          // 2. CREW SECTION - Member avatars row (tap to see all)
+          _buildCrewSection(context, trip, themeData),
+          const SizedBox(height: 20),
+
+          // 3. QUICK ACTIONS - Compact grid of action tiles
+          _buildQuickActionsSection(
+            context,
+            trip,
+            themeData,
+            expensesAsync,
+            checklistsAsync,
+            unreadCountAsync,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// About section with description and info chips
+  Widget _buildAboutSection(BuildContext context, dynamic trip, dynamic themeData) {
+    final description = trip.trip.description as String?;
+    final isPublic = trip.trip.isPublic ?? false;
+    final budget = trip.trip.budget as double?;
+    final currency = trip.trip.currency ?? 'INR';
+    final startDate = trip.trip.startDate as DateTime?;
+    final endDate = trip.trip.endDate as DateTime?;
+    final memberCount = (trip.members as List).length;
+
+    // Calculate duration
+    int? durationDays;
+    if (startDate != null && endDate != null) {
+      durationDays = endDate.difference(startDate).inDays + 1;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withValues(alpha: 0.4),
-            blurRadius: 8,
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(statusIcon, color: Colors.white, size: 16),
-          const SizedBox(width: AppTheme.spacingXs),
-          Text(
-            statusText,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build overlapping member avatars for the hero section
-  Widget _buildHeroMemberAvatars(List<TripMemberModel> members) {
-    const maxVisible = 3;
-    final visibleMembers = members.take(maxVisible).toList();
-    final remainingCount = members.length - maxVisible;
-
-    if (visibleMembers.isEmpty) return const SizedBox.shrink();
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Overlapping avatars
-        SizedBox(
-          width: visibleMembers.length == 1
-              ? 36.0
-              : (visibleMembers.length * 24.0) + 12.0,
-          height: 36,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: List.generate(visibleMembers.length, (index) {
-              final member = visibleMembers[index];
-              return Positioned(
-                left: index * 24.0,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: UserAvatarWidget(
-                      imageUrl: member.avatarUrl,
-                      userName: member.fullName ?? member.email,
-                      size: 32,
-                      showBorder: false,
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-        // "+N more" badge if there are more members
-        if (remainingCount > 0) ...[
-          const SizedBox(width: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              '+$remainingCount',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildHeroInfoCard(BuildContext context, dynamic trip) {
-    // Optimized: removed BackdropFilter for scroll performance
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Destination
-          Expanded(
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Expanded(
-                  child: Text(
-                    trip.trip.destination ?? 'No destination',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Divider
-          Container(
-            height: 30,
-            width: 1,
-            color: Colors.white.withValues(alpha: 0.3),
-          ),
-          const SizedBox(width: AppTheme.spacingMd),
-          // Members
+          // Section header
           Row(
             children: [
-              const Icon(Icons.people, color: Colors.white, size: 18),
-              const SizedBox(width: AppTheme.spacingXs),
+              Icon(Icons.info_outline, size: 18, color: AppTheme.neutral500),
+              const SizedBox(width: 8),
               Text(
-                '${trip.members.length}',
-                style: const TextStyle(
-                  color: Colors.white,
+                'About',
+                style: TextStyle(
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
+                  color: AppTheme.neutral500,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(width: AppTheme.spacingMd),
-          // Dates
-          if (trip.trip.startDate != null) ...[
-            Container(
-              height: 30,
-              width: 1,
-              color: Colors.white.withValues(alpha: 0.3),
+          const SizedBox(height: 12),
+
+          // Description
+          if (description != null && description.isNotEmpty) ...[
+            Text(
+              description,
+              style: const TextStyle(
+                fontSize: 15,
+                height: 1.5,
+                color: Colors.black87,
+              ),
             ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Row(
-              children: [
-                const Icon(Icons.calendar_today, color: Colors.white, size: 16),
-                const SizedBox(width: AppTheme.spacingXs),
-                Text(
-                  DateFormat('MMM d').format(trip.trip.startDate!),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 16),
+          ] else ...[
+            Text(
+              'No description added yet.',
+              style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: AppTheme.neutral400,
+              ),
             ),
+            const SizedBox(height: 16),
           ],
+
+          // Info chips row
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              // Public/Private chip
+              _buildInfoChip(
+                icon: isPublic ? Icons.public : Icons.lock,
+                label: isPublic ? 'Public' : 'Private',
+                color: isPublic ? AppTheme.info : AppTheme.neutral500,
+              ),
+              // Budget chip
+              if (budget != null && budget > 0)
+                _buildInfoChip(
+                  icon: Icons.account_balance_wallet,
+                  label: '${_getCurrencySymbol(currency)}${_formatAmount(budget)}',
+                  color: const Color(0xFF4CAF93),
+                )
+              else
+                _buildInfoChip(
+                  icon: Icons.account_balance_wallet_outlined,
+                  label: 'No budget',
+                  color: AppTheme.neutral400,
+                ),
+              // Duration chip
+              if (durationDays != null)
+                _buildInfoChip(
+                  icon: Icons.schedule,
+                  label: '$durationDays ${durationDays == 1 ? 'day' : 'days'}',
+                  color: const Color(0xFFFFB74D),
+                ),
+              // Travelers chip
+              _buildInfoChip(
+                icon: Icons.group,
+                label: '$memberCount ${memberCount == 1 ? 'traveler' : 'travelers'}',
+                color: const Color(0xFF7E57C2),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatsCards(BuildContext context, dynamic trip) {
-    final expensesAsync = ref.watch(tripExpensesProvider(widget.tripId));
-    final checklistsAsync = ref.watch(tripChecklistsProvider(widget.tripId));
+  /// Info chip widget for displaying trip details
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-    // Calculate trip day progress
-    int currentDay = 0;
-    int totalDays = 0;
-    if (trip.trip.startDate != null && trip.trip.endDate != null) {
-      totalDays = trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1;
-      final now = DateTime.now();
-      if (now.isAfter(trip.trip.startDate!) && now.isBefore(trip.trip.endDate!)) {
-        currentDay = now.difference(trip.trip.startDate!).inDays + 1;
-      } else if (now.isAfter(trip.trip.endDate!)) {
-        currentDay = totalDays;
-      }
+  /// Get currency symbol from currency code
+  String _getCurrencySymbol(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'INR':
+        return '₹';
+      case 'USD':
+        return '\$';
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      default:
+        return currency;
     }
+  }
 
-    return Row(
+  /// Crew section with member avatars
+  Widget _buildCrewSection(BuildContext context, dynamic trip, dynamic themeData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Expenses Card
-        Expanded(
-          child: _StatCard(
-            icon: Icons.payments,
-            iconColor: AppTheme.warning,
-            label: 'Expenses',
-            value: expensesAsync.when(
-              data: (expenses) {
-                final total = expenses.fold<double>(
-                  0,
-                  (sum, e) => sum + e.expense.amount,
-                );
-                return '₹${_formatAmount(total)}';
-              },
-              loading: () => '...',
-              error: (e, s) => '₹0',
-            ),
-            subtitle: expensesAsync.when(
-              data: (expenses) => '${expenses.length} items • Tap to view',
-              loading: () => 'Loading',
-              error: (e, s) => 'Error',
-            ),
-            onTap: () {
-              HapticFeedback.lightImpact();
-              context.push('/trips/${widget.tripId}/expenses');
-            },
+        // Section header
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Row(
+            children: [
+              Icon(Icons.people_outline, size: 18, color: AppTheme.neutral500),
+              const SizedBox(width: 8),
+              Text(
+                'Crew',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.neutral500,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: AppTheme.spacingSm),
+        _buildV3MembersRow(context, trip, themeData),
+      ],
+    );
+  }
 
-        // Checklist Card
-        Expanded(
-          child: _StatCard(
-            icon: Icons.checklist,
-            iconColor: AppTheme.success,
-            label: 'Checklists',
-            value: checklistsAsync.when(
-              data: (checklists) => '${checklists.length}',
-              loading: () => '...',
-              error: (e, s) => '0',
-            ),
-            subtitle: checklistsAsync.when(
-              data: (checklists) => checklists.length == 1 ? '1 list' : '${checklists.length} lists',
-              loading: () => 'Loading',
-              error: (e, s) => 'Error',
-            ),
-            onTap: () {
-              HapticFeedback.lightImpact();
-              context.push('/trips/${widget.tripId}/checklists');
-            },
+  /// Quick Actions section with 2x3 compact grid
+  Widget _buildQuickActionsSection(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+    AsyncValue<List<dynamic>> expensesAsync,
+    AsyncValue<List<dynamic>> checklistsAsync,
+    AsyncValue<int> unreadCountAsync,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section header
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Icon(Icons.grid_view_rounded, size: 18, color: AppTheme.neutral500),
+              const SizedBox(width: 8),
+              Text(
+                'Quick Actions',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.neutral500,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: AppTheme.spacingSm),
-
-        // Days Card
-        Expanded(
-          child: _StatCard(
-            icon: Icons.calendar_today,
-            iconColor: context.primaryColor,
-            label: 'Trip Days',
-            value: totalDays > 0 ? 'Day $currentDay' : '-',
-            subtitle: totalDays > 0 ? 'of $totalDays days' : 'No dates',
-            progress: totalDays > 0 ? currentDay / totalDays : 0.0,
-            onTap: () {
-              HapticFeedback.lightImpact();
-              context.push('/trips/${widget.tripId}/itinerary');
-            },
-          ),
+        // 2x3 Compact grid of action tiles
+        _buildCompactActionGrid(
+          context,
+          trip,
+          themeData,
+          expensesAsync,
+          checklistsAsync,
+          unreadCountAsync,
         ),
       ],
     );
   }
 
+  /// Compact 2x3 grid of action tiles
+  Widget _buildCompactActionGrid(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+    AsyncValue<List<dynamic>> expensesAsync,
+    AsyncValue<List<dynamic>> checklistsAsync,
+    AsyncValue<int> unreadCountAsync,
+  ) {
+    final isCompleted = trip.trip.isCompleted;
+    final totalExpenses = expensesAsync.when(
+      data: (expenses) => expenses.fold<double>(0, (sum, e) => sum + e.expense.amount),
+      loading: () => 0.0,
+      error: (_, _) => 0.0,
+    );
+    final checklistCount = checklistsAsync.when(
+      data: (c) => c.length,
+      loading: () => 0,
+      error: (_, _) => 0,
+    );
+    final unreadCount = unreadCountAsync.value ?? 0;
+
+    return Column(
+      children: [
+        // Row 1: Expenses, Itinerary
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactTile(
+                context,
+                icon: Icons.payments_rounded,
+                title: 'Expenses',
+                value: '₹${_formatAmount(totalExpenses)}',
+                color: const Color(0xFF4CAF93),
+                onTap: () => context.push('/trips/${widget.tripId}/expenses'),
+                onLongPress: isCompleted ? null : () => showQuickExpenseSheet(
+                  context: context,
+                  tripId: widget.tripId,
+                  trip: trip,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildCompactTile(
+                context,
+                icon: Icons.map_rounded,
+                title: 'Itinerary',
+                value: _getTripDayInfo(trip),
+                color: const Color(0xFFFFB74D),
+                onTap: () => context.push('/trips/${widget.tripId}/itinerary'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Row 2: Chat, Checklists
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactTile(
+                context,
+                icon: Icons.chat_bubble_rounded,
+                title: 'Chat',
+                value: unreadCount > 0 ? '$unreadCount new' : 'Group',
+                color: const Color(0xFF7E57C2),
+                badge: unreadCount > 0 ? unreadCount : null,
+                onTap: () => _openDefaultGroupChat(),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildCompactTile(
+                context,
+                icon: Icons.checklist_rounded,
+                title: 'Checklists',
+                value: '$checklistCount ${checklistCount == 1 ? 'list' : 'lists'}',
+                color: const Color(0xFF4DB6AC),
+                onTap: () => context.push('/trips/${widget.tripId}/checklists'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Row 3: SOS/Rating, Share
+        Row(
+          children: [
+            Expanded(
+              child: !isCompleted
+                  ? _buildCompactTile(
+                      context,
+                      icon: Icons.emergency_rounded,
+                      title: 'SOS',
+                      value: 'Emergency',
+                      color: const Color(0xFFE57373),
+                      onTap: () => context.push('/emergency?tripId=${widget.tripId}'),
+                    )
+                  : _buildCompactTile(
+                      context,
+                      icon: Icons.star_rounded,
+                      title: 'Rating',
+                      value: trip.trip.rating != null ? '${trip.trip.rating}★' : 'Rate',
+                      color: const Color(0xFFFFD54F),
+                      onTap: () => _showCompleteDialog(context, ref),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildCompactTile(
+                context,
+                icon: Icons.share_rounded,
+                title: 'Share',
+                value: 'Invite',
+                color: const Color(0xFF64B5F6),
+                onTap: () => TripQrShare.show(
+                  context: context,
+                  tripId: widget.tripId,
+                  tripName: trip.trip.name,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Compact action tile for 2x3 grid
+  Widget _buildCompactTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+    required VoidCallback onTap,
+    VoidCallback? onLongPress,
+    int? badge,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        onTap();
+      },
+      onLongPress: onLongPress != null
+          ? () {
+              HapticFeedback.heavyImpact();
+              onLongPress();
+            }
+          : null,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon row with optional badge
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const Spacer(),
+                if (badge != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '$badge',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Title
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Value
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// V3.0: Compact members row with invite action
+  Widget _buildV3MembersRow(BuildContext context, dynamic trip, dynamic themeData) {
+    final members = trip.members as List<TripMemberModel>;
+    const maxVisible = 5;
+    final visibleMembers = members.take(maxVisible).toList();
+    final remainingCount = members.length - maxVisible;
+    final currentUserId = ref.watch(authStateProvider).value;
+    final canInvite = TripPermissions.canEditTrip(
+      currentUserId: currentUserId,
+      tripWithMembers: trip,
+    );
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        _showMembersBottomSheet(context, trip, themeData);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Overlapping avatars
+            SizedBox(
+              width: visibleMembers.length == 1 ? 32.0 : (visibleMembers.length * 22.0) + 10.0,
+              height: 32,
+              child: Stack(
+                children: List.generate(visibleMembers.length, (index) {
+                  final member = visibleMembers[index];
+                  return Positioned(
+                    left: index * 22.0,
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: ClipOval(
+                        child: UserAvatarWidget(
+                          imageUrl: member.avatarUrl,
+                          userName: member.fullName ?? member.email,
+                          size: 28,
+                          showBorder: false,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Member count text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${members.length} ${members.length == 1 ? 'Traveler' : 'Travelers'}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  if (remainingCount > 0)
+                    Text(
+                      '+$remainingCount more',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppTheme.neutral500,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            // Invite button
+            if (canInvite)
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  InviteBottomSheet.show(
+                    context: context,
+                    tripId: widget.tripId,
+                    tripName: trip.trip.name,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: themeData.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.person_add, size: 14, color: Colors.white),
+                      SizedBox(width: 4),
+                      Text(
+                        'Invite',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            const SizedBox(width: 8),
+            // Chevron to indicate tappable
+            Icon(Icons.chevron_right, size: 20, color: AppTheme.neutral400),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getTripDayInfo(dynamic trip) {
+    if (trip.trip.startDate == null || trip.trip.endDate == null) return 'Plan';
+    final now = DateTime.now();
+    final totalDays = trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1;
+    if (now.isBefore(trip.trip.startDate!)) {
+      return '${totalDays}d trip';
+    } else if (now.isAfter(trip.trip.endDate!)) {
+      return '${totalDays}d done';
+    } else {
+      final currentDay = now.difference(trip.trip.startDate!).inDays + 1;
+      return 'Day $currentDay';
+    }
+  }
+
+  /// Format amount for display (e.g., 1.5K, 2.3L)
   String _formatAmount(double amount) {
     if (amount >= 100000) {
       return '${(amount / 100000).toStringAsFixed(1)}L';
@@ -644,1239 +1015,209 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     return amount.toStringAsFixed(0);
   }
 
-  Widget _buildInfoSection(
-    BuildContext context,
-    dynamic trip,
-    dynamic themeData,
-  ) {
-    final hasBudget = trip.trip.budget != null && trip.trip.budget! > 0;
-    final budget = trip.trip.budget ?? 0.0;
-
-    return GradientBorderCard(
-      borderWidth: 2,
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      child: Column(
-        children: [
-          // Destination
-          if (trip.trip.destination != null)
-            _buildInfoRow(
-              context,
-              icon: Icons.location_on,
-              iconColor: themeData.primaryColor,
-              iconBg: themeData.primaryColor.withValues(alpha: 0.1),
-              label: 'Destination',
-              value: trip.trip.destination!,
+  /// Show members in bottom sheet
+  void _showMembersBottomSheet(BuildContext context, dynamic trip, dynamic themeData) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.85,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
             ),
-
-          if (trip.trip.destination != null &&
-              (trip.trip.startDate != null || trip.trip.endDate != null))
-            const Divider(height: AppTheme.spacingLg),
-
-          // Dates with Duration (consolidated into single row)
-          if (trip.trip.startDate != null && trip.trip.endDate != null)
-            _buildInfoRow(
-              context,
-              icon: Icons.calendar_today,
-              iconColor: AppTheme.success,
-              iconBg: AppTheme.success.withValues(alpha: 0.1),
-              label: 'Travel Dates',
-              value:
-                  '${DateFormat('MMM d').format(trip.trip.startDate!)} - ${DateFormat('MMM d, yyyy').format(trip.trip.endDate!)}',
-              subtitle: '${trip.trip.endDate!.difference(trip.trip.startDate!).inDays + 1} days trip',
-            ),
-
-          // Trip Cost
-          const Divider(height: AppTheme.spacingLg),
-          _buildInfoRow(
-            context,
-            icon: hasBudget ? Icons.savings : Icons.savings_outlined,
-            iconColor: hasBudget ? Colors.blue.shade700 : Colors.grey.shade400,
-            iconBg: hasBudget ? Colors.blue.shade50 : Colors.grey.shade50,
-            label: 'Trip Budget',
-            value: hasBudget
-                ? '${trip.trip.currency} ${budget.toStringAsFixed(2)}'
-                : 'No budget set',
-            subtitle: hasBudget ? 'Estimated trip cost' : null,
           ),
-
-          // Trip Visibility
-          const Divider(height: AppTheme.spacingLg),
-          _buildInfoRow(
-            context,
-            icon: trip.trip.isPublic ? Icons.public : Icons.lock,
-            iconColor: trip.trip.isPublic ? Colors.green.shade700 : Colors.orange.shade700,
-            iconBg: trip.trip.isPublic ? Colors.green.shade50 : Colors.orange.shade50,
-            label: 'Visibility',
-            value: trip.trip.isPublic ? 'Public' : 'Private',
-            subtitle: trip.trip.isPublic
-                ? 'Anyone can discover this trip'
-                : 'Only members can see this trip',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(
-    BuildContext context, {
-    required IconData icon,
-    required Color iconColor,
-    required Color iconBg,
-    required String label,
-    required String value,
-    String? subtitle,
-  }) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          decoration: BoxDecoration(
-            color: iconBg,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: Icon(icon, size: 24, color: iconColor),
-        ),
-        const SizedBox(width: AppTheme.spacingMd),
-        Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: context.textColor.withValues(alpha: 0.7),
-                  fontWeight: FontWeight.w500,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: context.textColor,
-                  fontWeight: FontWeight.w600,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-              if (subtitle != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: context.textColor.withValues(alpha: 0.6),
-                    fontSize: 11,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-              ],
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDescriptionCard(BuildContext context, String description) {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: AppTheme.shadowMd,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
+              // Handle bar
               Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
-                  color: context.accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                ),
-                child: Icon(
-                  Icons.description,
-                  size: 20,
-                  color: context.accentColor,
+                  color: AppTheme.neutral300,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Text(
-                'About This Trip',
-                style: context.titleStyle.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.textColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          Text(
-            description,
-            style: context.bodyStyle.copyWith(
-              color: context.textColor.withValues(alpha: 0.87),
-              height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMembersSection(
-    BuildContext context,
-    dynamic trip,
-    dynamic themeData,
-  ) {
-    final currentUserId = ref.watch(authStateProvider).value;
-    final isCreator = trip.trip.createdBy == currentUserId;
-    final isAdmin = trip.members.any(
-      (m) => m.userId == currentUserId && m.role == 'admin',
-    );
-    final canManageMembers = isCreator || isAdmin;
-
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: AppTheme.shadowMd,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
-                decoration: BoxDecoration(
-                  color: context.accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                ),
-                child: Icon(Icons.group, size: 20, color: context.accentColor),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
                   children: [
-                    Text(
+                    const Text(
                       'Trip Crew',
-                      style: context.titleStyle.copyWith(
+                      style: TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: context.textColor,
                       ),
                     ),
+                    const Spacer(),
                     Text(
-                      '${trip.members.length} member${trip.members.length == 1 ? '' : 's'}',
+                      '${trip.members.length} members',
                       style: TextStyle(
                         color: AppTheme.neutral500,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   ],
                 ),
               ),
-              // Add Member button (inline toggle)
-              if (canManageMembers)
-                GestureDetector(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    setState(() {
-                      _showAddMember = !_showAddMember;
-                      if (!_showAddMember) {
-                        _memberSearchController.clear();
-                        _memberSearchQuery = '';
-                      }
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingMd,
-                      vertical: AppTheme.spacingXs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _showAddMember
-                          ? AppTheme.neutral200
-                          : AppTheme.neutral100,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                      border: Border.all(
-                        color: AppTheme.neutral300,
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _showAddMember ? Icons.close : Icons.person_add,
-                          size: 14,
-                          color: AppTheme.neutral700,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _showAddMember ? 'Cancel' : 'Add',
-                          style: TextStyle(
-                            color: AppTheme.neutral700,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              const SizedBox(width: AppTheme.spacingSm),
-              // Invite button (share link)
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  InviteBottomSheet.show(
-                    context: context,
-                    tripId: widget.tripId,
-                    tripName: trip.trip.name,
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingXs,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: themeData.primaryGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.share, size: 14, color: Colors.white),
-                      SizedBox(width: 4),
-                      Text(
-                        'Invite',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Inline Add Member Section
-          if (_showAddMember) ...[
-            const SizedBox(height: AppTheme.spacingMd),
-            _buildInlineAddMemberSection(context, trip),
-          ],
-
-          const SizedBox(height: AppTheme.spacingMd),
-
-          if (trip.members.isEmpty)
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                color: context.backgroundColor,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.person_add_outlined,
-                    color: context.textColor.withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  const Expanded(child: Text('No members yet. Invite friends!')),
-                ],
-              ),
-            )
-          else ...[
-            // Show limited members with expand option
-            ...(_showAllMembers
-                    ? trip.members.asMap().entries
-                    : trip.members.asMap().entries.take(3))
-                .map(
-              (entry) => FadeSlideAnimation(
-                delay: AppAnimations.staggerTiny * entry.key,
-                child: _buildMemberCard(
-                  context,
-                  entry.value,
-                  themeData,
-                  trip,
-                  canManageMembers,
-                ),
-              ),
-            ),
-            // Show "+X more" button if there are more than 3 members
-            if (trip.members.length > 3)
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  setState(() => _showAllMembers = !_showAllMembers);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppTheme.spacingSm,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        _showAllMembers
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        size: 20,
-                        color: context.primaryColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _showAllMembers
-                            ? 'Show less'
-                            : '+${trip.members.length - 3} more members',
-                        style: TextStyle(
-                          color: context.primaryColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInlineAddMemberSection(BuildContext context, dynamic trip) {
-    final searchResults = ref.watch(
-      systemUsersSearchProvider((search: _memberSearchQuery, tripId: widget.tripId)),
-    );
-
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingSm),
-      decoration: BoxDecoration(
-        color: context.backgroundColor,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.neutral200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _memberSearchController,
-            decoration: InputDecoration(
-              hintText: 'Search users by name or email...',
-              hintStyle: TextStyle(color: AppTheme.neutral400, fontSize: 14),
-              prefixIcon: Icon(Icons.search, size: 20, color: AppTheme.neutral400),
-              suffixIcon: _memberSearchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear, size: 18, color: AppTheme.neutral400),
-                      onPressed: () {
-                        _memberSearchController.clear();
-                        setState(() => _memberSearchQuery = '');
-                      },
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: BorderSide(color: AppTheme.neutral300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: BorderSide(color: AppTheme.neutral300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                borderSide: BorderSide(color: context.primaryColor, width: 1.5),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd,
-                vertical: AppTheme.spacingSm,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              isDense: true,
-            ),
-            style: const TextStyle(fontSize: 14),
-            onChanged: (value) {
-              setState(() => _memberSearchQuery = value);
-            },
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-
-          // Search results
-          searchResults.when(
-            data: (users) {
-              if (users.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
-                  child: Center(
-                    child: Text(
-                      _memberSearchQuery.isEmpty
-                          ? 'Type to search for users'
-                          : 'No users found',
-                      style: TextStyle(color: AppTheme.neutral500, fontSize: 13),
-                    ),
-                  ),
-                );
-              }
-              return ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 180),
+              const Divider(height: 1),
+              // Members list
+              Expanded(
                 child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: users.length,
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: trip.members.length,
                   itemBuilder: (context, index) {
-                    final user = users[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    final member = trip.members[index] as TripMemberModel;
+                    final isCreator = member.userId == trip.trip.createdBy;
+                    return ListTile(
+                      leading: UserAvatarWidget(
+                        imageUrl: member.avatarUrl,
+                        userName: member.fullName ?? member.email,
+                        size: 44,
+                        showBorder: true,
                       ),
-                      child: ListTile(
-                        dense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacingSm,
-                          vertical: 0,
-                        ),
-                        leading: UserAvatarWidget(
-                          imageUrl: user.avatarUrl,
-                          userName: user.fullName ?? user.email ?? 'U',
-                          size: 36,
-                        ),
-                        title: Text(
-                          user.fullName ?? 'Unknown',
-                          style: TextStyle(
-                            color: context.textColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                          ),
-                        ),
-                        subtitle: Text(
-                          user.email ?? '',
-                          style: TextStyle(
-                            color: AppTheme.neutral500,
-                            fontSize: 11,
-                          ),
-                        ),
-                        trailing: GestureDetector(
-                          onTap: () => _addMemberToTrip(user.id),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
+                      title: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              member.fullName ?? member.email ?? 'Unknown',
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.success.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.add, size: 14, color: AppTheme.success),
-                                const SizedBox(width: 2),
-                                Text(
-                                  'Add',
-                                  style: TextStyle(
-                                    color: AppTheme.success,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 11,
-                                  ),
+                          ),
+                          if (isCreator) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.success.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'Organizer',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppTheme.success,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
+                        ],
+                      ),
+                      subtitle: Text(
+                        member.role == 'admin' ? 'Admin' : 'Member',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.neutral500,
                         ),
                       ),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: AppTheme.neutral400,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        final currentUserId = ref.read(authStateProvider).value ?? '';
+                        if (member.userId == currentUserId) {
+                          context.push('/profile');
+                        } else {
+                          context.push(
+                            '/profile'
+                            '?userId=${Uri.encodeComponent(member.userId)}'
+                            '&fullName=${Uri.encodeComponent(member.fullName ?? '')}'
+                            '&email=${Uri.encodeComponent(member.email ?? '')}'
+                            '&role=${Uri.encodeComponent(member.role)}',
+                          );
+                        }
+                      },
                     );
                   },
                 ),
-              );
-            },
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (error, stack) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
-              child: Center(
-                child: Text(
-                  'Error searching users',
-                  style: TextStyle(color: AppTheme.error, fontSize: 13),
-                ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _addMemberToTrip(String userId) async {
-    try {
-      HapticFeedback.mediumImpact();
-      await ref.read(tripControllerProvider.notifier).addMember(
-            tripId: widget.tripId,
-            userId: userId,
-          );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Member added successfully'),
-            backgroundColor: AppTheme.success,
-            duration: Duration(seconds: 2),
-          ),
-        );
-        // Clear search and close add section
-        setState(() {
-          _memberSearchController.clear();
-          _memberSearchQuery = '';
-          _showAddMember = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to add member: $e'),
-            backgroundColor: AppTheme.error,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _removeMemberFromTrip(String userId, String memberName) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Remove Member'),
-        content: Text(
-          'Are you sure you want to remove $memberName from this trip?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppTheme.error),
-            child: const Text('Remove'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      try {
-        HapticFeedback.mediumImpact();
-        await ref.read(tripControllerProvider.notifier).removeMember(
-              tripId: widget.tripId,
-              userId: userId,
-            );
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Member removed successfully'),
-              backgroundColor: AppTheme.success,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to remove member: $e'),
-              backgroundColor: AppTheme.error,
-            ),
-          );
-        }
-      }
-    }
-  }
-
-  Widget _buildMemberCard(
-    BuildContext context,
-    dynamic member,
-    dynamic themeData,
-    dynamic trip,
-    bool canManageMembers,
-  ) {
-    final currentUserId = ref.read(authStateProvider).value ?? '';
-    final isCurrentUser = member.userId == currentUserId;
-    final isCreator = member.userId == trip.trip.createdBy;
-    final canRemove = canManageMembers && !isCreator && !isCurrentUser;
-
-    final card = Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
-      decoration: BoxDecoration(
-        color: context.backgroundColor,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: context.textColor.withValues(alpha: 0.1),
-        ),
-      ),
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          if (isCurrentUser) {
-            context.push('/profile');
-          } else {
-            context.push(
-              '/profile'
-              '?userId=${Uri.encodeComponent(member.userId)}'
-              '&fullName=${Uri.encodeComponent(member.fullName ?? '')}'
-              '&email=${Uri.encodeComponent(member.email ?? '')}'
-              '&role=${Uri.encodeComponent(member.role)}',
-            );
-          }
-        },
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingSm),
-          child: Row(
-            children: [
-              UserAvatarWidget(
-                imageUrl: member.avatarUrl,
-                userName: member.fullName ?? member.email ?? 'U',
-                size: 40,
-                showBorder: true,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            member.fullName ?? member.email ?? 'Unknown',
-                            style: context.bodyStyle.copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (isCurrentUser) ...[
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.primaryColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                            ),
-                            child: Text(
-                              'You',
-                              style: TextStyle(
-                                color: context.primaryColor,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isCreator
-                                ? AppTheme.success.withValues(alpha: 0.1)
-                                : (member.role == 'admin'
-                                    ? Colors.amber.withValues(alpha: 0.1)
-                                    : AppTheme.neutral100),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            isCreator
-                                ? 'Creator'
-                                : (member.role == 'admin' ? 'Admin' : 'Member'),
-                            style: TextStyle(
-                              color: isCreator
-                                  ? AppTheme.success
-                                  : (member.role == 'admin'
-                                      ? Colors.amber.shade700
-                                      : AppTheme.neutral600),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              if (isCreator)
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    gradient: themeData.primaryGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                  ),
-                  child: const Icon(Icons.star, size: 14, color: Colors.white),
-                )
-              else if (canRemove)
-                GestureDetector(
-                  onTap: () => _removeMemberFromTrip(
-                    member.userId,
-                    member.fullName ?? 'this member',
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.error.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                    ),
-                    child: Icon(
-                      Icons.remove_circle_outline,
-                      size: 16,
-                      color: AppTheme.error,
-                    ),
-                  ),
-                )
-              else
-                Icon(
-                  Icons.chevron_right,
-                  size: 18,
-                  color: context.textColor.withValues(alpha: 0.3),
-                ),
             ],
           ),
         ),
       ),
     );
-
-    return card;
   }
 
-  Widget _buildQuickActionsGrid(BuildContext context, dynamic trip) {
-    final themeData = context.appThemeData;
-    final isCompleted = trip.trip.isCompleted;
-
-    // Get unread message count for badge
-    final currentUserId = ref.watch(currentUserProvider).value?.id ?? '';
-    final unreadCountAsync = ref.watch(tripUnreadCountProvider(
-      TripConversationsParams(tripId: widget.tripId, userId: currentUserId),
-    ));
-    final unreadCount = unreadCountAsync.value ?? 0;
-
-    // Build contextual actions based on trip status
-    final List<Widget> actions = [];
-
-    if (isCompleted) {
-      // Completed trip: Show review/view focused actions
-      actions.addAll([
-        _QuickActionCard(
-          icon: Icons.payments,
-          label: 'Expenses',
-          color: const Color(0xFF4CAF93), // Soft teal green
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/expenses');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.photo_library,
-          label: 'Memories',
-          color: const Color(0xFF64B5F6), // Soft sky blue
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            // Navigate to trip photos/memories
-            context.push('/trips/${widget.tripId}/itinerary');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.chat_bubble_rounded,
-          label: 'Chats',
-          color: const Color(0xFF7E57C2), // Soft purple
-          badgeCount: unreadCount,
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            _openDefaultGroupChat();
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.calendar_month,
-          label: 'Itinerary',
-          color: const Color(0xFFFFB74D), // Soft amber/orange
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/itinerary');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.checklist_rounded,
-          label: 'Checklists',
-          color: const Color(0xFF4DB6AC), // Soft teal
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/checklists');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.star_rate_rounded,
-          label: 'Rate Trip',
-          color: const Color(0xFFFFD54F), // Gold/yellow
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            _showCompleteDialog(context, ref);
-          },
-        ),
-      ]);
-    } else {
-      // Active/Upcoming trip: Show add/action focused actions
-      actions.addAll([
-        _QuickActionCard(
-          icon: Icons.bolt,
-          label: 'Quick Expense',
-          color: const Color(0xFF4CAF93), // Soft teal green
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            showQuickExpenseSheet(
-              context: context,
-              tripId: widget.tripId,
-              trip: trip,
-            );
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.chat_bubble_rounded,
-          label: 'Chats',
-          color: const Color(0xFF7E57C2), // Soft purple
-          badgeCount: unreadCount,
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            _openDefaultGroupChat();
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.calendar_month,
-          label: 'Itinerary',
-          color: const Color(0xFFFFB74D), // Soft amber/orange
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/itinerary');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.checklist_rounded,
-          label: 'Checklists',
-          color: const Color(0xFF4DB6AC), // Soft teal
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/trips/${widget.tripId}/checklists');
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.emergency,
-          label: 'Emergency',
-          color: const Color(0xFFE57373), // Soft coral red
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            context.push('/emergency?tripId=${widget.tripId}');
-          },
-        ),
-      ]);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingSm),
-              decoration: BoxDecoration(
-                color: themeData.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              ),
-              child: Icon(
-                Icons.dashboard_customize,
-                size: 20,
-                color: themeData.primaryColor,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Text(
-              'Quick Actions',
-              style: context.titleStyle.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.textColor,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingMd),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 3,
-          crossAxisSpacing: AppTheme.spacingMd,
-          mainAxisSpacing: AppTheme.spacingMd,
-          childAspectRatio: 0.95,
-          children: actions,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPopupMenu(BuildContext context, dynamic trip) {
-    final currentUserId = ref.watch(authStateProvider).value;
-    final canEditTrip = TripPermissions.canEditTrip(
-      currentUserId: currentUserId,
-      tripWithMembers: trip,
-    );
-    final canDeleteTrip = TripPermissions.canDeleteTrip(
-      currentUserId: currentUserId,
-      tripWithMembers: trip,
-    );
-
-    // Build menu items based on permissions
-    final menuItems = <PopupMenuEntry<String>>[];
-
-    // Share options - available to all members
-    menuItems.add(
-      PopupMenuItem(
-        value: 'share_whatsapp',
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXs),
-              decoration: BoxDecoration(
-                color: const Color(0xFF25D366).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-              ),
-              child: const Icon(
-                Icons.chat,
-                color: Color(0xFF25D366),
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            const Text('Share via WhatsApp'),
-          ],
-        ),
-      ),
-    );
-    menuItems.add(
-      PopupMenuItem(
-        value: 'share_whatsapp_contact',
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXs),
-              decoration: BoxDecoration(
-                color: const Color(0xFF25D366).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-              ),
-              child: const Icon(
-                Icons.contact_phone,
-                color: Color(0xFF25D366),
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            const Text('WhatsApp to Contact'),
-          ],
-        ),
-      ),
-    );
-    menuItems.add(
-      PopupMenuItem(
-        value: 'share_general',
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXs),
-              decoration: BoxDecoration(
-                color: AppTheme.info.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-              ),
-              child: const Icon(
-                Icons.share,
-                color: AppTheme.info,
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            const Text('Share via...'),
-          ],
-        ),
-      ),
-    );
-    menuItems.add(
-      PopupMenuItem(
-        value: 'share_qr',
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXs),
-              decoration: BoxDecoration(
-                color: Colors.purple.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-              ),
-              child: const Icon(
-                Icons.qr_code_2,
-                color: Colors.purple,
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            const Text('Share QR Code'),
-          ],
-        ),
-      ),
-    );
-    menuItems.add(const PopupMenuDivider());
-
-    // Complete/Reopen options - only for trip owner
-    if (canEditTrip) {
-      if (!trip.trip.isCompleted) {
-        menuItems.add(
-          PopupMenuItem(
-            value: 'complete',
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.success.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                  ),
-                  child: const Icon(
-                    Icons.check_circle,
-                    color: AppTheme.success,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                const Text('Mark as Completed'),
-              ],
-            ),
-          ),
-        );
-      } else {
-        menuItems.add(
-          PopupMenuItem(
-            value: 'reopen',
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.info.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                  ),
-                  child: const Icon(
-                    Icons.refresh,
-                    color: AppTheme.info,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                const Text('Reopen Trip'),
-              ],
-            ),
-          ),
-        );
-      }
-    }
-
-    // Delete option - only for trip owner
-    if (canDeleteTrip) {
-      menuItems.add(
-        PopupMenuItem(
-          value: 'delete',
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingXs),
-                decoration: BoxDecoration(
-                  color: AppTheme.error.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                ),
-                child: const Icon(
-                  Icons.delete,
-                  color: AppTheme.error,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              const Text('Delete Trip'),
-            ],
-          ),
-        ),
-      );
-    }
-
-    // Menu always has share options, so it's never empty
-    return PopupMenuButton(
-      icon: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingXs),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-        ),
-        child: const Icon(Icons.more_vert),
-      ),
+  Widget _buildCompactPopupMenu(BuildContext context, dynamic trip) {
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert, color: Colors.white, size: 22),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(12),
       ),
-      itemBuilder: (context) => menuItems,
-      onSelected: (value) async {
-        if (value == 'share_whatsapp') {
-          final text = ShareService.formatTrip(trip.trip);
-          final success = await ShareService.shareToWhatsApp(text);
-          if (!success && context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Could not open WhatsApp. Please install WhatsApp to share.'),
-              ),
-            );
-          }
-        } else if (value == 'share_whatsapp_contact') {
-          _showPhoneNumberDialog(context, trip.trip);
-        } else if (value == 'share_general') {
-          final text = ShareService.formatTrip(trip.trip);
-          await ShareService.shareGeneral(text, subject: 'Trip: ${trip.trip.name}');
-        } else if (value == 'share_qr') {
-          TripQrShare.show(
-            context: context,
-            tripId: widget.tripId,
-            tripName: trip.trip.name,
-          );
-        } else if (value == 'complete') {
-          _showCompleteDialog(context, ref);
-        } else if (value == 'reopen') {
-          _showReopenDialog(context, ref);
-        } else if (value == 'delete') {
-          _showDeleteDialog(context, ref);
-        }
-      },
+      itemBuilder: (context) => [
+        _buildPopupItem('share_whatsapp', Icons.chat, 'Share via WhatsApp', const Color(0xFF25D366)),
+        _buildPopupItem('share_general', Icons.share, 'Share via...', AppTheme.info),
+        _buildPopupItem('share_qr', Icons.qr_code_2, 'Show QR Code', Colors.purple),
+        const PopupMenuDivider(),
+        if (!trip.trip.isCompleted)
+          _buildPopupItem('complete', Icons.check_circle, 'Mark Completed', AppTheme.success)
+        else
+          _buildPopupItem('reopen', Icons.refresh, 'Reopen Trip', AppTheme.info),
+        if (TripPermissions.canDeleteTrip(
+          currentUserId: ref.watch(authStateProvider).value,
+          tripWithMembers: trip,
+        ))
+          _buildPopupItem('delete', Icons.delete, 'Delete Trip', AppTheme.error),
+      ],
+      onSelected: (value) => _handleMenuAction(context, value, trip),
     );
   }
+
+  PopupMenuItem<String> _buildPopupItem(String value, IconData icon, String label, Color color) {
+    return PopupMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 12),
+          Text(label),
+        ],
+      ),
+    );
+  }
+
+  void _handleMenuAction(BuildContext context, String action, dynamic trip) async {
+    switch (action) {
+      case 'share_whatsapp':
+        final text = ShareService.formatTrip(trip.trip);
+        await ShareService.shareToWhatsApp(text);
+        break;
+      case 'share_general':
+        final text = ShareService.formatTrip(trip.trip);
+        await ShareService.shareGeneral(text, subject: 'Trip: ${trip.trip.name}');
+        break;
+      case 'share_qr':
+        TripQrShare.show(context: context, tripId: widget.tripId, tripName: trip.trip.name);
+        break;
+      case 'complete':
+        _showCompleteDialog(context, ref);
+        break;
+      case 'reopen':
+        _showReopenDialog(context, ref);
+        break;
+      case 'delete':
+        _showDeleteDialog(context, ref);
+        break;
+    }
+  }
+
+  // V2 legacy methods removed in V3.0 redesign
+  // _buildTripStatusBadge, _buildHeroMemberAvatars, _buildStatsCards, etc.
+  // All replaced by V3 hub layout
+
 
   Widget _buildErrorState(BuildContext context, Object error) {
     return Center(
@@ -2086,91 +1427,6 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 
-  void _showPhoneNumberDialog(BuildContext context, TripModel trip) {
-    final phoneController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.contact_phone, color: Color(0xFF25D366)),
-            SizedBox(width: 12),
-            Text('Share to Contact'),
-          ],
-        ),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Enter the phone number with country code (e.g., 919876543210)',
-                style: TextStyle(fontSize: 13, color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  hintText: '919876543210',
-                  prefixIcon: Icon(Icons.phone),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a phone number';
-                  }
-                  final cleaned = value.replaceAll(RegExp(r'[^0-9]'), '');
-                  if (cleaned.length < 10) {
-                    return 'Please enter a valid phone number';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton.icon(
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                Navigator.of(dialogContext).pop();
-                final text = ShareService.formatTrip(trip);
-                final success = await ShareService.shareToWhatsApp(
-                  text,
-                  phoneNumber: phoneController.text,
-                );
-                if (!success && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Could not open WhatsApp. Please check the phone number and try again.'),
-                    ),
-                  );
-                }
-              }
-            },
-            icon: const Icon(Icons.send),
-            label: const Text('Send'),
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF25D366),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showDeleteDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
@@ -2248,303 +1504,3 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     );
   }
 }
-
-/// Stat card widget with progress indicator
-class _StatCard extends StatefulWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-  final String subtitle;
-  final double? progress;
-  final VoidCallback? onTap;
-
-  const _StatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.value,
-    required this.subtitle,
-    this.progress,
-    this.onTap,
-  });
-
-  @override
-  State<_StatCard> createState() => _StatCardState();
-}
-
-class _StatCardState extends State<_StatCard> {
-  double _scale = 1.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _scale = 0.95),
-      onTapUp: (_) {
-        setState(() => _scale = 1.0);
-        widget.onTap?.call();
-      },
-      onTapCancel: () => setState(() => _scale = 1.0),
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        child: Container(
-          padding: const EdgeInsets.all(AppTheme.spacingSm),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          widget.iconColor,
-                          widget.iconColor.withValues(alpha: 0.8),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                      boxShadow: [
-                        BoxShadow(
-                          color: widget.iconColor.withValues(alpha: 0.3),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Icon(widget.icon, size: 14, color: Colors.white),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: widget.iconColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 10,
-                      color: widget.iconColor,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppTheme.spacingXs),
-              Text(
-                widget.value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: context.textColor,
-                ),
-              ),
-              Text(
-                widget.subtitle,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: AppTheme.neutral500,
-                ),
-              ),
-              if (widget.progress != null) ...[
-                const SizedBox(height: AppTheme.spacingXs),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    value: widget.progress!,
-                    backgroundColor: widget.iconColor.withValues(alpha: 0.1),
-                    valueColor: AlwaysStoppedAnimation(widget.iconColor),
-                    minHeight: 3,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Quick action card with attractive gradient and icon design
-class _QuickActionCard extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  final int? badgeCount; // Optional badge for unread count
-
-  const _QuickActionCard({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-    this.badgeCount,
-  });
-
-  @override
-  State<_QuickActionCard> createState() => _QuickActionCardState();
-}
-
-class _QuickActionCardState extends State<_QuickActionCard> {
-  double _scale = 1.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _scale = 0.92),
-      onTapUp: (_) {
-        setState(() => _scale = 1.0);
-        widget.onTap();
-      },
-      onTapCancel: () => setState(() => _scale = 1.0),
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOutCubic,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                widget.color,
-                widget.color.withValues(alpha: 0.75),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            boxShadow: [
-              BoxShadow(
-                color: widget.color.withValues(alpha: 0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-                spreadRadius: 0,
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            child: Stack(
-              children: [
-                // Decorative circle in top right
-                Positioned(
-                  top: -15,
-                  right: -15,
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.12),
-                    ),
-                  ),
-                ),
-                // Decorative circle in bottom left
-                Positioned(
-                  bottom: -20,
-                  left: -20,
-                  child: Container(
-                    width: 45,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.08),
-                    ),
-                  ),
-                ),
-                // Content - centered
-                Positioned.fill(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Icon with glass background
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Icon(widget.icon, color: Colors.white, size: 24),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.label,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                            height: 1.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Unread count badge
-                if (widget.badgeCount != null && widget.badgeCount! > 0)
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        widget.badgeCount! > 99 ? '99+' : widget.badgeCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-

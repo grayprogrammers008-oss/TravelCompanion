@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
@@ -10,7 +11,9 @@ import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/voice_input_bottom_sheet.dart';
+import '../../../../core/widgets/destination_image.dart';
 import '../../../../core/utils/trip_permissions.dart';
+import '../../../../core/services/google_maps_url_parser.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -336,6 +339,17 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
           const SizedBox(height: 12),
           _buildFabOption(
             context: context,
+            icon: Icons.map,
+            label: 'Paste from Maps',
+            color: Colors.teal,
+            onTap: () {
+              setState(() => _isFabExpanded = false);
+              _pasteFromMaps(context);
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildFabOption(
+            context: context,
             icon: Icons.edit,
             label: 'Add Manually',
             color: context.primaryColor,
@@ -480,6 +494,350 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
       // Navigate to AI generator with voice input as additional context
       _navigateToAiGeneratorWithVoice(context, voiceText);
     }
+  }
+
+  /// Paste a Google Maps URL from clipboard and add as itinerary item
+  Future<void> _pasteFromMaps(BuildContext context) async {
+    final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    final text = clipboardData?.text;
+
+    if (text == null || text.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Clipboard is empty. Copy a Google Maps link first.'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Try to extract a Google Maps URL from the clipboard
+    final url = GoogleMapsUrlParser.extractUrl(text);
+    if (url == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No Google Maps link found in clipboard'),
+          ),
+        );
+      }
+      return;
+    }
+
+    final parsedLocation = GoogleMapsUrlParser.parse(url);
+    if (parsedLocation != null && context.mounted) {
+      // Show add dialog with pre-filled location
+      _showAddFromMapsDialog(context, parsedLocation);
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not parse the Google Maps link'),
+        ),
+      );
+    }
+  }
+
+  /// Show dialog to add location from Google Maps
+  void _showAddFromMapsDialog(BuildContext context, ParsedLocation location) {
+    final titleController = TextEditingController(
+      text: location.placeName ?? '',
+    );
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Location Preview Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.teal.shade50,
+                    Colors.teal.shade100.withValues(alpha: 0.5),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.teal.shade200,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Google Maps badge
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.network(
+                              'https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png',
+                              width: 16,
+                              height: 16,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.map,
+                                size: 16,
+                                color: Colors.teal.shade700,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Google Maps',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      if (location.hasCoordinates)
+                        Icon(
+                          Icons.verified,
+                          size: 18,
+                          color: Colors.teal.shade600,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Location name
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              location.placeName ?? 'Location',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            if (location.hasCoordinates) ...[
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.my_location,
+                                    size: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${location.latitude!.toStringAsFixed(6)}, ${location.longitude!.toStringAsFixed(6)}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                      fontFamily: 'monospace',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Open in Maps button
+                  if (location.hasCoordinates) ...[
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () async {
+                        final url = Uri.parse(
+                          'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}',
+                        );
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.open_in_new,
+                            size: 14,
+                            color: Colors.teal.shade700,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Open in Google Maps',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.teal.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Title input
+            Text(
+              'Activity Title',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(
+                hintText: location.placeName ?? 'e.g., Visit Marina Beach',
+                prefixIcon: const Icon(Icons.edit_outlined),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
+              ),
+              textCapitalization: TextCapitalization.words,
+              autofocus: location.placeName == null,
+            ),
+            const SizedBox(height: 20),
+
+            // Add button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  var title = titleController.text.trim();
+                  if (title.isEmpty) {
+                    title = location.placeName ?? 'New Location';
+                  }
+
+                  Navigator.pop(context);
+
+                  try {
+                    final controller = ref.read(itineraryControllerProvider.notifier);
+                    await controller.createItem(
+                      tripId: widget.tripId,
+                      title: title,
+                      location: location.placeName,
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                    );
+
+                    if (mounted) {
+                      HapticFeedback.mediumImpact();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
+                            children: [
+                              const Icon(Icons.check_circle, color: Colors.white),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text('Added "$title" to itinerary')),
+                            ],
+                          ),
+                          backgroundColor: Colors.green,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to add: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.add_location_alt),
+                label: const Text('Add to Itinerary'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 
   void _navigateToAiGeneratorWithVoice(BuildContext context, String voicePrompt) {
@@ -754,13 +1112,110 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   }) {
     // Build the item content widget
     final itemContent = Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Time indicator
-          if (item.startTime != null)
+          // Location image thumbnail or time indicator
+          if (item.hasMapLocation)
+            // Show location image
+            GestureDetector(
+              onTap: () => _openInMaps(context, item),
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Use DestinationImage for location photo
+                      DestinationImage(
+                        destination: item.location ?? item.title,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                      // Gradient overlay at bottom
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.black.withValues(alpha: 0.0),
+                                Colors.black.withValues(alpha: 0.7),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.map,
+                                color: Colors.white,
+                                size: 11,
+                              ),
+                              SizedBox(width: 3),
+                              Text(
+                                'View Map',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Map pin icon overlay
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(6),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.location_on,
+                            color: Colors.white,
+                            size: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else if (item.startTime != null)
+            // Time indicator for items without map
             Container(
+              width: 52,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: context.accentColor.withValues(alpha: 0.1),
@@ -772,6 +1227,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                   color: context.accentColor,
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             )
           else
@@ -784,11 +1240,39 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.title,
-                  style: context.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Title with time badge if has map
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        style: context.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // Show time badge next to title if has map location
+                    if (item.hasMapLocation && item.startTime != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: context.accentColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          DateFormat.Hm().format(item.startTime!),
+                          style: context.bodySmall.copyWith(
+                            color: context.accentColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 if (item.location != null) ...[
                   const SizedBox(height: 4),
@@ -796,16 +1280,22 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                     children: [
                       Icon(
                         Icons.location_on,
-                        size: 16,
-                        color: context.textColor.withValues(alpha: 0.6),
+                        size: 14,
+                        color: item.hasMapLocation
+                            ? Colors.teal
+                            : context.textColor.withValues(alpha: 0.5),
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           item.location!,
-                          style: context.bodyMedium.copyWith(
-                            color: context.textColor.withValues(alpha: 0.6),
+                          style: context.bodySmall.copyWith(
+                            color: item.hasMapLocation
+                                ? Colors.teal.shade700
+                                : context.textColor.withValues(alpha: 0.6),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -815,8 +1305,8 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                   const SizedBox(height: 4),
                   Text(
                     item.description!,
-                    style: context.bodyMedium.copyWith(
-                      color: context.textColor.withValues(alpha: 0.8),
+                    style: context.bodySmall.copyWith(
+                      color: context.textColor.withValues(alpha: 0.7),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -824,11 +1314,22 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                 ],
                 if (item.endTime != null) ...[
                   const SizedBox(height: 4),
-                  Text(
-                    'Until ${DateFormat.Hm().format(item.endTime!)}',
-                    style: context.bodySmall.copyWith(
-                      color: context.textColor.withValues(alpha: 0.6),
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        size: 12,
+                        color: context.textColor.withValues(alpha: 0.5),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Until ${DateFormat.Hm().format(item.endTime!)}',
+                        style: context.bodySmall.copyWith(
+                          color: context.textColor.withValues(alpha: 0.5),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ],
@@ -837,15 +1338,18 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
 
           // Reorder handle - only show if can edit
           if (canEdit)
-            Icon(
-              Icons.drag_handle,
-              color: context.textColor.withValues(alpha: 0.3),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Icon(
+                Icons.drag_handle,
+                color: context.textColor.withValues(alpha: 0.3),
+              ),
             ),
         ],
       ),
     );
 
-    // If user can edit, wrap with Dismissible for swipe-to-delete
+    // If user can edit, wrap with Dismissible for swipe-to-delete and add long-press menu
     if (canEdit) {
       return Dismissible(
         key: key ?? ValueKey(item.id),
@@ -853,34 +1357,32 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
           color: context.errorColor,
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 16),
-          child: const Icon(Icons.delete, color: Colors.white),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Icon(Icons.delete, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Delete', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              SizedBox(width: 16),
+            ],
+          ),
         ),
         direction: DismissDirection.endToStart,
         confirmDismiss: (direction) async {
-          return await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete Activity'),
-              content: const Text('Are you sure you want to delete this activity?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  style: TextButton.styleFrom(foregroundColor: context.errorColor),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          );
+          final confirmed = await _showDeleteConfirmation(context, item.title);
+          if (confirmed) {
+            // Perform deletion here before the widget is dismissed
+            await ref.read(itineraryControllerProvider.notifier).deleteItem(item.id);
+            if (context.mounted) {
+              HapticFeedback.mediumImpact();
+            }
+          }
+          return confirmed;
         },
-        onDismissed: (direction) {
-          ref.read(itineraryControllerProvider.notifier).deleteItem(item.id);
-        },
+        // onDismissed not needed since we handle deletion in confirmDismiss
         child: InkWell(
           onTap: () => _navigateToEditItem(context, item.id),
+          onLongPress: () => _showItemOptionsMenu(context, ref, item),
           child: itemContent,
         ),
       );
@@ -889,7 +1391,189 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     // Read-only view for members without edit permission
     return Container(
       key: key ?? ValueKey(item.id),
-      child: itemContent,
+      child: InkWell(
+        onTap: () => _navigateToEditItem(context, item.id),
+        child: itemContent,
+      ),
+    );
+  }
+
+  /// Show delete confirmation dialog
+  Future<bool> _showDeleteConfirmation(BuildContext context, String itemTitle) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Activity'),
+        content: Text('Are you sure you want to delete "$itemTitle"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: context.errorColor),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  /// Show options menu for an itinerary item (long-press)
+  void _showItemOptionsMenu(BuildContext context, WidgetRef ref, ItineraryItemModel item) {
+    HapticFeedback.mediumImpact();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Item title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: context.primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.event,
+                      color: context.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (item.location != null)
+                          Text(
+                            item.location!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey[600],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(height: 1),
+
+            // Edit option
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.edit, color: Colors.blue, size: 20),
+              ),
+              title: const Text('Edit Activity'),
+              subtitle: const Text('Modify details, time, or location'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToEditItem(context, item.id);
+              },
+            ),
+
+            // Open in Maps (if has coordinates)
+            if (item.hasMapLocation)
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.map, color: Colors.teal, size: 20),
+                ),
+                title: const Text('Open in Maps'),
+                subtitle: const Text('View location in Google Maps'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _openInMaps(context, item);
+                },
+              ),
+
+            // Delete option
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.delete, color: Colors.red, size: 20),
+              ),
+              title: const Text('Delete Activity', style: TextStyle(color: Colors.red)),
+              subtitle: const Text('Remove from itinerary'),
+              onTap: () async {
+                Navigator.pop(context);
+                final confirmed = await _showDeleteConfirmation(context, item.title);
+                if (confirmed && context.mounted) {
+                  ref.read(itineraryControllerProvider.notifier).deleteItem(item.id);
+                  HapticFeedback.mediumImpact();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text('"${item.title}" deleted')),
+                        ],
+                      ),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 
@@ -921,6 +1605,32 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
 
   void _navigateToEditItem(BuildContext context, String itemId) {
     context.push('/trips/${widget.tripId}/itinerary/$itemId/edit');
+  }
+
+  Future<void> _openInMaps(BuildContext context, ItineraryItemModel item) async {
+    if (!item.hasMapLocation) return;
+
+    // Use url_launcher to open in maps
+    final url = 'https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}';
+    final uri = Uri.parse(url);
+
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not open maps')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error opening maps: $e')),
+        );
+      }
+    }
   }
 
   void _navigateToAiGenerator(BuildContext context) {

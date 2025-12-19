@@ -60,6 +60,9 @@ dependencies:
   # Share functionality
   share_plus: ^10.1.2
 
+  # Receive shared content from other apps
+  receive_sharing_intent: ^1.8.1
+
   # QR Code Generation
   qr_flutter: ^4.1.0
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
@@ -413,9 +414,17 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ),
         actions: [
+          // Settings button (V2.0 - quick access to settings from You tab)
+          if (isViewingOwnProfile && !_isEditing)
+            IconButton(
+              icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              tooltip: 'Settings',
+              onPressed: () => context.push('/settings'),
+            ),
           if (isViewingOwnProfile && !_isEditing)
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.white),
+              tooltip: 'Edit Profile',
               onPressed: () => setState(() => _isEditing = true),
             ),
           if (isViewingOwnProfile && _isEditing && !_isLoading)
@@ -999,7 +1008,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   child: CircularProgressIndicator(),
                                 ),
                               ),
-                              error: (_, __) => Center(
+                              error: (_, _) => Center(
                                 child: Padding(
                                   padding: const EdgeInsets.all(AppTheme.spacingLg),
                                   child: Text(

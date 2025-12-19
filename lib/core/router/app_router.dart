@@ -192,9 +192,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (hasTripsLoading) {
           return null; // Stay on onboarding while loading
         }
-        // New users (no trips) → Welcome Choice page
-        // Returning users (has trips) → Dashboard
-        return hasTrips ? AppRoutes.dashboard : AppRoutes.welcomeChoice;
+        // V2.0: All users go to Trips tab (the new primary hub)
+        // New users see empty state with create/join options
+        // Returning users see their trip list
+        return AppRoutes.trips;
       }
 
       // If authenticated and on login/signup, redirect based on trip status
@@ -204,15 +205,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (hasTripsLoading) {
           return null; // Stay on login page while loading (shows loading indicator)
         }
-        // New users (no trips) → Welcome Choice page
-        // Returning users (has trips) → Dashboard
-        return hasTrips ? AppRoutes.dashboard : AppRoutes.welcomeChoice;
+        // V2.0: All users go to Trips tab
+        return AppRoutes.trips;
       }
 
-      // If user has trips but is on welcome choice page, redirect to dashboard
+      // If user has trips but is on welcome choice page, redirect to trips
       // (This handles returning users who navigate back to welcome page)
       if (isAuthenticated && hasTrips && isWelcomeChoiceRoute) {
-        return AppRoutes.dashboard;
+        return AppRoutes.trips;
+      }
+
+      // V2.0: Redirect legacy /dashboard route to /trips
+      final isDashboardRoute = state.matchedLocation == AppRoutes.dashboard;
+      if (isAuthenticated && isDashboardRoute) {
+        return AppRoutes.trips;
       }
 
       return null; // No redirect needed

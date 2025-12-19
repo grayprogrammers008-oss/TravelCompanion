@@ -11,6 +11,7 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/trip_providers.dart';
 
 /// Page for browsing and joining public trips created by other users
@@ -62,8 +63,435 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
     }).toList();
   }
 
-  /// Handle joining a trip
-  Future<void> _joinTrip(BuildContext context, String tripId, String tripName) async {
+  /// Show confirmation dialog before joining a trip
+  Future<bool> _showJoinConfirmationDialog(
+    BuildContext context,
+    TripWithMembers tripWithMembers,
+  ) async {
+    final trip = tripWithMembers.trip;
+    final members = tripWithMembers.members;
+    final themeData = ref.read(theme_provider.currentThemeDataProvider);
+
+    // Calculate trip status
+    final now = DateTime.now();
+    final daysUntilStart = trip.startDate?.difference(now).inDays;
+    final hasStarted = trip.startDate != null && trip.startDate!.isBefore(now);
+    final isOngoing = hasStarted && (trip.endDate == null || trip.endDate!.isAfter(now));
+    final hasEnded = trip.endDate != null && trip.endDate!.isBefore(now);
+
+    // Find organizer (creator)
+    final organizer = members.firstWhere(
+      (m) => m.userId == trip.createdBy,
+      orElse: () => members.isNotEmpty ? members.first : members.first,
+    );
+
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.75,
+        ),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppTheme.radiusXl),
+            topRight: Radius.circular(AppTheme.radiusXl),
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Handle bar
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppTheme.neutral300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Title
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        ),
+                        child: const Icon(
+                          Icons.group_add,
+                          color: Colors.green,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      const Text(
+                        'Join This Trip?',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Trip Preview Card
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.neutral50,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      border: Border.all(color: AppTheme.neutral200),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Trip Image
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(AppTheme.radiusMd),
+                            topRight: Radius.circular(AppTheme.radiusMd),
+                          ),
+                          child: DestinationImage(
+                            tripName: trip.destination ?? trip.name,
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(AppTheme.spacingMd),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Trip Name
+                              Text(
+                                trip.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              if (trip.destination != null) ...[
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      size: 14,
+                                      color: AppTheme.neutral500,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      trip.destination!,
+                                      style: TextStyle(
+                                        color: AppTheme.neutral600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                              const SizedBox(height: AppTheme.spacingSm),
+
+                              // Date info
+                              if (trip.startDate != null)
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.calendar_today_outlined,
+                                      size: 14,
+                                      color: AppTheme.neutral500,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${trip.startDate!.toLocal().toShortDate()}${trip.endDate != null ? ' - ${trip.endDate!.toLocal().toShortDate()}' : ''}',
+                                      style: TextStyle(
+                                        color: AppTheme.neutral600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              const SizedBox(height: AppTheme.spacingSm),
+
+                              // Members count
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.people_outline,
+                                    size: 14,
+                                    color: AppTheme.neutral500,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${members.length} ${members.length == 1 ? 'member' : 'members'}',
+                                    style: TextStyle(
+                                      color: AppTheme.neutral600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+
+                  // Organizer Info
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      color: themeData.primaryColor.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      border: Border.all(
+                        color: themeData.primaryColor.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: themeData.primaryColor.withValues(alpha: 0.2),
+                          backgroundImage: organizer.avatarUrl != null
+                              ? NetworkImage(organizer.avatarUrl!)
+                              : null,
+                          child: organizer.avatarUrl == null
+                              ? Text(
+                                  (organizer.fullName ?? organizer.email ?? 'O')[0].toUpperCase(),
+                                  style: TextStyle(
+                                    color: themeData.primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Organized by',
+                                style: TextStyle(
+                                  color: AppTheme.neutral500,
+                                  fontSize: 11,
+                                ),
+                              ),
+                              Text(
+                                organizer.fullName ?? organizer.email ?? 'Unknown',
+                                style: TextStyle(
+                                  color: themeData.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingSm,
+                            vertical: AppTheme.spacingXs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.public, size: 12, color: Colors.green),
+                              SizedBox(width: 4),
+                              Text(
+                                'Public',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Status Warning (if trip has started or ending soon)
+                  if (hasEnded) ...[
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: AppTheme.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        border: Border.all(
+                          color: AppTheme.error.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.event_busy, color: AppTheme.error, size: 20),
+                          const SizedBox(width: AppTheme.spacingSm),
+                          Expanded(
+                            child: Text(
+                              'This trip has already ended',
+                              style: TextStyle(
+                                color: AppTheme.error,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ] else if (isOngoing) ...[
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.directions_run, color: Colors.orange, size: 20),
+                          const SizedBox(width: AppTheme.spacingSm),
+                          Expanded(
+                            child: Text(
+                              'This trip is already in progress! You can still join and catch up.',
+                              style: TextStyle(
+                                color: Colors.orange.shade800,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ] else if (daysUntilStart != null && daysUntilStart <= 3 && daysUntilStart >= 0) ...[
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        border: Border.all(
+                          color: Colors.amber.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.schedule, color: Colors.amber, size: 20),
+                          const SizedBox(width: AppTheme.spacingSm),
+                          Expanded(
+                            child: Text(
+                              daysUntilStart == 0
+                                  ? 'Trip starts today! Join now to be part of it.'
+                                  : daysUntilStart == 1
+                                      ? 'Trip starts tomorrow! Join now to be part of it.'
+                                      : 'Trip starts in $daysUntilStart days!',
+                              style: TextStyle(
+                                color: Colors.amber.shade800,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: AppTheme.spacingXl),
+
+                  // Action Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppTheme.spacingMd,
+                            ),
+                            side: BorderSide(color: AppTheme.neutral300),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            ),
+                          ),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(color: AppTheme.neutral600),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton.icon(
+                          onPressed: hasEnded ? null : () => Navigator.pop(context, true),
+                          icon: const Icon(Icons.check_circle_outline),
+                          label: Text(hasEnded ? 'Trip Ended' : 'Join Trip'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: hasEnded ? AppTheme.neutral400 : Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppTheme.spacingMd,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return result ?? false;
+  }
+
+  /// Handle joining a trip with confirmation
+  Future<void> _joinTrip(BuildContext context, TripWithMembers tripWithMembers) async {
+    final trip = tripWithMembers.trip;
+    final tripId = trip.id;
+    final tripName = trip.name;
+
+    // Show confirmation dialog first
+    final confirmed = await _showJoinConfirmationDialog(context, tripWithMembers);
+    if (!confirmed) return;
+
+    if (!context.mounted) return;
+
     try {
       // Show loading dialog
       showDialog(
@@ -101,18 +529,23 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Successfully joined "$tripName"!'),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Text('Successfully joined "$tripName"!'),
+                ),
+              ],
+            ),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
-            action: SnackBarAction(
-              label: 'View',
-              textColor: Colors.white,
-              onPressed: () {
-                context.push('/trips/$tripId');
-              },
-            ),
+            duration: const Duration(seconds: 2),
           ),
         );
+
+        // Auto-navigate to trip detail (consistent with JoinTripByCodePage)
+        context.go('/trips/$tripId');
       }
     } catch (e) {
       if (context.mounted) {
@@ -122,18 +555,75 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to join trip: ${e.toString()}'),
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Text('Failed to join trip: ${e.toString()}'),
+                ),
+              ],
+            ),
             backgroundColor: AppTheme.error,
             behavior: SnackBarBehavior.floating,
-            action: SnackBarAction(
-              label: 'Retry',
-              textColor: Colors.white,
-              onPressed: () => _joinTrip(context, tripId, tripName),
-            ),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
     }
+  }
+
+  /// Build profile avatar for the app bar leading widget
+  Widget _buildProfileAvatar(WidgetRef ref) {
+    final userAsync = ref.watch(currentUserProvider);
+
+    return Padding(
+      padding: const EdgeInsets.only(left: AppTheme.spacingMd),
+      child: GestureDetector(
+        onTap: () => context.push('/profile'),
+        child: Center(
+          child: userAsync.when(
+            data: (user) => UserAvatarWidget(
+              imageUrl: user?.avatarUrl,
+              userName: user?.fullName ?? user?.email,
+              size: 36,
+              showBorder: true,
+            ),
+            loading: () => Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              child: const Center(
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            error: (_, _) => Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              child: const Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -161,16 +651,16 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
                 elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.go('/dashboard');
-                    }
-                  },
-                ),
+                leading: _buildProfileAvatar(ref),
+                leadingWidth: 64,
+                actions: [
+                  // Settings Icon
+                  IconButton(
+                    icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                    onPressed: () => context.push('/settings'),
+                    tooltip: 'Settings',
+                  ),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Container(
@@ -181,12 +671,12 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                       bottom: false,
                       child: Column(
                         children: [
-                          // Top row: Back button space + Title
+                          // Top row: Avatar space + Title + Actions space
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
-                              56, // Space for back button
+                              64, // Space for profile avatar
                               AppTheme.spacingSm,
-                              AppTheme.spacingMd,
+                              56, // Space for settings button
                               0,
                             ),
                             child: Row(
@@ -358,11 +848,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                               key: ValueKey(tripWithMembers.trip.id),
                               tripWithMembers: tripWithMembers,
                               onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
-                              onJoin: () => _joinTrip(
-                                context,
-                                tripWithMembers.trip.id,
-                                tripWithMembers.trip.name,
-                              ),
+                              onJoin: () => _joinTrip(context, tripWithMembers),
                             ),
                           );
                         },
@@ -399,57 +885,256 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
     );
   }
 
+  /// V2.0 Explore Empty State - Never feels empty, shows featured content
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    final themeData = ref.watch(theme_provider.currentThemeDataProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Join by Code Card - Primary action
+          _buildJoinByCodeCard(context, themeData),
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // Featured Destinations Section
+          Text(
+            'Popular Destinations',
+            style: context.titleStyle.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            'Get inspired for your next adventure',
+            style: context.bodyStyle.copyWith(
+              color: context.textColor.withValues(alpha: 0.6),
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          _buildFeaturedDestinations(context),
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // Trip Ideas Section
+          Text(
+            'Trip Ideas',
+            style: context.titleStyle.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          _buildTripIdeas(context, themeData),
+          const SizedBox(height: AppTheme.spacingXl),
+
+          // Create Your Own CTA
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  'Don\'t see what you\'re looking for?',
+                  style: context.bodyStyle.copyWith(
+                    color: context.textColor.withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/trips/ai-wizard'),
+                  icon: const Icon(Icons.auto_awesome),
+                  label: const Text('Create with AI'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeData.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingLg,
+                      vertical: AppTheme.spacingMd,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+        ],
+      ),
+    );
+  }
+
+  /// Join by Code card - prominent CTA for users with invite codes
+  Widget _buildJoinByCodeCard(BuildContext context, dynamic themeData) {
+    return GestureDetector(
+      onTap: () => context.push('/join-trip'),
+      child: Container(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              themeData.primaryColor.withValues(alpha: 0.1),
+              themeData.primaryColor.withValues(alpha: 0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          border: Border.all(
+            color: themeData.primaryColor.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppTheme.spacingXl),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.neutral100,
-                shape: BoxShape.circle,
+                color: themeData.primaryColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: Icon(
-                Icons.explore_off,
-                size: 64,
-                color: AppTheme.neutral400,
+                Icons.qr_code_scanner,
+                color: themeData.primaryColor,
+                size: 28,
               ),
             ),
-            const SizedBox(height: AppTheme.spacingLg),
-            Text(
-              'No Public Trips Available',
-              style: context.titleStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+            const SizedBox(width: AppTheme.spacingMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Have a trip code?',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: themeData.primaryColor,
+                    ),
+                  ),
+                  Text(
+                    'Join a friend\'s trip instantly',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppTheme.neutral600,
+                    ),
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              'There are currently no public trips to join.\nCheck back later or create your own!',
-              style: context.bodyStyle.copyWith(
-                color: context.textColor.withValues(alpha: 0.7),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppTheme.spacingXl),
-            ElevatedButton.icon(
-              onPressed: () => context.push('/trips/create'),
-              icon: const Icon(Icons.add),
-              label: const Text('Create Trip'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg,
-                  vertical: AppTheme.spacingMd,
-                ),
-              ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: themeData.primaryColor,
+              size: 18,
             ),
           ],
         ),
       ),
+    );
+  }
+
+  /// Featured destinations grid
+  Widget _buildFeaturedDestinations(BuildContext context) {
+    final destinations = [
+      {'name': 'Goa', 'emoji': '🏖️', 'type': 'Beaches'},
+      {'name': 'Manali', 'emoji': '🏔️', 'type': 'Mountains'},
+      {'name': 'Kerala', 'emoji': '🌴', 'type': 'Backwaters'},
+      {'name': 'Jaipur', 'emoji': '🏰', 'type': 'Heritage'},
+      {'name': 'Ladakh', 'emoji': '🏍️', 'type': 'Adventure'},
+      {'name': 'Udaipur', 'emoji': '💕', 'type': 'Romance'},
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: AppTheme.spacingSm,
+        crossAxisSpacing: AppTheme.spacingSm,
+        childAspectRatio: 1.0,
+      ),
+      itemCount: destinations.length,
+      itemBuilder: (context, index) {
+        final dest = destinations[index];
+        return GestureDetector(
+          onTap: () {
+            // Navigate to AI wizard with pre-filled destination
+            context.push('/trips/ai-wizard');
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              boxShadow: AppTheme.shadowSm,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  dest['emoji'] as String,
+                  style: const TextStyle(fontSize: 28),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  dest['name'] as String,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+                Text(
+                  dest['type'] as String,
+                  style: TextStyle(
+                    color: AppTheme.neutral500,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Trip ideas as tappable chips
+  Widget _buildTripIdeas(BuildContext context, dynamic themeData) {
+    final ideas = [
+      '🏖️ Weekend Beach Getaway',
+      '🏔️ Mountain Trek',
+      '👨‍👩‍👧‍👦 Family Vacation',
+      '💕 Romantic Escape',
+      '🎒 Solo Adventure',
+      '👯 Friends Trip',
+      '🏛️ Heritage Tour',
+      '🍜 Food Trail',
+    ];
+
+    return Wrap(
+      spacing: AppTheme.spacingSm,
+      runSpacing: AppTheme.spacingSm,
+      children: ideas.map((idea) {
+        return GestureDetector(
+          onTap: () => context.push('/trips/ai-wizard'),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd,
+              vertical: AppTheme.spacingSm,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+              border: Border.all(color: AppTheme.neutral200),
+              boxShadow: AppTheme.shadowSm,
+            ),
+            child: Text(
+              idea,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -548,8 +1233,20 @@ class DiscoverableTripCard extends StatelessWidget {
     final members = tripWithMembers.members;
     final memberCount = members.length;
 
-    // Calculate days until trip starts
-    final daysLeft = trip.startDate?.difference(DateTime.now()).inDays;
+    // Calculate trip status
+    final now = DateTime.now();
+    final daysLeft = trip.startDate?.difference(now).inDays;
+    final hasStarted = trip.startDate != null && trip.startDate!.isBefore(now);
+    final isOngoing = hasStarted && (trip.endDate == null || trip.endDate!.isAfter(now));
+    final hasEnded = trip.endDate != null && trip.endDate!.isBefore(now);
+
+    // Find organizer (creator)
+    final organizer = members.isNotEmpty
+        ? members.firstWhere(
+            (m) => m.userId == trip.createdBy,
+            orElse: () => members.first,
+          )
+        : null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -621,28 +1318,82 @@ class DiscoverableTripCard extends StatelessWidget {
                               ],
                             ),
 
-                            // Days Left Badge
-                            if (daysLeft != null && daysLeft > 0)
+                            // Trip Status Badge
+                            if (hasEnded)
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppTheme.spacingSm,
                                   vertical: AppTheme.spacingXs,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: context.accentColor,
+                                  color: AppTheme.neutral500,
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.event_busy, size: 12, color: Colors.white),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Ended',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else if (isOngoing)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacingSm,
+                                  vertical: AppTheme.spacingXs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange,
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.directions_run, size: 12, color: Colors.white),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'In Progress',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else if (daysLeft != null && daysLeft >= 0)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacingSm,
+                                  vertical: AppTheme.spacingXs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: daysLeft <= 3 ? Colors.amber : context.accentColor,
                                   borderRadius: BorderRadius.circular(AppTheme.radiusFull),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(
-                                      Icons.access_time,
+                                    Icon(
+                                      daysLeft == 0 ? Icons.today : Icons.access_time,
                                       size: 12,
                                       color: Colors.white,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} left',
+                                      daysLeft == 0
+                                          ? 'Starts Today!'
+                                          : '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} left',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 11,
@@ -738,6 +1489,51 @@ class DiscoverableTripCard extends StatelessWidget {
                           ),
                       ],
                     ),
+
+                    // Organizer Info
+                    if (organizer != null) ...[
+                      const SizedBox(height: AppTheme.spacingMd),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingSm,
+                          vertical: AppTheme.spacingXs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.neutral100,
+                          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundColor: AppTheme.neutral300,
+                              backgroundImage: organizer.avatarUrl != null
+                                  ? NetworkImage(organizer.avatarUrl!)
+                                  : null,
+                              child: organizer.avatarUrl == null
+                                  ? Text(
+                                      (organizer.fullName ?? organizer.email ?? 'O')[0].toUpperCase(),
+                                      style: TextStyle(
+                                        color: AppTheme.neutral600,
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'by ${organizer.fullName ?? organizer.email ?? 'Unknown'}',
+                              style: TextStyle(
+                                color: AppTheme.neutral600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
 
                     const SizedBox(height: AppTheme.spacingMd),
 

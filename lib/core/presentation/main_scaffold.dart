@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/home/presentation/pages/dashboard_page.dart';
 import '../../features/trips/presentation/pages/home_page.dart';
 import '../../features/trips/presentation/pages/browse_trips_page.dart';
 import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/expenses/presentation/pages/expenses_home_page.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
 
-/// Main scaffold with bottom navigation - 5 tabs: Home, Trips, Explore, Expenses, Profile
+/// Main scaffold with bottom navigation - V2.1: 2 tabs (Trips, Explore)
+///
+/// DESIGN RATIONALE (Trip-First UX):
+/// - Tab 0: Trips - All your trips (created + joined) - the primary hub
+/// - Tab 1: Explore - Browse/join public trips
+/// - Profile & Settings: Accessible via header icons (avatar for profile, gear for settings)
+///
+/// This replaces the V2.0 3-tab design where Profile was a separate tab.
+/// Profile and Settings are now accessed via the header for a cleaner navigation.
 class MainScaffold extends StatefulWidget {
   final Widget child;
   final int currentIndex;
@@ -26,19 +33,10 @@ class _MainScaffoldState extends State<MainScaffold> {
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
-        context.go('/dashboard');
-        break;
-      case 1:
         context.go('/trips');
         break;
-      case 2:
+      case 1:
         context.go('/explore');
-        break;
-      case 3:
-        context.go('/expenses');
-        break;
-      case 4:
-        context.go('/profile');
         break;
     }
   }
@@ -51,29 +49,14 @@ class _MainScaffoldState extends State<MainScaffold> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.flight_takeoff_outlined),
-            activeIcon: Icon(Icons.flight_takeoff),
+            icon: Icon(Icons.luggage_outlined),
+            activeIcon: Icon(Icons.luggage),
             label: 'Trips',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.explore_outlined),
             activeIcon: Icon(Icons.explore),
             label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            activeIcon: Icon(Icons.receipt_long),
-            label: 'Expenses',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
           ),
         ],
         currentIndex: widget.currentIndex,
@@ -83,53 +66,37 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 }
 
-/// Shell route for dashboard tab (Home) - Index 0
-class DashboardShell extends StatelessWidget {
-  const DashboardShell({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 0, child: DashboardPage());
-  }
-}
-
-/// Shell route for trips tab - Index 1
+/// Shell route for trips tab - V2.0 Index 0 (Primary tab)
+/// This is now the main landing page for authenticated users
 class TripsShell extends StatelessWidget {
   const TripsShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 1, child: HomePage());
+    return const MainScaffold(currentIndex: 0, child: HomePage());
   }
 }
 
-/// Shell route for explore tab - Index 2
+/// Shell route for explore tab - V2.0 Index 1
 class ExploreShell extends StatelessWidget {
   const ExploreShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 2, child: BrowseTripsPage());
+    return const MainScaffold(currentIndex: 1, child: BrowseTripsPage());
   }
 }
 
-/// Shell route for expenses tab - Index 3
-class ExpensesShell extends StatelessWidget {
-  const ExpensesShell({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 3, child: ExpensesHomePage());
-  }
-}
-
-/// Shell route for profile tab - Index 4
+/// @deprecated Profile tab removed in V2.1 - access via header avatar instead
+/// Kept for backward compatibility during transition
 class ProfileShell extends StatelessWidget {
   const ProfileShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MainScaffold(currentIndex: 4, child: ProfilePage());
+    // V2.1: Profile accessed via header avatar, not bottom nav
+    // Still render ProfilePage but without bottom nav highlight
+    return const MainScaffold(currentIndex: 0, child: ProfilePage());
   }
 }
 
@@ -142,11 +109,40 @@ class TripDetailShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
-      currentIndex: 1, // Trips tab
+      currentIndex: 0, // Trips tab (V2.0 index)
       child: TripDetailPage(tripId: tripId),
     );
   }
 }
 
+// ============================================================================
+// LEGACY SHELLS (V1.0) - Kept for backward compatibility during transition
+// These can be removed once all routes are updated to V2.0
+// ============================================================================
+
+/// @deprecated Use TripsShell instead - Dashboard is now merged into Trips
+class DashboardShell extends StatelessWidget {
+  const DashboardShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // V2.0: Dashboard functionality merged into Trips tab
+    // Redirect to Trips shell
+    return const MainScaffold(currentIndex: 0, child: HomePage());
+  }
+}
+
+/// @deprecated Expenses tab removed in V2.0 - access via Trip Detail instead
+class ExpensesShell extends StatelessWidget {
+  const ExpensesShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // V2.0: Expenses accessed through Trip Detail page
+    // For now, show expenses home but from Trips tab context
+    return const MainScaffold(currentIndex: 0, child: ExpensesHomePage());
+  }
+}
+
 // Legacy alias for backward compatibility
-typedef HomeShell = DashboardShell;
+typedef HomeShell = TripsShell;

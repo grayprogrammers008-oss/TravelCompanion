@@ -13,6 +13,7 @@ import 'core/theme/theme_provider.dart';
 import 'core/theme/theme_access.dart';
 import 'core/theme/easy_mode_provider.dart';
 import 'core/services/notification_initialization.dart';
+import 'core/services/shared_location_handler.dart';
 import 'features/messaging/data/initialization/messaging_initialization.dart';
 
 /// Background message handler - must be top-level function
@@ -111,16 +112,38 @@ void main() async {
   );
 }
 
-class TravelCrewApp extends ConsumerWidget {
+class TravelCrewApp extends ConsumerStatefulWidget {
   const TravelCrewApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TravelCrewApp> createState() => _TravelCrewAppState();
+}
+
+class _TravelCrewAppState extends ConsumerState<TravelCrewApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize shared location handler for receiving Google Maps shares
+    SharedLocationHandler.initialize();
+    debugPrint('✅ Shared location handler initialized');
+  }
+
+  @override
+  void dispose() {
+    SharedLocationHandler.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     final themeData = ref.watch(currentThemeDataProvider);
 
     // Watch Easy Mode state for text scaling
     final easyModeConfig = ref.watch(easyModeConfigProvider);
+
+    // Set context for SharedLocationHandler
+    SharedLocationHandler.setContext(context);
 
     return AppThemeProvider(
       themeData: themeData,
@@ -138,6 +161,9 @@ class TravelCrewApp extends ConsumerWidget {
               mediaQuery.textScaler.scale(1.0) * easyModeConfig.textScaleFactor,
             ),
           );
+
+          // Update context for SharedLocationHandler with the inner context
+          SharedLocationHandler.setContext(context);
 
           return MediaQuery(
             data: scaledMediaQuery,

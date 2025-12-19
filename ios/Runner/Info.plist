@@ -84,6 +84,16 @@
 				<string>pathio</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.pathio.travel</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.pathio.travel</string>
+			</array>
+		</dict>
 	</array>
 	<key>FlutterDeepLinkingEnabled</key>
 	<true/>

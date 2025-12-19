@@ -15,6 +15,9 @@ class ItineraryRemoteDataSource {
     required String title,
     String? description,
     String? location,
+    double? latitude,
+    double? longitude,
+    String? placeId,
     DateTime? startTime,
     DateTime? endTime,
     int? dayNumber,
@@ -35,6 +38,9 @@ class ItineraryRemoteDataSource {
         'title': title,
         'description': description,
         'location': location,
+        'latitude': latitude,
+        'longitude': longitude,
+        'place_id': placeId,
         'start_time': startTime?.toIso8601String(),
         'end_time': endTime?.toIso8601String(),
         'day_number': dayNumber,
@@ -155,6 +161,9 @@ class ItineraryRemoteDataSource {
     String? title,
     String? description,
     String? location,
+    double? latitude,
+    double? longitude,
+    String? placeId,
     DateTime? startTime,
     DateTime? endTime,
     int? dayNumber,
@@ -168,6 +177,9 @@ class ItineraryRemoteDataSource {
       if (title != null) updates['title'] = title;
       if (description != null) updates['description'] = description;
       if (location != null) updates['location'] = location;
+      if (latitude != null) updates['latitude'] = latitude;
+      if (longitude != null) updates['longitude'] = longitude;
+      if (placeId != null) updates['place_id'] = placeId;
       if (startTime != null) updates['start_time'] = startTime.toIso8601String();
       if (endTime != null) updates['end_time'] = endTime.toIso8601String();
       if (dayNumber != null) updates['day_number'] = dayNumber;

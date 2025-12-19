@@ -186,7 +186,7 @@ class GroqService {
     final groupStr = groupSize != null ? 'Group Size: $groupSize people' : '';
 
     return '''
-You are an expert travel planner. Based on the user's voice request, generate a COMPLETE trip plan including itinerary AND packing list.
+You are an expert travel planner with deep knowledge of Indian destinations. Based on the user's voice request, generate a COMPLETE trip plan including itinerary AND packing list.
 
 USER'S VOICE REQUEST: "$voicePrompt"
 
@@ -198,18 +198,57 @@ ${interestsStr.isNotEmpty ? '- $interestsStr' : ''}
 ${styleStr.isNotEmpty ? '- $styleStr' : ''}
 ${groupStr.isNotEmpty ? '- $groupStr' : ''}
 
-REQUIREMENTS:
-1. **IMPORTANT: Create a FUN, PEPPY, CREATIVE trip name** - NOT just "Trip to [destination]". Use alliteration, rhymes, wordplay, or evocative language. Examples:
-   - "Goan Paradise Escape" instead of "Trip to Goa"
-   - "Kerala Backwater Bliss" instead of "Trip to Kerala"
-   - "Majestic Manali Mountains" instead of "Trip to Manali"
-   - "Rajasthan Royal Rendezvous" instead of "Trip to Jaipur"
-   - "Himalayan Heights Adventure" instead of "Trip to Ladakh"
-2. Generate a realistic, well-paced day-by-day itinerary
-3. Include specific places, restaurants, and activities with times
-4. Add estimated costs in INR for each activity
-5. Create a comprehensive packing list tailored to the destination
-6. Include practical travel tips
+CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
+
+**1. TRIP NAME:**
+- Create a FUN, PEPPY, CREATIVE trip name - NOT "Trip to [destination]"
+- Use alliteration, rhymes, wordplay, or evocative language
+- Examples: "Goan Paradise Escape", "Kerala Backwater Bliss", "Majestic Manali Mountains"
+
+**2. REALISTIC TIME MANAGEMENT:**
+- Day 1: Start activities from check-in time (usually 2-3 PM) or arrival time, NOT early morning
+- Last Day: End by checkout time (usually 11 AM-12 PM), plan only morning activities
+- Include realistic TRAVEL TIME between locations (30-60 mins for city travel, 2-4 hours for inter-city)
+- Add 15-30 min buffer between activities for unexpected delays
+- Limit to 4-5 major activities per day to avoid exhaustion
+
+**3. LOGICAL ACTIVITY SEQUENCING:**
+- MORNING (6 AM-12 PM): Nature walks, temples, sunrise points, outdoor activities when cooler
+- AFTERNOON (12 PM-4 PM): Indoor activities (museums, restaurants, shopping, rest time during peak heat)
+- EVENING (4 PM-9 PM): Sunset points, markets, cultural shows, dinner
+- Group nearby locations together to minimize travel
+- Don't schedule strenuous activities after heavy meals
+
+**4. SENSIBLE DAILY STRUCTURE:**
+- Breakfast: 7:30-9:00 AM
+- Lunch: 12:30-2:00 PM
+- Dinner: 7:30-9:00 PM
+- Include 1-2 hours rest/free time in afternoon (especially in hot climates)
+- Don't pack every minute - allow spontaneity
+
+**5. WEATHER & SEASON AWARENESS:**
+- Consider current month's typical weather for the destination
+- Suggest appropriate clothing and gear
+- Adjust outdoor activity timing based on climate
+- Include rain contingency plans for monsoon destinations
+
+**6. PRACTICAL COST ESTIMATES (2024-2025 PRICES IN INR):**
+- Entry fees: ₹50-500 for local sites, ₹500-1500 for premium attractions
+- Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
+- Transport: ₹500-1500/day for local travel
+- Be realistic - don't underestimate costs
+
+**7. SMART PACKING LIST:**
+- ONLY include items ACTUALLY needed for this specific trip
+- Consider: destination climate, planned activities, trip duration
+- Don't add generic items that aren't relevant
+- Specify quantities based on trip length (e.g., "3 t-shirts" for 3-day trip)
+- Group by category: documents, clothing, toiletries, electronics, medicines, accessories
+
+**8. ACTIONABLE TIPS:**
+- Include destination-specific advice (local customs, scams to avoid, best transport options)
+- Mention best times to visit specific attractions (e.g., "Visit Taj Mahal at sunrise to avoid crowds")
+- Include emergency info (nearest hospital, police station, emergency numbers)
 
 RESPOND WITH VALID JSON in this exact format:
 {
@@ -373,23 +412,65 @@ Generate the complete trip plan now:
   /// Build prompt that lets AI extract everything from voice input
   String _buildVoiceParsingPrompt({required String voiceInput}) {
     return '''
-You are an expert travel planner. The user has spoken their trip request in natural language.
+You are an expert travel planner with deep knowledge of Indian destinations. The user has spoken their trip request in natural language.
+
 Your job is to:
 1. UNDERSTAND what they said (could be in any language - English, Hindi, Tamil, etc.)
 2. EXTRACT the destination, duration, trip type, and preferences
-3. GENERATE a complete trip plan
+3. GENERATE a sensible, practical, and well-paced trip plan
 
 USER'S VOICE INPUT: "$voiceInput"
 
-INSTRUCTIONS:
-1. First, identify the DESTINATION from what the user said
-2. Identify the DURATION (number of days) - if not specified, assume 3 days
-3. Identify any trip preferences (family, adventure, romantic, budget, etc.)
-4. Generate a creative, peppy trip name (NOT "Trip to X")
-5. Create a realistic day-by-day itinerary with specific places in India
-6. Include a comprehensive packing list
-7. Add practical travel tips
-8. All costs should be in INR (Indian Rupees)
+CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
+
+**1. EXTRACT FROM VOICE:**
+- Identify the DESTINATION from what the user said
+- Identify the DURATION (number of days) - if not specified, assume 3 days
+- Identify trip preferences (family, adventure, romantic, budget, solo, etc.)
+
+**2. TRIP NAME:**
+- Generate a creative, peppy trip name (NOT "Trip to X")
+- Use alliteration, rhymes, wordplay: "Goan Paradise Escape", "Kerala Backwater Bliss"
+
+**3. REALISTIC TIME MANAGEMENT:**
+- Day 1: Start activities from arrival/check-in time (2-3 PM), NOT early morning
+- Last Day: End by checkout (11 AM-12 PM), plan only morning activities
+- Include realistic TRAVEL TIME between locations (30-60 mins city, 2-4 hours inter-city)
+- Add 15-30 min buffer between activities
+- Limit to 4-5 major activities per day
+
+**4. LOGICAL ACTIVITY SEQUENCING:**
+- MORNING (6-12): Nature walks, temples, sunrise points, outdoor activities
+- AFTERNOON (12-4): Indoor activities, museums, restaurants, rest time (hot climates)
+- EVENING (4-9): Sunset points, markets, cultural shows, dinner
+- Group nearby locations together
+- Don't schedule strenuous activities after heavy meals
+
+**5. SENSIBLE DAILY STRUCTURE:**
+- Breakfast: 7:30-9:00 AM | Lunch: 12:30-2:00 PM | Dinner: 7:30-9:00 PM
+- Include 1-2 hours rest/free time in afternoon
+- Don't pack every minute - allow spontaneity
+
+**6. WEATHER & SEASON AWARENESS:**
+- Consider current month's typical weather for the destination
+- Adjust outdoor activity timing based on climate
+- Include rain contingency plans for monsoon destinations
+
+**7. PRACTICAL COST ESTIMATES (2024-2025 INR):**
+- Entry fees: ₹50-500 local, ₹500-1500 premium attractions
+- Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
+- Transport: ₹500-1500/day for local travel
+
+**8. SMART PACKING LIST:**
+- ONLY include items ACTUALLY needed for THIS specific trip
+- Consider: destination climate, planned activities, trip duration
+- Specify quantities based on trip length (e.g., "3 t-shirts" for 3-day trip)
+- Don't add generic irrelevant items
+
+**9. ACTIONABLE TIPS:**
+- Destination-specific advice (local customs, scams to avoid, best transport)
+- Best times to visit specific attractions
+- Emergency info (nearest hospital, police, emergency numbers)
 
 RESPOND WITH VALID JSON in this exact format:
 {

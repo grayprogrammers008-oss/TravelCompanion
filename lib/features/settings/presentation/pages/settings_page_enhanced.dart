@@ -8,7 +8,9 @@ import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/theme/easy_mode_provider.dart';
 import '../../../../core/widgets/destination_image.dart';
+import '../../../../core/services/google_maps_url_parser.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../itinerary/presentation/widgets/add_location_to_trip_sheet.dart';
 
 /// Enhanced Settings Page with working toggles and preferences
 class SettingsPageEnhanced extends ConsumerStatefulWidget {
@@ -57,6 +59,62 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
       await prefs.setBool(key, value);
     } else if (value is String) {
       await prefs.setString(key, value);
+    }
+  }
+
+  /// Test the Google Maps share flow with a sample location
+  void _testGoogleMapsShare(BuildContext context) {
+    // Sample Google Maps URL - Marina Beach, Chennai
+    const testUrl = 'https://www.google.com/maps/place/Marina+Beach/@13.0499889,80.2824727,17z';
+
+    final parsedLocation = GoogleMapsUrlParser.parse(testUrl);
+    if (parsedLocation != null) {
+      AddLocationToTripSheet.show(context, parsedLocation);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to parse test URL')),
+      );
+    }
+  }
+
+  /// Add location from clipboard (paste Google Maps URL)
+  Future<void> _addLocationFromClipboard(BuildContext context) async {
+    final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    final text = clipboardData?.text;
+
+    if (text == null || text.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Clipboard is empty. Copy a Google Maps link first.'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Try to extract a Google Maps URL from the clipboard
+    final url = GoogleMapsUrlParser.extractUrl(text);
+    if (url == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No Google Maps link found in clipboard'),
+          ),
+        );
+      }
+      return;
+    }
+
+    final parsedLocation = GoogleMapsUrlParser.parse(url);
+    if (parsedLocation != null && context.mounted) {
+      AddLocationToTripSheet.show(context, parsedLocation);
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not parse the Google Maps link'),
+        ),
+      );
     }
   }
 
@@ -301,6 +359,30 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                       const SnackBar(content: Text('Privacy & Security - Coming Soon')),
                     );
                   },
+                ),
+              ],
+            ),
+
+            // Developer Tools (Debug)
+            _buildSection(
+              context,
+              title: 'Developer Tools',
+              items: [
+                _buildNavigationTile(
+                  context,
+                  icon: Icons.content_paste,
+                  iconColor: Colors.teal,
+                  title: 'Add Location from Clipboard',
+                  subtitle: 'Paste a Google Maps link',
+                  onTap: () => _addLocationFromClipboard(context),
+                ),
+                _buildNavigationTile(
+                  context,
+                  icon: Icons.bug_report,
+                  iconColor: Colors.grey,
+                  title: 'Test with Sample Location',
+                  subtitle: 'Marina Beach, Chennai',
+                  onTap: () => _testGoogleMapsShare(context),
                 ),
               ],
             ),
