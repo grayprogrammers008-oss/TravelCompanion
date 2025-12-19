@@ -125,8 +125,28 @@ class VoiceInputService {
 
   /// Request microphone permission (and speech recognition on iOS)
   /// Returns true if permission is granted, false otherwise
+  ///
+  /// Uses speech_to_text's built-in permission request which triggers
+  /// the native iOS permission dialog properly
   Future<bool> requestMicrophonePermission() async {
-    debugPrint('🎤 Requesting microphone permission...');
+    debugPrint('🎤 Requesting microphone permission via speech_to_text...');
+
+    // First, try to initialize speech_to_text which triggers the permission dialog
+    // This is more reliable than permission_handler for speech permissions
+    final hasPermission = await _speech.initialize(
+      onStatus: (status) => debugPrint('🎤 Permission request status: $status'),
+      onError: (error) => debugPrint('🎤 Permission request error: ${error.errorMsg}'),
+    );
+
+    debugPrint('🎤 speech_to_text.initialize() returned: $hasPermission');
+
+    if (hasPermission) {
+      _isInitialized = true;
+      return true;
+    }
+
+    // If speech_to_text didn't grant permission, try permission_handler as fallback
+    debugPrint('🎤 Falling back to permission_handler...');
     final micStatus = await Permission.microphone.request();
     debugPrint('🎤 Microphone permission status: $micStatus');
 
@@ -139,9 +159,6 @@ class VoiceInputService {
       debugPrint('🎤 Requesting speech recognition permission on iOS...');
       final speechStatus = await Permission.speech.request();
       debugPrint('🎤 Speech recognition permission status: $speechStatus');
-      // We still return true even if speech permission is denied,
-      // as the main blocking issue is microphone permission.
-      // Speech recognition might still work with device-only recognition.
     }
 
     return true;

@@ -309,26 +309,29 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
 
   Future<void> _toggleListening() async {
     HapticFeedback.lightImpact();
-    debugPrint('🎤 _toggleListening called: _isListening=$_isListening, _isSimulator=$_isSimulator');
+    debugPrint('🎤🎤🎤 _toggleListening CALLED 🎤🎤🎤');
+    debugPrint('🎤 State: _isListening=$_isListening, _isSimulator=$_isSimulator, _isInitialized=$_isInitialized');
 
     if (_isListening) {
+      debugPrint('🎤 Already listening, stopping...');
       await _voiceService.stopListening();
     } else {
       // ALWAYS check and request microphone permission FIRST before anything else
-      // (Skip only for simulators where mic permission doesn't exist)
-      debugPrint('🎤 Checking microphone permission...');
+      debugPrint('🎤 Not listening, starting permission check...');
+      debugPrint('🎤 Calling hasMicrophonePermission()...');
       final hasPermission = await _voiceService.hasMicrophonePermission();
-      debugPrint('🎤 hasMicrophonePermission: $hasPermission');
+      debugPrint('🎤 hasMicrophonePermission returned: $hasPermission');
 
       if (!hasPermission) {
-        debugPrint('🎤 Microphone permission not granted, requesting...');
+        debugPrint('🎤🎤🎤 PERMISSION NOT GRANTED - REQUESTING NOW 🎤🎤🎤');
         final granted = await _voiceService.requestMicrophonePermission();
-        debugPrint('🎤 Permission request result: granted=$granted');
+        debugPrint('🎤🎤🎤 PERMISSION REQUEST RESULT: granted=$granted 🎤🎤🎤');
 
         if (!granted) {
           // Permission denied - update UI state
+          debugPrint('🎤 Permission was DENIED, checking if permanently denied...');
           final isPermanentlyDenied = await _voiceService.isMicrophonePermissionPermanentlyDenied();
-          debugPrint('🎤 Permission denied. isPermanentlyDenied=$isPermanentlyDenied');
+          debugPrint('🎤 isPermanentlyDenied=$isPermanentlyDenied');
           setState(() {
             _hasError = true;
             _isPermissionDenied = true;
@@ -339,9 +342,11 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
           });
           return; // Don't proceed without permission
         }
-        debugPrint('✅ Microphone permission granted!');
+        debugPrint('✅✅✅ Microphone permission GRANTED! ✅✅✅');
         // Re-initialize voice service now that we have permission
         await _initVoiceService();
+      } else {
+        debugPrint('🎤 Permission already granted, proceeding...');
       }
 
       // If there's already text, we're continuing (appending)
@@ -1124,7 +1129,8 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
-        onTap: _isInitialized ? _toggleListening : null,
+        // Always allow tapping - _toggleListening will request permission if needed
+        onTap: _toggleListening,
         child: SizedBox(
           width: sphereSize,
           height: sphereSize,
