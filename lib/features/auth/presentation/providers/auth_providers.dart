@@ -369,6 +369,9 @@ class PasswordResetState {
   final ResetMethod method;
   final bool isInFlow;
   final bool isSuccess; // Track success state in provider to survive widget rebuilds
+  // Store session tokens to survive widget rebuilds after OTP verification
+  final String? accessToken;
+  final String? refreshToken;
 
   const PasswordResetState({
     this.currentStep = 0,
@@ -377,10 +380,15 @@ class PasswordResetState {
     this.method = ResetMethod.email,
     this.isInFlow = false,
     this.isSuccess = false,
+    this.accessToken,
+    this.refreshToken,
   });
 
   /// Get the contact info (email or phone) based on method
   String? get contactInfo => method == ResetMethod.email ? email : phone;
+
+  /// Check if we have valid session tokens stored
+  bool get hasSessionTokens => accessToken != null && refreshToken != null;
 
   PasswordResetState copyWith({
     int? currentStep,
@@ -389,6 +397,8 @@ class PasswordResetState {
     ResetMethod? method,
     bool? isInFlow,
     bool? isSuccess,
+    String? accessToken,
+    String? refreshToken,
   }) {
     return PasswordResetState(
       currentStep: currentStep ?? this.currentStep,
@@ -397,6 +407,8 @@ class PasswordResetState {
       method: method ?? this.method,
       isInFlow: isInFlow ?? this.isInFlow,
       isSuccess: isSuccess ?? this.isSuccess,
+      accessToken: accessToken ?? this.accessToken,
+      refreshToken: refreshToken ?? this.refreshToken,
     );
   }
 }
@@ -434,6 +446,15 @@ class PasswordResetNotifier extends Notifier<PasswordResetState> {
   /// Move to password step after OTP verification
   void moveToPasswordStep() {
     state = state.copyWith(currentStep: 2);
+  }
+
+  /// Move to password step with session tokens (survives widget rebuilds)
+  void moveToPasswordStepWithSession(String accessToken, String refreshToken) {
+    state = state.copyWith(
+      currentStep: 2,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
   }
 
   /// Mark password reset as successful

@@ -311,9 +311,6 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       final resetState = ref.read(passwordResetProvider);
       debugPrint('🔐 [ForgotPassword] Verifying OTP...');
 
-      // Update provider BEFORE calling verifyOTP to preserve state
-      ref.read(passwordResetProvider.notifier).moveToPasswordStep();
-
       AuthResponse response;
 
       if (resetState.method == ResetMethod.email) {
@@ -335,8 +332,16 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       if (response.session != null) {
         debugPrint('✅ [ForgotPassword] OTP verified successfully!');
         debugPrint('   Session access token: ${response.session!.accessToken.substring(0, 20)}...');
+        debugPrint('   Refresh token: ${response.session!.refreshToken?.substring(0, 20) ?? "null"}...');
 
-        // Store the session for password update step
+        // Store the session tokens in PROVIDER (not local state) to survive widget rebuilds
+        // This is critical because router rebuilds after auth state change will recreate this widget
+        final accessToken = response.session!.accessToken;
+        final refreshToken = response.session!.refreshToken ?? '';
+        ref.read(passwordResetProvider.notifier).moveToPasswordStepWithSession(accessToken, refreshToken);
+        debugPrint('   ✅ Session tokens saved to provider');
+
+        // Also store locally as backup
         _otpSession = response.session;
 
         if (mounted) {
@@ -350,22 +355,16 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           );
         }
       } else {
-        // Revert step if verification failed
-        ref.read(passwordResetProvider.notifier).goBack();
         throw Exception('Invalid OTP');
       }
     } on AuthException catch (e) {
       debugPrint('❌ [ForgotPassword] OTP verification failed: ${e.message}');
-      // Revert step on error
-      ref.read(passwordResetProvider.notifier).goBack();
       setState(() {
         _isLoading = false;
         _errorMessage = _getReadableError(e.message);
       });
     } catch (e) {
       debugPrint('❌ [ForgotPassword] Error: $e');
-      // Revert step on error
-      ref.read(passwordResetProvider.notifier).goBack();
       setState(() {
         _isLoading = false;
         _errorMessage = 'Invalid or expired OTP. Please try again.';
@@ -397,15 +396,53 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       final currentUser = Supabase.instance.client.auth.currentUser;
       debugPrint('   Current session: ${currentSession != null ? "exists" : "null"}');
       debugPrint('   Current user: ${currentUser?.email ?? "null"}');
-      debugPrint('   Stored OTP session: ${_otpSession != null ? "exists" : "null"}');
+      debugPrint('   Stored OTP session (local): ${_otpSession != null ? "exists" : "null"}');
+
+      // Get session tokens from provider (survives widget rebuilds)
+      final resetState = ref.read(passwordResetProvider);
+      debugPrint('   Provider has session tokens: ${resetState.hasSessionTokens}');
+      if (resetState.hasSessionTokens) {
+        debugPrint('   Provider access token (first 20 chars): ${resetState.accessToken!.substring(0, 20)}...');
+        debugPrint('   Provider refresh token: ${resetState.refreshToken?.substring(0, 20) ?? "null"}...');
+      }
 
       // If we have a current session and user, we can proceed directly
       if (currentSession != null && currentUser != null) {
         debugPrint('   ✅ Using current active session');
       }
-      // If no current session but we have stored OTP session, try to restore it
+      // If no current session, try to restore from PROVIDER tokens first (more reliable)
+      else if (resetState.accessToken != null && resetState.accessToken!.isNotEmpty) {
+        debugPrint('   Restoring session from PROVIDER tokens...');
+
+        // Try with refresh token first if available
+        if (resetState.refreshToken != null && resetState.refreshToken!.isNotEmpty) {
+          debugPrint('   Trying setSession with refresh token...');
+          try {
+            final response = await Supabase.instance.client.auth.setSession(resetState.refreshToken!);
+            debugPrint('   Session restored from refresh token: ${response.session != null}');
+            debugPrint('   User after restore: ${response.user?.email ?? "null"}');
+            currentSession = response.session;
+          } catch (restoreError) {
+            debugPrint('   ❌ Failed to restore with refresh token: $restoreError');
+          }
+        }
+
+        // If still no session, try recoverSession with access token
+        if (currentSession == null) {
+          debugPrint('   Trying recoverSession with access token...');
+          try {
+            final recoverResponse = await Supabase.instance.client.auth.recoverSession(resetState.accessToken!);
+            debugPrint('   Recover session result: ${recoverResponse.session != null}');
+            debugPrint('   User after recover: ${recoverResponse.user?.email ?? "null"}');
+            currentSession = recoverResponse.session;
+          } catch (recoverError) {
+            debugPrint('   ❌ Recover session also failed: $recoverError');
+          }
+        }
+      }
+      // Fallback to local _otpSession if provider tokens didn't work
       else if (_otpSession != null) {
-        debugPrint('   Restoring OTP session...');
+        debugPrint('   Restoring from local OTP session (fallback)...');
         debugPrint('   Access token (first 20 chars): ${_otpSession!.accessToken.substring(0, 20)}...');
         debugPrint('   Refresh token: ${_otpSession!.refreshToken?.substring(0, 20) ?? "null"}...');
 

@@ -215,7 +215,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                     Text(
                                       'Join Travel Crew',
                                       style: context.headlineLarge.copyWith(
-                                            color: Colors.white,
+                                            color: const Color(0xFF1A1A2E), // Dark navy - always visible
                                             fontWeight: FontWeight.w800,
                                             letterSpacing: -0.5,
                                           ),
@@ -227,8 +227,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
                                     Text(
                                       'Start planning amazing trips together',
                                       style: context.bodyLarge.copyWith(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.9),
+                                            color: const Color(0xFF4A4A5A), // Dark gray - always visible
                                             letterSpacing: 0.5,
                                           ),
                                       textAlign: TextAlign.center,
