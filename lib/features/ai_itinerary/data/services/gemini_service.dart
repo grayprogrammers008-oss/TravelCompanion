@@ -638,12 +638,20 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Transport: ₹500-1500/day for local travel
 - Be realistic - don't underestimate costs
 
-**7. SMART PACKING LIST:**
-- ONLY include items ACTUALLY needed for this specific trip
-- Consider: destination climate, planned activities, trip duration
-- Don't add generic items that aren't relevant
-- Specify quantities based on trip length (e.g., "3 t-shirts" for 3-day trip)
-- Group by category: documents, clothing, toiletries, electronics, medicines, accessories
+**7. COMPREHENSIVE PACKING CHECKLIST (BE THOROUGH):**
+
+Generate a COMPLETE packing checklist with ALL items needed. Include:
+
+**DOCUMENTS:** ID proof, tickets, hotel bookings, insurance, photocopies, emergency contacts
+**CLOTHING:** Daily wear (based on days), underwear, sleepwear, swimwear (if beach), rain gear, jacket, walking shoes, sandals, hat
+**TOILETRIES:** Toothbrush, toothpaste, shampoo, soap, deodorant, sunscreen SPF 50+, moisturizer, razor, wet wipes, sanitizer
+**ELECTRONICS:** Phone charger, power bank 10000mAh+, earphones, camera, travel adapter
+**MEDICINES:** Prescription meds, painkillers, antacids, anti-diarrhea, band-aids, mosquito repellent, ORS, first-aid
+**ACCESSORIES:** Sunglasses, watch, day bag, wallet, water bottle, neck pillow, luggage locks, plastic bags
+**DESTINATION-SPECIFIC:** Beach gear, warm layers for hills, trekking shoes, temple-appropriate clothing
+
+Mark essential items (documents, medicines, charger) as is_essential: true.
+Include helpful notes and adjust quantities for $durationDays-day duration.
 
 **8. ACTIONABLE TIPS:**
 - Include destination-specific advice (local customs, scams to avoid, best transport options)
@@ -851,11 +859,93 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
 - Transport: ₹500-1500/day for local travel
 
-**8. SMART PACKING LIST:**
-- ONLY include items ACTUALLY needed for THIS specific trip
-- Consider: destination climate, planned activities, trip duration
-- Specify quantities based on trip length (e.g., "3 t-shirts" for 3-day trip)
-- Don't add generic irrelevant items
+**8. COMPREHENSIVE PACKING CHECKLIST (VERY IMPORTANT - BE THOROUGH):**
+
+Generate a COMPLETE, DETAILED packing checklist with ALL items a traveler might need. Include:
+
+**DOCUMENTS (Always Essential):**
+- ID proof (Aadhaar/Passport/Driving License)
+- Travel tickets/bookings printouts
+- Hotel reservation confirmations
+- Travel insurance documents
+- Photocopies of all important documents
+- Emergency contact list
+
+**CLOTHING (Based on destination weather & activities):**
+- Daily wear (t-shirts/shirts - quantity based on days)
+- Bottoms (pants/shorts/skirts)
+- Underwear & socks (enough for all days + extras)
+- Sleepwear/nightclothes
+- Swimwear (if beach/pool destination)
+- Rain jacket/umbrella (if monsoon/rainy season)
+- Light jacket/sweater (for AC/evenings/hill stations)
+- Comfortable walking shoes
+- Sandals/flip-flops
+- Traditional/formal wear (if visiting temples/events)
+- Hat/cap for sun protection
+
+**TOILETRIES & PERSONAL CARE:**
+- Toothbrush & toothpaste
+- Shampoo & conditioner (travel size)
+- Body wash/soap
+- Deodorant
+- Sunscreen (SPF 50+ for beach/outdoor trips)
+- Moisturizer & lip balm
+- Razor & shaving kit
+- Feminine hygiene products (if applicable)
+- Hairbrush/comb
+- Nail clipper
+- Wet wipes & tissues
+- Hand sanitizer
+- Face wash
+
+**ELECTRONICS:**
+- Phone charger & cable
+- Power bank (10000+ mAh)
+- Universal travel adapter (if needed)
+- Earphones/headphones
+- Camera & charger (if not using phone)
+- Laptop/tablet & charger (if needed)
+
+**MEDICINES & HEALTH:**
+- Personal prescription medicines
+- Pain relievers (Paracetamol/Ibuprofen)
+- Antacids/digestive aids
+- Anti-diarrhea medicine
+- Motion sickness tablets (if prone)
+- Band-aids & antiseptic
+- Mosquito repellent (essential for most Indian destinations)
+- ORS packets
+- Any allergy medicines
+- Basic first-aid supplies
+
+**ACCESSORIES & TRAVEL ESSENTIALS:**
+- Sunglasses
+- Watch
+- Day backpack/small bag
+- Wallet with cash & cards
+- Water bottle (reusable)
+- Neck pillow (for long journeys)
+- Eye mask & earplugs
+- Locks for luggage
+- Plastic bags (for wet/dirty clothes)
+- Notebook & pen
+
+**DESTINATION-SPECIFIC ITEMS:**
+- Beach: Beach towel, snorkeling gear, waterproof phone pouch
+- Hills/Mountains: Warm layers, thermals, gloves, woolen cap
+- Adventure: Trekking shoes, quick-dry clothes, headlamp
+- Religious sites: Conservative clothing, head covering
+- Wildlife/Safari: Binoculars, earth-toned clothes, camera with zoom
+
+**SNACKS & COMFORT:**
+- Dry snacks for travel
+- Chewing gum/mints
+- Favorite comfort items
+
+Mark ESSENTIAL items (documents, medicines, phone charger) as is_essential: true.
+Include helpful notes for specific items (e.g., "SPF 50+ recommended", "Check expiry dates").
+Adjust quantities based on the trip duration extracted from user input.
 
 **9. ACTIONABLE TIPS:**
 - Destination-specific advice (local customs, scams to avoid, best transport)
