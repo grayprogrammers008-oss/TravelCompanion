@@ -510,10 +510,12 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       final controller = ref.read(tripControllerProvider.notifier);
       final tripName = _ensurePeppyName(tripPlan.tripName, tripPlan.destination);
 
-      // Use AI-extracted duration for dates
+      // Use AI-extracted dates (or fallback to 7 days from now)
       final durationDays = tripPlan.durationDays;
-      DateTime startDate = DateTime.now().add(const Duration(days: 1)); // Start tomorrow
-      DateTime endDate = startDate.add(Duration(days: durationDays - 1));
+      DateTime startDate = tripPlan.startDate ?? DateTime.now().add(const Duration(days: 7));
+      DateTime endDate = tripPlan.endDate ?? startDate.add(Duration(days: durationDays - 1));
+
+      debugPrint('📅 Trip dates: ${startDate.toString()} to ${endDate.toString()}');
 
       final trip = await controller.createTrip(
         name: tripName,

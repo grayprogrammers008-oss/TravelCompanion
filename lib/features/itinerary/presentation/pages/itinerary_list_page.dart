@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -304,7 +306,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                 final day = filteredDays[index];
                 final isToday = todaysDayNumber != null && day.dayNumber == todaysDayNumber;
                 final dayDate = _getDateForDay(day.dayNumber, tripStartDate);
-                return _buildDaySection(context, ref, day, isToday: isToday, dayDate: dayDate, canEdit: canEditItinerary);
+                return _buildDaySection(context, ref, day, isToday: isToday, dayDate: dayDate, canEdit: canEditItinerary, allDays: filteredDays);
               },
             ),
           );
@@ -979,6 +981,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     bool isToday = false,
     DateTime? dayDate,
     bool canEdit = false,
+    List<ItineraryDay> allDays = const [],
   }) {
     // Colors for today highlighting
     final todayColor = Colors.orange;
@@ -1081,11 +1084,36 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: day.items.length,
               onReorder: (oldIndex, newIndex) {
+                HapticFeedback.mediumImpact();
                 _handleReorder(ref, day, oldIndex, newIndex);
+              },
+              proxyDecorator: (child, index, animation) {
+                return AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, child) {
+                    final double elevation = Tween<double>(begin: 0, end: 8).animate(
+                      CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                    ).value;
+                    final double scale = Tween<double>(begin: 1.0, end: 1.02).animate(
+                      CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                    ).value;
+                    return Transform.scale(
+                      scale: scale,
+                      child: Material(
+                        elevation: elevation,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        shadowColor: context.primaryColor.withValues(alpha: 0.3),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: child,
+                );
               },
               itemBuilder: (context, index) {
                 final item = day.items[index];
-                return _buildItineraryItem(context, ref, item, key: ValueKey(item.id), canEdit: canEdit);
+                return _buildItineraryItem(context, ref, item, key: ValueKey(item.id), canEdit: canEdit, currentDayNumber: day.dayNumber, allDays: allDays, itemIndex: index);
               },
             )
           else
@@ -1095,7 +1123,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
               itemCount: day.items.length,
               itemBuilder: (context, index) {
                 final item = day.items[index];
-                return _buildItineraryItem(context, ref, item, key: ValueKey(item.id), canEdit: canEdit);
+                return _buildItineraryItem(context, ref, item, key: ValueKey(item.id), canEdit: canEdit, currentDayNumber: day.dayNumber, allDays: allDays, itemIndex: index);
               },
             ),
         ],
@@ -1109,6 +1137,9 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     ItineraryItemModel item, {
     Key? key,
     bool canEdit = false,
+    int currentDayNumber = 1,
+    List<ItineraryDay> allDays = const [],
+    int itemIndex = 0,
   }) {
     // Build the item content widget
     final itemContent = Padding(
@@ -1336,21 +1367,32 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             ),
           ),
 
-          // Reorder handle - only show if can edit
-          if (canEdit)
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Icon(
-                Icons.drag_handle,
-                color: context.textColor.withValues(alpha: 0.3),
-              ),
-            ),
         ],
       ),
     );
 
     // If user can edit, wrap with Dismissible for swipe-to-delete and add long-press menu
     if (canEdit) {
+      // Build item with drag handle that uses ReorderableDragStartListener
+      final itemWithDragHandle = Row(
+        key: key ?? ValueKey(item.id),
+        children: [
+          // Main content area - tappable and long-pressable
+          Expanded(
+            child: InkWell(
+              onTap: () => _navigateToEditItem(context, item.id),
+              onLongPress: () => _showItemOptionsMenu(context, ref, item, currentDayNumber: currentDayNumber, allDays: allDays),
+              child: itemContent,
+            ),
+          ),
+          // Drag handle - uses ReorderableDragStartListener for proper drag initiation
+          ReorderableDragStartListener(
+            index: itemIndex,
+            child: _AnimatedDragHandle(primaryColor: context.primaryColor),
+          ),
+        ],
+      );
+
       return Dismissible(
         key: key ?? ValueKey(item.id),
         background: Container(
@@ -1380,11 +1422,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
           return confirmed;
         },
         // onDismissed not needed since we handle deletion in confirmDismiss
-        child: InkWell(
-          onTap: () => _navigateToEditItem(context, item.id),
-          onLongPress: () => _showItemOptionsMenu(context, ref, item),
-          child: itemContent,
-        ),
+        child: itemWithDragHandle,
       );
     }
 
@@ -1421,7 +1459,13 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
   }
 
   /// Show options menu for an itinerary item (long-press)
-  void _showItemOptionsMenu(BuildContext context, WidgetRef ref, ItineraryItemModel item) {
+  void _showItemOptionsMenu(
+    BuildContext context,
+    WidgetRef ref,
+    ItineraryItemModel item, {
+    int currentDayNumber = 1,
+    List<ItineraryDay> allDays = const [],
+  }) {
     HapticFeedback.mediumImpact();
 
     showModalBottomSheet(
@@ -1532,6 +1576,25 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                 },
               ),
 
+            // Move to Day option (only show if there are multiple days)
+            if (allDays.length > 1)
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.swap_horiz, color: Colors.purple, size: 20),
+                ),
+                title: const Text('Move to Another Day'),
+                subtitle: Text('Currently on Day $currentDayNumber'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showMoveToDayDialog(context, ref, item, currentDayNumber: currentDayNumber, allDays: allDays);
+                },
+              ),
+
             // Delete option
             ListTile(
               leading: Container(
@@ -1568,6 +1631,184 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                   );
                 }
               },
+            ),
+
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Show dialog to move item to another day
+  void _showMoveToDayDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ItineraryItemModel item, {
+    required int currentDayNumber,
+    required List<ItineraryDay> allDays,
+  }) {
+    // Get available days (exclude current day)
+    final availableDays = allDays.where((day) => day.dayNumber != currentDayNumber).toList();
+
+    if (availableDays.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('No other days available to move to'),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.swap_horiz, color: Colors.purple),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Move to Day',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Select destination for "${item.title}"',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+
+            // Day options
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.4,
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: availableDays.length,
+                itemBuilder: (context, index) {
+                  final day = availableDays[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: context.primaryColor.withValues(alpha: 0.1),
+                      child: Text(
+                        '${day.dayNumber}',
+                        style: TextStyle(
+                          color: context.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    title: Text('Day ${day.dayNumber}'),
+                    subtitle: Text(
+                      '${day.items.length} ${day.items.length == 1 ? 'activity' : 'activities'}',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      HapticFeedback.mediumImpact();
+
+                      try {
+                        await ref.read(itineraryControllerProvider.notifier).moveItemToDay(
+                          itemId: item.id,
+                          newDayNumber: day.dayNumber,
+                        );
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(Icons.check_circle, color: Colors.white),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text('Moved "${item.title}" to Day ${day.dayNumber}'),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(Icons.error, color: Colors.white),
+                                  const SizedBox(width: 8),
+                                  const Expanded(child: Text('Failed to move activity')),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  );
+                },
+              ),
             ),
 
             const SizedBox(height: 8),
@@ -1659,5 +1900,65 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
 
     final uri = Uri(path: '/ai-itinerary', queryParameters: queryParams);
     context.push(uri.toString());
+  }
+}
+
+/// Animated drag handle widget with platform-specific icons
+/// Shows 6-dot pattern (drag_indicator) on Android
+/// Shows 3 horizontal lines (drag_handle) on iOS
+class _AnimatedDragHandle extends StatefulWidget {
+  final Color primaryColor;
+
+  const _AnimatedDragHandle({required this.primaryColor});
+
+  @override
+  State<_AnimatedDragHandle> createState() => _AnimatedDragHandleState();
+}
+
+class _AnimatedDragHandleState extends State<_AnimatedDragHandle>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    _pulseAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    // Start subtle pulse animation
+    _controller.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _pulseAnimation,
+      builder: (context, child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Opacity(
+            opacity: _pulseAnimation.value,
+            child: Icon(
+              Platform.isIOS ? Icons.drag_handle : Icons.drag_indicator,
+              color: widget.primaryColor.withValues(alpha: 0.7),
+              size: 24,
+            ),
+          ),
+        );
+      },
+    );
   }
 }
