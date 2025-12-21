@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 /// SmartGeoLoader - A morphing geometric shape loader
@@ -213,26 +212,20 @@ class _GeoPainter extends CustomPainter {
     var canvasPoints = _fitToRadius(interpolatedPoints, center, allowedRadius * 0.92);
     canvasPoints = _shrinkToCircle(canvasPoints, center, allowedRadius);
 
-    // Build the path
-    final path = Path()..moveTo(canvasPoints[0].dx, canvasPoints[0].dy);
-    for (int i = 1; i < canvasPoints.length; i++) {
-      path.lineTo(canvasPoints[i].dx, canvasPoints[i].dy);
-    }
-    path.close();
+    // Build smooth path using Catmull-Rom splines for seamless curves
+    final path = _createSmoothPath(canvasPoints);
 
-    // Create sweep gradient for the stroke
-    final gradientShader = ui.Gradient.sweep(
-      center,
-      [
+    // Create seamless sweep gradient for the stroke using SweepGradient
+    // (no explicit start/end angles to avoid seam line)
+    final gradientShader = SweepGradient(
+      colors: [
         primaryColor,
         secondaryColor,
         primaryColor,
       ],
-      [0.0, 0.5, 1.0],
-      TileMode.clamp,
-      0,
-      2 * pi,
-    );
+      stops: const [0.0, 0.5, 1.0],
+      transform: GradientRotation(rotationValue * 2 * pi),
+    ).createShader(Rect.fromCircle(center: center, radius: dimension / 2));
 
     // Draw main stroke with gradient
     canvas.drawPath(
@@ -320,6 +313,47 @@ class _GeoPainter extends CustomPainter {
   static double _smootherstep(double x) {
     x = x.clamp(0.0, 1.0);
     return x * x * x * (x * (x * 6 - 15) + 10);
+  }
+
+  /// Creates a smooth closed path using Catmull-Rom to Bezier conversion
+  /// This eliminates jerky line transitions during morphing
+  Path _createSmoothPath(List<Offset> points) {
+    final path = Path();
+    final n = points.length;
+    if (n < 3) {
+      // Fallback for too few points
+      if (n > 0) path.moveTo(points[0].dx, points[0].dy);
+      for (int i = 1; i < n; i++) {
+        path.lineTo(points[i].dx, points[i].dy);
+      }
+      if (n > 0) path.close();
+      return path;
+    }
+
+    path.moveTo(points[0].dx, points[0].dy);
+
+    for (int i = 0; i < n; i++) {
+      // Get 4 points for Catmull-Rom spline
+      final p0 = points[(i - 1 + n) % n];
+      final p1 = points[i];
+      final p2 = points[(i + 1) % n];
+      final p3 = points[(i + 2) % n];
+
+      // Convert Catmull-Rom to cubic Bezier control points
+      final cp1 = Offset(
+        p1.dx + (p2.dx - p0.dx) / 6,
+        p1.dy + (p2.dy - p0.dy) / 6,
+      );
+      final cp2 = Offset(
+        p2.dx - (p3.dx - p1.dx) / 6,
+        p2.dy - (p3.dy - p1.dy) / 6,
+      );
+
+      path.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, p2.dx, p2.dy);
+    }
+
+    path.close();
+    return path;
   }
 
   @override

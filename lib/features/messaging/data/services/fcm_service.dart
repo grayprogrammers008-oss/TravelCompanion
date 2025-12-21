@@ -37,8 +37,13 @@ class FCMService {
     try {
       debugPrint('🔵 [FCM] Initializing FCM service...');
 
-      // Ensure Firebase is initialized
-      await Firebase.initializeApp();
+      // Ensure Firebase is initialized (safe to call multiple times)
+      try {
+        await Firebase.initializeApp();
+      } catch (e) {
+        // Firebase might already be initialized, that's OK
+        debugPrint('   ℹ️ Firebase already initialized or init error: $e');
+      }
 
       // Request notification permissions
       await _requestPermissions();
@@ -46,9 +51,14 @@ class FCMService {
       // Initialize local notifications
       await _initializeLocalNotifications();
 
-      // Get FCM token
-      _fcmToken = await _firebaseMessaging.getToken();
-      debugPrint('   ✅ FCM Token: $_fcmToken');
+      // Get FCM token - with extra error handling for iOS cold start
+      try {
+        _fcmToken = await _firebaseMessaging.getToken();
+        debugPrint('   ✅ FCM Token: $_fcmToken');
+      } catch (e) {
+        debugPrint('   ⚠️ Failed to get FCM token: $e');
+        // Continue without token - will retry later
+      }
 
       // Listen to token refresh
       _firebaseMessaging.onTokenRefresh.listen((token) {
@@ -64,10 +74,14 @@ class FCMService {
       FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
 
       // Check for initial message (app opened from terminated state)
-      final initialMessage = await _firebaseMessaging.getInitialMessage();
-      if (initialMessage != null) {
-        debugPrint('📬 [FCM] App opened from terminated state');
-        _handleMessageOpenedApp(initialMessage);
+      try {
+        final initialMessage = await _firebaseMessaging.getInitialMessage();
+        if (initialMessage != null) {
+          debugPrint('📬 [FCM] App opened from terminated state');
+          _handleMessageOpenedApp(initialMessage);
+        }
+      } catch (e) {
+        debugPrint('   ⚠️ Failed to get initial message: $e');
       }
 
       _isInitialized = true;
@@ -76,7 +90,7 @@ class FCMService {
       debugPrint('❌ [FCM] Initialization failed');
       debugPrint('   Exception: $e');
       debugPrint('   Stack Trace: $stackTrace');
-      rethrow;
+      // Don't rethrow - app should still work without push notifications
     }
   }
 

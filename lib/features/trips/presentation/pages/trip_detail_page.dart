@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
@@ -12,13 +13,14 @@ import '../../../../core/utils/trip_permissions.dart';
 import '../../../../core/services/share_service.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../providers/trip_providers.dart';
-import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../expenses/presentation/widgets/quick_expense_sheet.dart';
 import '../../../checklists/presentation/providers/checklist_providers.dart';
 import '../../../messaging/presentation/providers/conversation_providers.dart';
 import '../widgets/trip_qr_share.dart';
+import '../widgets/add_member_bottom_sheet.dart';
+import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 
 class TripDetailPage extends ConsumerStatefulWidget {
   final String tripId;
@@ -117,33 +119,22 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     double safeAreaTop,
     double safeAreaBottom,
   ) {
-    final heroHeight = screenHeight * 0.28; // 28% for hero image
+    // Slightly taller hero to accommodate stats and description
+    final heroHeight = screenHeight * 0.32; // 32% for expanded info panel
 
     return Stack(
       children: [
-        // Full-screen background with hero image at top
+        // Background - image at top, content area below
         Column(
           children: [
-            // Hero section with image, title, status
+            // Hero section with image, stats, and description overlay
             _buildV3HeroSection(context, trip, themeData, heroHeight, safeAreaTop),
 
             // Main content area - fills remaining space
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
-                  color: context.backgroundColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                  child: _buildV3ContentArea(context, trip, themeData, safeAreaBottom),
-                ),
+                color: context.backgroundColor,
+                child: _buildV3ContentArea(context, trip, themeData, safeAreaBottom),
               ),
             ),
           ],
@@ -163,6 +154,384 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           child: _buildFloatingActions(context, trip),
         ),
       ],
+    );
+  }
+
+  /// Hero section with gradient info panel overlay
+  /// All trip info (name, stats, description) displayed on the image
+  Widget _buildV3HeroSection(
+    BuildContext context,
+    dynamic trip,
+    dynamic themeData,
+    double height,
+    double safeAreaTop,
+  ) {
+    final startDate = trip.trip.startDate as DateTime?;
+    final endDate = trip.trip.endDate as DateTime?;
+    final description = trip.trip.description as String?;
+    final isPublic = trip.trip.isPublic ?? false;
+    final memberCount = (trip.members as List).length;
+    final budget = trip.trip.budget as double?;
+    final currency = trip.trip.currency ?? 'INR';
+
+    // Calculate duration
+    int? durationDays;
+    if (startDate != null && endDate != null) {
+      durationDays = endDate.difference(startDate).inDays + 1;
+    }
+
+    return SizedBox(
+      height: height + safeAreaTop,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          DestinationImage(
+            imageUrl: trip.trip.coverImageUrl,
+            tripName: trip.trip.destination ?? trip.trip.name,
+            height: height + safeAreaTop,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            showOverlay: false,
+          ),
+          // Extended gradient overlay for info panel (covers bottom 60%)
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0.0, 0.25, 0.45, 1.0],
+                colors: [
+                  Colors.black.withValues(alpha: 0.5),
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.3),
+                  Colors.black.withValues(alpha: 0.85),
+                ],
+              ),
+            ),
+          ),
+          // Trip info overlay at bottom - now includes stats and description
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 14,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Row 1: Status badge + Visibility badge
+                Row(
+                  children: [
+                    _buildCompactStatusBadge(context, trip),
+                    const SizedBox(width: 8),
+                    // Public/Private badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isPublic ? Icons.public : Icons.lock,
+                            size: 11,
+                            color: Colors.white70,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isPublic ? 'Public' : 'Private',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
+                // Row 2: Trip name
+                Text(
+                  trip.trip.name,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    height: 1.1,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 4,
+                        color: Colors.black45,
+                      ),
+                    ],
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+
+                // Row 3: Location + Dates
+                Row(
+                  children: [
+                    if (trip.trip.destination != null) ...[
+                      const Icon(Icons.location_on, size: 13, color: Colors.white70),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          trip.trip.destination!,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                    if (trip.trip.destination != null && startDate != null)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 6),
+                        child: Text('•', style: TextStyle(color: Colors.white54)),
+                      ),
+                    if (startDate != null) ...[
+                      const Icon(Icons.calendar_today, size: 11, color: Colors.white70),
+                      const SizedBox(width: 3),
+                      Text(
+                        _formatDateRange(startDate, endDate),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // Row 4: Stats chips (duration, travelers, budget)
+                Row(
+                  children: [
+                    if (durationDays != null) ...[
+                      _buildHeroStatChip(
+                        icon: Icons.schedule,
+                        label: '$durationDays ${durationDays == 1 ? 'day' : 'days'}',
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    _buildHeroStatChip(
+                      icon: Icons.group,
+                      label: '$memberCount',
+                    ),
+                    if (budget != null && budget > 0) ...[
+                      const SizedBox(width: 8),
+                      _buildHeroStatChip(
+                        icon: Icons.account_balance_wallet,
+                        label: '${_getCurrencySymbol(currency)}${_formatAmount(budget)}',
+                      ),
+                    ],
+                  ],
+                ),
+
+                // Row 5: Description preview (if exists) - tap to see full
+                if (description != null && description.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () => _showFullDescription(context, trip.trip.name, description),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Info icon to indicate it's tappable
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Icon(
+                              Icons.info_outline,
+                              size: 14,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              description,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withValues(alpha: 0.85),
+                                height: 1.3,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          // Always show chevron to indicate it's tappable
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2, left: 4),
+                            child: Icon(
+                              Icons.chevron_right,
+                              size: 16,
+                              color: Colors.white.withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Stat chip for hero overlay (translucent white style)
+  Widget _buildHeroStatChip({
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: Colors.white),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Show full description in a bottom sheet
+  void _showFullDescription(BuildContext context, String tripName, String description) {
+    HapticFeedback.lightImpact();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.25,
+        maxChildSize: 0.7,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.neutral300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: context.primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.description_outlined,
+                        color: context.primaryColor,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'About This Trip',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            tripName,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppTheme.neutral500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close, color: AppTheme.neutral500),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              // Description content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(20),
+                  child: Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      height: 1.6,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -191,9 +560,58 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
       currentUserId: ref.watch(authStateProvider).value,
       tripWithMembers: trip,
     );
+    final isCompleted = trip.trip.isCompleted;
 
     return Row(
       children: [
+        // SOS Badge - only show for active trips
+        if (!isCompleted)
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFE53935).withValues(alpha: 0.4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  HapticFeedback.heavyImpact();
+                  _showSOSBottomSheet(context, trip);
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.emergency_rounded, color: Colors.white, size: 18),
+                      SizedBox(width: 4),
+                      Text(
+                        'SOS',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         if (canEdit)
           Container(
             margin: const EdgeInsets.only(right: 8),
@@ -217,101 +635,6 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           child: _buildCompactPopupMenu(context, trip),
         ),
       ],
-    );
-  }
-
-  /// V3.0: Compact hero with all key info overlaid
-  Widget _buildV3HeroSection(
-    BuildContext context,
-    dynamic trip,
-    dynamic themeData,
-    double height,
-    double safeAreaTop,
-  ) {
-    return SizedBox(
-      height: height + safeAreaTop,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image
-          DestinationImage(
-            tripName: trip.trip.destination ?? trip.trip.name,
-            height: height + safeAreaTop,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            showOverlay: false,
-          ),
-          // Gradient overlay
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: const [0.0, 0.3, 0.7, 1.0],
-                colors: [
-                  Colors.black.withValues(alpha: 0.5),
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.8),
-                ],
-              ),
-            ),
-          ),
-          // Content overlay at bottom
-          Positioned(
-            bottom: 32,
-            left: 16,
-            right: 16,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Trip name
-                Text(
-                  trip.trip.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    shadows: [
-                      Shadow(color: Colors.black54, offset: Offset(0, 2), blurRadius: 8),
-                    ],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8),
-                // Inline info row: destination • dates • status
-                Row(
-                  children: [
-                    if (trip.trip.destination != null) ...[
-                      const Icon(Icons.location_on, color: Colors.white70, size: 14),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          trip.trip.destination!,
-                          style: const TextStyle(color: Colors.white70, fontSize: 13),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                    ],
-                    if (trip.trip.startDate != null) ...[
-                      const Icon(Icons.calendar_today, color: Colors.white70, size: 12),
-                      const SizedBox(width: 4),
-                      Text(
-                        _formatDateRange(trip.trip.startDate, trip.trip.endDate),
-                        style: const TextStyle(color: Colors.white70, fontSize: 13),
-                      ),
-                    ],
-                    const Spacer(),
-                    _buildCompactStatusBadge(context, trip),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -383,15 +706,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. ABOUT SECTION - Trip description and key info
-          _buildAboutSection(context, trip, themeData),
-          const SizedBox(height: 20),
-
-          // 2. CREW SECTION - Member avatars row (tap to see all)
+          // 1. CREW SECTION - Member avatars row (tap to see all)
           _buildCrewSection(context, trip, themeData),
           const SizedBox(height: 20),
 
-          // 3. QUICK ACTIONS - Compact grid of action tiles
+          // 2. QUICK ACTIONS - Compact grid of action tiles
           _buildQuickActionsSection(
             context,
             trip,
@@ -399,154 +718,6 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             expensesAsync,
             checklistsAsync,
             unreadCountAsync,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// About section with description and info chips
-  Widget _buildAboutSection(BuildContext context, dynamic trip, dynamic themeData) {
-    final description = trip.trip.description as String?;
-    final isPublic = trip.trip.isPublic ?? false;
-    final budget = trip.trip.budget as double?;
-    final currency = trip.trip.currency ?? 'INR';
-    final startDate = trip.trip.startDate as DateTime?;
-    final endDate = trip.trip.endDate as DateTime?;
-    final memberCount = (trip.members as List).length;
-
-    // Calculate duration
-    int? durationDays;
-    if (startDate != null && endDate != null) {
-      durationDays = endDate.difference(startDate).inDays + 1;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section header
-          Row(
-            children: [
-              Icon(Icons.info_outline, size: 18, color: AppTheme.neutral500),
-              const SizedBox(width: 8),
-              Text(
-                'About',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.neutral500,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Description
-          if (description != null && description.isNotEmpty) ...[
-            Text(
-              description,
-              style: const TextStyle(
-                fontSize: 15,
-                height: 1.5,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 16),
-          ] else ...[
-            Text(
-              'No description added yet.',
-              style: TextStyle(
-                fontSize: 14,
-                fontStyle: FontStyle.italic,
-                color: AppTheme.neutral400,
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Info chips row
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              // Public/Private chip
-              _buildInfoChip(
-                icon: isPublic ? Icons.public : Icons.lock,
-                label: isPublic ? 'Public' : 'Private',
-                color: isPublic ? AppTheme.info : AppTheme.neutral500,
-              ),
-              // Budget chip
-              if (budget != null && budget > 0)
-                _buildInfoChip(
-                  icon: Icons.account_balance_wallet,
-                  label: '${_getCurrencySymbol(currency)}${_formatAmount(budget)}',
-                  color: const Color(0xFF4CAF93),
-                )
-              else
-                _buildInfoChip(
-                  icon: Icons.account_balance_wallet_outlined,
-                  label: 'No budget',
-                  color: AppTheme.neutral400,
-                ),
-              // Duration chip
-              if (durationDays != null)
-                _buildInfoChip(
-                  icon: Icons.schedule,
-                  label: '$durationDays ${durationDays == 1 ? 'day' : 'days'}',
-                  color: const Color(0xFFFFB74D),
-                ),
-              // Travelers chip
-              _buildInfoChip(
-                icon: Icons.group,
-                label: '$memberCount ${memberCount == 1 ? 'traveler' : 'travelers'}',
-                color: const Color(0xFF7E57C2),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Info chip widget for displaying trip details
-  Widget _buildInfoChip({
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
           ),
         ],
       ),
@@ -725,46 +896,6 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        // Row 3: SOS/Rating, Share
-        Row(
-          children: [
-            Expanded(
-              child: !isCompleted
-                  ? _buildCompactTile(
-                      context,
-                      icon: Icons.emergency_rounded,
-                      title: 'SOS',
-                      value: 'Emergency',
-                      color: const Color(0xFFE57373),
-                      onTap: () => context.push('/emergency?tripId=${widget.tripId}'),
-                    )
-                  : _buildCompactTile(
-                      context,
-                      icon: Icons.star_rounded,
-                      title: 'Rating',
-                      value: trip.trip.rating != null ? '${trip.trip.rating}★' : 'Rate',
-                      color: const Color(0xFFFFD54F),
-                      onTap: () => _showCompleteDialog(context, ref),
-                    ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildCompactTile(
-                context,
-                icon: Icons.share_rounded,
-                title: 'Share',
-                value: 'Invite',
-                color: const Color(0xFF64B5F6),
-                onTap: () => TripQrShare.show(
-                  context: context,
-                  tripId: widget.tripId,
-                  tripName: trip.trip.name,
-                ),
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }
@@ -870,7 +1001,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     final visibleMembers = members.take(maxVisible).toList();
     final remainingCount = members.length - maxVisible;
     final currentUserId = ref.watch(authStateProvider).value;
-    final canInvite = TripPermissions.canEditTrip(
+    final canInvite = TripPermissions.canManageMembers(
       currentUserId: currentUserId,
       tripWithMembers: trip,
     );
@@ -948,7 +1079,36 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                 ],
               ),
             ),
-            // Invite button
+            // Add member button - for existing app users
+            if (canInvite)
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  AddMemberBottomSheet.show(
+                    context: context,
+                    tripId: widget.tripId,
+                    tripName: trip.trip.name,
+                  );
+                },
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    gradient: themeData.primaryGradient,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeData.primaryColor.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.person_add, size: 18, color: Colors.white),
+                ),
+              ),
+            if (canInvite) const SizedBox(width: 8),
+            // Invite button - for external users via link/code
             if (canInvite)
               GestureDetector(
                 onTap: () {
@@ -960,30 +1120,18 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
-                    gradient: themeData.primaryGradient,
-                    borderRadius: BorderRadius.circular(20),
+                    color: AppTheme.neutral100,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppTheme.neutral300),
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.person_add, size: 14, color: Colors.white),
-                      SizedBox(width: 4),
-                      Text(
-                        'Invite',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: Icon(Icons.share, size: 18, color: themeData.primaryColor),
                 ),
               ),
-            const SizedBox(width: 8),
-            // Chevron to indicate tappable
+            if (canInvite) const SizedBox(width: 8),
+            // Chevron to view all members
             Icon(Icons.chevron_right, size: 20, color: AppTheme.neutral400),
           ],
         ),
@@ -1017,6 +1165,12 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
 
   /// Show members in bottom sheet
   void _showMembersBottomSheet(BuildContext context, dynamic trip, dynamic themeData) {
+    final currentUserId = ref.read(authStateProvider).value;
+    final canInvite = TripPermissions.canManageMembers(
+      currentUserId: currentUserId,
+      tripWithMembers: trip,
+    );
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -1045,7 +1199,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              // Header
+              // Header with Add Member button
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -1058,16 +1212,58 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      '${trip.members.length} members',
-                      style: TextStyle(
-                        color: AppTheme.neutral500,
-                        fontSize: 14,
+                    if (canInvite)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                          HapticFeedback.mediumImpact();
+                          AddMemberBottomSheet.show(
+                            context: context,
+                            tripId: widget.tripId,
+                            tripName: trip.trip.name,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            gradient: themeData.primaryGradient,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.person_add, size: 16, color: Colors.white),
+                              SizedBox(width: 6),
+                              Text(
+                                'Add Member',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
+              // Member count subtitle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '${trip.members.length} ${trip.members.length == 1 ? 'member' : 'members'}',
+                    style: TextStyle(
+                      color: AppTheme.neutral500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
               const Divider(height: 1),
               // Members list
               Expanded(
@@ -1149,6 +1345,513 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         ),
       ),
     );
+  }
+
+  /// Show SOS emergency bottom sheet with emergency features
+  void _showSOSBottomSheet(BuildContext context, dynamic trip) {
+    final destination = trip.trip.destination ?? 'Unknown';
+    final members = trip.members as List<TripMemberModel>;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.neutral300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFE53935).withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.emergency_rounded,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Emergency SOS',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Location: $destination',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    // Emergency Services Section
+                    _buildSOSSection(
+                      title: 'Emergency Services',
+                      icon: Icons.local_hospital_rounded,
+                      color: const Color(0xFFE53935),
+                      children: [
+                        _buildEmergencyTile(
+                          icon: Icons.local_police_rounded,
+                          title: 'Police',
+                          subtitle: 'Emergency: 100',
+                          color: const Color(0xFF1976D2),
+                          onTap: () => _makeEmergencyCall('100'),
+                        ),
+                        _buildEmergencyTile(
+                          icon: Icons.local_hospital_rounded,
+                          title: 'Ambulance',
+                          subtitle: 'Emergency: 108',
+                          color: const Color(0xFFE53935),
+                          onTap: () => _makeEmergencyCall('108'),
+                        ),
+                        _buildEmergencyTile(
+                          icon: Icons.fire_extinguisher,
+                          title: 'Fire',
+                          subtitle: 'Emergency: 101',
+                          color: const Color(0xFFFF6D00),
+                          onTap: () => _makeEmergencyCall('101'),
+                        ),
+                        _buildEmergencyTile(
+                          icon: Icons.support_agent_rounded,
+                          title: 'Women Helpline',
+                          subtitle: 'Emergency: 1091',
+                          color: const Color(0xFFE91E63),
+                          onTap: () => _makeEmergencyCall('1091'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Contact Co-Travelers Section
+                    _buildSOSSection(
+                      title: 'Contact Co-Travelers',
+                      icon: Icons.groups_rounded,
+                      color: const Color(0xFF7E57C2),
+                      children: [
+                        ...members.map((member) => _buildMemberCallTile(member)),
+                        if (members.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              'No co-travelers in this trip',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Quick Actions Section
+                    _buildSOSSection(
+                      title: 'Quick Actions',
+                      icon: Icons.flash_on_rounded,
+                      color: const Color(0xFFFF9800),
+                      children: [
+                        _buildActionTile(
+                          icon: Icons.broadcast_on_personal_rounded,
+                          title: 'Emergency Broadcast',
+                          subtitle: 'Send alert to all trip members',
+                          color: const Color(0xFFE53935),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _sendEmergencyBroadcast(trip);
+                          },
+                        ),
+                        _buildActionTile(
+                          icon: Icons.location_on_rounded,
+                          title: 'Share Live Location',
+                          subtitle: 'Share your location with trip group',
+                          color: const Color(0xFF4CAF50),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _shareLiveLocation(trip);
+                          },
+                        ),
+                        _buildActionTile(
+                          icon: Icons.navigate_next_rounded,
+                          title: 'Find Nearest Hospital',
+                          subtitle: 'Open maps for nearby hospitals',
+                          color: const Color(0xFF2196F3),
+                          onTap: () => _openNearbyHospitals(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSOSSection({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required List<Widget> children,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.neutral800,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.neutral50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.neutral200),
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmergencyTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.heavyImpact();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: AppTheme.neutral500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.call, color: Colors.white, size: 18),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberCallTile(TripMemberModel member) {
+    final currentUserId = ref.read(authStateProvider).value;
+    final isCurrentUser = member.userId == currentUserId;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: isCurrentUser ? null : () {
+          HapticFeedback.mediumImpact();
+          // TODO: Implement call to member (needs phone number from profile)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Calling ${member.fullName ?? 'Member'}...'),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF7E57C2),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              UserAvatarWidget(
+                imageUrl: member.avatarUrl,
+                userName: member.fullName ?? 'User',
+                size: 40,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            member.fullName ?? 'Unknown',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isCurrentUser) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.neutral200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'You',
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    Text(
+                      member.role == 'organizer' ? 'Organizer' : member.role == 'admin' ? 'Admin' : 'Member',
+                      style: TextStyle(
+                        color: AppTheme.neutral500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (!isCurrentUser)
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7E57C2).withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.call, color: Color(0xFF7E57C2), size: 18),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: AppTheme.neutral500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: AppTheme.neutral400),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _makeEmergencyCall(String number) async {
+    final uri = Uri.parse('tel:$number');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not call $number'),
+            backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  void _sendEmergencyBroadcast(dynamic trip) {
+    // Navigate to chat and send emergency message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.broadcast_on_personal_rounded, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(child: Text('Emergency alert sent to all trip members!')),
+          ],
+        ),
+        backgroundColor: Color(0xFFE53935),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    // TODO: Implement actual broadcast via messaging system
+    _openDefaultGroupChat();
+  }
+
+  void _shareLiveLocation(dynamic trip) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.location_on_rounded, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(child: Text('Live location sharing started for 1 hour')),
+          ],
+        ),
+        backgroundColor: Color(0xFF4CAF50),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    // TODO: Implement actual live location sharing
+  }
+
+  Future<void> _openNearbyHospitals() async {
+    // Open Google Maps with nearby hospitals search
+    final uri = Uri.parse('https://www.google.com/maps/search/hospitals+near+me');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Widget _buildCompactPopupMenu(BuildContext context, dynamic trip) {

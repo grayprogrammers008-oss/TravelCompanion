@@ -9,8 +9,8 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
-import '../../../../core/widgets/place_search_delegate.dart';
-import '../../../../core/services/place_search_service.dart';
+import '../../../../core/widgets/google_place_search_delegate.dart';
+import '../../../../core/services/google_places_service.dart';
 import '../providers/trip_providers.dart';
 import '../../../templates/presentation/providers/template_providers.dart';
 
@@ -54,6 +54,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   String _currency = 'INR'; // Default currency
   bool _isPublic = true; // Trip visibility: true = public, false = private
   bool _isLoading = false;
+
+  // Cover image from Google Places
+  String? _coverImageUrl;
 
   // Template-related state
   int? _templateDurationDays;
@@ -290,14 +293,32 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   }
 
   Future<void> _searchDestination() async {
-    final Place? result = await showSearch<Place?>(
+    debugPrint('🔍 [CreateTrip] Opening destination search...');
+
+    final PlaceDetails? result = await showSearch<PlaceDetails?>(
       context: context,
-      delegate: PlaceSearchDelegate(),
+      delegate: GooglePlaceSearchDelegate(),
     );
 
+    debugPrint('🔍 [CreateTrip] Search returned: ${result != null ? result.name : "null"}');
+
     if (result != null && mounted) {
+      debugPrint('🔍 [CreateTrip] Place: ${result.name}');
+      debugPrint('🔍 [CreateTrip] Photos count: ${result.photos.length}');
+
       setState(() {
         _destinationController.text = result.shortName;
+        // Get cover image from Google Places photos
+        if (result.photos.isNotEmpty) {
+          debugPrint('🔍 [CreateTrip] First photo reference: ${result.photos.first.photoReference.substring(0, 50)}...');
+          _coverImageUrl = GooglePlacesService().getPhotoUrl(
+            photoReference: result.photos.first.photoReference,
+            maxWidth: 800,
+          );
+          debugPrint('📸 [CreateTrip] Cover image URL set: ${_coverImageUrl?.substring(0, 80)}...');
+        } else {
+          debugPrint('⚠️ [CreateTrip] No photos available for this place');
+        }
       });
     }
   }
@@ -378,6 +399,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                   : _destinationController.text.trim(),
               startDate: _startDate,
               endDate: _endDate,
+              coverImageUrl: _coverImageUrl,
               budget: budget,
               currency: _currency,
               isPublic: _isPublic,

@@ -212,40 +212,36 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
                             ),
                           ),
                           // Category Filters
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppTheme.spacingMd,
-                              0,
-                              0,
-                              AppTheme.spacingSm,
-                            ),
-                            child: SizedBox(
-                              height: 32,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  TemplateCategoryChip(
-                                    label: 'All',
-                                    icon: Icons.apps,
-                                    isSelected: _selectedCategory == null,
-                                    onTap: () => setState(() => _selectedCategory = null),
-                                  ),
-                                  const SizedBox(width: AppTheme.spacingSm),
-                                  ...TemplateCategory.values.map((category) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: AppTheme.spacingSm),
-                                      child: TemplateCategoryChip(
-                                        label: category.displayName,
-                                        icon: category.icon,
-                                        isSelected: _selectedCategory == category,
-                                        onTap: () => setState(() => _selectedCategory = category),
-                                      ),
-                                    );
-                                  }),
-                                ],
+                          SizedBox(
+                            height: 36,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingMd,
                               ),
+                              children: [
+                                TemplateCategoryChip(
+                                  label: 'All',
+                                  icon: Icons.apps,
+                                  isSelected: _selectedCategory == null,
+                                  onTap: () => setState(() => _selectedCategory = null),
+                                ),
+                                const SizedBox(width: AppTheme.spacingSm),
+                                ...TemplateCategory.values.map((category) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: AppTheme.spacingSm),
+                                    child: TemplateCategoryChip(
+                                      label: category.displayName,
+                                      icon: category.icon,
+                                      isSelected: _selectedCategory == category,
+                                      onTap: () => setState(() => _selectedCategory = category),
+                                    ),
+                                  );
+                                }),
+                              ],
                             ),
                           ),
+                          const SizedBox(height: AppTheme.spacingSm),
                         ],
                       ),
                     ),

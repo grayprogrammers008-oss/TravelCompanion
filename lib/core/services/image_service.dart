@@ -1,23 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
+import 'google_places_service.dart';
 
-/// Service for fetching destination images from Unsplash API
+/// Service for fetching destination images from Google Places API
 ///
 /// Features:
-/// - Fetches high-quality travel destination images
+/// - Fetches real destination images from Google Places
 /// - Caches image URLs to reduce API calls
 /// - Falls back to gradients on error
-/// - Rate limiting aware (50 requests/hour on free tier)
 class ImageService {
-  // Unsplash Access Key - In production, move to environment variables
-  // Get your key at: https://unsplash.com/developers
-  static const String _accessKey =
-      'iLIdeLGraeoRJUQPJMY01oZT4wDo3RlHouy0cMG5zXA';
-  static const String _baseUrl = 'https://api.unsplash.com';
-
   // Cache duration (7 days)
   static const Duration _cacheDuration = Duration(days: 7);
 
@@ -26,24 +19,32 @@ class ImageService {
   factory ImageService() => _instance;
   ImageService._internal();
 
+  // Google Places service
+  final GooglePlacesService _placesService = GooglePlacesService();
+
   // In-memory cache
   final Map<String, CachedImage> _memoryCache = {};
 
-  /// Get image URL for a destination
+  /// Get image URL for a destination using Google Places
   /// Returns null if API fails (caller should fallback to gradient)
   Future<String?> getDestinationImage(String destination) async {
+    debugPrint('🌍 [ImageService] getDestinationImage called for: "$destination"');
+
     try {
       // Check in-memory cache first
       if (_memoryCache.containsKey(destination)) {
         final cached = _memoryCache[destination]!;
         if (!cached.isExpired) {
+          debugPrint('📦 [ImageService] Memory cache HIT for: $destination');
           return cached.url;
         } else {
+          debugPrint('📦 [ImageService] Memory cache EXPIRED for: $destination');
           _memoryCache.remove(destination);
         }
       }
 
       // Check persistent cache
+      debugPrint('💾 [ImageService] Checking disk cache for: $destination');
       final cachedUrl = await _getCachedUrl(destination);
       if (cachedUrl != null) {
         // Add to memory cache
@@ -51,19 +52,14 @@ class ImageService {
           url: cachedUrl,
           cachedAt: DateTime.now(),
         );
+        debugPrint('💾 [ImageService] Disk cache HIT for: $destination');
         return cachedUrl;
       }
+      debugPrint('💾 [ImageService] Disk cache MISS for: $destination');
 
-      // If no API key configured, return null (use gradient fallback)
-      if (_accessKey == 'YOUR_UNSPLASH_ACCESS_KEY_HERE' || _accessKey.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('⚠️  Unsplash API key not configured. Using gradient fallback.');
-        }
-        return null;
-      }
-
-      // Fetch from Unsplash API
-      final url = await _fetchFromUnsplash(destination);
+      // Fetch from Google Places API
+      debugPrint('🌐 [ImageService] Fetching from Google Places API...');
+      final url = await _fetchFromGooglePlaces(destination);
       if (url != null) {
         // Cache the result
         await _cacheUrl(destination, url);
@@ -71,125 +67,81 @@ class ImageService {
           url: url,
           cachedAt: DateTime.now(),
         );
+        debugPrint('✅ [ImageService] Got and cached URL for: $destination');
+      } else {
+        debugPrint('⚠️ [ImageService] No URL returned for: $destination');
       }
 
       return url;
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Error fetching image for $destination: $e');
-      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ [ImageService] Error fetching image for $destination: $e');
+      debugPrint('❌ [ImageService] Stack: $stackTrace');
       return null; // Fallback to gradient
     }
   }
 
-  /// Fetch image from Unsplash API
-  Future<String?> _fetchFromUnsplash(String destination) async {
+  /// Fetch image from Google Places API
+  Future<String?> _fetchFromGooglePlaces(String destination) async {
     try {
-      // Create search query with travel-related keywords
-      final query = _buildSearchQuery(destination);
-      if (kDebugMode) {
-        debugPrint('🔍 Searching Unsplash for: $query');
-      }
+      debugPrint('🔍 [ImageService] Searching Google Places for: "$destination"');
 
-      final uri = Uri.parse('$_baseUrl/photos/random').replace(
-        queryParameters: {
-          'query': query,
-          'orientation': 'landscape',
-          'content_filter': 'high', // Family-friendly content only
-        },
+      // Search for the destination
+      final predictions = await _placesService.getAutocomplete(
+        query: destination,
+        types: '(cities)',
       );
 
-      if (kDebugMode) {
-        debugPrint('📡 Calling Unsplash API: $uri');
+      debugPrint('🔍 [ImageService] Cities search returned ${predictions.length} results');
+
+      List<PlacePrediction> allPredictions = List.from(predictions);
+
+      if (predictions.isEmpty) {
+        // Try without type restriction
+        debugPrint('🔍 [ImageService] Trying search without type restriction...');
+        final morePredictions = await _placesService.getAutocomplete(
+          query: destination,
+        );
+        debugPrint('🔍 [ImageService] General search returned ${morePredictions.length} results');
+
+        if (morePredictions.isEmpty) {
+          debugPrint('⚠️ [ImageService] No places found for: $destination');
+          return null;
+        }
+        allPredictions.addAll(morePredictions);
       }
 
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              'Authorization': 'Client-ID $_accessKey',
-              'Accept-Version': 'v1',
-            },
-          )
-          .timeout(const Duration(seconds: 10));
+      // Get the first prediction's place details
+      final placeId = allPredictions.first.placeId;
+      debugPrint('🔍 [ImageService] Getting details for placeId: $placeId');
 
-      if (kDebugMode) {
-        debugPrint('📥 Response status: ${response.statusCode}');
-      }
+      final details = await _placesService.getPlaceDetails(placeId: placeId);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        // Get regular size image (suitable for cards)
-        final imageUrl = data['urls']['regular'] as String?;
-
-        // Log attribution (Unsplash requires attribution)
-        final photographerName = data['user']['name'] as String?;
-        if (kDebugMode) {
-          debugPrint('📸 Image by $photographerName on Unsplash');
-        }
-
-        return imageUrl;
-      } else if (response.statusCode == 403) {
-        if (kDebugMode) {
-          debugPrint(
-            '⚠️  Unsplash API rate limit reached. Using cached/gradient images.',
-          );
-        }
-        return null;
-      } else {
-        if (kDebugMode) {
-          debugPrint('⚠️  Unsplash API error: ${response.statusCode}');
-          debugPrint('   Response: ${response.body}');
-        }
+      if (details == null) {
+        debugPrint('⚠️ [ImageService] No details returned for: $destination');
         return null;
       }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Unsplash API call failed: $e');
+
+      debugPrint('🔍 [ImageService] Place details: ${details.name}, photos: ${details.photos.length}');
+
+      if (details.photos.isEmpty) {
+        debugPrint('⚠️ [ImageService] No photos found for: $destination');
+        return null;
       }
+
+      // Get photo URL from the first photo
+      final photoUrl = _placesService.getPhotoUrl(
+        photoReference: details.photos.first.photoReference,
+        maxWidth: 800,
+      );
+
+      debugPrint('📸 [ImageService] Got image URL for $destination: ${photoUrl.substring(0, 80)}...');
+
+      return photoUrl;
+    } catch (e, stackTrace) {
+      debugPrint('❌ [ImageService] Google Places API call failed: $e');
+      debugPrint('❌ [ImageService] Stack trace: $stackTrace');
       return null;
     }
-  }
-
-  /// Build search query for destination
-  String _buildSearchQuery(String destination) {
-    // Normalize destination name
-    final normalized = destination.toLowerCase().trim();
-
-    // Map common destination patterns to better search queries
-    final queryMap = {
-      'bali': 'bali indonesia temple beach',
-      'paris': 'paris eiffel tower france',
-      'tokyo': 'tokyo japan skyline',
-      'new york': 'new york city manhattan',
-      'london': 'london big ben uk',
-      'rome': 'rome colosseum italy',
-      'dubai': 'dubai burj khalifa',
-      'singapore': 'singapore marina bay',
-      'maldives': 'maldives beach resort',
-      'switzerland': 'switzerland alps mountains',
-      'iceland': 'iceland landscape',
-      'amsterdam': 'amsterdam canal netherlands',
-      'barcelona': 'barcelona spain sagrada',
-      'santorini': 'santorini greece blue dome',
-      'machu picchu': 'machu picchu peru',
-      'taj mahal': 'taj mahal india agra',
-      'great wall': 'great wall china',
-      'kyoto': 'kyoto japan temple',
-      'venice': 'venice italy canal',
-      'sydney': 'sydney opera house australia',
-    };
-
-    // Check if we have a specific query mapping
-    for (final entry in queryMap.entries) {
-      if (normalized.contains(entry.key)) {
-        return entry.value;
-      }
-    }
-
-    // Default: use destination name + travel keywords
-    return '$destination travel landmark';
   }
 
   /// Cache image URL in SharedPreferences
@@ -206,7 +158,7 @@ class ImageService {
       await prefs.setString(cacheKey, cacheData);
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('⚠️  Failed to cache image URL: $e');
+        debugPrint('⚠️ Failed to cache image URL: $e');
       }
     }
   }
@@ -233,7 +185,7 @@ class ImageService {
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('⚠️  Failed to read cached image URL: $e');
+        debugPrint('⚠️ Failed to read cached image URL: $e');
       }
       return null;
     }
@@ -273,24 +225,9 @@ class ImageService {
     }
   }
 
-  /// Preload images for common destinations
-  Future<void> preloadCommonDestinations() async {
-    final commonDestinations = [
-      'Bali',
-      'Paris',
-      'Tokyo',
-      'New York',
-      'London',
-      'Rome',
-      'Dubai',
-      'Singapore',
-    ];
-
-    for (final destination in commonDestinations) {
-      await getDestinationImage(destination);
-      // Small delay to avoid rate limiting
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
+  /// Dispose resources
+  void dispose() {
+    _placesService.dispose();
   }
 }
 

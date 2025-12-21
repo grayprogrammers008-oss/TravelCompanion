@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/services/voice_input_service.dart';
-import '../../../../core/widgets/ai_sphere_animation.dart';
+import '../../../../core/widgets/ai_orb_animation.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/checklist_model.dart';
 import '../../../ai_itinerary/data/services/gemini_service.dart';
@@ -552,12 +552,24 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
           if (activity.endTime != null) {
             final timeParts = activity.endTime!.split(':');
             if (timeParts.length >= 2) {
+              final endHour = int.tryParse(timeParts[0]) ?? 10;
+              final endMinute = int.tryParse(timeParts[1]) ?? 0;
+
+              // Calculate the base day for this activity
+              var activityDay = startDate.day + day.dayNumber - 1;
+
+              // If we have a start time and end time is earlier than start time,
+              // the activity spans midnight - end time should be next day
+              if (activityStartTime != null && endHour < activityStartTime.hour) {
+                activityDay += 1; // Move end time to next day
+              }
+
               activityEndTime = DateTime(
                 startDate.year,
                 startDate.month,
-                startDate.day + day.dayNumber - 1,
-                int.tryParse(timeParts[0]) ?? 10,
-                int.tryParse(timeParts[1]) ?? 0,
+                activityDay,
+                endHour,
+                endMinute,
               );
             }
           }
@@ -916,13 +928,11 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Animated sphere during generation
-          AISphereAnimation(
+          // Animated orb during generation
+          AiOrbAnimation(
             size: 200,
             isActive: true,
             soundLevel: 0.5,
-            primaryColor: const Color(0xFF00D9FF),
-            glowColor: const Color(0xFF8B5CF6),
           ),
           const SizedBox(height: 40),
           // Generation status
@@ -1139,12 +1149,10 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              AISphereAnimation(
+              AiOrbAnimation(
                 size: sphereSize,
                 isActive: _isListening,
                 soundLevel: _soundLevel,
-                primaryColor: const Color(0xFF00D9FF),
-                glowColor: const Color(0xFF8B5CF6),
               ),
               if (!_isListening)
                 Container(

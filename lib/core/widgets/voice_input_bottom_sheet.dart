@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/voice_input_service.dart';
-import 'ai_sphere_animation.dart';
+import 'ai_orb_animation.dart';
 
 /// Callback for when voice input is completed
 typedef VoiceInputCallback = void Function(String text);
@@ -308,12 +308,10 @@ class _VoiceInputBottomSheetState extends State<VoiceInputBottomSheet>
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  AISphereAnimation(
+                  AiOrbAnimation(
                     size: 160,
                     isActive: _isListening,
                     soundLevel: _soundLevel,
-                    primaryColor: primaryColor,
-                    glowColor: primaryColor,
                   ),
                   if (!_isListening)
                     Container(

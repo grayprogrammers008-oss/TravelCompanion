@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/services/voice_input_service.dart';
-import '../../../../core/widgets/ai_sphere_animation.dart';
+import '../../../../core/widgets/ai_orb_animation.dart';
 import '../providers/trip_providers.dart';
 
 class VoiceTripPage extends ConsumerStatefulWidget {
@@ -641,13 +641,11 @@ class _VoiceTripPageState extends ConsumerState<VoiceTripPage>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // AI Sphere Animation - Sci-Fi mesh sphere
-              AISphereAnimation(
+              // AI Orb Animation - Beautiful morphing orb with flowing colors
+              AiOrbAnimation(
                 size: sphereSize,
                 isActive: _isListening,
                 soundLevel: _soundLevel,
-                primaryColor: const Color(0xFF00D9FF), // Cyan
-                glowColor: const Color(0xFF00D9FF),
               ),
               // Microphone icon overlay when not listening
               if (!_isListening)

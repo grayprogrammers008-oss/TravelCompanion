@@ -124,8 +124,14 @@ class _TravelCrewAppState extends ConsumerState<TravelCrewApp> {
   void initState() {
     super.initState();
     // Initialize shared location handler for receiving Google Maps shares
-    SharedLocationHandler.initialize();
-    debugPrint('✅ Shared location handler initialized');
+    try {
+      SharedLocationHandler.initialize();
+      debugPrint('✅ Shared location handler initialized');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Failed to initialize SharedLocationHandler: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Continue anyway - sharing feature will be disabled
+    }
   }
 
   @override

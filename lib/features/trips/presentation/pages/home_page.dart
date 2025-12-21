@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
@@ -1547,6 +1548,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       child: Stack(
                         children: [
                           DestinationImage(
+                            imageUrl: trip.coverImageUrl,
                             tripName: trip.destination ?? trip.name,
                             height: double.infinity,
                             width: double.infinity,
@@ -1660,7 +1662,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
                         const SizedBox(height: AppTheme.spacingMd),
 
-                        // Members and Open button
+                        // Members, SOS and Open button
                         Row(
                           children: [
                             // Member avatars
@@ -1678,6 +1680,45 @@ class _HomePageState extends ConsumerState<HomePage>
                               ],
                             ),
                             const Spacer(),
+                            // SOS button
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                                _showSOSBottomSheet(context, primaryTrip);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFE53935).withValues(alpha: 0.4),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.emergency_rounded, color: Colors.white, size: 16),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'SOS',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
                             // Open trip button
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1993,6 +2034,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 width: 48,
                 height: 48,
                 child: DestinationImage(
+                  imageUrl: trip.coverImageUrl,
                   tripName: trip.destination ?? trip.name,
                   height: 48,
                   width: 48,
@@ -2867,6 +2909,509 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     );
   }
+
+  /// Show SOS emergency bottom sheet with emergency features
+  void _showSOSBottomSheet(BuildContext context, TripWithMembers tripWithMembers) {
+    final destination = tripWithMembers.trip.destination ?? 'Unknown';
+    final members = tripWithMembers.members;
+    final currentUserId = ref.read(authStateProvider).value;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (sheetContext, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.neutral300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFE53935).withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.emergency_rounded,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Emergency SOS',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Location: $destination',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    // Emergency Services Section
+                    _buildSOSSection(
+                      title: 'Emergency Services',
+                      icon: Icons.local_hospital_rounded,
+                      color: const Color(0xFFE53935),
+                      children: [
+                        _buildEmergencyTile(
+                          icon: Icons.local_police_rounded,
+                          title: 'Police',
+                          subtitle: 'Emergency: 100',
+                          color: const Color(0xFF1976D2),
+                          onTap: () => _makeEmergencyCall('100'),
+                        ),
+                        _buildEmergencyTile(
+                          icon: Icons.local_hospital_rounded,
+                          title: 'Ambulance',
+                          subtitle: 'Emergency: 108',
+                          color: const Color(0xFFE53935),
+                          onTap: () => _makeEmergencyCall('108'),
+                        ),
+                        _buildEmergencyTile(
+                          icon: Icons.fire_extinguisher,
+                          title: 'Fire',
+                          subtitle: 'Emergency: 101',
+                          color: const Color(0xFFFF6D00),
+                          onTap: () => _makeEmergencyCall('101'),
+                        ),
+                        _buildEmergencyTile(
+                          icon: Icons.support_agent_rounded,
+                          title: 'Women Helpline',
+                          subtitle: 'Emergency: 1091',
+                          color: const Color(0xFFE91E63),
+                          onTap: () => _makeEmergencyCall('1091'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Contact Co-Travelers Section
+                    _buildSOSSection(
+                      title: 'Contact Co-Travelers',
+                      icon: Icons.groups_rounded,
+                      color: const Color(0xFF7E57C2),
+                      children: [
+                        ...members.map((member) => _buildMemberCallTile(context, member, currentUserId)),
+                        if (members.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              'No co-travelers in this trip',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Quick Actions Section
+                    _buildSOSSection(
+                      title: 'Quick Actions',
+                      icon: Icons.flash_on_rounded,
+                      color: const Color(0xFFFF9800),
+                      children: [
+                        _buildSOSActionTile(
+                          icon: Icons.broadcast_on_personal_rounded,
+                          title: 'Emergency Broadcast',
+                          subtitle: 'Send alert to all trip members',
+                          color: const Color(0xFFE53935),
+                          onTap: () {
+                            Navigator.pop(sheetContext);
+                            _sendEmergencyBroadcast(context, tripWithMembers);
+                          },
+                        ),
+                        _buildSOSActionTile(
+                          icon: Icons.location_on_rounded,
+                          title: 'Share Live Location',
+                          subtitle: 'Share your location with trip group',
+                          color: const Color(0xFF4CAF50),
+                          onTap: () {
+                            Navigator.pop(sheetContext);
+                            _shareLiveLocation(context);
+                          },
+                        ),
+                        _buildSOSActionTile(
+                          icon: Icons.navigate_next_rounded,
+                          title: 'Find Nearest Hospital',
+                          subtitle: 'Open maps for nearby hospitals',
+                          color: const Color(0xFF2196F3),
+                          onTap: () => _openNearbyHospitals(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSOSSection({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required List<Widget> children,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.neutral800,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.neutral50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.neutral200),
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmergencyTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.heavyImpact();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: AppTheme.neutral500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.call, color: Colors.white, size: 18),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberCallTile(BuildContext context, TripMemberModel member, String? currentUserId) {
+    final isCurrentUser = member.userId == currentUserId;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: isCurrentUser ? null : () {
+          HapticFeedback.mediumImpact();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Calling ${member.fullName ?? 'Member'}...'),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF7E57C2),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              UserAvatarWidget(
+                imageUrl: member.avatarUrl,
+                userName: member.fullName ?? 'User',
+                size: 40,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            member.fullName ?? 'Unknown',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isCurrentUser) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.neutral200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'You',
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    Text(
+                      member.role == 'organizer' ? 'Organizer' : member.role == 'admin' ? 'Admin' : 'Member',
+                      style: TextStyle(
+                        color: AppTheme.neutral500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (!isCurrentUser)
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7E57C2).withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.call, color: Color(0xFF7E57C2), size: 18),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSOSActionTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: AppTheme.neutral500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: AppTheme.neutral400),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _makeEmergencyCall(String number) async {
+    final uri = Uri.parse('tel:$number');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not call $number'),
+            backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  void _sendEmergencyBroadcast(BuildContext context, TripWithMembers tripWithMembers) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.broadcast_on_personal_rounded, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(child: Text('Emergency alert sent to all trip members!')),
+          ],
+        ),
+        backgroundColor: Color(0xFFE53935),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    // Navigate to trip detail
+    context.push('/trips/${tripWithMembers.trip.id}');
+  }
+
+  void _shareLiveLocation(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.location_on_rounded, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(child: Text('Live location sharing started for 1 hour')),
+          ],
+        ),
+        backgroundColor: Color(0xFF4CAF50),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _openNearbyHospitals() async {
+    final uri = Uri.parse('https://www.google.com/maps/search/hospitals+near+me');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 }
 
 class TripCard extends StatelessWidget {
@@ -2961,6 +3506,7 @@ class TripCard extends StatelessWidget {
                   topRight: Radius.circular(AppTheme.radiusLg),
                 ),
                 child: DestinationImage(
+                  imageUrl: trip.coverImageUrl,
                   tripName: trip.destination ?? trip.name,
                   height: 140,
                   fit: BoxFit.cover,

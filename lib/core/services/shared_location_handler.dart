@@ -12,26 +12,32 @@ class SharedLocationHandler {
 
   /// Initialize the handler to listen for shared content
   static void initialize() {
-    debugPrint('🔗 SharedLocationHandler: Initializing...');
+    try {
+      debugPrint('🔗 SharedLocationHandler: Initializing...');
 
-    // Handle initial share when app is opened via share
-    _handleInitialShare();
+      // Handle initial share when app is opened via share
+      _handleInitialShare();
 
-    // Listen for shares while app is running
-    _mediaSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(
-      (List<SharedMediaFile> value) {
-        debugPrint('🔗 SharedLocationHandler: Received ${value.length} shared items');
-        for (final file in value) {
-          debugPrint('   Type: ${file.type}, Path: ${file.path}');
-          if (file.type == SharedMediaType.text || file.type == SharedMediaType.url) {
-            _processSharedText(file.path);
+      // Listen for shares while app is running
+      _mediaSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(
+        (List<SharedMediaFile> value) {
+          debugPrint('🔗 SharedLocationHandler: Received ${value.length} shared items');
+          for (final file in value) {
+            debugPrint('   Type: ${file.type}, Path: ${file.path}');
+            if (file.type == SharedMediaType.text || file.type == SharedMediaType.url) {
+              _processSharedText(file.path);
+            }
           }
-        }
-      },
-      onError: (error) {
-        debugPrint('❌ SharedLocationHandler: Error receiving shared content: $error');
-      },
-    );
+        },
+        onError: (error) {
+          debugPrint('❌ SharedLocationHandler: Error receiving shared content: $error');
+        },
+      );
+    } catch (e, stackTrace) {
+      debugPrint('❌ SharedLocationHandler: Failed to initialize: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Don't crash - just disable sharing functionality
+    }
   }
 
   /// Set the current context for showing dialogs
@@ -62,8 +68,10 @@ class SharedLocationHandler {
 
       // Clear the intent after processing
       ReceiveSharingIntent.instance.reset();
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('❌ SharedLocationHandler: Error handling initial share: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Don't crash the app on share handling errors
     }
   }
 

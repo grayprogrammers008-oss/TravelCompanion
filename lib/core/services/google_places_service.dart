@@ -1,0 +1,521 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+/// Google Places API Service
+///
+/// Provides autocomplete, place details, and place photos functionality
+/// Uses platform-specific API keys for iOS and Android
+class GooglePlacesService {
+  static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
+  static const Duration _debounceDelay = Duration(milliseconds: 300);
+
+  // Platform-specific API keys
+  static const String _iosApiKey = 'AIzaSyD158eJBqNAV7n5dA857dtEhEu2OGatg5U';
+  static const String _androidApiKey = 'AIzaSyCIcICfzyNy3-ACvBO8oPvtcX9LNGUZUUI';
+
+  final http.Client _client;
+  final Map<String, List<PlacePrediction>> _autocompleteCache = {};
+  final Map<String, PlaceDetails> _detailsCache = {};
+  Timer? _debounceTimer;
+
+  GooglePlacesService({http.Client? client}) : _client = client ?? http.Client();
+
+  /// Get the appropriate API key for the current platform
+  static String get apiKey {
+    if (Platform.isIOS) {
+      return _iosApiKey;
+    } else if (Platform.isAndroid) {
+      return _androidApiKey;
+    }
+    // Fallback for development/testing
+    return _iosApiKey;
+  }
+
+  /// Search for place predictions (autocomplete)
+  ///
+  /// [query] - The search text
+  /// [types] - Filter by place types (e.g., '(cities)', '(regions)', 'geocode')
+  /// [components] - Restrict to country (e.g., 'country:in' for India)
+  Future<List<PlacePrediction>> getAutocomplete({
+    required String query,
+    String? types,
+    String? components,
+    String? sessionToken,
+  }) async {
+    if (query.trim().isEmpty) {
+      return [];
+    }
+
+    final cacheKey = '$query|$types|$components';
+
+    // Check cache
+    if (_autocompleteCache.containsKey(cacheKey)) {
+      return _autocompleteCache[cacheKey]!;
+    }
+
+    try {
+      final params = <String, String>{
+        'input': query,
+        'key': apiKey,
+      };
+
+      if (types != null) params['types'] = types;
+      if (components != null) params['components'] = components;
+      if (sessionToken != null) params['sessiontoken'] = sessionToken;
+
+      final uri = Uri.parse('$_baseUrl/autocomplete/json').replace(
+        queryParameters: params,
+      );
+
+      final response = await _client.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final status = data['status'] as String;
+
+        if (status == 'OK' || status == 'ZERO_RESULTS') {
+          final predictions = (data['predictions'] as List? ?? [])
+              .map((p) => PlacePrediction.fromJson(p as Map<String, dynamic>))
+              .toList();
+
+          // Cache results
+          _autocompleteCache[cacheKey] = predictions;
+
+          return predictions;
+        } else {
+          if (kDebugMode) {
+            debugPrint('Google Places Autocomplete error: $status');
+            if (data['error_message'] != null) {
+              debugPrint('Error message: ${data['error_message']}');
+            }
+          }
+          return [];
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('Google Places HTTP error: ${response.statusCode}');
+        }
+        return [];
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Google Places error: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Search with debouncing for real-time typing
+  void getAutocompleteDebounced({
+    required String query,
+    required void Function(List<PlacePrediction> predictions) onResults,
+    String? types,
+    String? components,
+    String? sessionToken,
+  }) {
+    _debounceTimer?.cancel();
+
+    if (query.trim().isEmpty) {
+      onResults([]);
+      return;
+    }
+
+    _debounceTimer = Timer(_debounceDelay, () async {
+      final results = await getAutocomplete(
+        query: query,
+        types: types,
+        components: components,
+        sessionToken: sessionToken,
+      );
+      onResults(results);
+    });
+  }
+
+  /// Get detailed information about a place
+  Future<PlaceDetails?> getPlaceDetails({
+    required String placeId,
+    String? sessionToken,
+    List<String>? fields,
+  }) async {
+    debugPrint('🔍 [GooglePlacesService] getPlaceDetails called for: $placeId');
+
+    // Check cache
+    if (_detailsCache.containsKey(placeId)) {
+      debugPrint('📦 [GooglePlacesService] Found in memory cache');
+      return _detailsCache[placeId];
+    }
+
+    try {
+      final defaultFields = [
+        'place_id',
+        'name',
+        'formatted_address',
+        'geometry',
+        'photos',
+        'types',
+        'address_components',
+        'url',
+        'website',
+        'rating',
+        'user_ratings_total',
+      ];
+
+      final params = <String, String>{
+        'place_id': placeId,
+        'key': apiKey,
+        'fields': (fields ?? defaultFields).join(','),
+      };
+
+      if (sessionToken != null) params['sessiontoken'] = sessionToken;
+
+      final uri = Uri.parse('$_baseUrl/details/json').replace(
+        queryParameters: params,
+      );
+
+      debugPrint('🌐 [GooglePlacesService] Calling API...');
+
+      final response = await _client.get(uri);
+
+      debugPrint('🌐 [GooglePlacesService] Response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final status = data['status'] as String;
+
+        debugPrint('🌐 [GooglePlacesService] API status: $status');
+
+        if (status == 'OK') {
+          final details = PlaceDetails.fromJson(
+            data['result'] as Map<String, dynamic>,
+          );
+
+          debugPrint('✅ [GooglePlacesService] Got place: ${details.name}');
+          debugPrint('✅ [GooglePlacesService] Photos: ${details.photos.length}');
+
+          // Cache result
+          _detailsCache[placeId] = details;
+
+          return details;
+        } else {
+          debugPrint('❌ [GooglePlacesService] API error status: $status');
+          if (data['error_message'] != null) {
+            debugPrint('❌ [GooglePlacesService] Error message: ${data['error_message']}');
+          }
+          return null;
+        }
+      }
+      debugPrint('❌ [GooglePlacesService] HTTP error: ${response.statusCode}');
+      return null;
+    } catch (e) {
+      debugPrint('❌ [GooglePlacesService] Exception: $e');
+      return null;
+    }
+  }
+
+  /// Get URL for a place photo
+  ///
+  /// [photoReference] - Photo reference from place details
+  /// [maxWidth] - Maximum width in pixels (1-1600)
+  /// [maxHeight] - Maximum height in pixels (1-1600)
+  String getPhotoUrl({
+    required String photoReference,
+    int maxWidth = 400,
+    int? maxHeight,
+  }) {
+    final params = <String, String>{
+      'photoreference': photoReference,
+      'key': apiKey,
+      'maxwidth': maxWidth.toString(),
+    };
+
+    if (maxHeight != null) {
+      params['maxheight'] = maxHeight.toString();
+    }
+
+    return Uri.parse('$_baseUrl/photo')
+        .replace(queryParameters: params)
+        .toString();
+  }
+
+  /// Search for nearby places
+  Future<List<NearbyPlace>> searchNearby({
+    required double latitude,
+    required double longitude,
+    required int radius,
+    String? type,
+    String? keyword,
+  }) async {
+    try {
+      final params = <String, String>{
+        'location': '$latitude,$longitude',
+        'radius': radius.toString(),
+        'key': apiKey,
+      };
+
+      if (type != null) params['type'] = type;
+      if (keyword != null) params['keyword'] = keyword;
+
+      final uri = Uri.parse('$_baseUrl/nearbysearch/json').replace(
+        queryParameters: params,
+      );
+
+      final response = await _client.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final status = data['status'] as String;
+
+        if (status == 'OK' || status == 'ZERO_RESULTS') {
+          return (data['results'] as List? ?? [])
+              .map((p) => NearbyPlace.fromJson(p as Map<String, dynamic>))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Google Places Nearby error: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Clear all caches
+  void clearCache() {
+    _autocompleteCache.clear();
+    _detailsCache.clear();
+  }
+
+  /// Dispose resources
+  void dispose() {
+    _debounceTimer?.cancel();
+    _client.close();
+  }
+}
+
+/// Autocomplete prediction result
+class PlacePrediction {
+  final String placeId;
+  final String description;
+  final String mainText;
+  final String secondaryText;
+  final List<String> types;
+
+  const PlacePrediction({
+    required this.placeId,
+    required this.description,
+    required this.mainText,
+    required this.secondaryText,
+    required this.types,
+  });
+
+  factory PlacePrediction.fromJson(Map<String, dynamic> json) {
+    final structured = json['structured_formatting'] as Map<String, dynamic>? ?? {};
+
+    return PlacePrediction(
+      placeId: json['place_id'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      mainText: structured['main_text'] as String? ?? '',
+      secondaryText: structured['secondary_text'] as String? ?? '',
+      types: (json['types'] as List?)?.cast<String>() ?? [],
+    );
+  }
+
+  /// Check if this is a city/locality
+  bool get isCity => types.any((t) =>
+    t == 'locality' ||
+    t == 'administrative_area_level_2' ||
+    t == 'sublocality'
+  );
+
+  /// Check if this is a country
+  bool get isCountry => types.contains('country');
+
+  /// Check if this is a region/state
+  bool get isRegion => types.any((t) =>
+    t == 'administrative_area_level_1' ||
+    t == 'administrative_area_level_2'
+  );
+
+  /// Get appropriate icon for the place type
+  String get typeIcon {
+    if (isCountry) return '🌍';
+    if (isCity) return '🏙️';
+    if (isRegion) return '📍';
+    if (types.contains('airport')) return '✈️';
+    if (types.contains('natural_feature')) return '🏞️';
+    if (types.contains('point_of_interest')) return '📌';
+    return '📍';
+  }
+
+  @override
+  String toString() => description;
+}
+
+/// Detailed place information
+class PlaceDetails {
+  final String placeId;
+  final String name;
+  final String formattedAddress;
+  final double? latitude;
+  final double? longitude;
+  final List<PlacePhoto> photos;
+  final List<String> types;
+  final String? website;
+  final String? url;
+  final double? rating;
+  final int? userRatingsTotal;
+  final String? city;
+  final String? state;
+  final String? country;
+  final String? countryCode;
+
+  const PlaceDetails({
+    required this.placeId,
+    required this.name,
+    required this.formattedAddress,
+    this.latitude,
+    this.longitude,
+    required this.photos,
+    required this.types,
+    this.website,
+    this.url,
+    this.rating,
+    this.userRatingsTotal,
+    this.city,
+    this.state,
+    this.country,
+    this.countryCode,
+  });
+
+  factory PlaceDetails.fromJson(Map<String, dynamic> json) {
+    final geometry = json['geometry'] as Map<String, dynamic>?;
+    final location = geometry?['location'] as Map<String, dynamic>?;
+    final addressComponents = json['address_components'] as List? ?? [];
+
+    // Extract address components
+    String? city;
+    String? state;
+    String? country;
+    String? countryCode;
+
+    for (final component in addressComponents) {
+      final types = (component['types'] as List?)?.cast<String>() ?? [];
+      final longName = component['long_name'] as String?;
+      final shortName = component['short_name'] as String?;
+
+      if (types.contains('locality')) {
+        city = longName;
+      } else if (types.contains('administrative_area_level_1')) {
+        state = longName;
+      } else if (types.contains('country')) {
+        country = longName;
+        countryCode = shortName;
+      }
+    }
+
+    return PlaceDetails(
+      placeId: json['place_id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      formattedAddress: json['formatted_address'] as String? ?? '',
+      latitude: (location?['lat'] as num?)?.toDouble(),
+      longitude: (location?['lng'] as num?)?.toDouble(),
+      photos: (json['photos'] as List? ?? [])
+          .map((p) => PlacePhoto.fromJson(p as Map<String, dynamic>))
+          .toList(),
+      types: (json['types'] as List?)?.cast<String>() ?? [],
+      website: json['website'] as String?,
+      url: json['url'] as String?,
+      rating: (json['rating'] as num?)?.toDouble(),
+      userRatingsTotal: json['user_ratings_total'] as int?,
+      city: city,
+      state: state,
+      country: country,
+      countryCode: countryCode,
+    );
+  }
+
+  /// Get a short display name
+  String get shortName {
+    final parts = <String>[];
+    if (city != null) parts.add(city!);
+    if (state != null && state != city) parts.add(state!);
+    if (country != null) parts.add(country!);
+    return parts.isEmpty ? name : parts.join(', ');
+  }
+}
+
+/// Place photo reference
+class PlacePhoto {
+  final String photoReference;
+  final int width;
+  final int height;
+  final List<String> htmlAttributions;
+
+  const PlacePhoto({
+    required this.photoReference,
+    required this.width,
+    required this.height,
+    required this.htmlAttributions,
+  });
+
+  factory PlacePhoto.fromJson(Map<String, dynamic> json) {
+    return PlacePhoto(
+      photoReference: json['photo_reference'] as String? ?? '',
+      width: json['width'] as int? ?? 0,
+      height: json['height'] as int? ?? 0,
+      htmlAttributions: (json['html_attributions'] as List?)?.cast<String>() ?? [],
+    );
+  }
+}
+
+/// Nearby place result
+class NearbyPlace {
+  final String placeId;
+  final String name;
+  final String? vicinity;
+  final double? latitude;
+  final double? longitude;
+  final List<String> types;
+  final double? rating;
+  final int? userRatingsTotal;
+  final bool? openNow;
+  final List<PlacePhoto> photos;
+
+  const NearbyPlace({
+    required this.placeId,
+    required this.name,
+    this.vicinity,
+    this.latitude,
+    this.longitude,
+    required this.types,
+    this.rating,
+    this.userRatingsTotal,
+    this.openNow,
+    required this.photos,
+  });
+
+  factory NearbyPlace.fromJson(Map<String, dynamic> json) {
+    final geometry = json['geometry'] as Map<String, dynamic>?;
+    final location = geometry?['location'] as Map<String, dynamic>?;
+    final openingHours = json['opening_hours'] as Map<String, dynamic>?;
+
+    return NearbyPlace(
+      placeId: json['place_id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      vicinity: json['vicinity'] as String?,
+      latitude: (location?['lat'] as num?)?.toDouble(),
+      longitude: (location?['lng'] as num?)?.toDouble(),
+      types: (json['types'] as List?)?.cast<String>() ?? [],
+      rating: (json['rating'] as num?)?.toDouble(),
+      userRatingsTotal: json['user_ratings_total'] as int?,
+      openNow: openingHours?['open_now'] as bool?,
+      photos: (json['photos'] as List? ?? [])
+          .map((p) => PlacePhoto.fromJson(p as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}

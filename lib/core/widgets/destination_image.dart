@@ -6,10 +6,10 @@ import '../theme/app_theme.dart';
 import '../theme/theme_access.dart';
 import '../services/image_service.dart';
 
-/// Premium destination image widget with real images from Unsplash
+/// Premium destination image widget with real images from Google Places
 ///
 /// Features:
-/// - Fetches real destination images from Unsplash API
+/// - Fetches real destination images from Google Places API
 /// - Shows shimmer loading effect while fetching
 /// - Falls back to gradient if image unavailable
 /// - Caches images to reduce API calls
@@ -50,20 +50,32 @@ class _DestinationImageState extends State<DestinationImage> {
   @override
   void initState() {
     super.initState();
+    // Force print to console - this MUST appear
+    print('🚨🚨🚨 [DestinationImage] initState called! tripName=${widget.tripName}, imageUrl=${widget.imageUrl}');
     _loadImage();
   }
 
   Future<void> _loadImage() async {
+    // Using print instead of debugPrint for more reliable console output
+    print('🖼️ [DestinationImage] _loadImage called');
+    print('🖼️ [DestinationImage] imageUrl: ${widget.imageUrl}');
+    print('🖼️ [DestinationImage] tripName: ${widget.tripName}');
+    print('🖼️ [DestinationImage] destination: ${widget.destination}');
+
     // If imageUrl is provided, use it directly
     if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
+      print('🖼️ [DestinationImage] Using provided imageUrl');
       return;
     }
 
-    // Otherwise, try to fetch from Unsplash using destination or tripName
+    // Otherwise, try to fetch from Google Places using destination or tripName
     final searchQuery = widget.destination ?? widget.tripName;
     if (searchQuery == null || searchQuery.isEmpty) {
+      print('🖼️ [DestinationImage] No search query available, skipping fetch');
       return;
     }
+
+    print('🖼️ [DestinationImage] Fetching image for: $searchQuery');
 
     setState(() {
       _isLoading = true;
@@ -72,13 +84,16 @@ class _DestinationImageState extends State<DestinationImage> {
 
     try {
       final url = await _imageService.getDestinationImage(searchQuery);
+      print('🖼️ [DestinationImage] Received URL: ${url != null ? "${url.substring(0, 50)}..." : "null"}');
       if (mounted) {
         setState(() {
           _fetchedImageUrl = url;
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('🖼️ [DestinationImage] Error loading image: $e');
+      print('🖼️ [DestinationImage] Stack: $stackTrace');
       if (mounted) {
         setState(() {
           _hasError = true;
