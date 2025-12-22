@@ -19,17 +19,18 @@ class GooglePlacesService {
   static const String _androidApiKey = 'AIzaSyCIcICfzyNy3-ACvBO8oPvtcX9LNGUZUUI';
 
   // ============================================================
-  // BUDGET CONTROL - Adjust these to control spending
+  // BUDGET CONTROL - Using Google's FREE monthly tiers
   // ============================================================
-  // Pricing (as of Dec 2024):
-  // - Autocomplete: $2.83 per 1000 requests
-  // - Place Details: $17.00 per 1000 requests
-  // - Place Photos: $7.00 per 1000 requests
+  // Google Places API Free Tiers (as of March 2025):
+  // - Autocomplete (Essentials): 10,000 free/month
+  // - Place Details (Essentials): 10,000 free/month
+  // - Place Photos (Enterprise): 1,000 free/month
   //
-  // With these limits (~$0.50/day = ~$15/month):
-  static const int _dailyAutocompleteLimit = 100;  // $0.28/day
-  static const int _dailyDetailsLimit = 10;        // $0.17/day
-  static const int _dailyPhotoLimit = 10;          // $0.07/day
+  // Daily limits set to stay within FREE tier:
+  static const int _dailyAutocompleteLimit = 300;  // 9,000/month (under 10K free)
+  static const int _dailyDetailsLimit = 300;       // 9,000/month (under 10K free)
+  static const int _dailyPhotoLimit = 30;          // 900/month (under 1K free)
+  // Total monthly cost: $0 (all within free tiers!)
   // ============================================================
 
   // SharedPreferences keys for tracking
