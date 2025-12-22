@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Google Places API Service
 ///
 /// Provides autocomplete, place details, and place photos functionality
 /// Uses platform-specific API keys for iOS and Android
+/// Includes usage tracking to stay within budget limits
 class GooglePlacesService {
   static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
   static const Duration _debounceDelay = Duration(milliseconds: 300);
@@ -16,12 +18,99 @@ class GooglePlacesService {
   static const String _iosApiKey = 'AIzaSyD158eJBqNAV7n5dA857dtEhEu2OGatg5U';
   static const String _androidApiKey = 'AIzaSyCIcICfzyNy3-ACvBO8oPvtcX9LNGUZUUI';
 
+  // ============================================================
+  // BUDGET CONTROL - Adjust these to control spending
+  // ============================================================
+  // Pricing (as of Dec 2024):
+  // - Autocomplete: $2.83 per 1000 requests
+  // - Place Details: $17.00 per 1000 requests
+  // - Place Photos: $7.00 per 1000 requests
+  //
+  // With these limits (~$0.50/day = ~$15/month):
+  static const int _dailyAutocompleteLimit = 100;  // $0.28/day
+  static const int _dailyDetailsLimit = 10;        // $0.17/day
+  static const int _dailyPhotoLimit = 10;          // $0.07/day
+  // ============================================================
+
+  // SharedPreferences keys for tracking
+  static const String _prefAutocompleteCount = 'places_autocomplete_count';
+  static const String _prefDetailsCount = 'places_details_count';
+  static const String _prefPhotoCount = 'places_photo_count';
+  static const String _prefLastResetDate = 'places_last_reset_date';
+
   final http.Client _client;
   final Map<String, List<PlacePrediction>> _autocompleteCache = {};
   final Map<String, PlaceDetails> _detailsCache = {};
   Timer? _debounceTimer;
 
+  // In-memory usage counters (synced with SharedPreferences)
+  int _autocompleteCount = 0;
+  int _detailsCount = 0;
+  int _photoCount = 0;
+  bool _initialized = false;
+
   GooglePlacesService({http.Client? client}) : _client = client ?? http.Client();
+
+  /// Initialize usage counters from SharedPreferences
+  Future<void> _ensureInitialized() async {
+    if (_initialized) return;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lastResetDate = prefs.getString(_prefLastResetDate);
+      final today = DateTime.now().toIso8601String().substring(0, 10);
+
+      // Reset counters if it's a new day
+      if (lastResetDate != today) {
+        await prefs.setInt(_prefAutocompleteCount, 0);
+        await prefs.setInt(_prefDetailsCount, 0);
+        await prefs.setInt(_prefPhotoCount, 0);
+        await prefs.setString(_prefLastResetDate, today);
+        _autocompleteCount = 0;
+        _detailsCount = 0;
+        _photoCount = 0;
+        debugPrint('📊 [PlacesAPI] Daily counters reset for $today');
+      } else {
+        _autocompleteCount = prefs.getInt(_prefAutocompleteCount) ?? 0;
+        _detailsCount = prefs.getInt(_prefDetailsCount) ?? 0;
+        _photoCount = prefs.getInt(_prefPhotoCount) ?? 0;
+      }
+
+      _initialized = true;
+      debugPrint('📊 [PlacesAPI] Usage: autocomplete=$_autocompleteCount/$_dailyAutocompleteLimit, details=$_detailsCount/$_dailyDetailsLimit, photos=$_photoCount/$_dailyPhotoLimit');
+    } catch (e) {
+      debugPrint('⚠️ [PlacesAPI] Failed to initialize counters: $e');
+      _initialized = true; // Continue anyway
+    }
+  }
+
+  /// Increment and persist usage counter
+  Future<void> _incrementCounter(String key, int Function() getCount, void Function(int) setCount) async {
+    try {
+      final newCount = getCount() + 1;
+      setCount(newCount);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(key, newCount);
+    } catch (e) {
+      debugPrint('⚠️ [PlacesAPI] Failed to save counter: $e');
+    }
+  }
+
+  /// Check if we can make an autocomplete request
+  bool get canMakeAutocompleteRequest => _autocompleteCount < _dailyAutocompleteLimit;
+
+  /// Check if we can make a details request
+  bool get canMakeDetailsRequest => _detailsCount < _dailyDetailsLimit;
+
+  /// Check if we can make a photo request
+  bool get canMakePhotoRequest => _photoCount < _dailyPhotoLimit;
+
+  /// Get current usage stats
+  Map<String, dynamic> get usageStats => {
+    'autocomplete': {'used': _autocompleteCount, 'limit': _dailyAutocompleteLimit},
+    'details': {'used': _detailsCount, 'limit': _dailyDetailsLimit},
+    'photos': {'used': _photoCount, 'limit': _dailyPhotoLimit},
+  };
 
   /// Get the appropriate API key for the current platform
   static String get apiKey {
@@ -49,11 +138,21 @@ class GooglePlacesService {
       return [];
     }
 
+    // Initialize usage tracking
+    await _ensureInitialized();
+
     final cacheKey = '$query|$types|$components';
 
-    // Check cache
+    // Check cache first (doesn't count against quota)
     if (_autocompleteCache.containsKey(cacheKey)) {
+      debugPrint('📦 [PlacesAPI] Autocomplete cache hit for: $query');
       return _autocompleteCache[cacheKey]!;
+    }
+
+    // Check rate limit
+    if (!canMakeAutocompleteRequest) {
+      debugPrint('🚫 [PlacesAPI] Daily autocomplete limit reached ($_autocompleteCount/$_dailyAutocompleteLimit)');
+      return [];
     }
 
     try {
@@ -72,6 +171,13 @@ class GooglePlacesService {
 
       final response = await _client.get(uri);
 
+      // Count this request
+      await _incrementCounter(
+        _prefAutocompleteCount,
+        () => _autocompleteCount,
+        (v) => _autocompleteCount = v,
+      );
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final status = data['status'] as String;
@@ -83,6 +189,7 @@ class GooglePlacesService {
 
           // Cache results
           _autocompleteCache[cacheKey] = predictions;
+          debugPrint('✅ [PlacesAPI] Autocomplete: $_autocompleteCount/$_dailyAutocompleteLimit used today');
 
           return predictions;
         } else {
@@ -140,12 +247,21 @@ class GooglePlacesService {
     String? sessionToken,
     List<String>? fields,
   }) async {
-    debugPrint('🔍 [GooglePlacesService] getPlaceDetails called for: $placeId');
+    debugPrint('🔍 [PlacesAPI] getPlaceDetails called for: $placeId');
 
-    // Check cache
+    // Initialize usage tracking
+    await _ensureInitialized();
+
+    // Check cache first (doesn't count against quota)
     if (_detailsCache.containsKey(placeId)) {
-      debugPrint('📦 [GooglePlacesService] Found in memory cache');
+      debugPrint('📦 [PlacesAPI] Details cache hit');
       return _detailsCache[placeId];
+    }
+
+    // Check rate limit
+    if (!canMakeDetailsRequest) {
+      debugPrint('🚫 [PlacesAPI] Daily details limit reached ($_detailsCount/$_dailyDetailsLimit)');
+      return null;
     }
 
     try {
@@ -175,42 +291,49 @@ class GooglePlacesService {
         queryParameters: params,
       );
 
-      debugPrint('🌐 [GooglePlacesService] Calling API...');
+      debugPrint('🌐 [PlacesAPI] Calling Details API...');
 
       final response = await _client.get(uri);
 
-      debugPrint('🌐 [GooglePlacesService] Response status: ${response.statusCode}');
+      // Count this request
+      await _incrementCounter(
+        _prefDetailsCount,
+        () => _detailsCount,
+        (v) => _detailsCount = v,
+      );
+
+      debugPrint('🌐 [PlacesAPI] Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final status = data['status'] as String;
 
-        debugPrint('🌐 [GooglePlacesService] API status: $status');
+        debugPrint('🌐 [PlacesAPI] API status: $status');
 
         if (status == 'OK') {
           final details = PlaceDetails.fromJson(
             data['result'] as Map<String, dynamic>,
           );
 
-          debugPrint('✅ [GooglePlacesService] Got place: ${details.name}');
-          debugPrint('✅ [GooglePlacesService] Photos: ${details.photos.length}');
+          debugPrint('✅ [PlacesAPI] Got place: ${details.name}, Photos: ${details.photos.length}');
+          debugPrint('✅ [PlacesAPI] Details: $_detailsCount/$_dailyDetailsLimit used today');
 
           // Cache result
           _detailsCache[placeId] = details;
 
           return details;
         } else {
-          debugPrint('❌ [GooglePlacesService] API error status: $status');
+          debugPrint('❌ [PlacesAPI] API error status: $status');
           if (data['error_message'] != null) {
-            debugPrint('❌ [GooglePlacesService] Error message: ${data['error_message']}');
+            debugPrint('❌ [PlacesAPI] Error message: ${data['error_message']}');
           }
           return null;
         }
       }
-      debugPrint('❌ [GooglePlacesService] HTTP error: ${response.statusCode}');
+      debugPrint('❌ [PlacesAPI] HTTP error: ${response.statusCode}');
       return null;
     } catch (e) {
-      debugPrint('❌ [GooglePlacesService] Exception: $e');
+      debugPrint('❌ [PlacesAPI] Exception: $e');
       return null;
     }
   }
@@ -220,6 +343,9 @@ class GooglePlacesService {
   /// [photoReference] - Photo reference from place details
   /// [maxWidth] - Maximum width in pixels (1-1600)
   /// [maxHeight] - Maximum height in pixels (1-1600)
+  ///
+  /// Note: Each time this URL is loaded, it counts as a photo request.
+  /// The photo limit is tracked when getPhotoUrlWithTracking is used.
   String getPhotoUrl({
     required String photoReference,
     int maxWidth = 400,
@@ -238,6 +364,38 @@ class GooglePlacesService {
     return Uri.parse('$_baseUrl/photo')
         .replace(queryParameters: params)
         .toString();
+  }
+
+  /// Get URL for a place photo with usage tracking
+  ///
+  /// Returns null if daily photo limit is reached.
+  /// Use this when you want to enforce the photo budget limit.
+  Future<String?> getPhotoUrlWithTracking({
+    required String photoReference,
+    int maxWidth = 400,
+    int? maxHeight,
+  }) async {
+    await _ensureInitialized();
+
+    if (!canMakePhotoRequest) {
+      debugPrint('🚫 [PlacesAPI] Daily photo limit reached ($_photoCount/$_dailyPhotoLimit)');
+      return null;
+    }
+
+    // Count this request
+    await _incrementCounter(
+      _prefPhotoCount,
+      () => _photoCount,
+      (v) => _photoCount = v,
+    );
+
+    debugPrint('✅ [PlacesAPI] Photos: $_photoCount/$_dailyPhotoLimit used today');
+
+    return getPhotoUrl(
+      photoReference: photoReference,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+    );
   }
 
   /// Search for nearby places

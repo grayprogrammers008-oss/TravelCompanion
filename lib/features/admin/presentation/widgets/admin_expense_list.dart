@@ -24,7 +24,11 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
     {'value': 'food', 'label': 'Food', 'icon': Icons.restaurant},
     {'value': 'transport', 'label': 'Transport', 'icon': Icons.directions_car},
     {'value': 'accommodation', 'label': 'Stay', 'icon': Icons.hotel},
-    {'value': 'activities', 'label': 'Activities', 'icon': Icons.local_activity},
+    {
+      'value': 'activities',
+      'label': 'Activities',
+      'icon': Icons.local_activity,
+    },
     {'value': 'shopping', 'label': 'Shopping', 'icon': Icons.shopping_bag},
     {'value': 'other', 'label': 'Other', 'icon': Icons.more_horiz},
   ];
@@ -36,9 +40,9 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
   }
 
   ExpenseListParams get _currentParams => ExpenseListParams(
-        search: _searchQuery.isNotEmpty ? _searchQuery : null,
-        category: _selectedCategory,
-      );
+    search: _searchQuery.isNotEmpty ? _searchQuery : null,
+    category: _selectedCategory,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +58,8 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
           child: expensesAsync.when(
             data: (expenses) => _buildExpenseList(context, expenses),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => _buildErrorState(context, error.toString()),
+            error: (error, stack) =>
+                _buildErrorState(context, error.toString()),
           ),
         ),
       ],
@@ -144,17 +149,22 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
                   ),
                   onSelected: (selected) {
                     setState(() {
-                      _selectedCategory = selected ? category['value'] as String? : null;
+                      _selectedCategory = selected
+                          ? category['value'] as String?
+                          : null;
                     });
                   },
-                  selectedColor:
-                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                  selectedColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.15),
                   checkmarkColor: Theme.of(context).colorScheme.primary,
                   labelStyle: TextStyle(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
                         : Colors.grey.shade700,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                   backgroundColor: Colors.white,
                   side: BorderSide(
@@ -172,7 +182,10 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
     );
   }
 
-  Widget _buildExpenseList(BuildContext context, List<AdminExpenseModel> expenses) {
+  Widget _buildExpenseList(
+    BuildContext context,
+    List<AdminExpenseModel> expenses,
+  ) {
     if (expenses.isEmpty) {
       return _buildEmptyState(context);
     }
@@ -201,9 +214,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -217,7 +228,9 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(expense.category).withValues(alpha: 0.15),
+                    color: _getCategoryColor(
+                      expense.category,
+                    ).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -328,10 +341,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
                 const SizedBox(width: 8),
                 Text(
                   'Paid by: ${expense.payerDisplayName}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade700,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
               ],
             ),
@@ -376,10 +386,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
                   expense.transactionDate != null
                       ? DateFormat('MMM d, y').format(expense.transactionDate!)
                       : DateFormat('MMM d, y').format(expense.createdAt),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade500,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                 ),
               ],
             ),
@@ -412,18 +419,14 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
                     onPressed: () => _settleExpense(expense),
                     icon: const Icon(Icons.check_circle_outline, size: 18),
                     label: const Text('Settle All'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.green,
-                    ),
+                    style: TextButton.styleFrom(foregroundColor: Colors.green),
                   ),
                 if (expense.isFullySettled)
                   TextButton.icon(
                     onPressed: () => _unsettleExpense(expense),
                     icon: const Icon(Icons.undo, size: 18),
                     label: const Text('Unsettle'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.orange,
-                    ),
+                    style: TextButton.styleFrom(foregroundColor: Colors.orange),
                   ),
                 const SizedBox(width: 8),
 
@@ -440,9 +443,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
                   onPressed: () => _confirmDeleteExpense(expense),
                   icon: const Icon(Icons.delete_outline, size: 18),
                   label: const Text('Delete'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.error,
-                  ),
+                  style: TextButton.styleFrom(foregroundColor: AppTheme.error),
                 ),
               ],
             ),
@@ -514,10 +515,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -529,11 +527,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 80,
-            color: Colors.red.shade300,
-          ),
+          Icon(Icons.error_outline, size: 80, color: Colors.red.shade300),
           const SizedBox(height: 16),
           Text(
             'Error loading expenses',
@@ -548,10 +542,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
               error,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
               textAlign: TextAlign.center,
             ),
           ),
@@ -625,7 +616,9 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
   // Action methods
   Future<void> _settleExpense(AdminExpenseModel expense) async {
     try {
-      await ref.read(adminExpenseRepositoryProvider).settleExpenseSplits(expense.id);
+      await ref
+          .read(adminExpenseRepositoryProvider)
+          .settleExpenseSplits(expense.id);
       if (context.mounted) {
         ref.invalidate(adminExpensesProvider(_currentParams));
         ScaffoldMessenger.of(context).showSnackBar(
@@ -649,7 +642,9 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
 
   Future<void> _unsettleExpense(AdminExpenseModel expense) async {
     try {
-      await ref.read(adminExpenseRepositoryProvider).unsettleExpenseSplits(expense.id);
+      await ref
+          .read(adminExpenseRepositoryProvider)
+          .unsettleExpenseSplits(expense.id);
       if (context.mounted) {
         ref.invalidate(adminExpensesProvider(_currentParams));
         ScaffoldMessenger.of(context).showSnackBar(
@@ -682,7 +677,9 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
         expense: expense,
         onSave: (title, description, amount, category) async {
           try {
-            await ref.read(adminExpenseRepositoryProvider).updateExpense(
+            await ref
+                .read(adminExpenseRepositoryProvider)
+                .updateExpense(
                   expense.id,
                   title: title,
                   description: description,
@@ -728,9 +725,7 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-              foregroundColor: AppTheme.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.error),
             child: const Text('Delete'),
           ),
         ],
@@ -770,12 +765,15 @@ class _AdminExpenseListState extends ConsumerState<AdminExpenseList> {
 /// Edit Expense Dialog
 class _EditExpenseDialog extends StatefulWidget {
   final AdminExpenseModel expense;
-  final Future<void> Function(String title, String? description, double? amount, String? category) onSave;
+  final Future<void> Function(
+    String title,
+    String? description,
+    double? amount,
+    String? category,
+  )
+  onSave;
 
-  const _EditExpenseDialog({
-    required this.expense,
-    required this.onSave,
-  });
+  const _EditExpenseDialog({required this.expense, required this.onSave});
 
   @override
   State<_EditExpenseDialog> createState() => _EditExpenseDialogState();
@@ -790,9 +788,17 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
 
   static const List<Map<String, dynamic>> _categories = [
     {'value': 'food', 'label': 'Food & Dining', 'icon': Icons.restaurant},
-    {'value': 'transport', 'label': 'Transportation', 'icon': Icons.directions_car},
+    {
+      'value': 'transport',
+      'label': 'Transportation',
+      'icon': Icons.directions_car,
+    },
     {'value': 'accommodation', 'label': 'Accommodation', 'icon': Icons.hotel},
-    {'value': 'activities', 'label': 'Activities', 'icon': Icons.local_activity},
+    {
+      'value': 'activities',
+      'label': 'Activities',
+      'icon': Icons.local_activity,
+    },
     {'value': 'shopping', 'label': 'Shopping', 'icon': Icons.shopping_bag},
     {'value': 'other', 'label': 'Other', 'icon': Icons.more_horiz},
   ];
@@ -801,8 +807,12 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.expense.title);
-    _descriptionController = TextEditingController(text: widget.expense.description ?? '');
-    _amountController = TextEditingController(text: widget.expense.amount.toString());
+    _descriptionController = TextEditingController(
+      text: widget.expense.description ?? '',
+    );
+    _amountController = TextEditingController(
+      text: widget.expense.amount.toString(),
+    );
     _selectedCategory = widget.expense.category;
   }
 
@@ -831,10 +841,7 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
               children: [
                 const Text(
                   'Edit Expense',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 IconButton(
@@ -858,7 +865,9 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
             // Amount Field
             TextField(
               controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: InputDecoration(
                 labelText: 'Amount',
                 border: const OutlineInputBorder(),
@@ -869,7 +878,7 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
 
             // Category Dropdown
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
@@ -929,9 +938,9 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
   Future<void> _handleSave() async {
     final title = _titleController.text.trim();
     if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Title is required')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Title is required')));
       return;
     }
 
@@ -951,7 +960,9 @@ class _EditExpenseDialogState extends State<_EditExpenseDialog> {
 
     await widget.onSave(
       title,
-      _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+      _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
       amount,
       _selectedCategory,
     );

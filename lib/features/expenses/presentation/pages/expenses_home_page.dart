@@ -17,7 +17,15 @@ import '../widgets/payment_options_sheet.dart';
 enum ExpenseFilter { all, trip, standalone }
 
 /// Available expense categories for filtering
-enum ExpenseCategory { all, food, transport, accommodation, activities, shopping, other }
+enum ExpenseCategory {
+  all,
+  food,
+  transport,
+  accommodation,
+  activities,
+  shopping,
+  other,
+}
 
 class ExpensesHomePage extends ConsumerStatefulWidget {
   const ExpensesHomePage({super.key});
@@ -51,9 +59,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         elevation: 0,
         titleSpacing: 0,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: themeData.primaryGradient,
-          ),
+          decoration: BoxDecoration(gradient: themeData.primaryGradient),
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -202,7 +208,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         }
         return _buildExpensesList(expenses);
       },
-      loading: () => const Center(child: AppLoadingIndicator(message: 'Loading expenses...')),
+      loading: () => const Center(
+        child: AppLoadingIndicator(message: 'Loading expenses...'),
+      ),
       error: (error, stack) => _buildErrorState(error.toString()),
     );
   }
@@ -232,17 +240,25 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 120, color: context.textColor.withValues(alpha: 0.2)),
+            Icon(
+              icon,
+              size: 120,
+              color: context.textColor.withValues(alpha: 0.2),
+            ),
             const SizedBox(height: 24),
             Text(
               'No Expenses',
-              style: context.headlineSmall.copyWith(fontWeight: FontWeight.bold),
+              style: context.headlineSmall.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: context.bodyMedium.copyWith(color: context.textColor.withValues(alpha: 0.6)),
+              style: context.bodyMedium.copyWith(
+                color: context.textColor.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
@@ -272,7 +288,10 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
           }).toList();
 
     // Calculate total from filtered expenses
-    final total = filteredExpenses.fold<double>(0, (sum, e) => sum + e.expense.amount);
+    final total = filteredExpenses.fold<double>(
+      0,
+      (sum, e) => sum + e.expense.amount,
+    );
 
     return Column(
       children: [
@@ -283,13 +302,48 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             children: [
-              _buildCategoryChip(ExpenseCategory.all, 'All', Icons.all_inclusive, Colors.grey),
-              _buildCategoryChip(ExpenseCategory.food, 'Food', Icons.restaurant, Colors.orange),
-              _buildCategoryChip(ExpenseCategory.transport, 'Transport', Icons.directions_car, Colors.blue),
-              _buildCategoryChip(ExpenseCategory.accommodation, 'Stay', Icons.hotel, Colors.purple),
-              _buildCategoryChip(ExpenseCategory.activities, 'Activities', Icons.local_activity, Colors.green),
-              _buildCategoryChip(ExpenseCategory.shopping, 'Shopping', Icons.shopping_bag, Colors.pink),
-              _buildCategoryChip(ExpenseCategory.other, 'Other', Icons.receipt, Colors.grey),
+              _buildCategoryChip(
+                ExpenseCategory.all,
+                'All',
+                Icons.all_inclusive,
+                Colors.grey,
+              ),
+              _buildCategoryChip(
+                ExpenseCategory.food,
+                'Food',
+                Icons.restaurant,
+                Colors.orange,
+              ),
+              _buildCategoryChip(
+                ExpenseCategory.transport,
+                'Transport',
+                Icons.directions_car,
+                Colors.blue,
+              ),
+              _buildCategoryChip(
+                ExpenseCategory.accommodation,
+                'Stay',
+                Icons.hotel,
+                Colors.purple,
+              ),
+              _buildCategoryChip(
+                ExpenseCategory.activities,
+                'Activities',
+                Icons.local_activity,
+                Colors.green,
+              ),
+              _buildCategoryChip(
+                ExpenseCategory.shopping,
+                'Shopping',
+                Icons.shopping_bag,
+                Colors.pink,
+              ),
+              _buildCategoryChip(
+                ExpenseCategory.other,
+                'Other',
+                Icons.receipt,
+                Colors.grey,
+              ),
             ],
           ),
         ),
@@ -344,177 +398,207 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                       ),
                       const SizedBox(height: 8),
                       TextButton(
-                        onPressed: () => setState(() => _selectedCategory = ExpenseCategory.all),
+                        onPressed: () => setState(
+                          () => _selectedCategory = ExpenseCategory.all,
+                        ),
                         child: const Text('Clear filter'),
                       ),
                     ],
                   ),
                 )
               : ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: filteredExpenses.length,
-            itemBuilder: (context, index) {
-              final expenseWithSplits = filteredExpenses[index];
-              final expense = expenseWithSplits.expense;
-              final splits = expenseWithSplits.splits;
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: filteredExpenses.length,
+                  itemBuilder: (context, index) {
+                    final expenseWithSplits = filteredExpenses[index];
+                    final expense = expenseWithSplits.expense;
+                    final splits = expenseWithSplits.splits;
 
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: InkWell(
-                  onTap: () => _showExpenseDetails(context, expenseWithSplits),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            // Category icon
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _getCategoryColor(
-                                  expense.category,
-                                ).withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                _getCategoryIcon(expense.category),
-                                color: _getCategoryColor(expense.category),
-                                size: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-
-                            // Title and amount
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: InkWell(
+                        onTap: () =>
+                            _showExpenseDetails(context, expenseWithSplits),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Text(
-                                    expense.title,
-                                    style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                                  // Category icon
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: _getCategoryColor(
+                                        expense.category,
+                                      ).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      _getCategoryIcon(expense.category),
+                                      color: _getCategoryColor(
+                                        expense.category,
+                                      ),
+                                      size: 24,
+                                    ),
                                   ),
-                                  if (expense.category != null)
+                                  const SizedBox(width: 12),
+
+                                  // Title and amount
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          expense.title,
+                                          style: context.titleMedium.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        if (expense.category != null)
+                                          Text(
+                                            expense.category!,
+                                            style: context.bodySmall.copyWith(
+                                              color: context.textColor
+                                                  .withValues(alpha: 0.6),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Amount
+                                  Text(
+                                    expense.amount.toINR(),
+                                    style: context.titleLarge.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 12),
+                              const Divider(height: 1),
+                              const SizedBox(height: 12),
+
+                              // Metadata row
+                              Row(
+                                children: [
+                                  // Trip indicator with name
+                                  if (expense.tripId != null) ...[
+                                    Flexible(
+                                      flex: 0,
+                                      child: Container(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 140,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: context.primaryColor
+                                              .withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.flight,
+                                              size: 12,
+                                              color: context.primaryColor,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Flexible(
+                                              child: Text(
+                                                expense.tripName ?? 'Trip',
+                                                style: context.bodySmall
+                                                    .copyWith(
+                                                      color:
+                                                          context.primaryColor,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 11,
+                                                    ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
+
+                                  // Split info
+                                  Icon(
+                                    Icons.group_outlined,
+                                    size: 14,
+                                    color: context.textColor.withValues(
+                                      alpha: 0.6,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${splits.length} ways',
+                                    style: context.bodySmall.copyWith(
+                                      color: context.textColor.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      fontSize: 11,
+                                    ),
+                                  ),
+
+                                  const Spacer(),
+
+                                  // Date
+                                  if (expense.transactionDate != null)
                                     Text(
-                                      expense.category!,
-                                      style: context.bodySmall.copyWith(color: context.textColor.withValues(alpha: 0.6)),
+                                      expense.transactionDate!
+                                          .toFormattedDate(),
+                                      style: context.bodySmall.copyWith(
+                                        color: context.textColor.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        fontSize: 11,
+                                      ),
                                     ),
                                 ],
                               ),
-                            ),
-
-                            // Amount
-                            Text(
-                              expense.amount.toINR(),
-                              style: context.titleLarge.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.primaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-                        const Divider(height: 1),
-                        const SizedBox(height: 12),
-
-                        // Metadata row
-                        Row(
-                          children: [
-                            // Trip indicator with name
-                            if (expense.tripId != null) ...[
-                              Flexible(
-                                flex: 0,
-                                child: Container(
-                                  constraints: const BoxConstraints(maxWidth: 140),
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: context.primaryColor.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.flight,
-                                        size: 12,
-                                        color: context.primaryColor,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Flexible(
-                                        child: Text(
-                                          expense.tripName ?? 'Trip',
-                                          style: context.bodySmall.copyWith(
-                                            color: context.primaryColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 11,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
                             ],
-
-                            // Split info
-                            Icon(
-                              Icons.group_outlined,
-                              size: 14,
-                              color: context.textColor.withValues(alpha: 0.6),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${splits.length} ways',
-                              style: context.bodySmall.copyWith(
-                                color: context.textColor.withValues(alpha: 0.7),
-                                fontSize: 11,
-                              ),
-                            ),
-
-                            const Spacer(),
-
-                            // Date
-                            if (expense.transactionDate != null)
-                              Text(
-                                expense.transactionDate!.toFormattedDate(),
-                                style: context.bodySmall.copyWith(
-                                  color: context.textColor.withValues(alpha: 0.6),
-                                  fontSize: 11,
-                                ),
-                              ),
-                          ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
       ],
     );
   }
 
   /// Build a category filter chip
-  Widget _buildCategoryChip(ExpenseCategory category, String label, IconData icon, Color color) {
+  Widget _buildCategoryChip(
+    ExpenseCategory category,
+    String label,
+    IconData icon,
+    Color color,
+  ) {
     final isSelected = _selectedCategory == category;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: FilterChip(
         selected: isSelected,
         showCheckmark: false,
-        avatar: Icon(
-          icon,
-          size: 16,
-          color: isSelected ? Colors.white : color,
-        ),
+        avatar: Icon(icon, size: 16, color: isSelected ? Colors.white : color),
         label: Text(
           label,
           style: TextStyle(
@@ -539,7 +623,11 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
   }
 
   /// Build spending breakdown card with Personal vs Trip visualization
-  Widget _buildSpendingBreakdownCard(BuildContext context, List<ExpenseWithSplits> allExpenses, double filteredTotal) {
+  Widget _buildSpendingBreakdownCard(
+    BuildContext context,
+    List<ExpenseWithSplits> allExpenses,
+    double filteredTotal,
+  ) {
     // Calculate Personal vs Trip breakdown from all expenses (not filtered)
     double personalTotal = 0;
     double tripTotal = 0;
@@ -595,7 +683,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
               children: [
                 Text(
                   'Total Expenses',
-                  style: context.titleMedium.copyWith(color: context.surfaceColor),
+                  style: context.titleMedium.copyWith(
+                    color: context.surfaceColor,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -654,9 +744,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                         // Empty state
                         if (total == 0)
                           Expanded(
-                            child: Container(
-                              color: AppTheme.neutral200,
-                            ),
+                            child: Container(color: AppTheme.neutral200),
                           ),
                       ],
                     ),
@@ -679,11 +767,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                       ),
                     ),
                     // Divider
-                    Container(
-                      height: 50,
-                      width: 1,
-                      color: AppTheme.neutral200,
-                    ),
+                    Container(height: 50, width: 1, color: AppTheme.neutral200),
                     // Trip
                     Expanded(
                       child: _buildBreakdownItem(
@@ -749,10 +833,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         const SizedBox(height: 2),
         Text(
           '$count expense${count == 1 ? '' : 's'} • ${percentage.toStringAsFixed(0)}%',
-          style: TextStyle(
-            fontSize: 10,
-            color: AppTheme.neutral500,
-          ),
+          style: TextStyle(fontSize: 10, color: AppTheme.neutral500),
         ),
       ],
     );
@@ -767,16 +848,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
           children: [
             Icon(Icons.error_outline, size: 64, color: context.errorColor),
             const SizedBox(height: 16),
-            Text(
-              'Error loading expenses',
-              style: context.titleLarge,
-            ),
+            Text('Error loading expenses', style: context.titleLarge),
             const SizedBox(height: 8),
-            Text(
-              error,
-              textAlign: TextAlign.center,
-              style: context.bodySmall,
-            ),
+            Text(error, textAlign: TextAlign.center, style: context.bodySmall),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => ref.invalidate(userExpensesProvider),
@@ -825,7 +899,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
               // Title
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingLg,
+                ),
                 child: Row(
                   children: [
                     Container(
@@ -854,7 +930,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
               // Personal expense option
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingLg,
+                ),
                 child: Card(
                   elevation: 0,
                   color: AppTheme.neutral100,
@@ -869,10 +947,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                         color: Colors.orange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
-                      child: const Icon(
-                        Icons.person,
-                        color: Colors.orange,
-                      ),
+                      child: const Icon(Icons.person, color: Colors.orange),
                     ),
                     title: const Text(
                       'Personal Expense',
@@ -900,7 +975,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                   children: [
                     const Expanded(child: Divider()),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingMd,
+                      ),
                       child: Text(
                         'SELECT A TRIP',
                         style: context.bodySmall.copyWith(
@@ -920,7 +997,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                 child: tripsAsync.when(
                   data: (trips) {
                     // Filter to only show active (non-completed) trips
-                    final activeTrips = trips.where((t) => !t.trip.isCompleted).toList();
+                    final activeTrips = trips
+                        .where((t) => !t.trip.isCompleted)
+                        .toList();
 
                     if (activeTrips.isEmpty) {
                       return Center(
@@ -966,7 +1045,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
                     return ListView.builder(
                       controller: scrollController,
-                      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingLg,
+                      ),
                       itemCount: activeTrips.length,
                       itemBuilder: (context, index) {
                         final tripWithMembers = activeTrips[index];
@@ -974,9 +1055,13 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
                         return Card(
                           elevation: 0,
-                          margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+                          margin: const EdgeInsets.only(
+                            bottom: AppTheme.spacingSm,
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusMd,
+                            ),
                             side: BorderSide(color: AppTheme.neutral200),
                           ),
                           child: ListTile(
@@ -985,7 +1070,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                               vertical: AppTheme.spacingXs,
                             ),
                             leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusSm,
+                              ),
                               child: SizedBox(
                                 width: 48,
                                 height: 48,
@@ -998,7 +1085,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                             ),
                             title: Text(
                               trip.name,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1043,8 +1132,12 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: context.primaryColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                color: context.primaryColor.withValues(
+                                  alpha: 0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusFull,
+                                ),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -1082,7 +1175,11 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.error_outline, size: 48, color: context.errorColor),
+                        Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: context.errorColor,
+                        ),
                         const SizedBox(height: AppTheme.spacingMd),
                         Text('Error loading trips', style: context.titleMedium),
                         const SizedBox(height: AppTheme.spacingXs),
@@ -1163,10 +1260,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                 ),
                 child: Column(
                   children: [
-                    Text(
-                      'Total Amount',
-                      style: context.bodyMedium,
-                    ),
+                    Text('Total Amount', style: context.bodyMedium),
                     const SizedBox(height: 4),
                     Text(
                       expense.amount.toINR(),
@@ -1196,7 +1290,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
               // Splits
               Text(
                 'Split Details',
-                style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                style: context.titleMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 12),
 
@@ -1223,7 +1319,10 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                           ),
                           // Settlement status badge
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: split.isSettled
                                   ? context.successColor.withValues(alpha: 0.1)
@@ -1235,7 +1334,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: split.isSettled ? context.successColor : Colors.orange,
+                                color: split.isSettled
+                                    ? context.successColor
+                                    : Colors.orange,
                               ),
                             ),
                           ),
@@ -1304,7 +1405,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text('Expense deleted successfully'),
+                                  content: const Text(
+                                    'Expense deleted successfully',
+                                  ),
                                   backgroundColor: context.successColor,
                                 ),
                               );
@@ -1322,7 +1425,10 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                         }
                       },
                       icon: Icon(Icons.delete, color: context.errorColor),
-                      label: Text('Delete', style: TextStyle(color: context.errorColor)),
+                      label: Text(
+                        'Delete',
+                        style: TextStyle(color: context.errorColor),
+                      ),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: context.errorColor),
                       ),
@@ -1338,15 +1444,30 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
   }
 
   /// Show edit expense dialog
-  void _showEditExpenseDialog(BuildContext context, WidgetRef ref, ExpenseModel expense) {
+  void _showEditExpenseDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ExpenseModel expense,
+  ) {
     final titleController = TextEditingController(text: expense.title);
-    final amountController = TextEditingController(text: expense.amount.toString());
-    final descriptionController = TextEditingController(text: expense.description ?? '');
+    final amountController = TextEditingController(
+      text: expense.amount.toString(),
+    );
+    final descriptionController = TextEditingController(
+      text: expense.description ?? '',
+    );
     String? selectedCategory = expense.category;
     DateTime? transactionDate = expense.transactionDate;
     bool isLoading = false;
 
-    final categories = ['Food', 'Transport', 'Accommodation', 'Activities', 'Shopping', 'Other'];
+    final categories = [
+      'Food',
+      'Transport',
+      'Accommodation',
+      'Activities',
+      'Shopping',
+      'Other',
+    ];
 
     showDialog(
       context: context,
@@ -1390,16 +1511,20 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                     prefixIcon: Icon(Icons.currency_rupee),
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   enabled: !isLoading,
                 ),
                 const SizedBox(height: 16),
 
                 // Category
                 DropdownButtonFormField<String>(
-                  value: selectedCategory != null
+                  initialValue: selectedCategory != null
                       ? categories.firstWhere(
-                          (c) => c.toLowerCase() == selectedCategory!.toLowerCase(),
+                          (c) =>
+                              c.toLowerCase() ==
+                              selectedCategory!.toLowerCase(),
                           orElse: () => categories.last,
                         )
                       : null,
@@ -1408,26 +1533,38 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                     prefixIcon: Icon(Icons.category),
                     border: OutlineInputBorder(),
                   ),
-                  items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
-                  onChanged: isLoading ? null : (value) {
-                    setDialogState(() => selectedCategory = value?.toLowerCase());
-                  },
+                  items: categories
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                      .toList(),
+                  onChanged: isLoading
+                      ? null
+                      : (value) {
+                          setDialogState(
+                            () => selectedCategory = value?.toLowerCase(),
+                          );
+                        },
                 ),
                 const SizedBox(height: 16),
 
                 // Date
                 InkWell(
-                  onTap: isLoading ? null : () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: transactionDate ?? DateTime.now(),
-                      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                      lastDate: DateTime.now().add(const Duration(days: 30)),
-                    );
-                    if (picked != null) {
-                      setDialogState(() => transactionDate = picked);
-                    }
-                  },
+                  onTap: isLoading
+                      ? null
+                      : () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: transactionDate ?? DateTime.now(),
+                            firstDate: DateTime.now().subtract(
+                              const Duration(days: 365),
+                            ),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 30),
+                            ),
+                          );
+                          if (picked != null) {
+                            setDialogState(() => transactionDate = picked);
+                          }
+                        },
                   child: InputDecorator(
                     decoration: const InputDecoration(
                       labelText: 'Date',
@@ -1463,68 +1600,82 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: isLoading ? null : () async {
-                // Validate
-                if (titleController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter a title')),
-                  );
-                  return;
-                }
-                final amount = double.tryParse(amountController.text.trim());
-                if (amount == null || amount <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter a valid amount')),
-                  );
-                  return;
-                }
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      // Validate
+                      if (titleController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please enter a title')),
+                        );
+                        return;
+                      }
+                      final amount = double.tryParse(
+                        amountController.text.trim(),
+                      );
+                      if (amount == null || amount <= 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please enter a valid amount'),
+                          ),
+                        );
+                        return;
+                      }
 
-                setDialogState(() => isLoading = true);
+                      setDialogState(() => isLoading = true);
 
-                try {
-                  await ref.read(expenseControllerProvider.notifier).updateExpense(
-                    expenseId: expense.id,
-                    title: titleController.text.trim(),
-                    description: descriptionController.text.trim().isEmpty
-                        ? null
-                        : descriptionController.text.trim(),
-                    amount: amount,
-                    category: selectedCategory,
-                    transactionDate: transactionDate,
-                  );
+                      try {
+                        await ref
+                            .read(expenseControllerProvider.notifier)
+                            .updateExpense(
+                              expenseId: expense.id,
+                              title: titleController.text.trim(),
+                              description:
+                                  descriptionController.text.trim().isEmpty
+                                  ? null
+                                  : descriptionController.text.trim(),
+                              amount: amount,
+                              category: selectedCategory,
+                              transactionDate: transactionDate,
+                            );
 
-                  ref.invalidate(userExpensesProvider);
-                  ref.invalidate(standaloneExpensesProvider);
-                  if (expense.tripId != null) {
-                    ref.invalidate(tripExpensesProvider(expense.tripId!));
-                  }
+                        ref.invalidate(userExpensesProvider);
+                        ref.invalidate(standaloneExpensesProvider);
+                        if (expense.tripId != null) {
+                          ref.invalidate(tripExpensesProvider(expense.tripId!));
+                        }
 
-                  if (dialogContext.mounted) {
-                    Navigator.pop(dialogContext);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Expense updated successfully'),
-                        backgroundColor: context.successColor,
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  setDialogState(() => isLoading = false);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error: ${e.toString()}'),
-                        backgroundColor: context.errorColor,
-                      ),
-                    );
-                  }
-                }
-              },
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text(
+                                'Expense updated successfully',
+                              ),
+                              backgroundColor: context.successColor,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => isLoading = false);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: ${e.toString()}'),
+                              backgroundColor: context.errorColor,
+                            ),
+                          );
+                        }
+                      }
+                    },
               child: isLoading
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Text('Save'),
             ),
@@ -1620,10 +1771,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          'Paid',
-                                          style: context.bodySmall,
-                                        ),
+                                        Text('Paid', style: context.bodySmall),
                                         Text(
                                           balance.totalPaid.toINR(),
                                           style: context.titleSmall,
@@ -1634,10 +1782,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          'Owes',
-                                          style: context.bodySmall,
-                                        ),
+                                        Text('Owes', style: context.bodySmall),
                                         Text(
                                           balance.totalOwed.toINR(),
                                           style: context.titleSmall,
@@ -1656,7 +1801,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                           balance.balance.abs().toINR(),
                                           style: context.titleMedium.copyWith(
                                             color: isZero
-                                                ? context.textColor.withValues(alpha: 0.5)
+                                                ? context.textColor.withValues(
+                                                    alpha: 0.5,
+                                                  )
                                                 : isPositive
                                                 ? context.successColor
                                                 : context.errorColor,
@@ -1690,30 +1837,41 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                           child: ElevatedButton.icon(
                                             onPressed: () async {
                                               // Prompt for UPI ID
-                                              final upiId = await _showUPIInputDialog(
-                                                context,
-                                                balance.userName,
-                                              );
+                                              final upiId =
+                                                  await _showUPIInputDialog(
+                                                    context,
+                                                    balance.userName,
+                                                  );
 
-                                              if (upiId != null && upiId.isNotEmpty && mounted && context.mounted) {
+                                              if (upiId != null &&
+                                                  upiId.isNotEmpty &&
+                                                  mounted &&
+                                                  context.mounted) {
                                                 PaymentOptionsSheet.show(
                                                   context,
                                                   recipientUPIId: upiId,
-                                                  recipientName: balance.userName,
+                                                  recipientName:
+                                                      balance.userName,
                                                   amount: balance.balance.abs(),
-                                                  note: 'Settlement for shared expenses',
+                                                  note:
+                                                      'Settlement for shared expenses',
                                                 );
                                               }
                                             },
-                                            icon: const Icon(Icons.payment, size: 18),
+                                            icon: const Icon(
+                                              Icons.payment,
+                                              size: 18,
+                                            ),
                                             label: const Text('Pay Now'),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: context.successColor,
+                                              backgroundColor:
+                                                  context.successColor,
                                               foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 10,
-                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 10,
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -1723,22 +1881,36 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                           child: OutlinedButton.icon(
                                             onPressed: () {
                                               // TODO: Implement request payment notification
-                                              ScaffoldMessenger.of(context).showSnackBar(
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
                                                 SnackBar(
-                                                  content: Text('Payment request sent to ${balance.userName}'),
-                                                  backgroundColor: context.successColor,
+                                                  content: Text(
+                                                    'Payment request sent to ${balance.userName}',
+                                                  ),
+                                                  backgroundColor:
+                                                      context.successColor,
                                                 ),
                                               );
                                             },
-                                            icon: const Icon(Icons.request_page, size: 18),
-                                            label: const Text('Request Payment'),
+                                            icon: const Icon(
+                                              Icons.request_page,
+                                              size: 18,
+                                            ),
+                                            label: const Text(
+                                              'Request Payment',
+                                            ),
                                             style: OutlinedButton.styleFrom(
-                                              foregroundColor: context.primaryColor,
-                                              side: BorderSide(color: context.primaryColor),
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 10,
+                                              foregroundColor:
+                                                  context.primaryColor,
+                                              side: BorderSide(
+                                                color: context.primaryColor,
                                               ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 10,
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -1752,8 +1924,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                       },
                     );
                   },
-                  loading: () =>
-                      const Center(child: AppLoadingIndicator(message: 'Loading balances...')),
+                  loading: () => const Center(
+                    child: AppLoadingIndicator(message: 'Loading balances...'),
+                  ),
                   error: (error, stack) =>
                       Center(child: Text('Error: ${error.toString()}')),
                 ),
@@ -1765,7 +1938,10 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
     );
   }
 
-  Future<String?> _showUPIInputDialog(BuildContext context, String userName) async {
+  Future<String?> _showUPIInputDialog(
+    BuildContext context,
+    String userName,
+  ) async {
     final controller = TextEditingController();
     return showDialog<String>(
       context: context,

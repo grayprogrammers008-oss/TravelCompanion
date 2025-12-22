@@ -16,10 +16,7 @@ import '../providers/template_providers.dart';
 class TemplateDetailPage extends ConsumerStatefulWidget {
   final String templateId;
 
-  const TemplateDetailPage({
-    super.key,
-    required this.templateId,
-  });
+  const TemplateDetailPage({super.key, required this.templateId});
 
   @override
   ConsumerState<TemplateDetailPage> createState() => _TemplateDetailPageState();
@@ -74,7 +71,11 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
     );
   }
 
-  Widget _buildContent(BuildContext context, TripTemplate template, dynamic themeData) {
+  Widget _buildContent(
+    BuildContext context,
+    TripTemplate template,
+    dynamic themeData,
+  ) {
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) {
         return [
@@ -90,7 +91,11 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
                   color: Colors.black.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               onPressed: () => context.pop(),
             ),
@@ -146,7 +151,9 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
                           ),
                           decoration: BoxDecoration(
                             color: template.category.color,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusFull,
+                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -247,7 +254,11 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
     );
   }
 
-  Widget _buildOverviewSection(BuildContext context, TripTemplate template, dynamic themeData) {
+  Widget _buildOverviewSection(
+    BuildContext context,
+    TripTemplate template,
+    dynamic themeData,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       color: Colors.white,
@@ -298,7 +309,9 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
               style: ElevatedButton.styleFrom(
                 backgroundColor: themeData.primaryColor,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppTheme.spacingMd,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
@@ -354,7 +367,8 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (template.description != null && template.description!.isNotEmpty) ...[
+          if (template.description != null &&
+              template.description!.isNotEmpty) ...[
             Text(
               'About This Trip',
               style: context.titleStyle.copyWith(
@@ -471,7 +485,8 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
                     context,
                     icon: Icons.star,
                     iconColor: Colors.amber,
-                    label: '${template.rating.toStringAsFixed(1)} rating (${template.ratingCount} reviews)',
+                    label:
+                        '${template.rating.toStringAsFixed(1)} rating (${template.ratingCount} reviews)',
                   ),
                 ],
               ],
@@ -490,7 +505,11 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
   }) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: iconColor ?? context.textColor.withValues(alpha: 0.6)),
+        Icon(
+          icon,
+          size: 18,
+          color: iconColor ?? context.textColor.withValues(alpha: 0.6),
+        ),
         const SizedBox(width: AppTheme.spacingSm),
         Text(
           label,
@@ -510,11 +529,7 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.route_outlined,
-              size: 64,
-              color: AppTheme.neutral300,
-            ),
+            Icon(Icons.route_outlined, size: 64, color: AppTheme.neutral300),
             const SizedBox(height: AppTheme.spacingMd),
             Text(
               'No itinerary available',
@@ -589,7 +604,10 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
     );
   }
 
-  Widget _buildItineraryItemCard(BuildContext context, TemplateItineraryItem item) {
+  Widget _buildItineraryItemCard(
+    BuildContext context,
+    TemplateItineraryItem item,
+  ) {
     return Container(
       margin: const EdgeInsets.only(
         left: AppTheme.spacingLg,
@@ -740,7 +758,10 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
     );
   }
 
-  Widget _buildChecklistCard(BuildContext context, TemplateChecklist checklist) {
+  Widget _buildChecklistCard(
+    BuildContext context,
+    TemplateChecklist checklist,
+  ) {
     final items = checklist.items ?? [];
 
     return Container(
@@ -754,7 +775,9 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           initiallyExpanded: true,
-          tilePadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+          tilePadding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+          ),
           title: Row(
             children: [
               Container(
@@ -840,7 +863,9 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
                             ),
                             decoration: BoxDecoration(
                               color: Colors.red.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusXs,
+                              ),
                             ),
                             child: Text(
                               'Essential',
@@ -889,11 +914,7 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
               ),
             ),
             const SizedBox(height: AppTheme.spacingLg),
-            Icon(
-              Icons.auto_awesome,
-              size: 48,
-              color: context.primaryColor,
-            ),
+            Icon(Icons.auto_awesome, size: 48, color: context.primaryColor),
             const SizedBox(height: AppTheme.spacingMd),
             Text(
               'Use This Template',
@@ -933,7 +954,9 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
                 icon: const Icon(Icons.add_circle_outline),
                 label: const Text('Create New Trip'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacingMd,
+                  ),
                 ),
               ),
             ),
@@ -942,10 +965,12 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacingMd,
+                  ),
                 ),
+                child: const Text('Cancel'),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).padding.bottom),
@@ -960,11 +985,7 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: AppTheme.neutral400,
-          ),
+          Icon(Icons.search_off, size: 64, color: AppTheme.neutral400),
           const SizedBox(height: AppTheme.spacingLg),
           Text(
             'Template Not Found',
@@ -998,11 +1019,7 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppTheme.error,
-            ),
+            Icon(Icons.error_outline, size: 64, color: AppTheme.error),
             const SizedBox(height: AppTheme.spacingLg),
             Text(
               'Failed to Load Template',
@@ -1047,11 +1064,12 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Colors.white,
-      child: tabBar,
-    );
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(color: Colors.white, child: tabBar);
   }
 
   @override
