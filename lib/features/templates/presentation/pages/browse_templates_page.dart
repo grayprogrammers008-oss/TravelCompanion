@@ -80,23 +80,51 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
           },
           child: CustomScrollView(
             slivers: [
-              // Compact header with permanent search bar
+              // Personalized header matching Home Page design
               SliverAppBar(
                 expandedHeight: 180,
                 floating: true,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
                 elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.go('/home');
-                    }
-                  },
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: AppTheme.spacingSm),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/home');
+                      }
+                    },
+                  ),
                 ),
+                leadingWidth: 60,
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Trip Templates',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      'Ready-made travel plans',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+                centerTitle: false,
+                titleSpacing: 4,
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Container(
@@ -107,80 +135,42 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
                       bottom: false,
                       child: Column(
                         children: [
-                          // Top row: Back button space + Title
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              56, // Space for back button
-                              AppTheme.spacingSm,
-                              AppTheme.spacingMd,
-                              0,
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(AppTheme.spacingSm),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: const Icon(
-                                    Icons.auto_awesome,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text(
-                                        'Trip Templates',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Pre-built itineraries',
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.8),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Spacer for the toolbar area
+                          const SizedBox(height: kToolbarHeight),
                           // Search bar row
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
                               AppTheme.spacingMd,
                               AppTheme.spacingSm,
                               AppTheme.spacingMd,
-                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
                             ),
                             child: Container(
                               height: 44,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.08),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: TextField(
                                 controller: _searchController,
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                style: TextStyle(
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w500,
+                                  color: AppTheme.neutral900,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'Search templates...',
+                                  hintText: 'Search templates ✨',
                                   hintStyle: TextStyle(
                                     color: AppTheme.neutral400,
-                                    fontSize: 14,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.symmetric(
@@ -188,16 +178,16 @@ class _BrowseTemplatesPageState extends ConsumerState<BrowseTemplatesPage>
                                     vertical: 12,
                                   ),
                                   prefixIcon: Icon(
-                                    Icons.search,
-                                    color: AppTheme.neutral400,
-                                    size: 20,
+                                    Icons.search_rounded,
+                                    color: themeData.primaryColor,
+                                    size: 22,
                                   ),
                                   suffixIcon: _searchController.text.isNotEmpty
                                       ? IconButton(
                                           icon: Icon(
-                                            Icons.clear,
+                                            Icons.clear_rounded,
                                             color: AppTheme.neutral400,
-                                            size: 18,
+                                            size: 20,
                                           ),
                                           onPressed: () {
                                             setState(() {

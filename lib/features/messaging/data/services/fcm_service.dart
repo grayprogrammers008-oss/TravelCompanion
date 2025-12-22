@@ -11,12 +11,28 @@ class FCMService {
   factory FCMService() => _instance;
   FCMService._internal();
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  // Lazy-initialized to avoid accessing FirebaseMessaging before Firebase.initializeApp()
+  FirebaseMessaging? _firebaseMessaging;
+  FirebaseMessaging get firebaseMessaging =>
+      _firebaseMessaging ??= FirebaseMessaging.instance;
+
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
   bool _isInitialized = false;
   String? _fcmToken;
+
+  /// Reset singleton state - call this before reinitializing after app restart
+  /// This clears stale state from previous debug sessions
+  void reset() {
+    debugPrint('🔄 [FCM] Resetting FCM service state...');
+    _isInitialized = false;
+    _fcmToken = null;
+    _firebaseMessaging = null; // Force re-fetch from Firebase
+    onNotificationTapped = null;
+    onMessageReceived = null;
+    onTokenRefresh = null;
+  }
 
   /// Callback for when a notification is tapped (foreground)
   Function(Map<String, dynamic> data)? onNotificationTapped;
@@ -37,12 +53,29 @@ class FCMService {
     try {
       debugPrint('🔵 [FCM] Initializing FCM service...');
 
-      // Ensure Firebase is initialized (safe to call multiple times)
+      // Ensure Firebase is initialized - this MUST succeed for FCM to work
+      bool firebaseReady = false;
       try {
-        await Firebase.initializeApp();
+        // Check if Firebase is already initialized
+        Firebase.app();
+        firebaseReady = true;
+        debugPrint('   ℹ️ Firebase already initialized');
       } catch (e) {
-        // Firebase might already be initialized, that's OK
-        debugPrint('   ℹ️ Firebase already initialized or init error: $e');
+        // Firebase not initialized, try to initialize it
+        try {
+          await Firebase.initializeApp();
+          firebaseReady = true;
+          debugPrint('   ✅ Firebase initialized by FCMService');
+        } catch (initError) {
+          debugPrint('   ❌ Firebase initialization failed: $initError');
+          // Cannot continue without Firebase
+          return;
+        }
+      }
+
+      if (!firebaseReady) {
+        debugPrint('   ❌ Firebase not ready, cannot initialize FCM');
+        return;
       }
 
       // Request notification permissions
@@ -53,7 +86,7 @@ class FCMService {
 
       // Get FCM token - with extra error handling for iOS cold start
       try {
-        _fcmToken = await _firebaseMessaging.getToken();
+        _fcmToken = await firebaseMessaging.getToken();
         debugPrint('   ✅ FCM Token: $_fcmToken');
       } catch (e) {
         debugPrint('   ⚠️ Failed to get FCM token: $e');
@@ -61,7 +94,7 @@ class FCMService {
       }
 
       // Listen to token refresh
-      _firebaseMessaging.onTokenRefresh.listen((token) {
+      firebaseMessaging.onTokenRefresh.listen((token) {
         debugPrint('🔄 [FCM] Token refreshed: $token');
         _fcmToken = token;
         onTokenRefresh?.call(token);
@@ -75,7 +108,7 @@ class FCMService {
 
       // Check for initial message (app opened from terminated state)
       try {
-        final initialMessage = await _firebaseMessaging.getInitialMessage();
+        final initialMessage = await firebaseMessaging.getInitialMessage();
         if (initialMessage != null) {
           debugPrint('📬 [FCM] App opened from terminated state');
           _handleMessageOpenedApp(initialMessage);
@@ -99,7 +132,7 @@ class FCMService {
     try {
       debugPrint('   🔵 Requesting notification permissions...');
 
-      final settings = await _firebaseMessaging.requestPermission(
+      final settings = await firebaseMessaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -273,14 +306,14 @@ class FCMService {
 
   /// Get current notification settings
   Future<NotificationSettings> getNotificationSettings() async {
-    return await _firebaseMessaging.getNotificationSettings();
+    return await firebaseMessaging.getNotificationSettings();
   }
 
   /// Subscribe to topic
   Future<void> subscribeToTopic(String topic) async {
     try {
       debugPrint('🔵 [FCM] Subscribing to topic: $topic');
-      await _firebaseMessaging.subscribeToTopic(topic);
+      await firebaseMessaging.subscribeToTopic(topic);
       debugPrint('✅ [FCM] Subscribed to topic: $topic');
     } catch (e) {
       debugPrint('❌ [FCM] Failed to subscribe to topic: $e');
@@ -291,7 +324,7 @@ class FCMService {
   Future<void> unsubscribeFromTopic(String topic) async {
     try {
       debugPrint('🔵 [FCM] Unsubscribing from topic: $topic');
-      await _firebaseMessaging.unsubscribeFromTopic(topic);
+      await firebaseMessaging.unsubscribeFromTopic(topic);
       debugPrint('✅ [FCM] Unsubscribed from topic: $topic');
     } catch (e) {
       debugPrint('❌ [FCM] Failed to unsubscribe from topic: $e');
@@ -302,7 +335,7 @@ class FCMService {
   Future<void> setBadgeCount(int count) async {
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
-        await _firebaseMessaging.setAutoInitEnabled(true);
+        await firebaseMessaging.setAutoInitEnabled(true);
         // iOS badge is typically managed by APNs
         debugPrint('📱 [FCM] Badge count set to: $count');
       }

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,13 +34,28 @@ void main() async {
     debugPrint('Stack trace: ${details.stack}');
   };
 
-  WidgetsFlutterBinding.ensureInitialized();
+  // Ensure bindings are initialized first (critical for all subsequent operations)
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    debugPrint('✅ WidgetsFlutterBinding initialized');
+  } catch (e) {
+    debugPrint('❌ Failed to initialize WidgetsFlutterBinding: $e');
+    // Can't continue without bindings - this is fatal
+    return;
+  }
 
   // Initialize Firebase (skip on web - requires separate configuration)
   if (!kIsWeb) {
     try {
-      await Firebase.initializeApp();
-      debugPrint('✅ Firebase initialized successfully');
+      // Check if Firebase is already initialized (handles hot restart in debug mode)
+      try {
+        Firebase.app();
+        debugPrint('ℹ️ Firebase already initialized (reusing existing instance)');
+      } catch (_) {
+        // Not initialized yet, initialize now
+        await Firebase.initializeApp();
+        debugPrint('✅ Firebase initialized successfully');
+      }
 
       // Register background message handler
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -67,6 +82,13 @@ void main() async {
 
   // Initialize Hive for local storage
   try {
+    // First, try to close any stale Hive instances from previous crash
+    try {
+      await Hive.close();
+    } catch (_) {
+      // Ignore - Hive might not be initialized yet
+    }
+
     await Hive.initFlutter();
     debugPrint('✅ Hive initialized successfully');
   } catch (e, stackTrace) {
@@ -75,7 +97,9 @@ void main() async {
     // Try to recover by clearing Hive data
     try {
       debugPrint('🔄 Attempting Hive recovery...');
-      await Hive.close();
+      try {
+        await Hive.close();
+      } catch (_) {}
       await Hive.initFlutter();
       debugPrint('✅ Hive recovered successfully');
     } catch (recoveryError) {
@@ -115,6 +139,7 @@ void main() async {
     // Continue anyway - notifications will be disabled
   }
 
+  // Run the app
   runApp(
     // ProviderScope enables Riverpod state management
     const ProviderScope(child: TravelCrewApp()),

@@ -573,6 +573,54 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
     }
   }
 
+  /// Get contextual subtitle based on available trips
+  String _getExploreSubtitle(List<TripWithMembers> trips) {
+    if (trips.isEmpty) {
+      return 'Discover amazing adventures';
+    }
+
+    // Count trips starting soon (within 30 days)
+    final now = DateTime.now();
+    final upcomingTrips = trips.where((t) {
+      final startDate = t.trip.startDate;
+      if (startDate == null) return false;
+      final daysUntil = startDate.difference(now).inDays;
+      return daysUntil >= 0 && daysUntil <= 30;
+    }).toList();
+
+    // Get unique destinations
+    final destinations = trips
+        .map((t) => t.trip.destination)
+        .where((d) => d != null && d.isNotEmpty)
+        .toSet()
+        .take(3)
+        .toList();
+
+    // Priority 1: Show upcoming trips count
+    if (upcomingTrips.isNotEmpty) {
+      if (upcomingTrips.length == 1) {
+        final trip = upcomingTrips.first;
+        final daysUntil = trip.trip.startDate!.difference(now).inDays;
+        if (daysUntil == 0) {
+          return '${trip.trip.destination ?? "A trip"} starts today!';
+        } else if (daysUntil == 1) {
+          return '${trip.trip.destination ?? "A trip"} starts tomorrow';
+        } else {
+          return '${trip.trip.destination ?? "A trip"} in $daysUntil days';
+        }
+      }
+      return '${upcomingTrips.length} trips starting soon';
+    }
+
+    // Priority 2: Show total trips with popular destinations
+    if (destinations.isNotEmpty) {
+      return '${trips.length} trips · ${destinations.first}${destinations.length > 1 ? " & more" : ""}';
+    }
+
+    // Default: Show count
+    return '${trips.length} ${trips.length == 1 ? "adventure" : "adventures"} waiting';
+  }
+
   /// Build profile avatar for the app bar leading widget
   Widget _buildProfileAvatar(WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
@@ -644,15 +692,45 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
           },
           child: CustomScrollView(
             slivers: [
-              // Compact header with permanent search bar
+              // Personalized header matching Home Page design
               SliverAppBar(
                 expandedHeight: 140,
                 floating: true,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
                 elevation: 0,
-                leading: _buildProfileAvatar(ref),
-                leadingWidth: 64,
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: AppTheme.spacingSm),
+                  child: _buildProfileAvatar(ref),
+                ),
+                leadingWidth: 60,
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Explore',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      discoverableTripsAsync.maybeWhen(
+                        data: (trips) => _getExploreSubtitle(trips),
+                        orElse: () => 'Finding adventures...',
+                      ),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+                centerTitle: false,
+                titleSpacing: 4,
                 actions: [
                   // Settings Icon
                   IconButton(
@@ -660,6 +738,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                     onPressed: () => context.push('/settings'),
                     tooltip: 'Settings',
                   ),
+                  const SizedBox(width: AppTheme.spacingXs),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
@@ -671,84 +750,46 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                       bottom: false,
                       child: Column(
                         children: [
-                          // Top row: Avatar space + Title + Actions space
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              64, // Space for profile avatar
-                              AppTheme.spacingSm,
-                              56, // Space for settings button
-                              0,
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(AppTheme.spacingSm),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: const Icon(
-                                    Icons.explore,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text(
-                                        'Explore',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Discover and join public trips',
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.8),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Search bar row with filter button (aligned like Home Page)
+                          // Spacer for the toolbar area
+                          const SizedBox(height: kToolbarHeight),
+                          // Search bar row with filter button
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
                               AppTheme.spacingMd,
                               AppTheme.spacingSm,
                               AppTheme.spacingMd,
-                              AppTheme.spacingSm,
+                              AppTheme.spacingMd,
                             ),
                             child: Row(
                               children: [
-                                // Search Field
+                                // Search Field - Solid white background
                                 Expanded(
                                   child: Container(
                                     height: 44,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.08),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
                                     child: TextField(
                                       controller: _searchController,
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                                      style: TextStyle(
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w500,
+                                        color: AppTheme.neutral900,
                                       ),
                                       decoration: InputDecoration(
-                                        hintText: 'Search trips...',
+                                        hintText: 'Find your next adventure 🧭',
                                         hintStyle: TextStyle(
                                           color: AppTheme.neutral400,
-                                          fontSize: 14,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                         border: InputBorder.none,
                                         contentPadding: const EdgeInsets.symmetric(
@@ -756,16 +797,16 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                           vertical: 12,
                                         ),
                                         prefixIcon: Icon(
-                                          Icons.search,
-                                          color: AppTheme.neutral400,
-                                          size: 20,
+                                          Icons.search_rounded,
+                                          color: themeData.primaryColor,
+                                          size: 22,
                                         ),
                                         suffixIcon: _searchController.text.isNotEmpty
                                             ? IconButton(
                                                 icon: Icon(
-                                                  Icons.clear,
+                                                  Icons.clear_rounded,
                                                   color: AppTheme.neutral400,
-                                                  size: 18,
+                                                  size: 20,
                                                 ),
                                                 onPressed: () {
                                                   setState(() {
@@ -779,8 +820,8 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                // Filter Button (aligned like Home Page)
+                                const SizedBox(width: AppTheme.spacingMd),
+                                // Filter Button - Matching white style
                                 GestureDetector(
                                   onTap: () {
                                     // TODO: Implement filter functionality
@@ -796,10 +837,17 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                     width: 44,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.08),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
                                     child: Icon(
-                                      Icons.filter_list,
+                                      Icons.tune_rounded,
                                       color: AppTheme.neutral600,
                                       size: 20,
                                     ),

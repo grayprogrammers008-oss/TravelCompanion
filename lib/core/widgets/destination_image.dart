@@ -318,30 +318,73 @@ class UserAvatarWidget extends StatelessWidget {
 
     // If imageUrl is provided, show the image
     if (imageUrl != null && imageUrl!.isNotEmpty) {
+      final borderWidth = showBorder ? 2.0 : 0.0;
+      final imageSize = size - (borderWidth * 2);
+
+      // Outer container for border and shadow
+      // Inner ClipOval for the actual image (sized to fit inside border)
       return Container(
         width: size,
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: showBorder
-              ? Border.all(
-                  color: Colors.white,
-                  width: 2,
-                )
-              : null,
+          color: Colors.white, // Border color as background
           boxShadow: showBorder ? AppTheme.shadowMd : null,
         ),
-        child: ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: imageUrl!,
-            cacheKey: cacheKey ?? imageUrl,
-            fit: BoxFit.cover,
-            // Force re-fetch from network, don't use stale cache
-            maxHeightDiskCache: 500,
-            maxWidthDiskCache: 500,
-            placeholder: (context, url) => _buildGradientAvatar(themeData),
-            errorWidget: (context, url, error) =>
-                _buildGradientAvatar(themeData),
+        child: Center(
+          child: ClipOval(
+            child: SizedBox(
+              width: imageSize,
+              height: imageSize,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl!,
+                cacheKey: cacheKey ?? imageUrl,
+                fit: BoxFit.cover,
+                width: imageSize,
+                height: imageSize,
+                // Force re-fetch from network, don't use stale cache
+                maxHeightDiskCache: 500,
+                maxWidthDiskCache: 500,
+                placeholder: (context, url) => Container(
+                  width: imageSize,
+                  height: imageSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: themeData.primaryGradient,
+                  ),
+                  child: Center(
+                    child: Text(
+                      _getInitials(userName),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: imageSize * 0.4,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: imageSize,
+                  height: imageSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: themeData.primaryGradient,
+                  ),
+                  child: Center(
+                    child: Text(
+                      _getInitials(userName),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: imageSize * 0.4,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       );

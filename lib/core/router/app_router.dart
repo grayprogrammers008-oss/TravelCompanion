@@ -451,7 +451,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'addItineraryItem',
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
-          return AddEditItineraryItemPageNew(tripId: tripId);
+          // Extract prefill data from extra (used by "Add to Trip" flow)
+          final extra = state.extra as Map<String, dynamic>?;
+          return AddEditItineraryItemPageNew(
+            tripId: tripId,
+            prefillTitle: extra?['prefillTitle'] as String?,
+            prefillLocation: extra?['prefillLocation'] as String?,
+            prefillDescription: extra?['prefillDescription'] as String?,
+          );
         },
       ),
       GoRoute(

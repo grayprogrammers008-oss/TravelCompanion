@@ -31,14 +31,35 @@ class MessageLocalDataSource {
     }
   }
 
-  /// Get messages box
-  Box<Map> get _messages => Hive.box<Map>(_messagesBox);
+  /// Check if messaging boxes are available
+  bool get isAvailable =>
+      Hive.isBoxOpen(_messagesBox) &&
+      Hive.isBoxOpen(_queueBox) &&
+      Hive.isBoxOpen(_metadataBox);
 
-  /// Get queue box
-  Box<Map> get _queue => Hive.box<Map>(_queueBox);
+  /// Get messages box (throws if not available)
+  Box<Map> get _messages {
+    if (!Hive.isBoxOpen(_messagesBox)) {
+      throw StateError('Messages box is not open. Call initialize() first.');
+    }
+    return Hive.box<Map>(_messagesBox);
+  }
 
-  /// Get metadata box
-  Box<Map> get _metadata => Hive.box<Map>(_metadataBox);
+  /// Get queue box (throws if not available)
+  Box<Map> get _queue {
+    if (!Hive.isBoxOpen(_queueBox)) {
+      throw StateError('Queue box is not open. Call initialize() first.');
+    }
+    return Hive.box<Map>(_queueBox);
+  }
+
+  /// Get metadata box (throws if not available)
+  Box<Map> get _metadata {
+    if (!Hive.isBoxOpen(_metadataBox)) {
+      throw StateError('Metadata box is not open. Call initialize() first.');
+    }
+    return Hive.box<Map>(_metadataBox);
+  }
 
   // ============================================================================
   // MESSAGE CRUD OPERATIONS

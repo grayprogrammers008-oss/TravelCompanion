@@ -25,11 +25,13 @@ class GooglePlacesService {
   // - Autocomplete (Essentials): 10,000 free/month
   // - Place Details (Essentials): 10,000 free/month
   // - Place Photos (Enterprise): 1,000 free/month
+  // - Nearby Search (Essentials): 10,000 free/month
   //
   // Daily limits set to stay within FREE tier:
   static const int _dailyAutocompleteLimit = 300;  // 9,000/month (under 10K free)
   static const int _dailyDetailsLimit = 300;       // 9,000/month (under 10K free)
   static const int _dailyPhotoLimit = 30;          // 900/month (under 1K free)
+  static const int _dailyNearbyLimit = 50;         // 1,500/month (under 10K free, conservative)
   // Total monthly cost: $0 (all within free tiers!)
   // ============================================================
 
@@ -37,6 +39,7 @@ class GooglePlacesService {
   static const String _prefAutocompleteCount = 'places_autocomplete_count';
   static const String _prefDetailsCount = 'places_details_count';
   static const String _prefPhotoCount = 'places_photo_count';
+  static const String _prefNearbyCount = 'places_nearby_count';
   static const String _prefLastResetDate = 'places_last_reset_date';
 
   final http.Client _client;
@@ -48,6 +51,7 @@ class GooglePlacesService {
   int _autocompleteCount = 0;
   int _detailsCount = 0;
   int _photoCount = 0;
+  int _nearbyCount = 0;
   bool _initialized = false;
 
   GooglePlacesService({http.Client? client}) : _client = client ?? http.Client();
@@ -66,19 +70,22 @@ class GooglePlacesService {
         await prefs.setInt(_prefAutocompleteCount, 0);
         await prefs.setInt(_prefDetailsCount, 0);
         await prefs.setInt(_prefPhotoCount, 0);
+        await prefs.setInt(_prefNearbyCount, 0);
         await prefs.setString(_prefLastResetDate, today);
         _autocompleteCount = 0;
         _detailsCount = 0;
         _photoCount = 0;
+        _nearbyCount = 0;
         debugPrint('📊 [PlacesAPI] Daily counters reset for $today');
       } else {
         _autocompleteCount = prefs.getInt(_prefAutocompleteCount) ?? 0;
         _detailsCount = prefs.getInt(_prefDetailsCount) ?? 0;
         _photoCount = prefs.getInt(_prefPhotoCount) ?? 0;
+        _nearbyCount = prefs.getInt(_prefNearbyCount) ?? 0;
       }
 
       _initialized = true;
-      debugPrint('📊 [PlacesAPI] Usage: autocomplete=$_autocompleteCount/$_dailyAutocompleteLimit, details=$_detailsCount/$_dailyDetailsLimit, photos=$_photoCount/$_dailyPhotoLimit');
+      debugPrint('📊 [PlacesAPI] Usage: autocomplete=$_autocompleteCount/$_dailyAutocompleteLimit, details=$_detailsCount/$_dailyDetailsLimit, photos=$_photoCount/$_dailyPhotoLimit, nearby=$_nearbyCount/$_dailyNearbyLimit');
     } catch (e) {
       debugPrint('⚠️ [PlacesAPI] Failed to initialize counters: $e');
       _initialized = true; // Continue anyway
@@ -106,11 +113,15 @@ class GooglePlacesService {
   /// Check if we can make a photo request
   bool get canMakePhotoRequest => _photoCount < _dailyPhotoLimit;
 
+  /// Check if we can make a nearby search request
+  bool get canMakeNearbyRequest => _nearbyCount < _dailyNearbyLimit;
+
   /// Get current usage stats
   Map<String, dynamic> get usageStats => {
     'autocomplete': {'used': _autocompleteCount, 'limit': _dailyAutocompleteLimit},
     'details': {'used': _detailsCount, 'limit': _dailyDetailsLimit},
     'photos': {'used': _photoCount, 'limit': _dailyPhotoLimit},
+    'nearby': {'used': _nearbyCount, 'limit': _dailyNearbyLimit},
   };
 
   /// Get the appropriate API key for the current platform
@@ -400,19 +411,41 @@ class GooglePlacesService {
   }
 
   /// Search for nearby places
+  ///
+  /// [rankBy] - 'prominence' (default, by popularity) or 'distance'
+  /// Note: When using rankBy=distance, you must specify a type or keyword
   Future<List<NearbyPlace>> searchNearby({
     required double latitude,
     required double longitude,
-    required int radius,
+    int? radius,
     String? type,
     String? keyword,
+    String rankBy = 'prominence',
   }) async {
+    // Initialize usage tracking
+    await _ensureInitialized();
+
+    // Check rate limit
+    if (!canMakeNearbyRequest) {
+      debugPrint('🚫 [PlacesAPI] Daily nearby limit reached ($_nearbyCount/$_dailyNearbyLimit)');
+      return [];
+    }
+
     try {
       final params = <String, String>{
         'location': '$latitude,$longitude',
-        'radius': radius.toString(),
         'key': apiKey,
       };
+
+      // rankby=distance requires type or keyword, and cannot use radius
+      if (rankBy == 'distance' && (type != null || keyword != null)) {
+        params['rankby'] = 'distance';
+      } else if (radius != null) {
+        params['radius'] = radius.toString();
+      } else {
+        // Default radius if not using rankby=distance
+        params['radius'] = '15000'; // 15km default
+      }
 
       if (type != null) params['type'] = type;
       if (keyword != null) params['keyword'] = keyword;
@@ -421,16 +454,52 @@ class GooglePlacesService {
         queryParameters: params,
       );
 
+      debugPrint('🔍 [PlacesAPI] Nearby search: ${uri.toString().substring(0, 100)}...');
+
       final response = await _client.get(uri);
+
+      // Count this request
+      await _incrementCounter(
+        _prefNearbyCount,
+        () => _nearbyCount,
+        (v) => _nearbyCount = v,
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final status = data['status'] as String;
 
+        debugPrint('✅ [PlacesAPI] Nearby status: $status, count: ${(data['results'] as List?)?.length ?? 0}');
+        debugPrint('✅ [PlacesAPI] Nearby: $_nearbyCount/$_dailyNearbyLimit used today');
+
         if (status == 'OK' || status == 'ZERO_RESULTS') {
-          return (data['results'] as List? ?? [])
+          final places = (data['results'] as List? ?? [])
               .map((p) => NearbyPlace.fromJson(p as Map<String, dynamic>))
               .toList();
+
+          // Sort by rating (highest first), then by number of reviews
+          places.sort((a, b) {
+            // Places with ratings come first
+            if (a.rating == null && b.rating == null) return 0;
+            if (a.rating == null) return 1;
+            if (b.rating == null) return -1;
+
+            // Compare by rating
+            final ratingCompare = b.rating!.compareTo(a.rating!);
+            if (ratingCompare != 0) return ratingCompare;
+
+            // If ratings are equal, compare by number of reviews
+            final aReviews = a.userRatingsTotal ?? 0;
+            final bReviews = b.userRatingsTotal ?? 0;
+            return bReviews.compareTo(aReviews);
+          });
+
+          return places;
+        } else {
+          debugPrint('⚠️ [PlacesAPI] Nearby search status: $status');
+          if (data['error_message'] != null) {
+            debugPrint('⚠️ [PlacesAPI] Error: ${data['error_message']}');
+          }
         }
       }
       return [];

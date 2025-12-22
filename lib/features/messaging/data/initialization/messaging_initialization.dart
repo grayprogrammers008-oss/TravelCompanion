@@ -9,16 +9,16 @@ class MessagingInitialization {
   /// Initialize messaging module
   /// Call this in main() before runApp()
   static Future<void> initialize() async {
-    if (_isInitialized) {
-      debugPrint('⚠️ [MessagingInit] Already initialized');
-      return;
-    }
+    // Always reset state first to handle app restarts in debug mode
+    _isInitialized = false;
 
     try {
       debugPrint('🔵 [MessagingInit] Initializing messaging module...');
 
-      // Skip Hive initialization here - it's done in main.dart
-      // Just open messaging boxes
+      // Close any stale boxes first (from previous crash or debug restart)
+      await _closeStaleBoxes();
+
+      // Open messaging boxes
       await _openMessagingBoxes();
 
       _isInitialized = true;
@@ -29,6 +29,30 @@ class MessagingInitialization {
       debugPrint('   Stack Trace: $stackTrace');
       // Don't rethrow - allow app to continue without messaging
       // Messaging features will be disabled but app will still work
+    }
+  }
+
+  /// Close any stale boxes from previous crash
+  static Future<void> _closeStaleBoxes() async {
+    final boxNames = ['messages', 'message_queue', 'message_metadata'];
+
+    for (final boxName in boxNames) {
+      try {
+        if (Hive.isBoxOpen(boxName)) {
+          debugPrint('   🔄 Closing stale box: $boxName');
+          final box = Hive.box<Map>(boxName);
+          await box.close();
+        }
+      } catch (e) {
+        debugPrint('   ⚠️ Error closing stale box $boxName: $e');
+        // Try to delete it instead
+        try {
+          await Hive.deleteBoxFromDisk(boxName);
+          debugPrint('   🗑️ Deleted stale box: $boxName');
+        } catch (_) {
+          // Ignore - will try to recreate
+        }
+      }
     }
   }
 
@@ -47,6 +71,7 @@ class MessagingInitialization {
   /// Safely open a Hive box with recovery on corruption
   static Future<void> _openBoxSafely(String boxName) async {
     try {
+      // Double-check if already open
       if (Hive.isBoxOpen(boxName)) {
         debugPrint('      ℹ️ $boxName box already open');
         return;
@@ -58,6 +83,13 @@ class MessagingInitialization {
       // Try to delete corrupted box and recreate
       try {
         debugPrint('      🔄 Attempting to recover $boxName box...');
+        // Force close if somehow open in bad state
+        try {
+          if (Hive.isBoxOpen(boxName)) {
+            await Hive.box<Map>(boxName).close();
+          }
+        } catch (_) {}
+
         await Hive.deleteBoxFromDisk(boxName);
         await Hive.openBox<Map>(boxName);
         debugPrint('      ✅ Recovered $boxName box (data was reset)');

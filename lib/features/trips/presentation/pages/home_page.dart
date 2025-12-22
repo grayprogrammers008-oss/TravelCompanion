@@ -19,6 +19,7 @@ import '../../../../shared/models/itinerary_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../providers/trip_providers.dart';
+import '../widgets/ai_suggestions_card.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -780,28 +781,29 @@ class _HomePageState extends ConsumerState<HomePage>
           },
           child: CustomScrollView(
             slivers: [
-              // Compact header with search bar
+              // Personalized greeting header
               SliverAppBar(
-                expandedHeight: 140,
+                expandedHeight: _shouldShowSearchBar(userTripsAsync) ? 140 : 90,
                 floating: true,
                 pinned: true,
                 backgroundColor: themeData.primaryColor,
                 elevation: 0,
-                leading: _buildProfileAvatar(ref),
-                leadingWidth: 64,
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: AppTheme.spacingSm),
+                  child: _buildProfileAvatar(ref),
+                ),
+                leadingWidth: 60,
+                title: _buildGreetingTitle(ref, userTripsAsync),
+                centerTitle: false,
+                titleSpacing: 4,
                 actions: [
-                  // Settings Icon
+                  // Settings Icon only (consolidated menu)
                   IconButton(
                     icon: const Icon(Icons.settings_outlined, color: Colors.white),
                     onPressed: () => context.push('/settings'),
                     tooltip: 'Settings',
                   ),
-                  // More menu for trip-specific actions
-                  IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
-                    onPressed: () => _showProfileMenu(context, ref),
-                    tooltip: 'More options',
-                  ),
+                  const SizedBox(width: AppTheme.spacingXs),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
@@ -813,159 +815,129 @@ class _HomePageState extends ConsumerState<HomePage>
                       bottom: false,
                       child: Column(
                         children: [
-                          // Top row: Avatar space + Title + Actions space
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              64, // Space for profile avatar
-                              AppTheme.spacingSm,
-                              96, // Space for action buttons
-                              0,
-                            ),
-                            child: Row(
-                              children: [
-                                // Trip icon
-                                Container(
-                                  padding: const EdgeInsets.all(AppTheme.spacingSm),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  ),
-                                  child: const Icon(
-                                    Icons.luggage,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                // Title
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text(
-                                        'My Trips',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                          // Spacer for the toolbar area (avatar + greeting + settings)
+                          const SizedBox(height: kToolbarHeight),
+                          // Search bar row - only show when user has > 3 trips
+                          if (_shouldShowSearchBar(userTripsAsync))
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                AppTheme.spacingMd,
+                                AppTheme.spacingSm,
+                                AppTheme.spacingMd,
+                                AppTheme.spacingMd,
+                              ),
+                              child: Row(
+                                children: [
+                                  // Search Field - Solid white background for better text visibility
+                                  Expanded(
+                                    child: Container(
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.08),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        'Plan your next adventure',
+                                      child: TextField(
+                                        controller: _searchController,
                                         style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.8),
-                                          fontSize: 12,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppTheme.neutral900,
                                         ),
+                                        decoration: InputDecoration(
+                                          hintText: 'Where to next? 🌍',
+                                          hintStyle: TextStyle(
+                                            color: AppTheme.neutral400,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          border: InputBorder.none,
+                                          contentPadding: const EdgeInsets.symmetric(
+                                            horizontal: AppTheme.spacingMd,
+                                            vertical: 12,
+                                          ),
+                                          prefixIcon: Icon(
+                                            Icons.search_rounded,
+                                            color: themeData.primaryColor,
+                                            size: 22,
+                                          ),
+                                          suffixIcon: _searchController.text.isNotEmpty
+                                              ? IconButton(
+                                                  icon: Icon(
+                                                    Icons.clear_rounded,
+                                                    color: AppTheme.neutral400,
+                                                    size: 20,
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _searchController.clear();
+                                                    });
+                                                  },
+                                                )
+                                              : null,
+                                        ),
+                                        onChanged: (_) => setState(() {}),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Search bar row
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppTheme.spacingMd,
-                              AppTheme.spacingSm,
-                              AppTheme.spacingMd,
-                              AppTheme.spacingSm,
-                            ),
-                            child: Row(
-                              children: [
-                                // Search Field
-                                Expanded(
-                                  child: Container(
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                                     ),
-                                    child: TextField(
-                                      controller: _searchController,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                  ),
+                                  const SizedBox(width: AppTheme.spacingMd),
+                                  // Filter Button - Matching white style
+                                  GestureDetector(
+                                    onTap: () => _showFilterBottomSheet(context, themeData),
+                                    child: Container(
+                                      height: 44,
+                                      width: 44,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.08),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
                                       ),
-                                      decoration: InputDecoration(
-                                        hintText: 'Search trips...',
-                                        hintStyle: TextStyle(
-                                          color: AppTheme.neutral400,
-                                          fontSize: 14,
-                                        ),
-                                        border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: AppTheme.spacingMd,
-                                          vertical: 12,
-                                        ),
-                                        prefixIcon: Icon(
-                                          Icons.search,
-                                          color: AppTheme.neutral400,
-                                          size: 20,
-                                        ),
-                                        suffixIcon: _searchController.text.isNotEmpty
-                                            ? IconButton(
-                                                icon: Icon(
-                                                  Icons.clear,
-                                                  color: AppTheme.neutral400,
-                                                  size: 18,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.tune_rounded,
+                                            color: _hasActiveFilters
+                                                ? themeData.primaryColor
+                                                : AppTheme.neutral600,
+                                            size: 20,
+                                          ),
+                                          if (_hasActiveFilters)
+                                            Positioned(
+                                              right: 8,
+                                              top: 8,
+                                              child: Container(
+                                                width: 10,
+                                                height: 10,
+                                                decoration: BoxDecoration(
+                                                  color: themeData.primaryColor,
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: Colors.white,
+                                                    width: 2,
+                                                  ),
                                                 ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _searchController.clear();
-                                                  });
-                                                },
-                                              )
-                                            : null,
-                                      ),
-                                      onChanged: (_) => setState(() {}),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: AppTheme.spacingSm),
-                                // Filter Button
-                                GestureDetector(
-                                  onTap: () => _showFilterBottomSheet(context, themeData),
-                                  child: Container(
-                                    height: 44,
-                                    width: 44,
-                                    decoration: BoxDecoration(
-                                      color: _hasActiveFilters
-                                          ? Colors.white
-                                          : Colors.white.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                    ),
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.tune,
-                                          color: _hasActiveFilters
-                                              ? themeData.primaryColor
-                                              : Colors.white,
-                                          size: 20,
-                                        ),
-                                        if (_hasActiveFilters)
-                                          Positioned(
-                                            right: 8,
-                                            top: 8,
-                                            child: Container(
-                                              width: 8,
-                                              height: 8,
-                                              decoration: BoxDecoration(
-                                                color: AppTheme.error,
-                                                shape: BoxShape.circle,
                                               ),
                                             ),
-                                          ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -991,6 +963,11 @@ class _HomePageState extends ConsumerState<HomePage>
               }
 
               return [
+                // AI Suggestions Card
+                SliverToBoxAdapter(
+                  child: AiSuggestionsCard(themeData: themeData),
+                ),
+
                 // Quick Stats Header
                 SliverToBoxAdapter(
                   child: _buildStatsHeader(context, stats, themeData),
@@ -2729,6 +2706,128 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Get time-based greeting
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning';
+    } else if (hour < 17) {
+      return 'Good afternoon';
+    } else {
+      return 'Good evening';
+    }
+  }
+
+  /// Get user's first name from full name or email
+  String _getFirstName(String? fullName, String? email) {
+    if (fullName != null && fullName.isNotEmpty) {
+      return fullName.split(' ').first;
+    }
+    if (email != null && email.isNotEmpty) {
+      return email.split('@').first;
+    }
+    return 'Explorer';
+  }
+
+  /// Get contextual subtitle based on trips
+  String _getContextualSubtitle(List<TripWithMembers> trips) {
+    if (trips.isEmpty) {
+      return 'Plan your first adventure!';
+    }
+
+    final now = DateTime.now();
+    final upcomingTrips = trips.where((t) =>
+      t.trip.startDate != null && t.trip.startDate!.isAfter(now) && !t.trip.isCompleted
+    ).toList();
+
+    if (upcomingTrips.isNotEmpty) {
+      // Sort by start date to get the nearest upcoming trip
+      upcomingTrips.sort((a, b) => a.trip.startDate!.compareTo(b.trip.startDate!));
+      final nextTrip = upcomingTrips.first;
+      final daysUntil = nextTrip.trip.startDate!.difference(now).inDays;
+
+      if (daysUntil == 0) {
+        return '${nextTrip.trip.destination ?? nextTrip.trip.name} starts today!';
+      } else if (daysUntil == 1) {
+        return '${nextTrip.trip.destination ?? nextTrip.trip.name} tomorrow!';
+      } else if (daysUntil <= 7) {
+        return '${nextTrip.trip.destination ?? nextTrip.trip.name} in $daysUntil days';
+      } else {
+        return '${upcomingTrips.length} upcoming ${upcomingTrips.length == 1 ? 'adventure' : 'adventures'}';
+      }
+    }
+
+    final activeTrips = trips.where((t) => !t.trip.isCompleted).length;
+    if (activeTrips > 0) {
+      return '$activeTrips active ${activeTrips == 1 ? 'trip' : 'trips'}';
+    }
+
+    return '${trips.length} ${trips.length == 1 ? 'trip' : 'trips'} completed';
+  }
+
+  /// Check if search bar should be shown (when > 3 trips)
+  bool _shouldShowSearchBar(AsyncValue<List<TripWithMembers>> tripsAsync) {
+    return tripsAsync.maybeWhen(
+      data: (trips) => trips.length > 3,
+      orElse: () => false,
+    );
+  }
+
+  /// Build personalized greeting title widget
+  Widget _buildGreetingTitle(WidgetRef ref, AsyncValue<List<TripWithMembers>> tripsAsync) {
+    final userAsync = ref.watch(currentUserProvider);
+
+    return userAsync.when(
+      data: (user) {
+        final greeting = _getGreeting();
+        final firstName = _getFirstName(user?.fullName, user?.email);
+        final subtitle = tripsAsync.maybeWhen(
+          data: (trips) => _getContextualSubtitle(trips),
+          orElse: () => 'Loading your trips...',
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '$greeting, $firstName!',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.85),
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        );
+      },
+      loading: () => const Text(
+        'Loading...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      error: (_, __) => const Text(
+        'My Trips',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

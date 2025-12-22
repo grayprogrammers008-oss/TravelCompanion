@@ -15,11 +15,17 @@ import '../providers/itinerary_providers.dart';
 class AddEditItineraryItemPageNew extends ConsumerStatefulWidget {
   final String tripId;
   final String? itemId; // null for add, non-null for edit
+  final String? prefillTitle;
+  final String? prefillLocation;
+  final String? prefillDescription;
 
   const AddEditItineraryItemPageNew({
     super.key,
     required this.tripId,
     this.itemId,
+    this.prefillTitle,
+    this.prefillLocation,
+    this.prefillDescription,
   });
 
   @override
@@ -55,6 +61,16 @@ class _AddEditItineraryItemPageNewState
     if (widget.itemId != null) {
       _loadExistingItem();
     } else {
+      // Apply prefill data if available (from "Add to Trip" flow)
+      if (widget.prefillTitle != null) {
+        _titleController.text = widget.prefillTitle!;
+      }
+      if (widget.prefillLocation != null) {
+        _locationController.text = widget.prefillLocation!;
+      }
+      if (widget.prefillDescription != null) {
+        _descriptionController.text = widget.prefillDescription!;
+      }
       _isInitialized = true;
     }
   }

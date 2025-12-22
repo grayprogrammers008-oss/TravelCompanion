@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb, visibleForTesting;
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/messaging/data/services/fcm_service.dart';
@@ -19,16 +18,16 @@ class NotificationInitialization {
       return;
     }
 
-    if (_isInitialized) {
-      debugPrint('⚠️ [NotificationInit] Already initialized');
-      return;
-    }
+    // Always reset state first to handle app restarts in debug mode
+    // This prevents stale singleton state from causing crashes
+    final fcmService = FCMService();
+    fcmService.reset();
+    _isInitialized = false;
 
     try {
       debugPrint('🔵 [NotificationInit] Initializing notification services...');
 
       // Initialize FCM service
-      final fcmService = FCMService();
       await fcmService.initialize();
       debugPrint('   ✅ FCM service initialized');
 
@@ -37,9 +36,10 @@ class NotificationInitialization {
       final user = supabase.auth.currentUser;
 
       if (user != null) {
+        // Use FCMService's lazy-initialized FirebaseMessaging instance
         final tokenManager = FCMTokenManager(
           supabase,
-          FirebaseMessaging.instance,
+          fcmService.firebaseMessaging,
         );
         await tokenManager.registerToken();
         debugPrint('   ✅ FCM token registered');
@@ -78,9 +78,11 @@ class NotificationInitialization {
         return;
       }
 
+      // Use FCMService's lazy-initialized FirebaseMessaging instance
+      final fcmService = FCMService();
       final tokenManager = FCMTokenManager(
         supabase,
-        FirebaseMessaging.instance,
+        fcmService.firebaseMessaging,
       );
       await tokenManager.registerToken();
       debugPrint('   ✅ FCM token registered for user: ${user.id}');
@@ -98,10 +100,12 @@ class NotificationInitialization {
     try {
       debugPrint('🔵 [NotificationInit] Unregistering FCM token...');
 
+      // Use FCMService's lazy-initialized FirebaseMessaging instance
+      final fcmService = FCMService();
       final supabase = Supabase.instance.client;
       final tokenManager = FCMTokenManager(
         supabase,
-        FirebaseMessaging.instance,
+        fcmService.firebaseMessaging,
       );
       await tokenManager.unregisterToken();
       debugPrint('   ✅ FCM token unregistered');
