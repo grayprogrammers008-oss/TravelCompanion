@@ -17,10 +17,8 @@ class MessagingInitialization {
     try {
       debugPrint('🔵 [MessagingInit] Initializing messaging module...');
 
-      // Initialize Hive (if not already initialized)
-      await _initializeHive();
-
-      // Open messaging boxes
+      // Skip Hive initialization here - it's done in main.dart
+      // Just open messaging boxes
       await _openMessagingBoxes();
 
       _isInitialized = true;
@@ -29,60 +27,44 @@ class MessagingInitialization {
       debugPrint('❌ [MessagingInit] Initialization failed');
       debugPrint('   Exception: $e');
       debugPrint('   Stack Trace: $stackTrace');
-      rethrow;
-    }
-  }
-
-  /// Initialize Hive
-  static Future<void> _initializeHive() async {
-    try {
-      // Check if Hive is already initialized
-      if (Hive.isBoxOpen('test_box')) {
-        debugPrint('   ℹ️ Hive already initialized');
-        return;
-      }
-
-      // Initialize Hive Flutter
-      await Hive.initFlutter();
-      debugPrint('   ✅ Hive initialized');
-    } catch (e) {
-      // If Hive is already initialized, this will throw
-      // We can safely ignore this error
-      if (e.toString().contains('already initialized')) {
-        debugPrint('   ℹ️ Hive already initialized');
-        return;
-      }
-      rethrow;
+      // Don't rethrow - allow app to continue without messaging
+      // Messaging features will be disabled but app will still work
     }
   }
 
   /// Open messaging-related Hive boxes
   static Future<void> _openMessagingBoxes() async {
+    debugPrint('   🔵 Opening messaging boxes...');
+
+    // Open each box with recovery on corruption
+    await _openBoxSafely('messages');
+    await _openBoxSafely('message_queue');
+    await _openBoxSafely('message_metadata');
+
+    debugPrint('   ✅ Messaging boxes initialization complete');
+  }
+
+  /// Safely open a Hive box with recovery on corruption
+  static Future<void> _openBoxSafely(String boxName) async {
     try {
-      debugPrint('   🔵 Opening messaging boxes...');
-
-      // Open messages box
-      if (!Hive.isBoxOpen('messages')) {
-        await Hive.openBox<Map>('messages');
-        debugPrint('      ✅ Opened messages box');
+      if (Hive.isBoxOpen(boxName)) {
+        debugPrint('      ℹ️ $boxName box already open');
+        return;
       }
-
-      // Open message queue box
-      if (!Hive.isBoxOpen('message_queue')) {
-        await Hive.openBox<Map>('message_queue');
-        debugPrint('      ✅ Opened message_queue box');
-      }
-
-      // Open message metadata box
-      if (!Hive.isBoxOpen('message_metadata')) {
-        await Hive.openBox<Map>('message_metadata');
-        debugPrint('      ✅ Opened message_metadata box');
-      }
-
-      debugPrint('   ✅ All messaging boxes opened');
+      await Hive.openBox<Map>(boxName);
+      debugPrint('      ✅ Opened $boxName box');
     } catch (e) {
-      debugPrint('   ❌ Failed to open messaging boxes: $e');
-      rethrow;
+      debugPrint('      ⚠️ Failed to open $boxName box: $e');
+      // Try to delete corrupted box and recreate
+      try {
+        debugPrint('      🔄 Attempting to recover $boxName box...');
+        await Hive.deleteBoxFromDisk(boxName);
+        await Hive.openBox<Map>(boxName);
+        debugPrint('      ✅ Recovered $boxName box (data was reset)');
+      } catch (recoveryError) {
+        debugPrint('      ❌ Could not recover $boxName box: $recoveryError');
+        // Continue anyway - this box will be unavailable
+      }
     }
   }
 

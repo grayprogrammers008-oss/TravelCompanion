@@ -72,7 +72,16 @@ void main() async {
   } catch (e, stackTrace) {
     debugPrint('❌ Failed to initialize Hive: $e');
     debugPrint('Stack trace: $stackTrace');
-    // Continue anyway - app might work with limited functionality
+    // Try to recover by clearing Hive data
+    try {
+      debugPrint('🔄 Attempting Hive recovery...');
+      await Hive.close();
+      await Hive.initFlutter();
+      debugPrint('✅ Hive recovered successfully');
+    } catch (recoveryError) {
+      debugPrint('❌ Hive recovery failed: $recoveryError');
+      // Continue anyway - app might work with limited functionality
+    }
   }
 
   // Initialize messaging module (opens Hive boxes for messages)
