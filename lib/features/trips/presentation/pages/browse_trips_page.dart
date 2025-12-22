@@ -28,6 +28,12 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
   late Animation<double> _fadeAnimation;
   final _searchController = TextEditingController();
 
+  // Filter state variables
+  String _sortBy = 'nearest_date'; // nearest_date, farthest_date, most_members, recently_created
+  String _statusFilter = 'all'; // all, upcoming, in_progress, ended
+  int? _minMembers;
+  int? _maxMembers;
+
   @override
   void initState() {
     super.initState();
@@ -49,18 +55,486 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
     super.dispose();
   }
 
-  /// Filter trips based on search query
+  /// Filter and sort trips based on search query and filters
   List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
     final query = _searchController.text.toLowerCase().trim();
-    if (query.isEmpty) return trips;
+    final now = DateTime.now();
 
-    return trips.where((tripWithMembers) {
+    // Step 1: Apply search filter
+    var filteredTrips = trips.where((tripWithMembers) {
       final trip = tripWithMembers.trip;
-      final nameMatch = trip.name.toLowerCase().contains(query);
-      final destinationMatch = trip.destination?.toLowerCase().contains(query) ?? false;
-      final descriptionMatch = trip.description?.toLowerCase().contains(query) ?? false;
-      return nameMatch || destinationMatch || descriptionMatch;
+      if (query.isNotEmpty) {
+        final nameMatch = trip.name.toLowerCase().contains(query);
+        final destinationMatch = trip.destination?.toLowerCase().contains(query) ?? false;
+        final descriptionMatch = trip.description?.toLowerCase().contains(query) ?? false;
+        if (!nameMatch && !destinationMatch && !descriptionMatch) {
+          return false;
+        }
+      }
+      return true;
     }).toList();
+
+    // Step 2: Apply status filter
+    if (_statusFilter != 'all') {
+      filteredTrips = filteredTrips.where((tripWithMembers) {
+        final trip = tripWithMembers.trip;
+        final hasStarted = trip.startDate != null && trip.startDate!.isBefore(now);
+        final hasEnded = trip.endDate != null && trip.endDate!.isBefore(now);
+        final isOngoing = hasStarted && (trip.endDate == null || trip.endDate!.isAfter(now));
+
+        switch (_statusFilter) {
+          case 'upcoming':
+            return !hasStarted; // Not yet started
+          case 'in_progress':
+            return isOngoing; // Started but not ended
+          case 'ended':
+            return hasEnded; // Already ended
+          default:
+            return true;
+        }
+      }).toList();
+    }
+
+    // Step 3: Apply member count filter
+    if (_minMembers != null || _maxMembers != null) {
+      filteredTrips = filteredTrips.where((tripWithMembers) {
+        final memberCount = tripWithMembers.members.length;
+        if (_minMembers != null && memberCount < _minMembers!) {
+          return false;
+        }
+        if (_maxMembers != null && memberCount > _maxMembers!) {
+          return false;
+        }
+        return true;
+      }).toList();
+    }
+
+    // Step 4: Apply sorting
+    switch (_sortBy) {
+      case 'nearest_date':
+        filteredTrips.sort((a, b) {
+          final aDate = a.trip.startDate;
+          final bDate = b.trip.startDate;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return aDate.compareTo(bDate);
+        });
+        break;
+      case 'farthest_date':
+        filteredTrips.sort((a, b) {
+          final aDate = a.trip.startDate;
+          final bDate = b.trip.startDate;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
+        });
+        break;
+      case 'most_members':
+        filteredTrips.sort((a, b) => b.members.length.compareTo(a.members.length));
+        break;
+      case 'recently_created':
+        filteredTrips.sort((a, b) {
+          final aCreated = a.trip.createdAt;
+          final bCreated = b.trip.createdAt;
+          if (aCreated == null && bCreated == null) return 0;
+          if (aCreated == null) return 1;
+          if (bCreated == null) return -1;
+          return bCreated.compareTo(aCreated);
+        });
+        break;
+    }
+
+    return filteredTrips;
+  }
+
+  /// Show filter bottom sheet with sort and filter options
+  void _showFilterBottomSheet(BuildContext context) {
+    final themeData = ref.read(theme_provider.currentThemeDataProvider);
+
+    // Use local variables for modal state management
+    String localSortBy = _sortBy;
+    String localStatusFilter = _statusFilter;
+    int? localMinMembers = _minMembers;
+    int? localMaxMembers = _maxMembers;
+
+    // Controllers for member count fields
+    final minMembersController = TextEditingController(
+      text: localMinMembers?.toString() ?? '',
+    );
+    final maxMembersController = TextEditingController(
+      text: localMaxMembers?.toString() ?? '',
+    );
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (modalContext) => StatefulBuilder(
+        builder: (builderContext, setModalState) => Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(AppTheme.radiusXl),
+              topRight: Radius.circular(AppTheme.radiusXl),
+            ),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Handle bar
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppTheme.neutral300,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Title Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: themeData.primaryColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              ),
+                              child: Icon(
+                                Icons.tune_rounded,
+                                color: themeData.primaryColor,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: AppTheme.spacingMd),
+                            const Text(
+                              'Filter & Sort',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Reset button
+                        TextButton(
+                          onPressed: () {
+                            setModalState(() {
+                              localSortBy = 'nearest_date';
+                              localStatusFilter = 'all';
+                              localMinMembers = null;
+                              localMaxMembers = null;
+                              minMembersController.clear();
+                              maxMembersController.clear();
+                            });
+                          },
+                          child: Text(
+                            'Reset',
+                            style: TextStyle(
+                              color: themeData.primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Sort By Section
+                    Text(
+                      'Sort By',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral700,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Wrap(
+                      spacing: AppTheme.spacingSm,
+                      runSpacing: AppTheme.spacingSm,
+                      children: [
+                        _buildSortChipStateful('Nearest Date', 'nearest_date', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                        _buildSortChipStateful('Farthest Date', 'farthest_date', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                        _buildSortChipStateful('Most Members', 'most_members', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                        _buildSortChipStateful('Recently Created', 'recently_created', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Status Filter Section
+                    Text(
+                      'Trip Status',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral700,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Wrap(
+                      spacing: AppTheme.spacingSm,
+                      runSpacing: AppTheme.spacingSm,
+                      children: [
+                        _buildStatusChipStateful('All', 'all', themeData, localStatusFilter, (value) {
+                          setModalState(() => localStatusFilter = value);
+                        }),
+                        _buildStatusChipStateful('Upcoming', 'upcoming', themeData, localStatusFilter, (value) {
+                          setModalState(() => localStatusFilter = value);
+                        }),
+                        _buildStatusChipStateful('In Progress', 'in_progress', themeData, localStatusFilter, (value) {
+                          setModalState(() => localStatusFilter = value);
+                        }),
+                        _buildStatusChipStateful('Ended', 'ended', themeData, localStatusFilter, (value) {
+                          setModalState(() => localStatusFilter = value);
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                    // Member Count Filter Section
+                    Text(
+                      'Member Count',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral700,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMemberFieldStateful(
+                            'Min',
+                            minMembersController,
+                            (value) {
+                              setModalState(() => localMinMembers = value);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Text(
+                          'to',
+                          style: TextStyle(
+                            color: AppTheme.neutral500,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          child: _buildMemberFieldStateful(
+                            'Max',
+                            maxMembersController,
+                            (value) {
+                              setModalState(() => localMaxMembers = value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingXl),
+
+                    // Action Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppTheme.spacingMd,
+                              ),
+                              side: BorderSide(color: AppTheme.neutral300),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              ),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(color: AppTheme.neutral600),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          flex: 2,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              // Apply filters to parent state
+                              setState(() {
+                                _sortBy = localSortBy;
+                                _statusFilter = localStatusFilter;
+                                _minMembers = localMinMembers;
+                                _maxMembers = localMaxMembers;
+                              });
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.check_circle_outline),
+                            label: const Text('Apply Filters'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: themeData.primaryColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppTheme.spacingMd,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build sort chip with stateful support for modal bottom sheet
+  Widget _buildSortChipStateful(String label, String value, dynamic themeData, String currentSortBy, Function(String) onSelect) {
+    final isSelected = currentSortBy == value;
+    return GestureDetector(
+      onTap: () => onSelect(value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? themeData.primaryColor.withValues(alpha: 0.1) : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+          border: Border.all(
+            color: isSelected ? themeData.primaryColor : AppTheme.neutral300,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? themeData.primaryColor : AppTheme.neutral600,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build status chip with stateful support for modal bottom sheet
+  Widget _buildStatusChipStateful(String label, String value, dynamic themeData, String currentStatus, Function(String) onSelect) {
+    final isSelected = currentStatus == value;
+
+    // Define status-specific colors
+    Color chipColor;
+    switch (value) {
+      case 'upcoming':
+        chipColor = themeData.primaryColor;
+        break;
+      case 'in_progress':
+        chipColor = Colors.orange;
+        break;
+      case 'ended':
+        chipColor = AppTheme.neutral500;
+        break;
+      default:
+        chipColor = themeData.primaryColor;
+    }
+
+    return GestureDetector(
+      onTap: () => onSelect(value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? chipColor.withValues(alpha: 0.1) : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+          border: Border.all(
+            color: isSelected ? chipColor : AppTheme.neutral300,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? chipColor : AppTheme.neutral600,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build member count field with stateful support for modal bottom sheet
+  Widget _buildMemberFieldStateful(String label, TextEditingController controller, Function(int?) onChanged) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      onChanged: (text) {
+        final parsed = int.tryParse(text);
+        onChanged(parsed);
+      },
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: '0',
+        filled: true,
+        fillColor: AppTheme.neutral50,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderSide: BorderSide(color: AppTheme.neutral300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderSide: BorderSide(color: AppTheme.neutral300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderSide: BorderSide(color: AppTheme.neutral400, width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        prefixIcon: Icon(
+          Icons.people_outline,
+          color: AppTheme.neutral400,
+          size: 20,
+        ),
+      ),
+    );
   }
 
   /// Show confirmation dialog before joining a trip
@@ -823,15 +1297,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                 const SizedBox(width: AppTheme.spacingMd),
                                 // Filter Button - Matching white style
                                 GestureDetector(
-                                  onTap: () {
-                                    // TODO: Implement filter functionality
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Filter coming soon'),
-                                        behavior: SnackBarBehavior.floating,
-                                      ),
-                                    );
-                                  },
+                                  onTap: () => _showFilterBottomSheet(context),
                                   child: Container(
                                     height: 44,
                                     width: 44,

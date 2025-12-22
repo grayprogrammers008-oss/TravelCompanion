@@ -5,16 +5,17 @@ import '../../features/trips/presentation/pages/browse_trips_page.dart';
 import '../../features/trips/presentation/pages/trip_detail_page.dart';
 import '../../features/expenses/presentation/pages/expenses_home_page.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
+import '../../features/discover/presentation/pages/discover_page.dart';
 
-/// Main scaffold with bottom navigation - V2.1: 2 tabs (Trips, Explore)
+/// Main scaffold with bottom navigation - V3.0: 3 tabs (Trips, Explore, Discover)
 ///
 /// DESIGN RATIONALE (Trip-First UX):
 /// - Tab 0: Trips - All your trips (created + joined) - the primary hub
 /// - Tab 1: Explore - Browse/join public trips
+/// - Tab 2: Discover - Find tourist places by category (Beach, Hill Station, etc.)
 /// - Profile & Settings: Accessible via header icons (avatar for profile, gear for settings)
 ///
-/// This replaces the V2.0 3-tab design where Profile was a separate tab.
-/// Profile and Settings are now accessed via the header for a cleaner navigation.
+/// V3.0 adds the Discover tab for real-time tourist place discovery using Google Places API.
 class MainScaffold extends StatefulWidget {
   final Widget child;
   final int currentIndex;
@@ -38,6 +39,9 @@ class _MainScaffoldState extends State<MainScaffold> {
       case 1:
         context.go('/explore');
         break;
+      case 2:
+        context.go('/discover');
+        break;
     }
   }
 
@@ -58,6 +62,11 @@ class _MainScaffoldState extends State<MainScaffold> {
             activeIcon: Icon(Icons.explore),
             label: 'Explore',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.place_outlined),
+            activeIcon: Icon(Icons.place),
+            label: 'Discover',
+          ),
         ],
         currentIndex: widget.currentIndex,
         onTap: _onItemTapped,
@@ -77,13 +86,24 @@ class TripsShell extends StatelessWidget {
   }
 }
 
-/// Shell route for explore tab - V2.0 Index 1
+/// Shell route for explore tab - V3.0 Index 1
 class ExploreShell extends StatelessWidget {
   const ExploreShell({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MainScaffold(currentIndex: 1, child: BrowseTripsPage());
+  }
+}
+
+/// Shell route for discover tab - V3.0 Index 2
+/// Displays tourist places by category using Google Places API
+class DiscoverShell extends StatelessWidget {
+  const DiscoverShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MainScaffold(currentIndex: 2, child: DiscoverPage());
   }
 }
 

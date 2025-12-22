@@ -71,6 +71,7 @@ class AppRoutes {
   static const String home = '/home'; // Legacy - redirects to dashboard
   static const String trips = '/trips';
   static const String explore = '/explore';
+  static const String discover = '/discover';
   static const String expenses = '/expenses';
   static const String tripDetail = '/trips/:tripId';
   static const String createTrip = '/trips/create';
@@ -282,6 +283,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const ExploreShell(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.discover,
+        name: 'discover',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const DiscoverShell(),
         ),
       ),
       GoRoute(

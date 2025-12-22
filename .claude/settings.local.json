@@ -37,7 +37,12 @@
       "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" diff --stat)",
       "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" commit -m \"$(cat <<''EOF''\nfeat: Implement Group Chats and Direct Messages feature\n\n- Add complete group chat functionality within trips\n- Support for both Group Chats (3+ members) and Direct Messages (1:1)\n- Auto-detect chat type based on member selection\n- Smart DM lookup - finds existing DM or creates new one\n- Filter tabs: All, Direct Messages, Groups\n- Visual distinction with icons and colors (blue for DMs, purple for Groups)\n- Section headers separating DMs and Groups in list view\n- FAB menu to choose between DM or Group chat\n- Chat type indicator showing current mode\n- Efficient database function for DM lookup (find_existing_dm)\n\nNew files:\n- conversation_model.dart - Data models for conversations\n- conversation_entity.dart - Domain entities\n- conversation_repository.dart - Repository interface\n- conversation_repository_impl.dart - Repository implementation\n- conversation_remote_datasource.dart - Supabase data source\n- create_conversation_usecase.dart - Use cases\n- get_trip_conversations_usecase.dart - More use cases\n- conversation_providers.dart - Riverpod state management\n- conversation_list_page.dart - List view with filters\n- create_conversation_page.dart - Create DM or Group\n- group_chat_page.dart - Chat interface\n- conversation_info_page.dart - Chat settings/members\n- 20251202_group_chat.sql - Database migration\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(gradlew.bat assembleDebug:*)",
-      "Bash(timeout 60 bash:*)"
+      "Bash(timeout 60 bash:*)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" log --oneline -5)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" branch --show-current)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" add lib/features/auth/presentation/pages/forgot_password_page.dart lib/features/auth/presentation/pages/signup_page.dart lib/features/auth/presentation/providers/auth_providers.dart)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" pull origin main)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" log --oneline -10)"
     ],
     "deny": [],
     "ask": []

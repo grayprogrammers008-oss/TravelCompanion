@@ -550,167 +550,208 @@ class _HomePageState extends ConsumerState<HomePage>
 
   /// Show filter options in a bottom sheet
   void _showFilterBottomSheet(BuildContext context, dynamic themeData) {
+    // Use local variables for modal state management
+    String localSortBy = _sortBy;
+    double? localMinBudget = _minBudget;
+    double? localMaxBudget = _maxBudget;
+
+    // Controllers for budget fields
+    final minBudgetController = TextEditingController(
+      text: localMinBudget?.toStringAsFixed(0) ?? '',
+    );
+    final maxBudgetController = TextEditingController(
+      text: localMaxBudget?.toStringAsFixed(0) ?? '',
+    );
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.7,
-        ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(AppTheme.radiusXl),
-            topRight: Radius.circular(AppTheme.radiusXl),
+      builder: (modalContext) => StatefulBuilder(
+        builder: (builderContext, setModalState) => Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(modalContext).size.height * 0.7,
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: const EdgeInsets.only(top: AppTheme.spacingMd),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppTheme.neutral300,
-                borderRadius: BorderRadius.circular(2),
-              ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(AppTheme.radiusXl),
+              topRight: Radius.circular(AppTheme.radiusXl),
             ),
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Filter & Sort',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.neutral300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Filter & Sort',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  if (_hasAnyFilters)
-                    TextButton(
-                      onPressed: () {
-                        _clearAllFilters();
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Clear All',
-                        style: TextStyle(
-                          color: themeData.primaryColor,
-                          fontWeight: FontWeight.w600,
+                    if (_hasAnyFilters || localSortBy != 'recent' || localMinBudget != null || localMaxBudget != null)
+                      TextButton(
+                        onPressed: () {
+                          // Clear local state first
+                          setModalState(() {
+                            localSortBy = 'recent';
+                            localMinBudget = null;
+                            localMaxBudget = null;
+                            minBudgetController.clear();
+                            maxBudgetController.clear();
+                          });
+                          // Clear parent state
+                          _clearAllFilters();
+                          Navigator.pop(modalContext);
+                        },
+                        child: Text(
+                          'Clear All',
+                          style: TextStyle(
+                            color: themeData.primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Divider(height: 1),
-            // Sort Options
-            Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Sort by',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.neutral600,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Wrap(
-                    spacing: AppTheme.spacingSm,
-                    runSpacing: AppTheme.spacingSm,
-                    children: [
-                      _buildSortChip('Recent', 'recent', themeData),
-                      _buildSortChip('Name', 'name', themeData),
-                      _buildSortChip('Start Date', 'startDate', themeData),
-                      _buildSortChip('Budget', 'budget', themeData),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Budget Filter
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Budget Range',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.neutral600,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildBudgetField('Min', _minBudget, (value) {
-                          setState(() => _minBudget = value);
-                          Navigator.pop(context);
-                        }),
+              const Divider(height: 1),
+              // Sort Options
+              Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sort by',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral600,
                       ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: _buildBudgetField('Max', _maxBudget, (value) {
-                          setState(() => _maxBudget = value);
-                          Navigator.pop(context);
-                        }),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingLg),
-            // Apply Button
-            Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: themeData.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
-                  ),
-                  child: const Text(
-                    'Apply Filters',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(height: AppTheme.spacingSm),
+                    Wrap(
+                      spacing: AppTheme.spacingSm,
+                      runSpacing: AppTheme.spacingSm,
+                      children: [
+                        _buildSortChipStateful('Recent', 'recent', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                        _buildSortChipStateful('Name', 'name', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                        _buildSortChipStateful('Start Date', 'startDate', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                        _buildSortChipStateful('Budget', 'budget', themeData, localSortBy, (value) {
+                          setModalState(() => localSortBy = value);
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Budget Filter
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Budget Range',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral600,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildBudgetFieldStateful('Min', minBudgetController, (value) {
+                            setModalState(() => localMinBudget = value);
+                          }),
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        Expanded(
+                          child: _buildBudgetFieldStateful('Max', maxBudgetController, (value) {
+                            setModalState(() => localMaxBudget = value);
+                          }),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+              // Apply Button
+              Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Parse budget values from controllers
+                      final minVal = double.tryParse(minBudgetController.text);
+                      final maxVal = double.tryParse(maxBudgetController.text);
+
+                      // Apply all filter changes to parent state
+                      setState(() {
+                        _sortBy = localSortBy;
+                        _minBudget = minVal;
+                        _maxBudget = maxVal;
+                      });
+                      Navigator.pop(modalContext);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: themeData.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      ),
+                    ),
+                    child: const Text(
+                      'Apply Filters',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom),
-          ],
+              SizedBox(height: MediaQuery.of(modalContext).padding.bottom),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSortChip(String label, String value, dynamic themeData) {
-    final isSelected = _sortBy == value;
+  /// Build sort chip with stateful support for modal bottom sheet
+  Widget _buildSortChipStateful(String label, String value, dynamic themeData, String currentSortBy, Function(String) onSelect) {
+    final isSelected = currentSortBy == value;
     return GestureDetector(
-      onTap: () {
-        setState(() => _sortBy = value);
-      },
+      onTap: () => onSelect(value),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingMd,
@@ -735,8 +776,10 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _buildBudgetField(String label, double? value, Function(double?) onChanged) {
+  /// Build budget field with stateful support for modal bottom sheet
+  Widget _buildBudgetFieldStateful(String label, TextEditingController controller, Function(double?) onChanged) {
     return TextField(
+      controller: controller,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: label,
@@ -752,8 +795,7 @@ class _HomePageState extends ConsumerState<HomePage>
           vertical: AppTheme.spacingSm,
         ),
       ),
-      controller: TextEditingController(text: value?.toStringAsFixed(0) ?? ''),
-      onSubmitted: (text) {
+      onChanged: (text) {
         final parsed = double.tryParse(text);
         onChanged(parsed);
       },
