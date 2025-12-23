@@ -143,25 +143,51 @@ class _ChecklistDetailPageState extends ConsumerState<ChecklistDetailPage> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final item = items[index];
+                        // Get optimistic state for this item
+                        final optimisticStates = ref.watch(checklistItemOptimisticStateProvider);
+                        final optimisticIsCompleted = optimisticStates[item.id];
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
                           child: ChecklistItemTile(
                             item: item,
+                            optimisticIsCompleted: optimisticIsCompleted,
                             onToggle: () async {
                               // Get current user ID from Supabase (online-only mode)
                               final userId = SupabaseClientWrapper.currentUserId;
                               if (userId == null) return;
 
+                              final newCompletedState = !(optimisticIsCompleted ?? item.isCompleted);
+
+                              // OPTIMISTIC UPDATE: Immediately update UI
+                              ref.read(checklistItemOptimisticStateProvider.notifier)
+                                  .setOptimisticState(item.id, newCompletedState);
+
+                              // Send to server in background (fire and forget for smooth UX)
                               final controller = ref.read(checklistControllerProvider.notifier);
                               final success = await controller.toggleItemCompletion(
                                 itemId: item.id,
-                                isCompleted: !item.isCompleted,
+                                isCompleted: newCompletedState,
                                 userId: userId,
                               );
-                              // Trigger immediate UI update if successful
-                              if (success) {
-                                ref.invalidate(checklistWithItemsProvider(widget.checklistId));
+
+                              if (!success) {
+                                // Server failed - revert optimistic state
+                                ref.read(checklistItemOptimisticStateProvider.notifier)
+                                    .clearOptimisticState(item.id);
+                                // Show error
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Failed to update item. Please try again.'),
+                                      backgroundColor: AppTheme.error,
+                                    ),
+                                  );
+                                }
                               }
+                              // On success: Keep optimistic state - it shows the correct value
+                              // Don't invalidate/refetch - server is already updated
+                              // Next natural refresh (pull-to-refresh, navigation) will sync
                             },
                             onEdit: () async {
                               final result = await showDialog<bool>(

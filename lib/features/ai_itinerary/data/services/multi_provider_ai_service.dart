@@ -139,10 +139,41 @@ class MultiProviderAiService {
     }
   }
 
-  /// Generate itinerary only (uses Gemini directly as it has this method)
+  /// Generate itinerary with automatic failover
+  /// Tries Groq first (1,000 RPD), falls back to Gemini (25 RPD) if rate limited
   Future<AiGeneratedItinerary> generateItinerary(AiItineraryRequest request) async {
-    debugPrint('🔄 MultiProviderAiService: Generating itinerary (Gemini)');
-    return _geminiService.generateItinerary(request);
+    debugPrint('🔄 MultiProviderAiService: Starting itinerary generation');
+    debugPrint('   Primary: Groq (1,000 RPD)');
+    debugPrint('   Fallback: Gemini (25 RPD)');
+
+    // Try Groq first (primary - 1,000 requests/day)
+    try {
+      debugPrint('🚀 Trying Groq (primary provider)...');
+      final itinerary = await _groqService.generateItinerary(request);
+      debugPrint('✅ Groq succeeded!');
+      debugPrint('   Days: ${itinerary.days.length}');
+      return itinerary;
+    } catch (groqError, groqStack) {
+      debugPrint('⚠️ Groq failed: $groqError');
+      debugPrint('   Groq stack: $groqStack');
+      debugPrint('🔄 Falling back to Gemini...');
+
+      // Fallback to Gemini (25 requests/day)
+      try {
+        final itinerary = await _geminiService.generateItinerary(request);
+        debugPrint('✅ Gemini fallback succeeded!');
+        debugPrint('   Days: ${itinerary.days.length}');
+        return itinerary;
+      } catch (geminiError, geminiStack) {
+        debugPrint('❌ Both providers failed!');
+        debugPrint('   Groq error: $groqError');
+        debugPrint('   Gemini error: $geminiError');
+        debugPrint('   Gemini stack: $geminiStack');
+
+        // Throw a user-friendly error with details for debugging
+        throw Exception('AI service is currently unavailable. Please try again later.');
+      }
+    }
   }
 
   /// Generate checklist items (uses Gemini directly as it has this method)

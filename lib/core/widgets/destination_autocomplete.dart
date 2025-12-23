@@ -440,7 +440,7 @@ class DestinationPickerDialog extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Popular destinations (could be added later)
+          // Popular destinations
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -460,14 +460,19 @@ class DestinationPickerDialog extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      _buildQuickPick(context, '🏖️', 'Goa'),
-                      _buildQuickPick(context, '🏔️', 'Manali'),
-                      _buildQuickPick(context, '🌴', 'Kerala'),
-                      _buildQuickPick(context, '🏰', 'Jaipur'),
-                      _buildQuickPick(context, '🌊', 'Andaman'),
-                      _buildQuickPick(context, '🏝️', 'Maldives'),
-                      _buildQuickPick(context, '🌏', 'Singapore'),
-                      _buildQuickPick(context, '🏯', 'Bali'),
+                      // Popular Indian destinations
+                      _buildQuickPick(context, '🏖️', 'Goa', 'Goa, India'),
+                      _buildQuickPick(context, '🏔️', 'Manali', 'Manali, Himachal Pradesh, India'),
+                      _buildQuickPick(context, '🌴', 'Kerala', 'Kerala, India'),
+                      _buildQuickPick(context, '🏰', 'Jaipur', 'Jaipur, Rajasthan, India'),
+                      _buildQuickPick(context, '🏛️', 'Udaipur', 'Udaipur, Rajasthan, India'),
+                      _buildQuickPick(context, '🌊', 'Andaman', 'Andaman and Nicobar Islands, India'),
+                      _buildQuickPick(context, '❄️', 'Ladakh', 'Ladakh, India'),
+                      _buildQuickPick(context, '🍃', 'Ooty', 'Ooty, Tamil Nadu, India'),
+                      _buildQuickPick(context, '🌺', 'Pondicherry', 'Pondicherry, India'),
+                      _buildQuickPick(context, '🏞️', 'Shimla', 'Shimla, Himachal Pradesh, India'),
+                      _buildQuickPick(context, '🌿', 'Coorg', 'Coorg, Karnataka, India'),
+                      _buildQuickPick(context, '🏝️', 'Lakshadweep', 'Lakshadweep, India'),
                     ],
                   ),
                 ],
@@ -508,17 +513,55 @@ class DestinationPickerDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickPick(BuildContext context, String emoji, String name) {
+  Widget _buildQuickPick(BuildContext context, String emoji, String name, String searchQuery) {
     return ActionChip(
       avatar: Text(emoji),
       label: Text(name),
       backgroundColor: AppTheme.neutral100,
       side: BorderSide.none,
-      onPressed: () {
-        // Search for this destination
-        // For now, just close with the name
-        Navigator.pop(context);
-        // In a real implementation, you'd search and return the place details
+      onPressed: () async {
+        // Search for this destination using Google Places
+        final placesService = GooglePlacesService();
+        final cacheService = PlaceCacheService();
+
+        try {
+          // Get autocomplete predictions for the destination
+          final predictions = await placesService.getAutocomplete(
+            query: searchQuery,
+            types: '(cities)',
+          );
+
+          if (predictions.isNotEmpty) {
+            // Get the first (best) match and fetch its details
+            final details = await cacheService.getPlaceDetails(predictions.first.placeId);
+            if (details != null && context.mounted) {
+              Navigator.pop(context, details);
+              return;
+            }
+          }
+
+          // If no predictions found, create a basic PlaceDetails with the name
+          if (context.mounted) {
+            Navigator.pop(context, PlaceDetails(
+              placeId: '',
+              name: name,
+              formattedAddress: searchQuery,
+              photos: const [],
+              types: const ['locality'],
+            ));
+          }
+        } catch (e) {
+          // On error, just return the name as a basic place
+          if (context.mounted) {
+            Navigator.pop(context, PlaceDetails(
+              placeId: '',
+              name: name,
+              formattedAddress: searchQuery,
+              photos: const [],
+              types: const ['locality'],
+            ));
+          }
+        }
       },
     );
   }

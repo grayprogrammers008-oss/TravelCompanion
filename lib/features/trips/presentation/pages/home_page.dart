@@ -1394,6 +1394,7 @@ class _HomePageState extends ConsumerState<HomePage>
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             final tripWithMembers = trips[index];
+            final isCompleted = tripWithMembers.trip.isCompleted;
             return FadeSlideAnimation(
               delay: AppAnimations.staggerMedium * index,
               duration: AppAnimations.medium,
@@ -1401,7 +1402,8 @@ class _HomePageState extends ConsumerState<HomePage>
                 key: ValueKey(tripWithMembers.trip.id),
                 tripWithMembers: tripWithMembers,
                 onTap: () => context.push('/trips/${tripWithMembers.trip.id}'),
-                onEdit: () => _editTrip(context, tripWithMembers.trip),
+                // Don't allow editing completed trips
+                onEdit: isCompleted ? null : () => _editTrip(context, tripWithMembers.trip),
                 onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
                 currentUserId: currentUserId,
               ),
@@ -3558,7 +3560,7 @@ class _HomePageState extends ConsumerState<HomePage>
 class TripCard extends StatelessWidget {
   final TripWithMembers tripWithMembers;
   final VoidCallback onTap;
-  final VoidCallback onEdit;
+  final VoidCallback? onEdit; // Optional - null for completed trips
   final VoidCallback onDelete;
   final String? currentUserId; // To determine if user is organizer
 
@@ -3566,13 +3568,16 @@ class TripCard extends StatelessWidget {
     super.key,
     required this.tripWithMembers,
     required this.onTap,
-    required this.onEdit,
+    this.onEdit,
     required this.onDelete,
     this.currentUserId,
   });
 
   /// Check if current user is the trip organizer (creator)
   bool get isOrganizer => currentUserId != null && tripWithMembers.trip.createdBy == currentUserId;
+
+  /// Check if trip can be edited (not completed)
+  bool get canEdit => !tripWithMembers.trip.isCompleted && onEdit != null;
 
   /// Get trip status info (label, color, icon)
   ({String label, Color color, IconData icon}) _getTripStatus(TripModel trip) {
@@ -3750,12 +3755,14 @@ class TripCard extends StatelessWidget {
                                 // Actions
                                 Row(
                                   children: [
-                                    _buildActionButton(
-                                      context,
-                                      Icons.edit_outlined,
-                                      onEdit,
-                                    ),
-                                    const SizedBox(width: 4),
+                                    if (canEdit) ...[
+                                      _buildActionButton(
+                                        context,
+                                        Icons.edit_outlined,
+                                        onEdit!,
+                                      ),
+                                      const SizedBox(width: 4),
+                                    ],
                                     _buildActionButton(
                                       context,
                                       Icons.delete_outline,

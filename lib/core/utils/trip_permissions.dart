@@ -24,11 +24,15 @@ enum TripPermissionLevel {
 /// Centralized trip permission checker
 class TripPermissions {
   /// Check if the user can edit trip details (name, dates, budget, etc.)
+  /// Note: Completed trips cannot be edited (view-only mode)
   static bool canEditTrip({
     required String? currentUserId,
     required TripWithMembers tripWithMembers,
   }) {
     if (currentUserId == null) return false;
+
+    // Completed trips are view-only
+    if (tripWithMembers.trip.isCompleted) return false;
 
     // Only owner can edit trip details
     return tripWithMembers.trip.createdBy == currentUserId;
@@ -46,11 +50,15 @@ class TripPermissions {
   }
 
   /// Check if the user can edit itinerary (add/edit/delete/reorder items)
+  /// Note: Completed trips cannot be edited (view-only mode)
   static bool canEditItinerary({
     required String? currentUserId,
     required TripWithMembers tripWithMembers,
   }) {
     if (currentUserId == null) return false;
+
+    // Completed trips are view-only
+    if (tripWithMembers.trip.isCompleted) return false;
 
     // Owner can always edit
     if (tripWithMembers.trip.createdBy == currentUserId) return true;
@@ -60,11 +68,15 @@ class TripPermissions {
   }
 
   /// Check if the user can edit checklists (add/edit/delete checklists and items)
+  /// Note: Completed trips cannot be edited (view-only mode)
   static bool canEditChecklists({
     required String? currentUserId,
     required TripWithMembers tripWithMembers,
   }) {
     if (currentUserId == null) return false;
+
+    // Completed trips are view-only
+    if (tripWithMembers.trip.isCompleted) return false;
 
     // Owner can always edit
     if (tripWithMembers.trip.createdBy == currentUserId) return true;
@@ -105,11 +117,15 @@ class TripPermissions {
   }
 
   /// Check if the user can manage members (add/remove)
+  /// Note: Completed trips cannot be edited (view-only mode)
   static bool canManageMembers({
     required String? currentUserId,
     required TripWithMembers tripWithMembers,
   }) {
     if (currentUserId == null) return false;
+
+    // Completed trips are view-only
+    if (tripWithMembers.trip.isCompleted) return false;
 
     // Owner can always manage members
     if (tripWithMembers.trip.createdBy == currentUserId) return true;
@@ -126,6 +142,18 @@ class TripPermissions {
     if (currentUserId == null) return false;
 
     // Only owner can complete trip
+    return tripWithMembers.trip.createdBy == currentUserId;
+  }
+
+  /// Check if the user can edit rating/review (allowed even for completed trips)
+  /// This is a post-trip reflection activity
+  static bool canEditRating({
+    required String? currentUserId,
+    required TripWithMembers tripWithMembers,
+  }) {
+    if (currentUserId == null) return false;
+
+    // Only owner can rate/review the trip (even after completion)
     return tripWithMembers.trip.createdBy == currentUserId;
   }
 

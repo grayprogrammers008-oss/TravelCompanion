@@ -13,6 +13,7 @@ import '../../features/trips/presentation/pages/trip_members_page.dart';
 import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
+import '../../features/expenses/presentation/pages/settlement_summary_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/trip_invites/presentation/pages/join_trip_by_code_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
@@ -84,6 +85,7 @@ class AppRoutes {
   static const String browseTrips = '/trips/browse';
   static const String expenseList = '/trips/:tripId/expenses';
   static const String addExpense = '/trips/:tripId/expenses/add';
+  static const String settlementSummary = '/trips/:tripId/expenses/settle';
   static const String addStandaloneExpense = '/expenses/add';
   static const String expenseTest = '/expenses/test';
   static const String acceptInvite = '/invite/:inviteCode';
@@ -424,6 +426,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
           return AddExpensePage(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.settlementSummary,
+        name: 'settlementSummary',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return SettlementSummaryPage(tripId: tripId);
         },
       ),
       GoRoute(

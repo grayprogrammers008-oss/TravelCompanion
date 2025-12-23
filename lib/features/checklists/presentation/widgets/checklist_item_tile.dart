@@ -8,6 +8,9 @@ class ChecklistItemTile extends StatelessWidget {
   final VoidCallback onToggle;
   final VoidCallback onDelete;
   final VoidCallback? onEdit;
+  /// Optional override for isCompleted state (for optimistic updates)
+  /// When provided, this value is used instead of item.isCompleted
+  final bool? optimisticIsCompleted;
 
   const ChecklistItemTile({
     super.key,
@@ -15,7 +18,11 @@ class ChecklistItemTile extends StatelessWidget {
     required this.onToggle,
     required this.onDelete,
     this.onEdit,
+    this.optimisticIsCompleted,
   });
+
+  /// Returns the effective completion state (optimistic if available, otherwise actual)
+  bool get _isCompleted => optimisticIsCompleted ?? item.isCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +69,8 @@ class ChecklistItemTile extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           side: BorderSide(
-            color: item.isCompleted ? AppTheme.success.withValues(alpha: 0.3) : context.textColor.withValues(alpha: 0.12),
-            width: item.isCompleted ? 2 : 1,
+            color: _isCompleted ? AppTheme.success.withValues(alpha: 0.3) : context.textColor.withValues(alpha: 0.12),
+            width: _isCompleted ? 2 : 1,
           ),
         ),
         child: InkWell(
@@ -79,7 +86,7 @@ class ChecklistItemTile extends StatelessWidget {
               children: [
                 // Checkbox
                 Checkbox(
-                  value: item.isCompleted,
+                  value: _isCompleted,
                   onChanged: (_) => onToggle(),
                   activeColor: AppTheme.success,
                   shape: RoundedRectangleBorder(
@@ -96,8 +103,8 @@ class ChecklistItemTile extends StatelessWidget {
                       Text(
                         item.title,
                         style: context.bodyLarge.copyWith(
-                              decoration: item.isCompleted ? TextDecoration.lineThrough : null,
-                              color: item.isCompleted ? context.textColor.withValues(alpha: 0.5) : context.textColor,
+                              decoration: _isCompleted ? TextDecoration.lineThrough : null,
+                              color: _isCompleted ? context.textColor.withValues(alpha: 0.5) : context.textColor,
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -175,7 +182,7 @@ class ChecklistItemTile extends StatelessWidget {
                 ),
 
                 // Status icon
-                if (item.isCompleted)
+                if (_isCompleted)
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(

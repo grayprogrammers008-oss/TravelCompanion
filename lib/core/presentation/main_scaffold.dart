@@ -55,7 +55,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           BottomNavigationBarItem(
             icon: Icon(Icons.luggage_outlined),
             activeIcon: Icon(Icons.luggage),
-            label: 'Trips',
+            label: 'My Trips',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.explore_outlined),

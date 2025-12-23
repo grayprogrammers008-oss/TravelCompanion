@@ -154,6 +154,9 @@ class _AiItineraryGeneratorPageState
   Future<void> _generateItinerary() async {
     debugPrint('🚀 Generate Itinerary button pressed');
 
+    // Dismiss keyboard first for cleaner UX
+    FocusScope.of(context).unfocus();
+
     if (!_formKey.currentState!.validate()) {
       debugPrint('❌ Form validation failed');
       return;

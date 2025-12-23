@@ -219,10 +219,44 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Row 1: Status badge + Visibility badge
+                // Row 1: Status badge + View Only badge + Visibility badge
                 Row(
                   children: [
                     _buildCompactStatusBadge(context, trip),
+                    // View Only badge for completed trips
+                    if (trip.trip.isCompleted) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.visibility,
+                              size: 11,
+                              color: Colors.white70,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'View Only',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(width: 8),
                     // Public/Private badge
                     Container(
@@ -841,18 +875,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         Row(
           children: [
             Expanded(
-              child: _buildCompactTile(
+              child: _buildExpensesTileWithQuickAdd(
                 context,
-                icon: Icons.payments_rounded,
-                title: 'Expenses',
-                value: '₹${_formatAmount(totalExpenses)}',
-                color: const Color(0xFF4CAF93),
-                onTap: () => context.push('/trips/${widget.tripId}/expenses'),
-                onLongPress: isCompleted ? null : () => showQuickExpenseSheet(
-                  context: context,
-                  tripId: widget.tripId,
-                  trip: trip,
-                ),
+                totalExpenses: totalExpenses,
+                trip: trip,
+                isCompleted: isCompleted,
               ),
             ),
             const SizedBox(width: 12),
@@ -910,6 +937,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     required VoidCallback onTap,
     VoidCallback? onLongPress,
     int? badge,
+    String? hint,
   }) {
     return GestureDetector(
       onTap: () {
@@ -983,6 +1011,136 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             Text(
               value,
               style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+            // Hint text for long press action
+            if (hint != null) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(
+                    Icons.touch_app_rounded,
+                    size: 10,
+                    color: color.withValues(alpha: 0.6),
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    hint,
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
+                      color: color.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Expenses tile with prominent Quick Add button
+  Widget _buildExpensesTileWithQuickAdd(
+    BuildContext context, {
+    required double totalExpenses,
+    required TripWithMembers trip,
+    required bool isCompleted,
+  }) {
+    const color = Color(0xFF4CAF93);
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        context.push('/trips/${widget.tripId}/expenses');
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon row with Quick Add button
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.payments_rounded, color: color, size: 20),
+                ),
+                const Spacer(),
+                // Prominent Quick Add button - only for active trips
+                if (!isCompleted)
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      showQuickExpenseSheet(
+                        context: context,
+                        tripId: widget.tripId,
+                        trip: trip,
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.add_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'Quick',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Title
+            const Text(
+              'Expenses',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Value
+            Text(
+              '₹${_formatAmount(totalExpenses)}',
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: color,

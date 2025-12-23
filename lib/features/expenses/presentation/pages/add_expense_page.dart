@@ -34,6 +34,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
   DateTime? _transactionDate;
   bool _isLoading = false;
   List<String> _selectedMemberIds = [];
+  String? _paidByUserId; // Who paid for this expense
 
   final List<String> _categories = [
     'Food',
@@ -90,7 +91,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                 : _descriptionController.text.trim(),
             amount: double.parse(_amountController.text.trim()),
             category: _selectedCategory?.toLowerCase(),
-            paidBy: currentUserId,
+            paidBy: _paidByUserId ?? currentUserId, // Use selected payer or default to current user
             splitWith: memberIds,
             transactionDate: _transactionDate ?? DateTime.now(),
           );
@@ -202,6 +203,169 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildWhoPaidPicker() {
+    if (widget.tripId == null) return const SizedBox.shrink();
+
+    final tripAsync = ref.watch(tripProvider(widget.tripId!));
+    final currentUserId = SupabaseClientWrapper.currentUserId;
+
+    return tripAsync.when(
+      data: (trip) {
+        final members = trip.members;
+
+        // Initialize paidByUserId to current user if not set yet
+        if (_paidByUserId == null && currentUserId != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _paidByUserId = currentUserId;
+              });
+            }
+          });
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Label
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 8),
+              child: Text(
+                'Paid By *',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.neutral700,
+                ),
+              ),
+            ),
+            // Dropdown-style selector
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: AppTheme.neutral300),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _paidByUserId ?? currentUserId,
+                  isExpanded: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  icon: Icon(Icons.keyboard_arrow_down, color: AppTheme.neutral500),
+                  items: members.map((member) {
+                    final displayName = member.fullName ?? member.email ?? 'Unknown';
+                    final isSelf = member.userId == currentUserId;
+                    final initials = _getInitials(displayName);
+
+                    return DropdownMenuItem<String>(
+                      value: member.userId,
+                      child: Row(
+                        children: [
+                          // Avatar
+                          if (member.avatarUrl != null)
+                            CircleAvatar(
+                              radius: 14,
+                              backgroundImage: NetworkImage(member.avatarUrl!),
+                            )
+                          else
+                            CircleAvatar(
+                              radius: 14,
+                              backgroundColor: AppTheme.primaryTeal,
+                              child: Text(
+                                initials,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(width: 12),
+                          // Name
+                          Expanded(
+                            child: Text(
+                              isSelf ? '$displayName (Me)' : displayName,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppTheme.neutral800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: _isLoading
+                      ? null
+                      : (value) {
+                          if (value != null) {
+                            setState(() => _paidByUserId = value);
+                          }
+                        },
+                ),
+              ),
+            ),
+            // Helper text
+            Padding(
+              padding: const EdgeInsets.only(left: 4, top: 6),
+              child: Text(
+                'Select who paid for this expense',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppTheme.neutral500,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppTheme.spacingMd),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, _) => Container(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          color: AppTheme.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.error_outline, color: AppTheme.error),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                'Failed to load members',
+                style: TextStyle(color: AppTheme.error),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
   }
 
   @override
@@ -382,6 +546,16 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                     FadeSlideAnimation(
                       delay: AppAnimations.staggerSmall * 4,
                       child: _buildMemberPicker(),
+                    ),
+
+                  if (!isStandalone && widget.tripId != null)
+                    const SizedBox(height: AppTheme.spacingLg),
+
+                  // Who Paid Picker (only for trip expenses)
+                  if (!isStandalone && widget.tripId != null)
+                    FadeSlideAnimation(
+                      delay: AppAnimations.staggerSmall * 5,
+                      child: _buildWhoPaidPicker(),
                     ),
 
                   if (!isStandalone && widget.tripId != null)

@@ -15,6 +15,7 @@ import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/expense_providers.dart';
 import '../widgets/payment_options_sheet.dart';
+import '../widgets/who_owes_whom_card.dart';
 
 class ExpenseListPage extends ConsumerWidget {
   final String tripId;
@@ -65,7 +66,7 @@ class ExpenseListPage extends ConsumerWidget {
           if (expenses.isEmpty) {
             return _buildEmptyState(context);
           }
-          return _buildExpensesList(context, expenses, ref, tripAsync, currentUserId);
+          return _buildExpensesList(context, expenses, ref, tripAsync, currentUserId, balancesAsync);
         },
         loading: () => const Center(
           child: AppLoadingIndicator(
@@ -180,55 +181,123 @@ class ExpenseListPage extends ConsumerWidget {
     WidgetRef ref,
     AsyncValue<TripWithMembers> tripAsync,
     String? currentUserId,
+    AsyncValue<List<BalanceSummary>> balancesAsync,
   ) {
     // Calculate total
     final total = expenses.fold<double>(0, (sum, e) => sum + e.expense.amount);
 
-    return Column(
-      children: [
-        // Total summary card
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                context.primaryColor,
-                context.primaryColor.withValues(alpha: 0.8),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Who Owes Whom card - ALWAYS VISIBLE at the top
+          balancesAsync.when(
+            data: (balances) => WhoOwesWhomCard(
+              balances: balances,
+              currentUserId: currentUserId,
+              onSettlePressed: () {
+                // Navigate to settlement summary page
+                context.push('/trips/$tripId/expenses/settle');
+              },
+              onPayPressed: (recipientName, amount) async {
+                // Prompt for UPI ID and launch payment
+                final upiId = await _showUPIInputDialog(context, recipientName);
+                if (upiId != null && upiId.isNotEmpty && context.mounted) {
+                  PaymentOptionsSheet.show(
+                    context,
+                    recipientUPIId: upiId,
+                    recipientName: recipientName,
+                    amount: amount,
+                    note: 'Settlement for trip expenses',
+                  );
+                }
+              },
+            ),
+            loading: () => Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: context.surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+
+          // Total summary card
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  context.primaryColor,
+                  context.primaryColor.withValues(alpha: 0.8),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Total Expenses',
+                  style: context.titleMedium.copyWith(color: context.surfaceColor),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  total.toINR(),
+                  style: context.headlineMedium.copyWith(
+                    color: context.surfaceColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
-            borderRadius: BorderRadius.circular(12),
           ),
-          child: Column(
-            children: [
-              Text(
-                'Total Expenses',
-                style: context.titleMedium.copyWith(color: context.surfaceColor),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                total.toINR(),
-                style: context.headlineMedium.copyWith(
-                  color: context.surfaceColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
 
-        // Expenses list
-        Expanded(
-          child: ListView.builder(
+          const SizedBox(height: 16),
+
+          // Section header
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: expenses.length,
-            itemBuilder: (context, index) {
-              final expenseWithSplits = expenses[index];
-              final expense = expenseWithSplits.expense;
-              final splits = expenseWithSplits.splits;
+            child: Row(
+              children: [
+                Icon(
+                  Icons.receipt_long,
+                  size: 20,
+                  color: context.textColor.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'All Expenses',
+                  style: context.titleMedium.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${expenses.length} items',
+                  style: context.bodySmall.copyWith(
+                    color: context.textColor.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-              return Card(
+          const SizedBox(height: 12),
+
+          // Expenses list - inline items
+          ...expenses.map((expenseWithSplits) {
+            final expense = expenseWithSplits.expense;
+            final splits = expenseWithSplits.splits;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: InkWell(
                   onTap: () {
@@ -345,11 +414,14 @@ class ExpenseListPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-      ],
+              ),
+            );
+          }),
+
+          // Bottom padding for FAB
+          const SizedBox(height: 80),
+        ],
+      ),
     );
   }
 

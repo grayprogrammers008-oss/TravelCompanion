@@ -1048,13 +1048,21 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
   }
 
   /// Get contextual subtitle based on available trips
-  String _getExploreSubtitle(List<TripWithMembers> trips) {
+  String _getExploreSubtitle(List<TripWithMembers> allTrips) {
+    final now = DateTime.now();
+
+    // Filter out ended/completed trips first
+    final trips = allTrips.where((t) {
+      if (t.trip.isCompleted) return false;
+      if (t.trip.endDate != null && t.trip.endDate!.isBefore(now)) return false;
+      return true;
+    }).toList();
+
     if (trips.isEmpty) {
       return 'Discover amazing adventures';
     }
 
     // Count trips starting soon (within 30 days)
-    final now = DateTime.now();
     final upcomingTrips = trips.where((t) {
       final startDate = t.trip.startDate;
       if (startDate == null) return false;

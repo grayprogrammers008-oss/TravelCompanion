@@ -79,7 +79,9 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
   ExpenseCategory? _selectedCategory;
   bool _isSubmitting = false;
   bool _showMemberSelector = false;
+  bool _showPaidBySelector = false;
   late Set<String> _selectedMemberIds;
+  late String _paidByUserId; // Who paid for this expense
   DateTime _transactionDate = DateTime.now();
   bool _isPersonalExpense = false; // "Just Me" mode
 
@@ -88,6 +90,8 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
     super.initState();
     // Default: all members selected
     _selectedMemberIds = widget.trip.members.map((m) => m.userId).toSet();
+    // Default: current user paid
+    _paidByUserId = SupabaseClientWrapper.currentUserId ?? '';
   }
 
   /// Get currency symbol
@@ -213,7 +217,7 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
             : _selectedCategory!.name,
         amount: _numericAmount,
         category: _selectedCategory!.name.toLowerCase(),
-        paidBy: currentUserId,
+        paidBy: _paidByUserId, // Use selected payer instead of current user
         splitWith: memberIds,
         transactionDate: _transactionDate,
       );
@@ -464,6 +468,11 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
               // Transaction date section
               _buildDateSection(themeData),
 
+              const SizedBox(height: AppTheme.spacingSm),
+
+              // Who paid section
+              _buildWhoPaidSection(themeData),
+
               const SizedBox(height: AppTheme.spacingMd),
 
               // Numpad
@@ -631,6 +640,207 @@ class _QuickExpenseSheetState extends ConsumerState<QuickExpenseSheet> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Build the "Who Paid" section
+  Widget _buildWhoPaidSection(AppThemeData themeData) {
+    // Find the payer's info
+    final payer = widget.trip.members.firstWhere(
+      (m) => m.userId == _paidByUserId,
+      orElse: () => widget.trip.members.first,
+    );
+    final payerName = payer.fullName ?? payer.email ?? 'Unknown';
+    final currentUserId = SupabaseClientWrapper.currentUserId;
+    final isCurrentUser = _paidByUserId == currentUserId;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row with toggle
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              setState(() {
+                _showPaidBySelector = !_showPaidBySelector;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingSm,
+                vertical: AppTheme.spacingXs,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.payment_outlined,
+                    size: 16,
+                    color: AppTheme.neutral600,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Paid by',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.neutral600,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: themeData.primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (payer.avatarUrl != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: CircleAvatar(
+                              radius: 8,
+                              backgroundImage: NetworkImage(payer.avatarUrl!),
+                            ),
+                          ),
+                        Text(
+                          isCurrentUser ? 'Me' : (payerName.length > 15 ? '${payerName.substring(0, 15)}...' : payerName),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: themeData.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    _showPaidBySelector
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: AppTheme.neutral500,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Expandable payer selector
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: _showPaidBySelector
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox.shrink(),
+            secondChild: Container(
+              margin: const EdgeInsets.only(top: AppTheme.spacingSm),
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: AppTheme.neutral50,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: AppTheme.neutral200),
+              ),
+              child: Wrap(
+                spacing: AppTheme.spacingSm,
+                runSpacing: AppTheme.spacingSm,
+                children: widget.trip.members.map((member) {
+                  final isSelected = _paidByUserId == member.userId;
+                  final displayName = member.fullName ?? member.email ?? 'Unknown';
+                  final initials = _getInitials(displayName);
+                  final isSelf = member.userId == currentUserId;
+
+                  return GestureDetector(
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      setState(() {
+                        _paidByUserId = member.userId;
+                        _showPaidBySelector = false; // Close after selection
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? themeData.primaryColor.withValues(alpha: 0.15)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isSelected
+                              ? themeData.primaryColor
+                              : AppTheme.neutral300,
+                          width: isSelected ? 2 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Avatar or initials
+                          if (member.avatarUrl != null)
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundImage: NetworkImage(member.avatarUrl!),
+                            )
+                          else
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundColor: isSelected
+                                  ? themeData.primaryColor
+                                  : AppTheme.neutral400,
+                              child: Text(
+                                initials,
+                                style: const TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(width: 6),
+                          // Name
+                          Text(
+                            isSelf ? 'Me' : (displayName.length > 12
+                                ? '${displayName.substring(0, 12)}...'
+                                : displayName),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? themeData.primaryColor
+                                  : AppTheme.neutral700,
+                            ),
+                          ),
+                          if (isSelected) ...[
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.check_circle,
+                              size: 14,
+                              color: themeData.primaryColor,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

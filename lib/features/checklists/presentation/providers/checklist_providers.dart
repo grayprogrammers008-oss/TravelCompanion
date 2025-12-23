@@ -283,3 +283,35 @@ class ChecklistController extends Notifier<ChecklistState> {
 final checklistControllerProvider = NotifierProvider<ChecklistController, ChecklistState>(() {
   return ChecklistController();
 });
+
+// =====================================================
+// OPTIMISTIC UPDATE STATE FOR CHECKLIST ITEMS
+// =====================================================
+
+/// Stores optimistic toggle states for checklist items
+/// Key: itemId, Value: optimistic isCompleted state
+/// Used for immediate UI feedback before server confirms
+class ChecklistOptimisticNotifier extends Notifier<Map<String, bool>> {
+  @override
+  Map<String, bool> build() => {};
+
+  /// Set optimistic state for an item
+  void setOptimisticState(String itemId, bool isCompleted) {
+    state = {...state, itemId: isCompleted};
+  }
+
+  /// Clear optimistic state for an item (after server confirms)
+  void clearOptimisticState(String itemId) {
+    state = Map<String, bool>.from(state)..remove(itemId);
+  }
+
+  /// Clear all optimistic states
+  void clearAll() {
+    state = {};
+  }
+}
+
+final checklistItemOptimisticStateProvider =
+    NotifierProvider<ChecklistOptimisticNotifier, Map<String, bool>>(() {
+  return ChecklistOptimisticNotifier();
+});

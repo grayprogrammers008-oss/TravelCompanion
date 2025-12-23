@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'gemini_service.dart';
+import '../../domain/entities/ai_itinerary.dart';
 
 class GroqService {
   static const String _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
@@ -17,6 +18,39 @@ class GroqService {
   final String _apiKey;
 
   GroqService(this._apiKey);
+
+  /// Clean JSON response by removing markdown code blocks and extra text
+  /// LLMs sometimes wrap JSON in ```json ... ``` blocks despite instructions
+  String _cleanJsonResponse(String content) {
+    String cleaned = content.trim();
+
+    // Remove markdown code blocks
+    if (cleaned.startsWith('```json')) {
+      cleaned = cleaned.substring(7);
+    } else if (cleaned.startsWith('```')) {
+      cleaned = cleaned.substring(3);
+    }
+
+    if (cleaned.endsWith('```')) {
+      cleaned = cleaned.substring(0, cleaned.length - 3);
+    }
+
+    cleaned = cleaned.trim();
+
+    // If response has text before JSON, find the first { or [
+    final jsonStart = cleaned.indexOf('{');
+    if (jsonStart > 0) {
+      cleaned = cleaned.substring(jsonStart);
+    }
+
+    // If response has text after JSON, find the last } or ]
+    final jsonEnd = cleaned.lastIndexOf('}');
+    if (jsonEnd != -1 && jsonEnd < cleaned.length - 1) {
+      cleaned = cleaned.substring(0, jsonEnd + 1);
+    }
+
+    return cleaned;
+  }
 
   /// Generate complete trip plan using Groq API
   /// Includes retry logic with exponential backoff for rate limiting (429 errors)
@@ -143,7 +177,9 @@ class GroqService {
       debugPrint('📄 Generated text length: ${content.length} chars');
 
       try {
-        final planJson = jsonDecode(content) as Map<String, dynamic>;
+        // Clean up response - remove markdown code blocks if present
+        final cleanContent = _cleanJsonResponse(content);
+        final planJson = jsonDecode(cleanContent) as Map<String, dynamic>;
         final plan = AiCompleteTripPlan.fromJson(planJson);
         debugPrint('✅ Successfully parsed complete trip plan from Groq');
         debugPrint('   - Trip name: ${plan.tripName}');
@@ -238,19 +274,75 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Transport: ₹500-1500/day for local travel
 - Be realistic - don't underestimate costs
 
-**7. SMART PACKING LIST:**
-- ONLY include items ACTUALLY needed for this specific trip
-- Consider: destination climate, planned activities, trip duration
-- Don't add generic items that aren't relevant
-- Specify quantities based on trip length (e.g., "3 t-shirts" for 3-day trip)
-- Group by category: documents, clothing, toiletries, electronics, medicines, accessories
+**7. COMPLETE PACKING LIST (INCLUDE ALL NECESSARY ITEMS):**
+Generate a COMPLETE packing list with ALL items the traveler will need. Do NOT skip any category:
+
+**DOCUMENTS (all required):**
+- ID proof (Aadhaar/Passport/Driving License)
+- Travel tickets & booking confirmations
+- Hotel reservation printouts
+- Travel insurance documents
+- Photocopies of all important documents
+
+**CLOTHING (quantities based on ${durationDays}-day trip):**
+- T-shirts/shirts (${durationDays - 1} sets minimum)
+- Pants/shorts/bottoms (2-3 pairs)
+- Underwear (${durationDays + 2} pieces)
+- Socks (${durationDays + 1} pairs)
+- Sleepwear/night clothes
+- Comfortable walking shoes
+- Sandals/flip-flops
+- Light jacket/sweater (for AC/evenings)
+
+**TOILETRIES (complete set):**
+- Toothbrush & toothpaste
+- Soap/body wash
+- Shampoo & conditioner
+- Deodorant
+- Sunscreen (SPF 50+)
+- Moisturizer/lotion
+- Lip balm
+- Comb/hairbrush
+- Razor & shaving cream (if needed)
+- Feminine hygiene products (if needed)
+
+**ELECTRONICS:**
+- Phone charger
+- Power bank (10000+ mAh)
+- Earphones/headphones
+- Camera (if needed)
+- Charging cables
+
+**MEDICINES & HEALTH:**
+- Pain relievers (Paracetamol/Ibuprofen)
+- Antacids/digestive medicine
+- Anti-diarrhea medicine
+- Band-aids & antiseptic
+- Mosquito repellent
+- Motion sickness pills (if prone)
+- Personal prescription medicines
+- Hand sanitizer
+- Wet wipes/tissues
+
+**ACCESSORIES:**
+- Sunglasses
+- Hat/cap
+- Umbrella or raincoat
+- Water bottle (reusable)
+- Day bag/backpack
+- Travel pillow (for long journeys)
+- Eye mask & earplugs
+
+**ACTIVITY-SPECIFIC (based on itinerary):**
+- Add items specific to planned activities (temple wear, beach gear, hiking boots, etc.)
 
 **8. ACTIONABLE TIPS:**
 - Include destination-specific advice (local customs, scams to avoid, best transport options)
 - Mention best times to visit specific attractions (e.g., "Visit Taj Mahal at sunrise to avoid crowds")
 - Include emergency info (nearest hospital, police station, emergency numbers)
 
-RESPOND WITH VALID JSON in this exact format:
+RESPOND WITH VALID JSON ONLY. No markdown, no code blocks, no explanations - just the raw JSON object.
+CRITICAL: Follow this EXACT schema - field names must match EXACTLY as shown. The parser will FAIL if you use different field names:
 {
   "trip_name": "Creative peppy name (NEVER use 'Trip to X' format!)",
   "summary": "A brief 2-3 sentence summary of the trip",
@@ -276,7 +368,7 @@ RESPOND WITH VALID JSON in this exact format:
   ],
   "packing_list": [
     {
-      "title": "Item name (e.g., Passport, Sunscreen SPF 50)",
+      "title": "Item name (REQUIRED - must use 'title' NOT 'item')",
       "category": "documents|clothing|toiletries|electronics|medicines|accessories|misc",
       "is_essential": true,
       "quantity": 1,
@@ -288,6 +380,8 @@ RESPOND WITH VALID JSON in this exact format:
     "General travel tip 2"
   ]
 }
+
+IMPORTANT: For packing_list items, you MUST use "title" as the field name for the item name, NOT "item". This is critical for parsing.
 
 Generate the complete trip plan now:
 ''';
@@ -392,7 +486,9 @@ Generate the complete trip plan now:
       debugPrint('📄 Generated text length: ${content.length} chars');
 
       try {
-        final planJson = jsonDecode(content) as Map<String, dynamic>;
+        // Clean up response - remove markdown code blocks if present
+        final cleanContent = _cleanJsonResponse(content);
+        final planJson = jsonDecode(cleanContent) as Map<String, dynamic>;
         final plan = AiCompleteTripPlan.fromJson(planJson);
         debugPrint('✅ Successfully parsed complete trip plan from voice');
         debugPrint('   - Destination: ${plan.destination}');
@@ -410,6 +506,264 @@ Generate the complete trip plan now:
     }
 
     throw Exception('Failed to generate trip plan after multiple attempts');
+  }
+
+  /// Generate an itinerary using Groq API (same format as GeminiService)
+  /// Includes retry logic with exponential backoff for rate limiting (429 errors)
+  Future<AiGeneratedItinerary> generateItinerary(AiItineraryRequest request) async {
+    debugPrint('🚀 GroqService.generateItinerary() called');
+    debugPrint('📍 Destination: ${request.destination}');
+    debugPrint('📅 Duration: ${request.durationDays} days');
+
+    final prompt = _buildItineraryPrompt(request);
+    debugPrint('📝 Prompt built (${prompt.length} chars)');
+
+    // Retry logic with exponential backoff
+    const maxRetries = 3;
+    int retryCount = 0;
+    int delaySeconds = 2;
+
+    while (retryCount <= maxRetries) {
+      debugPrint('🌐 Making POST request to Groq API (attempt ${retryCount + 1}/${maxRetries + 1})...');
+
+      final requestBody = {
+        'model': _model,
+        'messages': [
+          {
+            'role': 'system',
+            'content': 'You are an expert travel planner. You MUST respond with valid JSON only. Do not include any markdown, code blocks, or explanations. Only output the raw JSON object.',
+          },
+          {
+            'role': 'user',
+            'content': prompt,
+          },
+        ],
+        'temperature': 0.7,
+        'max_tokens': 8192,
+      };
+
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_apiKey',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      debugPrint('📥 Response status code: ${response.statusCode}');
+
+      // Handle rate limiting (429) with exponential backoff
+      if (response.statusCode == 429) {
+        retryCount++;
+        if (retryCount > maxRetries) {
+          debugPrint('❌ Groq: Max retries exceeded for rate limiting');
+          throw Exception('Groq rate limited: 429');
+        }
+        debugPrint('⏳ Groq rate limited (429). Waiting ${delaySeconds}s before retry $retryCount/$maxRetries...');
+        await Future.delayed(Duration(seconds: delaySeconds));
+        delaySeconds *= 2;
+        continue;
+      }
+
+      // Handle server errors with retry
+      if (response.statusCode >= 500 && response.statusCode < 600) {
+        retryCount++;
+        if (retryCount > maxRetries) {
+          debugPrint('❌ Groq: Max retries exceeded for server error');
+          throw Exception('Groq server error: ${response.statusCode}');
+        }
+        debugPrint('⏳ Groq server error (${response.statusCode}). Waiting ${delaySeconds}s before retry...');
+        await Future.delayed(Duration(seconds: delaySeconds));
+        delaySeconds *= 2;
+        continue;
+      }
+
+      if (response.statusCode != 200) {
+        debugPrint('❌ Groq API Error: ${response.statusCode}');
+        debugPrint('Response body: ${response.body}');
+        String errorDetail = '';
+        try {
+          final errorJson = jsonDecode(response.body) as Map<String, dynamic>;
+          final error = errorJson['error'] as Map<String, dynamic>?;
+          errorDetail = error?['message'] as String? ?? '';
+        } catch (_) {}
+        throw Exception('Groq API error: ${response.statusCode}${errorDetail.isNotEmpty ? ' - $errorDetail' : ''}');
+      }
+
+      debugPrint('✅ Groq API returned 200 OK');
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      final choices = jsonResponse['choices'] as List?;
+
+      if (choices == null || choices.isEmpty) {
+        throw Exception('No response from Groq AI');
+      }
+
+      final message = choices[0]['message'] as Map<String, dynamic>?;
+      final content = message?['content'] as String?;
+
+      if (content == null || content.isEmpty) {
+        throw Exception('Empty response from Groq AI');
+      }
+
+      debugPrint('📄 Generated text length: ${content.length} chars');
+
+      try {
+        // Clean up response - remove markdown code blocks if present
+        final cleanContent = _cleanJsonResponse(content);
+        final itineraryJson = jsonDecode(cleanContent) as Map<String, dynamic>;
+        final itinerary = AiGeneratedItinerary.fromJson({
+          ...itineraryJson,
+          'destination': request.destination,
+          'duration_days': request.durationDays,
+          'budget': request.budget,
+          'currency': request.currency,
+          'interests': request.interests,
+          'generated_at': DateTime.now().toIso8601String(),
+        });
+        debugPrint('✅ Successfully parsed itinerary from Groq');
+        debugPrint('   - Days: ${itinerary.days.length}');
+        debugPrint('   - Packing items: ${itinerary.packingList.length}');
+        return itinerary;
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Failed to parse Groq response: $content');
+          debugPrint('Error: $e');
+        }
+        throw Exception('Failed to parse Groq AI response');
+      }
+    }
+
+    throw Exception('Failed to generate itinerary after multiple attempts');
+  }
+
+  /// Build prompt for itinerary generation (matches Gemini format)
+  String _buildItineraryPrompt(AiItineraryRequest request) {
+    final budgetStr = request.budget != null
+        ? 'Budget: ₹${request.budget!.toStringAsFixed(0)} ${request.currency}'
+        : 'Budget: Flexible';
+
+    final interestsStr = request.interests.isNotEmpty
+        ? 'Interests: ${request.interests.join(", ")}'
+        : '';
+
+    final styleStr = request.travelStyle != null
+        ? 'Travel Style: ${request.travelStyle}'
+        : '';
+
+    final groupStr = request.groupSize != null
+        ? 'Group Size: ${request.groupSize} people'
+        : '';
+
+    return '''
+You are an expert travel planner specializing in Indian destinations. Generate a detailed, PRACTICAL day-by-day itinerary with SPECIFIC restaurant recommendations.
+
+TRIP DETAILS:
+- Destination: ${request.destination}, India
+- Duration: ${request.durationDays} days
+- $budgetStr
+${interestsStr.isNotEmpty ? '- $interestsStr' : ''}
+${styleStr.isNotEmpty ? '- $styleStr' : ''}
+${groupStr.isNotEmpty ? '- $groupStr' : ''}
+
+CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
+
+**1. REALISTIC TIME MANAGEMENT:**
+- Day 1: Start from check-in/arrival time (2-3 PM), NOT early morning
+- Last Day: End by checkout (11 AM-12 PM), plan only morning activities
+- Include realistic TRAVEL TIME between locations (30-60 mins city, 2-4 hours inter-city)
+- Add 15-30 min buffer between activities
+- Limit to 4-5 major activities per day
+
+**2. LOGICAL ACTIVITY SEQUENCING:**
+- MORNING (6-12): Nature walks, temples, sunrise points, outdoor activities
+- AFTERNOON (12-4): Indoor activities, museums, restaurants, rest time
+- EVENING (4-9): Sunset points, markets, cultural shows, dinner
+- Group nearby locations together
+- Don't schedule strenuous activities after heavy meals
+
+**3. SENSIBLE DAILY STRUCTURE:**
+- Breakfast: 7:30-9:00 AM | Lunch: 12:30-2:00 PM | Dinner: 7:30-9:00 PM
+- Include 1-2 hours rest/free time in afternoon (especially in hot climates)
+- Don't pack every minute - allow spontaneity
+
+**4. SPECIFIC RESTAURANT RECOMMENDATIONS (VERY IMPORTANT):**
+- Include REAL, NAMED restaurants for each meal (breakfast, lunch, dinner)
+- Recommend popular/well-reviewed local restaurants, cafes, and eateries
+- Mix of: Local cuisine spots, popular cafes, street food recommendations
+- For each restaurant include:
+  - Actual restaurant name (e.g., "Fisherman's Wharf", "Cafe Coffee Day", "Saravana Bhavan")
+  - Specific location/area (e.g., "Calangute Beach Road", "MG Road")
+  - What they're famous for (signature dishes)
+  - Price range matching the budget
+- Include at least one local specialty/street food experience per trip
+- For breakfast: suggest good cafes or hotel breakfast options
+- For lunch: suggest restaurants near the day's activities
+- For dinner: suggest atmospheric dining spots
+
+**5. WEATHER & SEASON AWARENESS:**
+- Consider current month's typical weather
+- Adjust outdoor activity timing based on climate
+- Include rain contingency plans if monsoon season
+
+**6. PRACTICAL COST ESTIMATES (2024-2025 INR):**
+- Entry fees: ₹50-500 local, ₹500-1500 premium attractions
+- Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
+- Transport: ₹500-1500/day local travel
+
+**7. SMART PACKING LIST:**
+- ONLY items needed for THIS trip (destination climate + activities)
+- Specify quantities based on ${request.durationDays}-day duration
+- Don't add generic irrelevant items
+
+**8. ACTIONABLE TIPS:**
+- Destination-specific advice (local customs, scams to avoid)
+- Best times to visit specific attractions
+- Must-try local dishes and where to find them
+- Emergency info (hospital, police numbers)
+
+RESPOND WITH VALID JSON ONLY. No markdown, no code blocks, no explanations - just the raw JSON object.
+CRITICAL: Follow this EXACT schema - field names must match EXACTLY as shown. The parser will FAIL if you use different field names:
+{
+  "summary": "A brief 2-3 sentence summary of the trip",
+  "days": [
+    {
+      "day_number": 1,
+      "title": "Day title (e.g., 'Arrival & City Exploration')",
+      "description": "Brief overview of the day",
+      "activities": [
+        {
+          "title": "Activity name (for food: include restaurant name e.g., 'Lunch at Fisherman's Wharf')",
+          "description": "What to do/eat here. For restaurants: mention signature dishes",
+          "location": "Specific location name (e.g., 'Fisherman's Wharf, Calangute Beach Road')",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "duration_minutes": 120,
+          "category": "sightseeing|food|transport|activity|accommodation",
+          "estimated_cost": 500,
+          "tip": "Helpful tip (for restaurants: must-try dishes)"
+        }
+      ]
+    }
+  ],
+  "packing_list": [
+    {
+      "item": "Item name (REQUIRED - must use 'item' NOT 'title')",
+      "category": "clothing|toiletries|electronics|documents|medicines|misc",
+      "is_essential": true
+    }
+  ],
+  "tips": [
+    "General tip 1",
+    "General tip 2"
+  ]
+}
+
+IMPORTANT: For packing_list items in this itinerary format, you MUST use "item" as the field name for the item name, NOT "title". This is critical for parsing.
+
+Generate a complete itinerary with specific restaurant recommendations now:
+''';
   }
 
   /// Build prompt that lets AI extract everything from voice input
@@ -543,39 +897,95 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
 - Transport: ₹500-1500/day for local travel
 
-**11. ITINERARY-BASED PACKING LIST (VERY IMPORTANT):**
+**11. COMPLETE PACKING LIST (INCLUDE ALL NECESSARY ITEMS):**
 
-Generate a packing list that is SPECIFICALLY TAILORED to the itinerary you created. Look at EACH activity in your itinerary and include items needed for that activity:
+Generate a COMPLETE packing list with ALL items the traveler needs. Go through EACH CATEGORY and include EVERY relevant item:
 
-**ANALYZE YOUR ITINERARY AND INCLUDE:**
-- If visiting TEMPLES: Traditional clothing (saree/dhoti/kurta), offerings bag, head covering
-- If visiting BEACHES: Swimwear, beach towel, waterproof phone pouch, sunscreen SPF 50+
-- If doing TREKKING: Trekking shoes, quick-dry clothes, headlamp, first-aid kit
-- If visiting HILL STATIONS: Warm layers, thermals, gloves, woolen cap
-- If doing WATER SPORTS: Quick-dry clothes, waterproof bag, extra set of clothes
-- If visiting WILDLIFE/SAFARI: Binoculars, earth-toned clothes, camera with zoom
-- If attending CULTURAL SHOWS: Smart casual wear
+**DOCUMENTS (Include ALL):**
+- ID proof (Aadhaar/PAN/Passport/Driving License)
+- Travel tickets (flight/train/bus) - printed & digital
+- Hotel booking confirmations
+- Travel insurance documents
+- Photocopies of all important documents
+- Emergency contact list
+- Credit/debit cards
+- Some cash in local currency
 
-**ALWAYS INCLUDE ESSENTIALS:**
-- ID proof (Aadhaar/Passport/Driving License)
-- Travel tickets/bookings printouts
-- Phone charger & power bank (10000+ mAh)
-- Medicines (painkillers, antacids, anti-diarrhea, band-aids, mosquito repellent)
-- Toiletries (toothbrush, toothpaste, soap, deodorant)
+**CLOTHING (Based on destination weather & duration):**
+- T-shirts/shirts (one per day or duration-1 with laundry)
+- Pants/trousers/jeans
+- Shorts (if weather permits)
+- Underwear (duration + 2 extra)
+- Socks (duration + 2 extra)
+- Sleepwear/nightclothes
+- Comfortable walking shoes
+- Sandals/flip-flops
+- Light jacket/sweater (for AC/evenings)
+- Raincoat/umbrella (check weather)
+- Hat/cap for sun protection
+- Traditional/formal wear (if temples/events)
 
-**DESTINATION-SPECIFIC:**
-- Beach destinations: Flip-flops, sunglasses, hat, aloe vera gel
-- Hill stations: Jacket, thermals, lip balm
-- Religious sites: Conservative clothing, small bag for offerings
-- Hot/humid places: Light cotton clothes, extra water bottle, ORS packets
+**TOILETRIES (Complete kit):**
+- Toothbrush & toothpaste
+- Shampoo & conditioner (travel size)
+- Soap/body wash
+- Deodorant
+- Sunscreen SPF 50+
+- Moisturizer/lotion
+- Lip balm
+- Razor & shaving cream
+- Comb/hairbrush
+- Wet wipes
+- Hand sanitizer
+- Tissues/toilet paper roll
+- Feminine hygiene products (if needed)
 
-**QUANTITY BASED ON DURATION:**
-- Clothes: (duration_days - 1) sets (can rewear)
-- Underwear: duration_days + 2 extras
-- Toiletries: Travel-size for short trips
+**ELECTRONICS (All essentials):**
+- Phone charger (original)
+- Power bank (10000+ mAh)
+- Earphones/headphones
+- Camera (if separate from phone)
+- Travel adapter (if needed)
+- Laptop/tablet charger (if carrying)
+
+**MEDICINES (Complete first-aid):**
+- Personal prescription medicines
+- Painkillers (Paracetamol/Ibuprofen)
+- Antacids/digestive aids (Eno/Digene)
+- Anti-diarrhea medicine (Imodium)
+- Anti-nausea/motion sickness (Avomine)
+- Antihistamine for allergies
+- Band-aids & antiseptic cream
+- Mosquito repellent (cream/spray)
+- ORS packets
+- Thermometer
+- Any vitamins you take regularly
+
+**ACCESSORIES (All useful items):**
+- Sunglasses
+- Watch
+- Day backpack/small bag
+- Wallet
+- Water bottle (reusable)
+- Neck pillow (for long travel)
+- Eye mask & earplugs
+- Luggage locks
+- Plastic bags (for wet/dirty clothes)
+- Small torch/flashlight
+- Pen (for forms)
+- Book/Kindle for reading
+
+**ACTIVITY-SPECIFIC (Based on your itinerary):**
+- If TEMPLES: Traditional clothing, head covering, offerings bag
+- If BEACHES: Swimwear, beach towel, waterproof phone pouch, after-sun lotion
+- If TREKKING: Trekking shoes, quick-dry clothes, headlamp, trekking poles
+- If HILL STATIONS: Warm layers, thermals, gloves, woolen cap, thermal socks
+- If WATER SPORTS: Quick-dry clothes, waterproof bag, goggles
+- If WILDLIFE/SAFARI: Binoculars, earth-toned clothes, camera with zoom lens
+- If PHOTOGRAPHY: Extra memory cards, camera cleaning kit, tripod
 
 Mark ESSENTIAL items (documents, medicines, phone charger) as is_essential: true.
-Include helpful notes for specific items based on your itinerary.
+Include helpful notes referencing specific activities from your itinerary.
 
 **12. ACTIONABLE TIPS (INCLUDE SMART INSIDER TIPS):**
 - Destination-specific advice (local customs, scams to avoid, best transport options)
@@ -585,7 +995,8 @@ Include helpful notes for specific items based on your itinerary.
 - Emergency info (nearest hospital, police station, emergency numbers)
 - **Route tips:** Best order to visit attractions for efficiency
 
-RESPOND WITH VALID JSON in this exact format:
+RESPOND WITH VALID JSON ONLY. No markdown, no code blocks, no explanations - just the raw JSON object.
+CRITICAL: Follow this EXACT schema - field names must match EXACTLY as shown. The parser will FAIL if you use different field names:
 {
   "destination": "The destination extracted from user input",
   "duration_days": 3,
@@ -618,7 +1029,7 @@ RESPOND WITH VALID JSON in this exact format:
   ],
   "packing_list": [
     {
-      "title": "Item name",
+      "title": "Item name (REQUIRED - must use 'title' NOT 'item')",
       "category": "documents|clothing|toiletries|electronics|medicines|accessories|pilgrimage|misc",
       "is_essential": true,
       "quantity": 1,
@@ -631,6 +1042,8 @@ RESPOND WITH VALID JSON in this exact format:
     "Route tip (e.g., 'Start from south gate, temples are in walking sequence northward')"
   ]
 }
+
+IMPORTANT: For packing_list items, you MUST use "title" as the field name for the item name, NOT "item". This is critical for parsing.
 
 Generate the complete trip plan now:
 ''';

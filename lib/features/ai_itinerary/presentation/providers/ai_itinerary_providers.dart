@@ -1,7 +1,8 @@
 // AI Itinerary Providers
 //
 // Riverpod providers for AI itinerary generation.
-// Uses dual-provider system: Groq (primary) + Gemini (fallback)
+// Uses dual-provider system: Groq (primary, 1000 RPD) + Gemini (fallback, 25 RPD)
+// Total: ~1,025 free AI generations per day!
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,8 +120,16 @@ class AiItineraryController extends Notifier<AiItineraryState> {
     // Check if user can generate
     debugPrint('🔍 Checking if user can generate...');
     final templateController = ref.read(templateControllerProvider.notifier);
-    final canGenerate = await ref.read(canGenerateAiProvider.future);
-    debugPrint('✅ Can generate: $canGenerate');
+
+    bool canGenerate = true;
+    try {
+      canGenerate = await ref.read(canGenerateAiProvider.future);
+      debugPrint('✅ Can generate: $canGenerate');
+    } catch (e) {
+      // If check fails, allow generation (fail-open for better UX)
+      debugPrint('⚠️ canGenerateAiProvider error (allowing): $e');
+      canGenerate = true;
+    }
 
     if (!canGenerate) {
       debugPrint('❌ User has reached limit');
@@ -136,28 +145,41 @@ class AiItineraryController extends Notifier<AiItineraryState> {
     final stopwatch = Stopwatch()..start();
 
     try {
-      debugPrint('🤖 Calling Gemini API...');
-      final geminiService = ref.read(geminiServiceProvider);
-      final itinerary = await geminiService.generateItinerary(request);
-      debugPrint('✅ Gemini API returned successfully');
+      debugPrint('🤖 Calling AI Service (Groq primary, Gemini fallback)...');
+      final aiService = ref.read(multiProviderAiServiceProvider);
+      final itinerary = await aiService.generateItinerary(request);
+      debugPrint('✅ AI Service returned successfully');
 
       stopwatch.stop();
 
-      // Increment usage
-      await templateController.incrementAiUsage();
+      // Increment usage (don't fail if this errors)
+      try {
+        await templateController.incrementAiUsage();
+      } catch (e) {
+        debugPrint('⚠️ Failed to increment AI usage: $e');
+      }
 
-      // Log generation
-      await templateController.logAiGeneration(
-        destination: request.destination,
-        durationDays: request.durationDays,
-        budget: request.budget,
-        interests: request.interests,
-        generationTimeMs: stopwatch.elapsedMilliseconds,
-        wasSuccessful: true,
-      );
+      // Log generation (don't fail if this errors)
+      try {
+        await templateController.logAiGeneration(
+          destination: request.destination,
+          durationDays: request.durationDays,
+          budget: request.budget,
+          interests: request.interests,
+          generationTimeMs: stopwatch.elapsedMilliseconds,
+          wasSuccessful: true,
+        );
+      } catch (e) {
+        debugPrint('⚠️ Failed to log AI generation: $e');
+      }
 
-      // Get updated remaining generations
-      final remaining = await ref.read(remainingGenerationsProvider.future);
+      // Get updated remaining generations (don't fail if this errors)
+      int? remaining;
+      try {
+        remaining = await ref.read(remainingGenerationsProvider.future);
+      } catch (e) {
+        debugPrint('⚠️ Failed to get remaining generations: $e');
+      }
 
       state = state.copyWith(
         isLoading: false,

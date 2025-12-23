@@ -153,7 +153,7 @@ class GeminiService {
         : '';
 
     return '''
-You are an expert travel planner specializing in Indian destinations. Generate a detailed, PRACTICAL day-by-day itinerary.
+You are an expert travel planner specializing in Indian destinations. Generate a detailed, PRACTICAL day-by-day itinerary with SPECIFIC restaurant recommendations.
 
 TRIP DETAILS:
 - Destination: ${request.destination}, India
@@ -184,27 +184,49 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Include 1-2 hours rest/free time in afternoon (especially in hot climates)
 - Don't pack every minute - allow spontaneity
 
-**4. WEATHER & SEASON AWARENESS:**
+**4. SPECIFIC RESTAURANT RECOMMENDATIONS (VERY IMPORTANT):**
+- Include REAL, NAMED restaurants for each meal (breakfast, lunch, dinner)
+- Recommend popular/well-reviewed local restaurants, cafes, and eateries
+- Mix of: Local cuisine spots, popular cafes, street food recommendations
+- For each restaurant include:
+  - Actual restaurant name (e.g., "Fisherman's Wharf", "Cafe Coffee Day", "Saravana Bhavan")
+  - Specific location/area (e.g., "Calangute Beach Road", "MG Road")
+  - What they're famous for (signature dishes)
+  - Price range matching the budget
+- Include at least one local specialty/street food experience per trip
+- For breakfast: suggest good cafes or hotel breakfast options
+- For lunch: suggest restaurants near the day's activities
+- For dinner: suggest atmospheric dining spots
+
+**5. WEATHER & SEASON AWARENESS:**
 - Consider current month's typical weather
 - Adjust outdoor activity timing based on climate
 - Include rain contingency plans if monsoon season
 
-**5. PRACTICAL COST ESTIMATES (2024-2025 INR):**
+**6. PRACTICAL COST ESTIMATES (2024-2025 INR):**
 - Entry fees: ₹50-500 local, ₹500-1500 premium attractions
 - Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
 - Transport: ₹500-1500/day local travel
 
-**6. SMART PACKING LIST:**
-- ONLY items needed for THIS trip (destination climate + activities)
-- Specify quantities based on ${request.durationDays}-day duration
-- Don't add generic irrelevant items
+**7. COMPLETE PACKING LIST (INCLUDE ALL NECESSARY ITEMS):**
+Generate a COMPLETE packing list with ALL items the traveler needs for this ${request.durationDays}-day trip:
 
-**7. ACTIONABLE TIPS:**
+**DOCUMENTS:** ID proof, travel tickets (printed & digital), hotel bookings, insurance, photocopies, emergency contacts, cards, cash
+**CLOTHING:** T-shirts/shirts, pants, shorts, underwear (days+2), socks, sleepwear, walking shoes, sandals, jacket, raincoat/umbrella, hat, formal/traditional wear
+**TOILETRIES:** Toothbrush, toothpaste, shampoo, conditioner, soap, deodorant, sunscreen SPF 50+, moisturizer, lip balm, razor, comb, wet wipes, sanitizer, tissues
+**ELECTRONICS:** Phone charger, power bank 10000mAh+, earphones, camera, travel adapter
+**MEDICINES:** Prescription meds, painkillers, antacids, anti-diarrhea, motion sickness pills, antihistamine, band-aids, antiseptic, mosquito repellent, ORS
+**ACCESSORIES:** Sunglasses, watch, day backpack, wallet, water bottle, neck pillow, eye mask, earplugs, luggage locks, plastic bags, torch, pen
+**ACTIVITY-SPECIFIC:** Items based on planned activities (temple clothing, beach gear, trekking shoes, warm layers for hills, etc.)
+
+**8. ACTIONABLE TIPS:**
 - Destination-specific advice (local customs, scams to avoid)
 - Best times to visit specific attractions
+- Must-try local dishes and where to find them
 - Emergency info (hospital, police numbers)
 
-RESPOND WITH VALID JSON in this exact format:
+RESPOND WITH VALID JSON ONLY. No markdown, no explanations, just the JSON object.
+CRITICAL: Follow this EXACT format - field names must match exactly:
 {
   "summary": "A brief 2-3 sentence summary of the trip",
   "days": [
@@ -214,22 +236,22 @@ RESPOND WITH VALID JSON in this exact format:
       "description": "Brief overview of the day",
       "activities": [
         {
-          "title": "Activity name",
-          "description": "What to do here",
-          "location": "Specific location name",
+          "title": "Activity name (for food: include restaurant name e.g., 'Lunch at Fisherman's Wharf')",
+          "description": "What to do/eat here. For restaurants: mention signature dishes",
+          "location": "Specific location name (e.g., 'Fisherman's Wharf, Calangute Beach Road')",
           "start_time": "09:00",
           "end_time": "11:00",
           "duration_minutes": 120,
           "category": "sightseeing|food|transport|activity|accommodation",
           "estimated_cost": 500,
-          "tip": "Helpful tip for this activity"
+          "tip": "Helpful tip (for restaurants: must-try dishes)"
         }
       ]
     }
   ],
   "packing_list": [
     {
-      "item": "Item name",
+      "item": "Item name (REQUIRED - use 'item' not 'title')",
       "category": "clothing|toiletries|electronics|documents|medicines|misc",
       "is_essential": true
     }
@@ -240,7 +262,7 @@ RESPOND WITH VALID JSON in this exact format:
   ]
 }
 
-Generate a complete itinerary now:
+Generate a complete itinerary with specific restaurant recommendations now:
 ''';
   }
 
@@ -411,11 +433,12 @@ CRITICAL PACKING REQUIREMENTS (FOLLOW STRICTLY):
 - accessories: Sunglasses, bags, travel-specific gear
 - misc: Snacks, entertainment, other
 
-RESPOND WITH VALID JSON in this exact format:
+RESPOND WITH VALID JSON ONLY. No markdown, no code blocks, no explanations - just the raw JSON object.
+CRITICAL: Follow this EXACT schema - field names must match exactly as shown:
 {
   "items": [
     {
-      "title": "Item name (e.g., Passport, Sunscreen SPF 50)",
+      "title": "Item name (REQUIRED - must use 'title' not 'item')",
       "category": "documents|clothing|toiletries|electronics|medicines|accessories|misc",
       "is_essential": true,
       "quantity": 1,
@@ -423,6 +446,8 @@ RESPOND WITH VALID JSON in this exact format:
     }
   ]
 }
+
+IMPORTANT: The packing list items MUST use "title" as the field name, NOT "item".
 
 Generate the checklist now:
 ''';
@@ -638,27 +663,28 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Transport: ₹500-1500/day for local travel
 - Be realistic - don't underestimate costs
 
-**7. COMPREHENSIVE PACKING CHECKLIST (BE THOROUGH):**
+**7. COMPLETE PACKING CHECKLIST (INCLUDE ALL NECESSARY ITEMS):**
 
-Generate a COMPLETE packing checklist with ALL items needed. Include:
+Generate a COMPLETE packing checklist with ALL items the traveler needs for this $durationDays-day trip:
 
-**DOCUMENTS:** ID proof, tickets, hotel bookings, insurance, photocopies, emergency contacts
-**CLOTHING:** Daily wear (based on days), underwear, sleepwear, swimwear (if beach), rain gear, jacket, walking shoes, sandals, hat
-**TOILETRIES:** Toothbrush, toothpaste, shampoo, soap, deodorant, sunscreen SPF 50+, moisturizer, razor, wet wipes, sanitizer
-**ELECTRONICS:** Phone charger, power bank 10000mAh+, earphones, camera, travel adapter
-**MEDICINES:** Prescription meds, painkillers, antacids, anti-diarrhea, band-aids, mosquito repellent, ORS, first-aid
-**ACCESSORIES:** Sunglasses, watch, day bag, wallet, water bottle, neck pillow, luggage locks, plastic bags
-**DESTINATION-SPECIFIC:** Beach gear, warm layers for hills, trekking shoes, temple-appropriate clothing
+**DOCUMENTS (Include ALL):** ID proof (Aadhaar/Passport), travel tickets (printed & digital), hotel bookings, insurance papers, photocopies of documents, emergency contact list, credit/debit cards, cash
+**CLOTHING (Based on weather):** T-shirts/shirts ($durationDays sets), pants/trousers, shorts, underwear ($durationDays+2), socks ($durationDays+2), sleepwear, walking shoes, sandals/flip-flops, light jacket/sweater, raincoat/umbrella, hat/cap, traditional/formal wear (if needed)
+**TOILETRIES (Complete kit):** Toothbrush, toothpaste, shampoo, conditioner, soap/body wash, deodorant, sunscreen SPF 50+, moisturizer, lip balm, razor, comb, wet wipes, hand sanitizer, tissues
+**ELECTRONICS (All essentials):** Phone charger, power bank 10000mAh+, earphones, camera, travel adapter, laptop charger (if needed)
+**MEDICINES (Complete first-aid):** Prescription medicines, painkillers, antacids, anti-diarrhea, motion sickness pills, antihistamine, band-aids, antiseptic cream, mosquito repellent, ORS packets, thermometer
+**ACCESSORIES (All useful items):** Sunglasses, watch, day backpack, wallet, water bottle, neck pillow, eye mask, earplugs, luggage locks, plastic bags, torch/flashlight, pen
+**ACTIVITY-SPECIFIC:** Based on itinerary - temple clothing & offerings bag, beach gear & waterproof pouch, trekking shoes & headlamp, warm layers for hills, binoculars for wildlife
 
 Mark essential items (documents, medicines, charger) as is_essential: true.
-Include helpful notes and adjust quantities for $durationDays-day duration.
+Include helpful notes referencing specific activities from the itinerary.
 
 **8. ACTIONABLE TIPS:**
 - Include destination-specific advice (local customs, scams to avoid, best transport options)
 - Mention best times to visit specific attractions (e.g., "Visit Taj Mahal at sunrise to avoid crowds")
 - Include emergency info (nearest hospital, police station, emergency numbers)
 
-RESPOND WITH VALID JSON in this exact format:
+RESPOND WITH VALID JSON ONLY. No markdown, no code blocks, no explanations - just the raw JSON object.
+CRITICAL: Follow this EXACT schema - field names must match exactly as shown:
 {
   "trip_name": "Creative peppy name (NEVER use 'Trip to X' format!)",
   "summary": "A brief 2-3 sentence summary of the trip",
@@ -684,7 +710,7 @@ RESPOND WITH VALID JSON in this exact format:
   ],
   "packing_list": [
     {
-      "title": "Item name (e.g., Passport, Sunscreen SPF 50)",
+      "title": "Item name (REQUIRED field - use 'title' not 'item')",
       "category": "documents|clothing|toiletries|electronics|medicines|accessories|misc",
       "is_essential": true,
       "quantity": 1,
@@ -941,59 +967,96 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
 - Transport: ₹500-1500/day for local travel
 
-**11. ITINERARY-BASED PACKING LIST (VERY IMPORTANT - BE SPECIFIC TO YOUR ITINERARY):**
+**11. COMPLETE PACKING LIST (INCLUDE ALL NECESSARY ITEMS):**
 
-Generate a packing list that is SPECIFICALLY TAILORED to the itinerary you created above. Look at EACH activity in your itinerary and include items needed for that activity:
+Generate a COMPLETE packing list with ALL items the traveler needs. Go through EACH CATEGORY and include EVERY relevant item:
 
-**ANALYZE YOUR ITINERARY FIRST AND INCLUDE:**
-- If your itinerary has TEMPLES: Traditional clothing (saree/dhoti/kurta), offerings bag, head covering
-- If your itinerary has BEACHES: Swimwear, beach towel, waterproof phone pouch, sunscreen SPF 50+
-- If your itinerary has TREKKING: Trekking shoes, quick-dry clothes, headlamp, first-aid kit
-- If your itinerary has HILL STATIONS: Warm layers, thermals, gloves, woolen cap
-- If your itinerary has WATER SPORTS: Quick-dry clothes, waterproof bag, extra set of clothes
-- If your itinerary has WILDLIFE/SAFARI: Binoculars, earth-toned clothes, camera with zoom
-- If your itinerary has CULTURAL SHOWS: Smart casual wear
+**DOCUMENTS (Include ALL):**
+- ID proof (Aadhaar/PAN/Passport/Driving License)
+- Travel tickets (flight/train/bus) - printed & digital
+- Hotel booking confirmations
+- Travel insurance documents
+- Photocopies of all important documents
+- Emergency contact list
+- Credit/debit cards
+- Some cash in local currency
 
-**ALWAYS INCLUDE ESSENTIALS:**
-- ID proof (Aadhaar/Passport/Driving License)
-- Travel tickets/bookings printouts
-- Phone charger & power bank (10000+ mAh)
-- Medicines (painkillers, antacids, anti-diarrhea, band-aids, mosquito repellent)
-- Toiletries (toothbrush, toothpaste, soap, deodorant, sunscreen)
-
-**QUANTITY BASED ON DURATION:**
-- Clothes: (duration_days - 1) sets (can rewear)
-- Underwear & socks: duration_days + 2 extras
-- Toiletries: Travel-size for short trips
-
-**CLOTHING (Based on destination weather):**
-- Daily wear (t-shirts/shirts - based on trip days)
-- Bottoms (pants/shorts/skirts)
+**CLOTHING (Based on destination weather & duration):**
+- T-shirts/shirts (one per day or duration-1 with laundry)
+- Pants/trousers/jeans
+- Shorts (if weather permits)
+- Underwear (duration + 2 extra)
+- Socks (duration + 2 extra)
 - Sleepwear/nightclothes
 - Comfortable walking shoes
 - Sandals/flip-flops
 - Light jacket/sweater (for AC/evenings)
+- Raincoat/umbrella (check weather)
 - Hat/cap for sun protection
+- Traditional/formal wear (if temples/events)
 
-**MEDICINES & HEALTH:**
+**TOILETRIES (Complete kit):**
+- Toothbrush & toothpaste
+- Shampoo & conditioner (travel size)
+- Soap/body wash
+- Deodorant
+- Sunscreen SPF 50+
+- Moisturizer/lotion
+- Lip balm
+- Razor & shaving cream
+- Comb/hairbrush
+- Wet wipes
+- Hand sanitizer
+- Tissues/toilet paper roll
+- Feminine hygiene products (if needed)
+
+**ELECTRONICS (All essentials):**
+- Phone charger (original)
+- Power bank (10000+ mAh)
+- Earphones/headphones
+- Camera (if separate from phone)
+- Travel adapter (if needed)
+- Laptop/tablet charger (if carrying)
+
+**MEDICINES (Complete first-aid):**
 - Personal prescription medicines
-- Pain relievers (Paracetamol/Ibuprofen)
-- Antacids/digestive aids
-- Anti-diarrhea medicine
-- Band-aids & antiseptic
-- Mosquito repellent (essential for most Indian destinations)
+- Painkillers (Paracetamol/Ibuprofen)
+- Antacids/digestive aids (Eno/Digene)
+- Anti-diarrhea medicine (Imodium)
+- Anti-nausea/motion sickness (Avomine)
+- Antihistamine for allergies
+- Band-aids & antiseptic cream
+- Mosquito repellent (cream/spray)
 - ORS packets
+- Thermometer
+- Any vitamins you take regularly
 
-**ACCESSORIES:**
+**ACCESSORIES (All useful items):**
 - Sunglasses
+- Watch
 - Day backpack/small bag
-- Wallet with cash & cards
+- Wallet
 - Water bottle (reusable)
+- Neck pillow (for long travel)
+- Eye mask & earplugs
+- Luggage locks
 - Plastic bags (for wet/dirty clothes)
+- Small torch/flashlight
+- Pen (for forms)
+- Book/Kindle for reading
+
+**ACTIVITY-SPECIFIC (Based on your itinerary):**
+- If TEMPLES: Traditional clothing, head covering, offerings bag
+- If BEACHES: Swimwear, beach towel, waterproof phone pouch, after-sun lotion
+- If TREKKING: Trekking shoes, quick-dry clothes, headlamp, trekking poles
+- If HILL STATIONS: Warm layers, thermals, gloves, woolen cap, thermal socks
+- If WATER SPORTS: Quick-dry clothes, waterproof bag, goggles
+- If WILDLIFE/SAFARI: Binoculars, earth-toned clothes, camera with zoom lens
+- If PHOTOGRAPHY: Extra memory cards, camera cleaning kit, tripod
+- If PILGRIMAGE: Traditional clothing, offerings materials, prayer beads
 
 Mark ESSENTIAL items (documents, medicines, phone charger) as is_essential: true.
-Include helpful notes that REFERENCE specific activities in your itinerary (e.g., "For Day 2 beach visit", "Needed for temple darshan on Day 1").
-**For pilgrimage trips:** Include traditional clothing, offerings materials, prayer beads if applicable.
+Include helpful notes referencing specific activities from your itinerary (e.g., "For Day 2 beach visit").
 
 **12. ACTIONABLE TIPS (INCLUDE SMART INSIDER TIPS):**
 - Destination-specific advice (local customs, scams to avoid, best transport options)
@@ -1003,7 +1066,8 @@ Include helpful notes that REFERENCE specific activities in your itinerary (e.g.
 - Emergency info (nearest hospital, police station, emergency numbers)
 - **Route tips:** Best order to visit attractions for efficiency
 
-RESPOND WITH VALID JSON in this exact format:
+RESPOND WITH VALID JSON ONLY. No markdown, no code blocks, no explanations - just the raw JSON object.
+CRITICAL: Follow this EXACT schema - field names must match EXACTLY as shown. The parser will FAIL if you use different field names:
 {
   "destination": "The destination extracted from user input",
   "duration_days": 3,
@@ -1036,7 +1100,7 @@ RESPOND WITH VALID JSON in this exact format:
   ],
   "packing_list": [
     {
-      "title": "Item name",
+      "title": "Item name (REQUIRED - must use 'title' NOT 'item')",
       "category": "documents|clothing|toiletries|electronics|medicines|accessories|pilgrimage|misc",
       "is_essential": true,
       "quantity": 1,
@@ -1049,6 +1113,8 @@ RESPOND WITH VALID JSON in this exact format:
     "Route tip (e.g., 'Start from south gate, temples are in walking sequence northward')"
   ]
 }
+
+IMPORTANT: For packing_list items, you MUST use "title" as the field name for the item name, NOT "item". This is critical for parsing.
 
 Generate the complete trip plan now:
 ''';
