@@ -201,10 +201,11 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
 
       if (hasInternet) {
         debugPrint('🌐 [Discover] Fetching fresh data from API...');
+        debugPrint('📏 [Discover] Using distance: ${state.selectedDistance.displayName} (${state.selectedDistance.radiusInMeters}m)');
         final nearbyPlaces = await _placesService.searchNearby(
           latitude: lat,
           longitude: lng,
-          radius: 50000, // 50km radius
+          radius: state.selectedDistance.radiusInMeters,
           type: category.googlePlaceType,
           keyword: category.googlePlaceKeyword,
         );
@@ -340,6 +341,31 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   /// Toggle show favorites only filter
   void toggleShowFavoritesOnly() {
     state = state.copyWith(showFavoritesOnly: !state.showFavoritesOnly);
+  }
+
+  /// Change the selected distance and reload places
+  Future<void> changeDistance(DiscoverDistance distance) async {
+    if (distance == state.selectedDistance) return;
+    state = state.copyWith(selectedDistance: distance);
+    debugPrint('📏 [Discover] Distance changed to: ${distance.displayName}');
+    if (state.hasLocation) {
+      await loadPlaces(state.selectedCategory);
+    }
+  }
+
+  /// Set the selected country (optional filter)
+  void setCountry(String? country) {
+    if (country == null) {
+      state = state.copyWith(clearCountry: true);
+    } else {
+      state = state.copyWith(selectedCountry: country);
+    }
+    debugPrint('🌍 [Discover] Country set to: ${country ?? "Current Location"}');
+  }
+
+  /// Clear the country filter
+  void clearCountry() {
+    state = state.copyWith(clearCountry: true);
   }
 
   /// Check if a place is favorited

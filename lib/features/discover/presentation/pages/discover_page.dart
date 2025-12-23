@@ -430,29 +430,355 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               ],
             ),
           ),
-          // Radius indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.radar, size: 14, color: Colors.orange[700]),
-                const SizedBox(width: 4),
-                Text(
-                  '50 km',
-                  style: context.bodySmall.copyWith(
-                    color: Colors.orange[700],
-                    fontWeight: FontWeight.w600,
+          // Filter chips row
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Optional Country filter (tappable)
+              GestureDetector(
+                onTap: () => _showCountrySelector(discoverState),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: discoverState.selectedCountry != null
+                        ? Colors.teal.withValues(alpha: 0.15)
+                        : Colors.grey.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: discoverState.selectedCountry != null
+                          ? Colors.teal.withValues(alpha: 0.3)
+                          : Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.public,
+                        size: 14,
+                        color: discoverState.selectedCountry != null
+                            ? Colors.teal[700]
+                            : Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        discoverState.selectedCountry ?? 'All',
+                        style: context.bodySmall.copyWith(
+                          color: discoverState.selectedCountry != null
+                              ? Colors.teal[700]
+                              : Colors.grey[600],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      Icon(
+                        Icons.arrow_drop_down,
+                        size: 16,
+                        color: discoverState.selectedCountry != null
+                            ? Colors.teal[700]
+                            : Colors.grey[600],
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              // Radius indicator (tappable to change distance)
+              GestureDetector(
+                onTap: () => _showDistanceSelector(discoverState),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.orange.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.radar, size: 14, color: Colors.orange[700]),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${discoverState.selectedDistance.kilometers} km',
+                        style: context.bodySmall.copyWith(
+                          color: Colors.orange[700],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      Icon(Icons.arrow_drop_down, size: 16, color: Colors.orange[700]),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showDistanceSelector(DiscoverState discoverState) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: context.cardColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Title
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'Search Distance',
+                style: context.titleMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            // Distance options
+            ...DiscoverDistance.values.map((distance) {
+              final isSelected = distance == discoverState.selectedDistance;
+              return ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? context.primaryColor.withValues(alpha: 0.15)
+                        : Colors.grey.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.radar,
+                    color: isSelected ? context.primaryColor : Colors.grey,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  distance.displayName,
+                  style: context.bodyLarge.copyWith(
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? context.primaryColor : null,
+                  ),
+                ),
+                trailing: isSelected
+                    ? Icon(Icons.check_circle, color: context.primaryColor)
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  ref.read(discoverStateProvider.notifier).changeDistance(distance);
+                },
+              );
+            }),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// List of popular countries for travel
+  static const List<String> _popularCountries = [
+    'India',
+    'Thailand',
+    'Indonesia',
+    'Vietnam',
+    'Malaysia',
+    'Singapore',
+    'Japan',
+    'South Korea',
+    'Australia',
+    'New Zealand',
+    'United States',
+    'United Kingdom',
+    'France',
+    'Italy',
+    'Spain',
+    'Germany',
+    'Switzerland',
+    'Greece',
+    'Turkey',
+    'Egypt',
+    'South Africa',
+    'Morocco',
+    'UAE',
+    'Maldives',
+    'Sri Lanka',
+    'Nepal',
+    'Bhutan',
+    'Philippines',
+    'Cambodia',
+    'Myanmar',
+  ];
+
+  void _showCountrySelector(DiscoverState discoverState) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: context.cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Title row with clear button
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select Country (Optional)',
+                      style: context.titleMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (discoverState.selectedCountry != null)
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ref.read(discoverStateProvider.notifier).clearCountry();
+                        },
+                        icon: const Icon(Icons.clear, size: 16),
+                        label: const Text('Clear'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.red[600],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              // Current location option
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: discoverState.selectedCountry == null
+                        ? context.primaryColor.withValues(alpha: 0.15)
+                        : Colors.grey.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.my_location,
+                    color: discoverState.selectedCountry == null
+                        ? context.primaryColor
+                        : Colors.grey,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  'Current Location (All Countries)',
+                  style: context.bodyLarge.copyWith(
+                    fontWeight: discoverState.selectedCountry == null
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: discoverState.selectedCountry == null
+                        ? context.primaryColor
+                        : null,
+                  ),
+                ),
+                trailing: discoverState.selectedCountry == null
+                    ? Icon(Icons.check_circle, color: context.primaryColor)
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  ref.read(discoverStateProvider.notifier).clearCountry();
+                },
+              ),
+              const Divider(),
+              // Country list header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.public, size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Popular Countries',
+                      style: context.bodySmall.copyWith(
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Country list
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: _popularCountries.length,
+                  itemBuilder: (context, index) {
+                    final country = _popularCountries[index];
+                    final isSelected = country == discoverState.selectedCountry;
+                    return ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Colors.teal.withValues(alpha: 0.15)
+                              : Colors.grey.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.flag,
+                          color: isSelected ? Colors.teal : Colors.grey,
+                          size: 20,
+                        ),
+                      ),
+                      title: Text(
+                        country,
+                        style: context.bodyLarge.copyWith(
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected ? Colors.teal : null,
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check_circle, color: Colors.teal)
+                          : null,
+                      onTap: () {
+                        Navigator.pop(context);
+                        ref.read(discoverStateProvider.notifier).setCountry(country);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

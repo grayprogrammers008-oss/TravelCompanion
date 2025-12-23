@@ -152,6 +152,23 @@ class DiscoverPlace {
 /// View mode for discover page
 enum DiscoverViewMode { grid, map }
 
+/// Distance filter options for discover
+enum DiscoverDistance {
+  nearby(50, 'Nearby (50 km)'),
+  near100(100, '100 km'),
+  near200(200, '200 km'),
+  near300(300, '300 km'),
+  near500(500, '500 km');
+
+  final int kilometers;
+  final String displayName;
+
+  const DiscoverDistance(this.kilometers, this.displayName);
+
+  /// Get radius in meters for API calls
+  int get radiusInMeters => kilometers * 1000;
+}
+
 /// State class for managing discover places
 class DiscoverState {
   final PlaceCategory selectedCategory;
@@ -166,6 +183,8 @@ class DiscoverState {
   final Set<String> favoriteIds;
   final bool showFavoritesOnly;
   final bool isFromCache; // Indicates if current data is from offline cache
+  final DiscoverDistance selectedDistance; // Distance filter
+  final String? selectedCountry; // Optional country filter
 
   const DiscoverState({
     this.selectedCategory = PlaceCategory.beach,
@@ -180,6 +199,8 @@ class DiscoverState {
     this.favoriteIds = const {},
     this.showFavoritesOnly = false,
     this.isFromCache = false,
+    this.selectedDistance = DiscoverDistance.nearby,
+    this.selectedCountry,
   });
 
   DiscoverState copyWith({
@@ -195,6 +216,9 @@ class DiscoverState {
     Set<String>? favoriteIds,
     bool? showFavoritesOnly,
     bool? isFromCache,
+    DiscoverDistance? selectedDistance,
+    String? selectedCountry,
+    bool clearCountry = false, // Use this to explicitly set country to null
   }) {
     return DiscoverState(
       selectedCategory: selectedCategory ?? this.selectedCategory,
@@ -209,6 +233,8 @@ class DiscoverState {
       favoriteIds: favoriteIds ?? this.favoriteIds,
       showFavoritesOnly: showFavoritesOnly ?? this.showFavoritesOnly,
       isFromCache: isFromCache ?? this.isFromCache,
+      selectedDistance: selectedDistance ?? this.selectedDistance,
+      selectedCountry: clearCountry ? null : (selectedCountry ?? this.selectedCountry),
     );
   }
 
