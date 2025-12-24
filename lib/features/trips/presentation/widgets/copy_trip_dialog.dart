@@ -55,10 +55,22 @@ class _CopyTripDialogState extends ConsumerState<CopyTripDialog> {
 
   final _dateFormat = DateFormat('MMM d, yyyy');
 
+  /// Calculate the original trip duration in days
+  int get _originalTripDuration {
+    if (widget.trip.startDate != null && widget.trip.endDate != null) {
+      return widget.trip.endDate!.difference(widget.trip.startDate!).inDays;
+    }
+    return 0; // Same day trip
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: '${widget.trip.name} (Copy)');
+
+    // Set default dates - start tomorrow, end based on original trip duration
+    _startDate = DateTime.now().add(const Duration(days: 1));
+    _endDate = _startDate!.add(Duration(days: _originalTripDuration));
   }
 
   @override
@@ -97,10 +109,8 @@ class _CopyTripDialogState extends ConsumerState<CopyTripDialog> {
     if (picked != null) {
       setState(() {
         _startDate = picked;
-        // Auto-adjust end date if it's before start date
-        if (_endDate != null && _endDate!.isBefore(picked)) {
-          _endDate = null;
-        }
+        // Auto-calculate end date based on original trip duration
+        _endDate = picked.add(Duration(days: _originalTripDuration));
       });
     }
   }

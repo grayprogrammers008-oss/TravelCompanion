@@ -49,8 +49,9 @@ BEGIN
     start_date,
     end_date,
     cover_image_url,
-    budget,
+    cost,
     currency,
+    is_public,
     created_by,
     is_completed,
     rating,
@@ -62,8 +63,9 @@ BEGIN
     p_new_start_date,
     p_new_end_date,
     v_source_trip.cover_image_url,
-    v_source_trip.budget,
+    v_source_trip.cost,
     v_source_trip.currency,
+    v_source_trip.is_public,
     v_user_id,           -- Current user becomes creator
     false,               -- Reset to not completed
     NULL,                -- Reset rating
