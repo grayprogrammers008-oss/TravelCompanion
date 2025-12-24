@@ -245,9 +245,17 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     HapticFeedback.selectionClick();
     setState(() {
       _selectedLanguage = locale;
+      // Clear any previous error when changing language
+      _hasError = false;
+      _errorMessage = '';
     });
     _voiceService.setLocale(locale);
     debugPrint('🌐 Language changed to: $locale (${_languages[locale]})');
+
+    // Note: We don't show a warning here anymore because:
+    // 1. The voice service will automatically fall back to device default if locale unavailable
+    // 2. Speech will still work with device default language
+    // 3. Only show error if actual speech recognition fails
   }
 
   /// Cycle through available languages

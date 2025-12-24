@@ -283,6 +283,49 @@ class VoiceInputService {
     }
   }
 
+  /// Check if a specific locale is available for speech recognition
+  bool isLocaleAvailable(String localeId) {
+    if (_availableLocales.isEmpty) return false;
+
+    // Check exact match first
+    if (_availableLocales.any((l) => l.localeId == localeId)) {
+      return true;
+    }
+
+    // Check if language code matches (e.g., 'ta' for 'ta_IN')
+    final languageCode = localeId.split('_')[0];
+    return _availableLocales.any((l) => l.localeId.startsWith(languageCode));
+  }
+
+  /// Find the best matching locale for a given locale ID
+  /// Returns null if no match found (will use device default)
+  String? _findBestMatchingLocale(String? requestedLocale) {
+    if (requestedLocale == null) return null;
+    if (_availableLocales.isEmpty) return null;
+
+    // Check exact match first
+    final exactMatch = _availableLocales.firstWhere(
+      (l) => l.localeId == requestedLocale,
+      orElse: () => LocaleName('', ''),
+    );
+    if (exactMatch.localeId.isNotEmpty) {
+      return exactMatch.localeId;
+    }
+
+    // Check if language code matches (e.g., 'ta' for 'ta_IN')
+    final languageCode = requestedLocale.split('_')[0];
+    final languageMatch = _availableLocales.firstWhere(
+      (l) => l.localeId.startsWith(languageCode),
+      orElse: () => LocaleName('', ''),
+    );
+    if (languageMatch.localeId.isNotEmpty) {
+      debugPrint('🎤 Found alternative locale: ${languageMatch.localeId} for requested: $requestedLocale');
+      return languageMatch.localeId;
+    }
+
+    return null;
+  }
+
   /// Start listening for speech
   /// VERY PATIENT settings: waits longer for speech and allows extended pauses
   /// If localeId is null and _currentLocaleId is null, uses device default (auto-detect)
@@ -315,7 +358,25 @@ class VoiceInputService {
     onListeningStarted?.call();
 
     // Use provided locale, or current locale, or device default (null = auto-detect)
-    final effectiveLocale = localeId ?? _currentLocaleId;
+    final requestedLocale = localeId ?? _currentLocaleId;
+
+    // Validate and find best matching locale
+    String? effectiveLocale;
+    bool usingFallback = false;
+    if (requestedLocale != null) {
+      effectiveLocale = _findBestMatchingLocale(requestedLocale);
+      if (effectiveLocale == null) {
+        // Language not available on device - fall back silently to device default
+        final languageName = indianLanguages[requestedLocale] ?? requestedLocale;
+        debugPrint('⚠️ Requested locale $requestedLocale ($languageName) is not available on this device');
+        debugPrint('📋 Available locales: ${_availableLocales.map((l) => l.localeId).join(", ")}');
+        debugPrint('🎤 Falling back to device default language (will still work!)');
+
+        // Don't show error here - let it try with device default first
+        // Only show error if the actual speech recognition fails
+        usingFallback = true;
+      }
+    }
 
     try {
       // VERY PATIENT listening settings:
@@ -355,8 +416,24 @@ class VoiceInputService {
     } catch (e) {
       debugPrint('❌ Error starting speech recognition: $e');
       debugPrint('❌ Error type: ${e.runtimeType}');
+      debugPrint('❌ Was using fallback: $usingFallback');
       _isListening = false;
-      onError?.call('Failed to start listening: $e');
+
+      // Provide more helpful error message
+      String errorMessage;
+      if (e.toString().contains('ListenFailed')) {
+        final languageName = indianLanguages[requestedLocale] ?? requestedLocale ?? 'Selected language';
+        if (usingFallback) {
+          // The selected language wasn't available AND the fallback also failed
+          errorMessage = '$languageName is not available for speech recognition. Please download it in Settings → General → Keyboard → Dictation Languages.';
+        } else {
+          errorMessage = '$languageName speech recognition failed. Please try using device default language or check your device language settings.';
+        }
+      } else {
+        errorMessage = 'Failed to start listening: $e';
+      }
+
+      onError?.call(errorMessage);
       onListeningStopped?.call();
     }
   }
