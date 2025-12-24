@@ -54,6 +54,21 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     'hi_IN': 'हिंदी',
   };
 
+  // Track which languages are actually available for speech recognition
+  final Map<String, bool> _languageAvailability = {
+    'en_IN': true, // English is always available
+    'ta_IN': false,
+    'hi_IN': false,
+  };
+
+  /// Update language availability based on device's speech recognition locales
+  void _updateLanguageAvailability() {
+    for (final localeId in _languages.keys) {
+      _languageAvailability[localeId] = _voiceService.isLocaleAvailable(localeId);
+    }
+    debugPrint('🌐 Language availability: $_languageAvailability');
+  }
+
   // AI Generation state
   bool _isGenerating = false;
   String _generationStatus = '';
@@ -212,6 +227,9 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
 
     final initialized = await _voiceService.initialize();
 
+    // Update which languages are actually available for speech recognition
+    _updateLanguageAvailability();
+
     // Set the selected language locale for speech recognition
     _voiceService.setLocale(_selectedLanguage);
 
@@ -256,14 +274,6 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     // 1. The voice service will automatically fall back to device default if locale unavailable
     // 2. Speech will still work with device default language
     // 3. Only show error if actual speech recognition fails
-  }
-
-  /// Cycle through available languages
-  void _cycleLanguage() {
-    final keys = _languages.keys.toList();
-    final currentIndex = keys.indexOf(_selectedLanguage);
-    final nextIndex = (currentIndex + 1) % keys.length;
-    _changeLanguage(keys[nextIndex]);
   }
 
   /// Handle permission button tap - request permission or open settings
@@ -1101,17 +1111,21 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     );
   }
 
-  /// Language selector widget - tap to cycle through languages
+  /// Language selector widget - tap to show language picker with availability
   Widget _buildLanguageSelector() {
+    final isCurrentLanguageAvailable = _languageAvailability[_selectedLanguage] ?? false;
+
     return GestureDetector(
-      onTap: _cycleLanguage,
+      onTap: _showLanguagePicker,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: isCurrentLanguageAvailable
+                ? Colors.white.withValues(alpha: 0.2)
+                : Colors.orange.withValues(alpha: 0.5),
           ),
         ),
         child: Row(
@@ -1133,12 +1147,320 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             ),
             const SizedBox(width: 4),
             Icon(
-              Icons.swap_horiz,
-              color: Colors.white.withValues(alpha: 0.5),
-              size: 14,
+              isCurrentLanguageAvailable ? Icons.arrow_drop_down : Icons.warning_amber,
+              color: isCurrentLanguageAvailable
+                  ? Colors.white.withValues(alpha: 0.5)
+                  : Colors.orange,
+              size: 16,
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Show language picker bottom sheet with availability status
+  void _showLanguagePicker() {
+    HapticFeedback.selectionClick();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1a1a2e),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                const Icon(Icons.translate, color: Colors.white70, size: 24),
+                const SizedBox(width: 12),
+                const Text(
+                  'Speech Language',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white54),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select a language for voice input',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+
+            // Language options
+            ..._languages.entries.map((entry) {
+              final localeId = entry.key;
+              final languageName = entry.value;
+              final isAvailable = _languageAvailability[localeId] ?? false;
+              final isSelected = _selectedLanguage == localeId;
+
+              return _buildLanguageOption(
+                localeId: localeId,
+                languageName: languageName,
+                isAvailable: isAvailable,
+                isSelected: isSelected,
+              );
+            }),
+
+            const SizedBox(height: 16),
+
+            // Help text
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.blue.shade300, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Languages marked unavailable need to be enabled in your device\'s Keyboard/Dictation settings.',
+                      style: TextStyle(
+                        color: Colors.blue.shade200,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build a single language option in the picker
+  Widget _buildLanguageOption({
+    required String localeId,
+    required String languageName,
+    required bool isAvailable,
+    required bool isSelected,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            if (isAvailable) {
+              _changeLanguage(localeId);
+              Navigator.pop(context);
+            } else {
+              // Show setup instructions
+              Navigator.pop(context);
+              _showLanguageSetupDialog(localeId, languageName);
+            }
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Colors.cyan.withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected
+                    ? Colors.cyan.withValues(alpha: 0.5)
+                    : isAvailable
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.orange.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                // Language name
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        languageName,
+                        style: TextStyle(
+                          color: isAvailable ? Colors.white : Colors.white60,
+                          fontSize: 16,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        ),
+                      ),
+                      if (!isAvailable)
+                        Text(
+                          'Tap to setup',
+                          style: TextStyle(
+                            color: Colors.orange.shade300,
+                            fontSize: 12,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                // Status indicator
+                if (isAvailable)
+                  Icon(
+                    isSelected ? Icons.check_circle : Icons.check_circle_outline,
+                    color: isSelected ? Colors.cyan : Colors.green.withValues(alpha: 0.5),
+                    size: 24,
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.download, color: Colors.orange.shade300, size: 14),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Setup',
+                          style: TextStyle(
+                            color: Colors.orange.shade300,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Show dialog with instructions to enable a language
+  void _showLanguageSetupDialog(String localeId, String languageName) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1a1a2e),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.language, color: Colors.cyan),
+            const SizedBox(width: 12),
+            Text(
+              'Enable $languageName',
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$languageName speech recognition needs to be downloaded on your device.',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              isIOS ? 'On iPhone:' : 'On Android:',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (isIOS) ...[
+              _buildSetupStep('1', 'Open Settings'),
+              _buildSetupStep('2', 'Go to General → Keyboard'),
+              _buildSetupStep('3', 'Tap Dictation Languages'),
+              _buildSetupStep('4', 'Enable $languageName'),
+              _buildSetupStep('5', 'Return to this app'),
+            ] else ...[
+              _buildSetupStep('1', 'Open Settings'),
+              _buildSetupStep('2', 'Go to System → Languages & Input'),
+              _buildSetupStep('3', 'Tap On-screen keyboard → Gboard'),
+              _buildSetupStep('4', 'Tap Languages → Add $languageName'),
+              _buildSetupStep('5', 'Return to this app'),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Later', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _voiceService.openMicrophoneSettings();
+            },
+            icon: const Icon(Icons.settings, size: 18),
+            label: const Text('Open Settings'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.cyan,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build a setup step row
+  Widget _buildSetupStep(String number, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.cyan.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                number,
+                style: const TextStyle(
+                  color: Colors.cyan,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }
