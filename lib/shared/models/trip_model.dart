@@ -13,7 +13,7 @@ class TripModel {
   final bool isCompleted;
   final DateTime? completedAt;
   final double rating; // Trip rating 0.0 to 5.0 stars
-  final double? budget; // Trip budget (optional)
+  final double? cost; // Trip cost per person (set by organizer/creator)
   final String currency; // Currency code (e.g., 'INR', 'USD')
   final bool isPublic; // Trip visibility: true = public, false = private
 
@@ -31,7 +31,7 @@ class TripModel {
     this.isCompleted = false,
     this.completedAt,
     this.rating = 0.0,
-    this.budget,
+    this.cost,
     this.currency = 'INR',
     this.isPublic = true, // Default to public for backward compatibility
   });
@@ -50,7 +50,7 @@ class TripModel {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
-    double? budget,
+    double? cost,
     String? currency,
     bool? isPublic,
   }) {
@@ -68,7 +68,7 @@ class TripModel {
       isCompleted: isCompleted ?? this.isCompleted,
       completedAt: completedAt ?? this.completedAt,
       rating: rating ?? this.rating,
-      budget: budget ?? this.budget,
+      cost: cost ?? this.cost,
       currency: currency ?? this.currency,
       isPublic: isPublic ?? this.isPublic,
     );
@@ -89,7 +89,7 @@ class TripModel {
       'is_completed': isCompleted,
       'completed_at': completedAt?.toIso8601String(),
       'rating': rating,
-      'budget': budget,
+      'cost': cost,
       'currency': currency,
       'is_public': isPublic,
     };
@@ -120,7 +120,7 @@ class TripModel {
           ? DateTime.parse(json['completed_at'] as String)
           : null,
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-      budget: (json['budget'] as num?)?.toDouble(),
+      cost: (json['cost'] as num?)?.toDouble(),
       currency: json['currency'] as String? ?? 'INR',
       isPublic: json['is_public'] as bool? ?? true, // Default to public for backward compatibility
     );
@@ -143,7 +143,7 @@ class TripModel {
         other.isCompleted == isCompleted &&
         other.completedAt == completedAt &&
         other.rating == rating &&
-        other.budget == budget &&
+        other.cost == cost &&
         other.currency == currency &&
         other.isPublic == isPublic;
   }
@@ -164,7 +164,7 @@ class TripModel {
       isCompleted,
       completedAt,
       rating,
-      budget,
+      cost,
       currency,
       isPublic,
     );
@@ -172,7 +172,7 @@ class TripModel {
 
   @override
   String toString() {
-    return 'TripModel(id: $id, name: $name, description: $description, destination: $destination, startDate: $startDate, endDate: $endDate, coverImageUrl: $coverImageUrl, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, isCompleted: $isCompleted, completedAt: $completedAt, rating: $rating, budget: $budget, currency: $currency, isPublic: $isPublic)';
+    return 'TripModel(id: $id, name: $name, description: $description, destination: $destination, startDate: $startDate, endDate: $endDate, coverImageUrl: $coverImageUrl, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, isCompleted: $isCompleted, completedAt: $completedAt, rating: $rating, cost: $cost, currency: $currency, isPublic: $isPublic)';
   }
 }
 

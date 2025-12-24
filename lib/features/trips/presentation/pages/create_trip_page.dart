@@ -21,7 +21,7 @@ class CreateTripPage extends ConsumerStatefulWidget {
   final String? prefillDestination;
   final DateTime? prefillStartDate;
   final DateTime? prefillEndDate;
-  final double? prefillBudget;
+  final double? prefillCost;
 
   // Template parameters
   final String? templateId;
@@ -33,7 +33,7 @@ class CreateTripPage extends ConsumerStatefulWidget {
     this.prefillDestination,
     this.prefillStartDate,
     this.prefillEndDate,
-    this.prefillBudget,
+    this.prefillCost,
     this.templateId,
     this.templateDurationDays,
   });
@@ -48,7 +48,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _destinationController = TextEditingController();
-  final _budgetController = TextEditingController();
+  final _costController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
   String _currency = 'INR'; // Default currency
@@ -97,7 +97,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       debugPrint('DEBUG: templateId: ${widget.templateId}');
       debugPrint('DEBUG: templateDurationDays: ${widget.templateDurationDays}');
       debugPrint('DEBUG: prefillDestination: ${widget.prefillDestination}');
-      debugPrint('DEBUG: prefillBudget: ${widget.prefillBudget}');
+      debugPrint('DEBUG: prefillCost: ${widget.prefillCost}');
     }
 
     if (widget.prefillDestination != null) {
@@ -118,10 +118,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         debugPrint('DEBUG: Pre-filled end date: ${widget.prefillEndDate}');
       }
     }
-    if (widget.prefillBudget != null) {
-      _budgetController.text = _formatCurrency(widget.prefillBudget!);
+    if (widget.prefillCost != null) {
+      _costController.text = _formatCurrency(widget.prefillCost!);
       if (kDebugMode) {
-        debugPrint('DEBUG: Pre-filled budget: ${widget.prefillBudget}');
+        debugPrint('DEBUG: Pre-filled cost: ${widget.prefillCost}');
       }
     }
 
@@ -177,7 +177,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
         debugPrint('DEBUG: Loaded Trip Destination: ${trip.trip.destination ?? "NULL"}');
         debugPrint('DEBUG: Loaded Trip Start Date: ${trip.trip.startDate}');
         debugPrint('DEBUG: Loaded Trip End Date: ${trip.trip.endDate}');
-        debugPrint('DEBUG: Loaded Trip Budget: ${trip.trip.budget ?? "NULL"}');
+        debugPrint('DEBUG: Loaded Trip Cost: ${trip.trip.cost ?? "NULL"}');
         debugPrint('DEBUG: Loaded Trip Currency: ${trip.trip.currency}');
       }
 
@@ -186,9 +186,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           _nameController.text = trip.trip.name;
           _descriptionController.text = trip.trip.description ?? '';
           _destinationController.text = trip.trip.destination ?? '';
-          // Format budget properly - show whole numbers without decimals
-          _budgetController.text = trip.trip.budget != null
-              ? _formatCurrency(trip.trip.budget!)
+          // Format cost properly - show whole numbers without decimals
+          _costController.text = trip.trip.cost != null
+              ? _formatCurrency(trip.trip.cost!)
               : '';
           _currency = trip.trip.currency;
           _isPublic = trip.trip.isPublic;
@@ -202,7 +202,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Name: "${_nameController.text}"');
           debugPrint('DEBUG: Description: "${_descriptionController.text}"');
           debugPrint('DEBUG: Destination: "${_destinationController.text}"');
-          debugPrint('DEBUG: Budget: "${_budgetController.text}"');
+          debugPrint('DEBUG: Cost: "${_costController.text}"');
           debugPrint('DEBUG: Currency: "$_currency"');
         }
       }
@@ -231,7 +231,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     _nameController.dispose();
     _descriptionController.dispose();
     _destinationController.dispose();
-    _budgetController.dispose();
+    _costController.dispose();
     super.dispose();
   }
 
@@ -343,13 +343,13 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Destination (null if empty): ${_destinationController.text.trim().isEmpty ? 'NULL' : '"${_destinationController.text.trim()}"'}');
           debugPrint('DEBUG: Start Date: $_startDate');
           debugPrint('DEBUG: End Date: $_endDate');
-          debugPrint('DEBUG: Budget: ${_budgetController.text.isEmpty ? 'NULL' : _budgetController.text}');
+          debugPrint('DEBUG: Cost: ${_costController.text.isEmpty ? 'NULL' : _costController.text}');
           debugPrint('DEBUG: Currency: $_currency');
         }
 
-        final budget = _budgetController.text.trim().isEmpty
+        final cost = _costController.text.trim().isEmpty
             ? null
-            : double.tryParse(_budgetController.text.trim());
+            : double.tryParse(_costController.text.trim());
 
         final updatedTrip = await ref.read(tripControllerProvider.notifier).updateTrip(
               tripId: widget.tripId!,
@@ -362,7 +362,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                   : _destinationController.text.trim(),
               startDate: _startDate,
               endDate: _endDate,
-              budget: budget,
+              cost: cost,
               currency: _currency,
               isPublic: _isPublic,
             );
@@ -372,20 +372,20 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           debugPrint('DEBUG: Updated Trip Name: ${updatedTrip.name}');
           debugPrint('DEBUG: Updated Trip Description: ${updatedTrip.description ?? "NULL"}');
           debugPrint('DEBUG: Updated Trip Destination: ${updatedTrip.destination ?? "NULL"}');
-          debugPrint('DEBUG: Updated Trip Budget: ${updatedTrip.budget ?? "NULL"}');
+          debugPrint('DEBUG: Updated Trip Cost: ${updatedTrip.cost ?? "NULL"}');
           debugPrint('DEBUG: Updated Trip Currency: ${updatedTrip.currency}');
         }
       } else {
         // Create new trip
         if (kDebugMode) {
           debugPrint('DEBUG: Creating trip with name: ${_nameController.text.trim()}');
-          debugPrint('DEBUG: Budget: ${_budgetController.text.isEmpty ? 'NULL' : _budgetController.text}');
+          debugPrint('DEBUG: Cost: ${_costController.text.isEmpty ? 'NULL' : _costController.text}');
           debugPrint('DEBUG: Currency: $_currency');
         }
 
-        final budget = _budgetController.text.trim().isEmpty
+        final cost = _costController.text.trim().isEmpty
             ? null
-            : double.tryParse(_budgetController.text.trim());
+            : double.tryParse(_costController.text.trim());
 
         final trip = await ref
             .read(tripControllerProvider.notifier)
@@ -400,14 +400,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
               startDate: _startDate,
               endDate: _endDate,
               coverImageUrl: _coverImageUrl,
-              budget: budget,
+              cost: cost,
               currency: _currency,
               isPublic: _isPublic,
             );
 
         if (kDebugMode) {
           debugPrint('DEBUG: Trip created with ID: ${trip.id}');
-          debugPrint('DEBUG: Trip Budget: ${trip.budget ?? "NULL"}');
+          debugPrint('DEBUG: Trip Cost: ${trip.cost ?? "NULL"}');
           debugPrint('DEBUG: Trip Currency: ${trip.currency}');
         }
 
@@ -610,7 +610,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                 ),
                 const SizedBox(height: AppTheme.spacingMd),
 
-                // Budget Section
+                // Cost Section
                 FadeSlideAnimation(
                   delay: AppAnimations.staggerSmall * 4,
                   child: Column(
@@ -618,20 +618,20 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                       // Currency Dropdown
                       _buildCurrencyDropdown(),
                       const SizedBox(height: AppTheme.spacingMd),
-                      // Budget Amount
+                      // Trip Cost
                       _buildFormField(
-                        controller: _budgetController,
-                        label: 'Budget (Optional)',
-                        icon: Icons.account_balance_wallet,
-                        hint: 'e.g., 50000',
+                        controller: _costController,
+                        label: 'Trip Cost (Optional)',
+                        icon: Icons.payments_outlined,
+                        hint: 'e.g., 50000 per person',
                         validator: (value) {
                           if (value != null && value.isNotEmpty) {
-                            final budget = double.tryParse(value);
-                            if (budget == null) {
+                            final cost = double.tryParse(value);
+                            if (cost == null) {
                               return 'Please enter a valid number';
                             }
-                            if (budget < 0) {
-                              return 'Budget must be positive';
+                            if (cost < 0) {
+                              return 'Cost must be positive';
                             }
                           }
                           return null;

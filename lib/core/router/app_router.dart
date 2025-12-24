@@ -29,6 +29,7 @@ import '../../features/messaging/presentation/pages/conversation_info_page.dart'
 import '../../features/settings/presentation/pages/theme_settings_page.dart';
 import '../../features/settings/presentation/pages/settings_page_enhanced.dart';
 import '../../features/settings/presentation/pages/profile_page.dart';
+import '../../features/statistics/presentation/pages/travel_statistics_page.dart';
 import '../../features/trips/presentation/pages/trip_history_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/onboarding/presentation/providers/onboarding_provider.dart';
@@ -104,6 +105,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String themeSettings = '/settings/theme';
+  static const String statistics = '/settings/statistics';
   static const String admin = '/settings/admin';
   static const String adminUserDetail = '/settings/admin/users/:userId';
   static const String tripHistory = '/trip-history';
@@ -321,7 +323,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               prefillDestination: destination,
               prefillStartDate: startDateStr != null ? DateTime.tryParse(startDateStr) : null,
               prefillEndDate: endDateStr != null ? DateTime.tryParse(endDateStr) : null,
-              prefillBudget: budgetStr != null ? double.tryParse(budgetStr) : null,
+              prefillCost: budgetStr != null ? double.tryParse(budgetStr) : null,
               templateId: templateId,
               templateDurationDays: durationDaysStr != null ? int.tryParse(durationDaysStr) : null,
             ),
@@ -630,6 +632,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const ThemeSettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.statistics,
+        name: 'statistics',
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const TravelStatisticsPage(),
         ),
       ),
       GoRoute(

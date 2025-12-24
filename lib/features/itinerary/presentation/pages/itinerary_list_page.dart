@@ -862,8 +862,8 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
       if (trip.endDate != null) {
         queryParams['endDate'] = trip.endDate!.toIso8601String();
       }
-      if (trip.budget != null) {
-        queryParams['budget'] = trip.budget.toString();
+      if (trip.cost != null) {
+        queryParams['budget'] = trip.cost.toString();
       }
     });
 
@@ -1893,8 +1893,8 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
       if (trip.endDate != null) {
         queryParams['endDate'] = trip.endDate!.toIso8601String();
       }
-      if (trip.budget != null) {
-        queryParams['budget'] = trip.budget.toString();
+      if (trip.cost != null) {
+        queryParams['budget'] = trip.cost.toString();
       }
     });
 

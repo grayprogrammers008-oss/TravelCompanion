@@ -18,7 +18,7 @@ class TripRepositoryImpl implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-    double? budget,
+    double? cost,
     String? currency,
     bool isPublic = true,
   }) async {
@@ -32,7 +32,7 @@ class TripRepositoryImpl implements TripRepository {
         endDate: endDate,
         coverImageUrl: coverImageUrl,
         createdBy: '', // Will be set by backend
-        budget: budget,
+        cost: cost,
         currency: currency ?? 'INR',
         isPublic: isPublic,
       );
@@ -82,7 +82,7 @@ class TripRepositoryImpl implements TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
-    double? budget,
+    double? cost,
     String? currency,
     bool? isPublic,
   }) async {
@@ -124,9 +124,9 @@ class TripRepositoryImpl implements TripRepository {
         updates['rating'] = rating;
         updatedField = updatedField == null ? 'rating' : 'details';
       }
-      if (budget != null) {
-        updates['budget'] = budget;
-        updatedField = updatedField == null ? 'budget' : 'details';
+      if (cost != null) {
+        updates['cost'] = cost;
+        updatedField = updatedField == null ? 'cost' : 'details';
       }
       if (currency != null) {
         updates['currency'] = currency;
@@ -276,6 +276,29 @@ class TripRepositoryImpl implements TripRepository {
       await _remoteDataSource.addMember(tripId, userId, role: 'member');
     } catch (e) {
       throw Exception('Failed to join trip: $e');
+    }
+  }
+
+  @override
+  Future<String> copyTrip({
+    required String sourceTripId,
+    required String newName,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+    bool copyItinerary = true,
+    bool copyChecklists = true,
+  }) async {
+    try {
+      return await _remoteDataSource.copyTrip(
+        sourceTripId: sourceTripId,
+        newName: newName,
+        newStartDate: newStartDate,
+        newEndDate: newEndDate,
+        copyItinerary: copyItinerary,
+        copyChecklists: copyChecklists,
+      );
+    } catch (e) {
+      throw Exception('Failed to copy trip: $e');
     }
   }
 }

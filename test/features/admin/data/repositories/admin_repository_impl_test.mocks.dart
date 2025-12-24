@@ -3,23 +3,27 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i7;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:travel_crew/features/admin/data/datasources/admin_remote_datasource.dart'
-    as _i4;
+    as _i6;
 import 'package:travel_crew/features/admin/data/models/admin_activity_log_model.dart'
-    as _i8;
+    as _i10;
 import 'package:travel_crew/features/admin/data/models/admin_dashboard_stats_model.dart'
     as _i3;
 import 'package:travel_crew/features/admin/data/models/admin_user_model.dart'
     as _i2;
+import 'package:travel_crew/features/admin/domain/entities/admin_checklist.dart'
+    as _i4;
+import 'package:travel_crew/features/admin/domain/entities/admin_expense.dart'
+    as _i5;
 import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart'
-    as _i9;
+    as _i11;
 import 'package:travel_crew/features/admin/domain/entities/user_role.dart'
-    as _i6;
+    as _i8;
 import 'package:travel_crew/features/admin/domain/entities/user_status.dart'
-    as _i7;
+    as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -47,30 +51,42 @@ class _FakeAdminDashboardStatsModel_1 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeAdminChecklistStatsModel_2 extends _i1.SmartFake
+    implements _i4.AdminChecklistStatsModel {
+  _FakeAdminChecklistStatsModel_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeAdminExpenseStatsModel_3 extends _i1.SmartFake
+    implements _i5.AdminExpenseStatsModel {
+  _FakeAdminExpenseStatsModel_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AdminRemoteDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAdminRemoteDataSource extends _i1.Mock
-    implements _i4.AdminRemoteDataSource {
+    implements _i6.AdminRemoteDataSource {
   MockAdminRemoteDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<bool> isAdmin() =>
+  _i7.Future<bool> isAdmin() =>
       (super.noSuchMethod(
             Invocation.method(#isAdmin, []),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i7.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i7.Future<bool>);
 
   @override
-  _i5.Future<List<_i2.AdminUserModel>> getAllUsers({
+  _i7.Future<List<_i2.AdminUserModel>> getAllUsers({
     int? limit = 50,
     int? offset = 0,
     String? search,
-    _i6.UserRole? role,
-    _i7.UserStatus? status,
+    _i8.UserRole? role,
+    _i9.UserStatus? status,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getAllUsers, [], {
@@ -80,64 +96,64 @@ class MockAdminRemoteDataSource extends _i1.Mock
               #role: role,
               #status: status,
             }),
-            returnValue: _i5.Future<List<_i2.AdminUserModel>>.value(
+            returnValue: _i7.Future<List<_i2.AdminUserModel>>.value(
               <_i2.AdminUserModel>[],
             ),
           )
-          as _i5.Future<List<_i2.AdminUserModel>>);
+          as _i7.Future<List<_i2.AdminUserModel>>);
 
   @override
-  _i5.Future<_i2.AdminUserModel> getUserById(String? userId) =>
+  _i7.Future<_i2.AdminUserModel> getUserById(String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#getUserById, [userId]),
-            returnValue: _i5.Future<_i2.AdminUserModel>.value(
+            returnValue: _i7.Future<_i2.AdminUserModel>.value(
               _FakeAdminUserModel_0(
                 this,
                 Invocation.method(#getUserById, [userId]),
               ),
             ),
           )
-          as _i5.Future<_i2.AdminUserModel>);
+          as _i7.Future<_i2.AdminUserModel>);
 
   @override
-  _i5.Future<bool> suspendUser(String? userId, String? reason) =>
+  _i7.Future<bool> suspendUser(String? userId, String? reason) =>
       (super.noSuchMethod(
             Invocation.method(#suspendUser, [userId, reason]),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i7.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i7.Future<bool>);
 
   @override
-  _i5.Future<bool> activateUser(String? userId) =>
+  _i7.Future<bool> activateUser(String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#activateUser, [userId]),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i7.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i7.Future<bool>);
 
   @override
-  _i5.Future<bool> updateUserRole(String? userId, _i6.UserRole? newRole) =>
+  _i7.Future<bool> updateUserRole(String? userId, _i8.UserRole? newRole) =>
       (super.noSuchMethod(
             Invocation.method(#updateUserRole, [userId, newRole]),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i7.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i7.Future<bool>);
 
   @override
-  _i5.Future<_i3.AdminDashboardStatsModel> getDashboardStats() =>
+  _i7.Future<_i3.AdminDashboardStatsModel> getDashboardStats() =>
       (super.noSuchMethod(
             Invocation.method(#getDashboardStats, []),
-            returnValue: _i5.Future<_i3.AdminDashboardStatsModel>.value(
+            returnValue: _i7.Future<_i3.AdminDashboardStatsModel>.value(
               _FakeAdminDashboardStatsModel_1(
                 this,
                 Invocation.method(#getDashboardStats, []),
               ),
             ),
           )
-          as _i5.Future<_i3.AdminDashboardStatsModel>);
+          as _i7.Future<_i3.AdminDashboardStatsModel>);
 
   @override
-  _i5.Future<List<_i8.AdminActivityLogModel>> getActivityLogs({
+  _i7.Future<List<_i10.AdminActivityLogModel>> getActivityLogs({
     int? limit = 50,
     int? offset = 0,
     String? adminId,
@@ -150,14 +166,14 @@ class MockAdminRemoteDataSource extends _i1.Mock
               #adminId: adminId,
               #targetUserId: targetUserId,
             }),
-            returnValue: _i5.Future<List<_i8.AdminActivityLogModel>>.value(
-              <_i8.AdminActivityLogModel>[],
+            returnValue: _i7.Future<List<_i10.AdminActivityLogModel>>.value(
+              <_i10.AdminActivityLogModel>[],
             ),
           )
-          as _i5.Future<List<_i8.AdminActivityLogModel>>);
+          as _i7.Future<List<_i10.AdminActivityLogModel>>);
 
   @override
-  _i5.Future<_i2.AdminUserModel> updateUserProfile(
+  _i7.Future<_i2.AdminUserModel> updateUserProfile(
     String? userId, {
     String? fullName,
     String? avatarUrl,
@@ -168,7 +184,7 @@ class MockAdminRemoteDataSource extends _i1.Mock
               [userId],
               {#fullName: fullName, #avatarUrl: avatarUrl},
             ),
-            returnValue: _i5.Future<_i2.AdminUserModel>.value(
+            returnValue: _i7.Future<_i2.AdminUserModel>.value(
               _FakeAdminUserModel_0(
                 this,
                 Invocation.method(
@@ -179,10 +195,10 @@ class MockAdminRemoteDataSource extends _i1.Mock
               ),
             ),
           )
-          as _i5.Future<_i2.AdminUserModel>);
+          as _i7.Future<_i2.AdminUserModel>);
 
   @override
-  _i5.Future<List<_i9.AdminTripModel>> getAllTrips({
+  _i7.Future<List<_i11.AdminTripModel>> getAllTrips({
     int? limit = 50,
     int? offset = 0,
     String? search,
@@ -195,22 +211,22 @@ class MockAdminRemoteDataSource extends _i1.Mock
               #search: search,
               #status: status,
             }),
-            returnValue: _i5.Future<List<_i9.AdminTripModel>>.value(
-              <_i9.AdminTripModel>[],
+            returnValue: _i7.Future<List<_i11.AdminTripModel>>.value(
+              <_i11.AdminTripModel>[],
             ),
           )
-          as _i5.Future<List<_i9.AdminTripModel>>);
+          as _i7.Future<List<_i11.AdminTripModel>>);
 
   @override
-  _i5.Future<bool> deleteTrip(String? tripId) =>
+  _i7.Future<bool> deleteTrip(String? tripId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteTrip, [tripId]),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i7.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i7.Future<bool>);
 
   @override
-  _i5.Future<bool> updateTrip(
+  _i7.Future<bool> updateTrip(
     String? tripId, {
     String? name,
     String? description,
@@ -236,7 +252,157 @@ class MockAdminRemoteDataSource extends _i1.Mock
                 #isCompleted: isCompleted,
               },
             ),
-            returnValue: _i5.Future<bool>.value(false),
+            returnValue: _i7.Future<bool>.value(false),
           )
-          as _i5.Future<bool>);
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<List<_i4.AdminChecklistModel>> getAllChecklists({
+    int? limit = 50,
+    int? offset = 0,
+    String? search,
+    String? status,
+    String? tripId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllChecklists, [], {
+              #limit: limit,
+              #offset: offset,
+              #search: search,
+              #status: status,
+              #tripId: tripId,
+            }),
+            returnValue: _i7.Future<List<_i4.AdminChecklistModel>>.value(
+              <_i4.AdminChecklistModel>[],
+            ),
+          )
+          as _i7.Future<List<_i4.AdminChecklistModel>>);
+
+  @override
+  _i7.Future<_i4.AdminChecklistStatsModel> getChecklistStats() =>
+      (super.noSuchMethod(
+            Invocation.method(#getChecklistStats, []),
+            returnValue: _i7.Future<_i4.AdminChecklistStatsModel>.value(
+              _FakeAdminChecklistStatsModel_2(
+                this,
+                Invocation.method(#getChecklistStats, []),
+              ),
+            ),
+          )
+          as _i7.Future<_i4.AdminChecklistStatsModel>);
+
+  @override
+  _i7.Future<bool> deleteChecklist(String? checklistId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteChecklist, [checklistId]),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<bool> updateChecklist(String? checklistId, {String? name}) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateChecklist, [checklistId], {#name: name}),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<int> bulkUpdateChecklistItems(
+    String? checklistId, {
+    required bool? isCompleted,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #bulkUpdateChecklistItems,
+              [checklistId],
+              {#isCompleted: isCompleted},
+            ),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
+
+  @override
+  _i7.Future<List<_i5.AdminExpenseModel>> getAllExpenses({
+    int? limit = 50,
+    int? offset = 0,
+    String? search,
+    String? category,
+    String? tripId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllExpenses, [], {
+              #limit: limit,
+              #offset: offset,
+              #search: search,
+              #category: category,
+              #tripId: tripId,
+            }),
+            returnValue: _i7.Future<List<_i5.AdminExpenseModel>>.value(
+              <_i5.AdminExpenseModel>[],
+            ),
+          )
+          as _i7.Future<List<_i5.AdminExpenseModel>>);
+
+  @override
+  _i7.Future<_i5.AdminExpenseStatsModel> getExpenseStats() =>
+      (super.noSuchMethod(
+            Invocation.method(#getExpenseStats, []),
+            returnValue: _i7.Future<_i5.AdminExpenseStatsModel>.value(
+              _FakeAdminExpenseStatsModel_3(
+                this,
+                Invocation.method(#getExpenseStats, []),
+              ),
+            ),
+          )
+          as _i7.Future<_i5.AdminExpenseStatsModel>);
+
+  @override
+  _i7.Future<bool> deleteExpense(String? expenseId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteExpense, [expenseId]),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<bool> updateExpense(
+    String? expenseId, {
+    String? title,
+    String? description,
+    double? amount,
+    String? currency,
+    String? category,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #updateExpense,
+              [expenseId],
+              {
+                #title: title,
+                #description: description,
+                #amount: amount,
+                #currency: currency,
+                #category: category,
+              },
+            ),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
+
+  @override
+  _i7.Future<int> settleExpenseSplits(String? expenseId) =>
+      (super.noSuchMethod(
+            Invocation.method(#settleExpenseSplits, [expenseId]),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
+
+  @override
+  _i7.Future<int> unsettleExpenseSplits(String? expenseId) =>
+      (super.noSuchMethod(
+            Invocation.method(#unsettleExpenseSplits, [expenseId]),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
 }

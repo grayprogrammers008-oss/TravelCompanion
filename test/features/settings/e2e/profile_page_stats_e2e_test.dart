@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_crew/features/settings/presentation/pages/profile_page.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
+import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
+import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
+import 'package:travel_crew/features/expenses/presentation/providers/expense_providers.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/theme/app_theme_data.dart';
 import 'package:travel_crew/core/theme/theme_access.dart';
@@ -12,6 +15,8 @@ import 'package:travel_crew/core/theme/theme_access.dart';
 void main() {
   group('Profile Page E2E Tests - User Travel Stats', () {
     late UserTravelStats mockStats;
+    late UserEntity mockUser;
+    late ExpenseSummary mockExpenseSummary;
 
     setUp(() {
       mockStats = const UserTravelStats(
@@ -20,13 +25,36 @@ void main() {
         totalSpent: 15000.0,
         uniqueCrewMembers: 8,
       );
+      mockUser = UserEntity(
+        id: 'test-user-id',
+        email: 'test@example.com',
+        fullName: 'Test User',
+        createdAt: DateTime(2024, 1, 1),
+        updatedAt: DateTime(2024, 1, 1),
+      );
+      mockExpenseSummary = ExpenseSummary(
+        totalPersonal: 5000.0,
+        totalTrip: 10000.0,
+        totalAll: 15000.0,
+        personalCount: 10,
+        tripCount: 15,
+        categoryBreakdown: {'Food': 5000, 'Transport': 10000},
+        thisMonthSpending: 3000.0,
+        lastMonthSpending: 2500.0,
+      );
     });
 
-    Widget createTestWidget() {
+    Widget createTestWidget({UserTravelStats? stats, UserEntity? user}) {
       return ProviderScope(
         overrides: [
+          currentUserProvider.overrideWith(
+            (ref) async => user ?? mockUser,
+          ),
           userStatsProvider.overrideWith(
-            (ref) => Stream.value(mockStats),
+            (ref) => Stream.value(stats ?? mockStats),
+          ),
+          expenseSummaryProvider.overrideWith(
+            (ref) async => mockExpenseSummary,
           ),
         ],
         child: AppThemeProvider(
@@ -101,11 +129,19 @@ void main() {
     });
 
     testWidgets('should display loading indicator initially', (tester) async {
-      // Arrange
+      // Arrange - Use a completer to control when data is returned
+      final userCompleter = Completer<UserEntity>();
+
       final widget = ProviderScope(
         overrides: [
+          currentUserProvider.overrideWith(
+            (ref) => userCompleter.future,
+          ),
           userStatsProvider.overrideWith(
             (ref) => Stream.value(mockStats),
+          ),
+          expenseSummaryProvider.overrideWith(
+            (ref) async => mockExpenseSummary,
           ),
         ],
         child: AppThemeProvider(
@@ -117,38 +153,28 @@ void main() {
         ),
       );
 
-      // Act
+      // Act - pump widget but don't settle
       await tester.pumpWidget(widget);
-      // Don't settle - should show loading
+      await tester.pump(); // One frame to build
 
-      // Assert - loading indicator should be present
-      expect(find.byType(CircularProgressIndicator), findsAtLeastNWidgets(1));
+      // Assert - loading text should be present while waiting
+      // ProfilePage uses AppLoadingIndicator which shows "Loading profile..." text
+      expect(find.textContaining('Loading'), findsAtLeastNWidgets(1));
 
-      // Now settle to verify stats are shown
+      // Complete the future and settle
+      userCompleter.complete(mockUser);
       await tester.pumpAndSettle();
+
+      // Now verify data is shown
       expect(find.text('5'), findsAtLeastNWidgets(1));
     });
 
     testWidgets('should display zero stats when user has no data', (tester) async {
       // Arrange
       final emptyStats = UserTravelStats.empty();
-      final widget = ProviderScope(
-        overrides: [
-          userStatsProvider.overrideWith(
-            (ref) => Stream.value(emptyStats),
-          ),
-        ],
-        child: AppThemeProvider(
-          themeData: AppThemeData.getThemeData(AppThemeType.ocean),
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const ProfilePage(),
-          ),
-        ),
-      );
 
       // Act
-      await tester.pumpWidget(widget);
+      await tester.pumpWidget(createTestWidget(stats: emptyStats));
       await tester.pumpAndSettle();
 
       // Assert
@@ -166,23 +192,8 @@ void main() {
         uniqueCrewMembers: 50,
       );
 
-      final widget = ProviderScope(
-        overrides: [
-          userStatsProvider.overrideWith(
-            (ref) => Stream.value(largeStats),
-          ),
-        ],
-        child: AppThemeProvider(
-          themeData: AppThemeData.getThemeData(AppThemeType.ocean),
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const ProfilePage(),
-          ),
-        ),
-      );
-
       // Act
-      await tester.pumpWidget(widget);
+      await tester.pumpWidget(createTestWidget(stats: largeStats));
       await tester.pumpAndSettle();
 
       // Assert
@@ -201,23 +212,8 @@ void main() {
         uniqueCrewMembers: 5,
       );
 
-      final widget = ProviderScope(
-        overrides: [
-          userStatsProvider.overrideWith(
-            (ref) => Stream.value(decimalStats),
-          ),
-        ],
-        child: AppThemeProvider(
-          themeData: AppThemeData.getThemeData(AppThemeType.ocean),
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const ProfilePage(),
-          ),
-        ),
-      );
-
       // Act
-      await tester.pumpWidget(widget);
+      await tester.pumpWidget(createTestWidget(stats: decimalStats));
       await tester.pumpAndSettle();
 
       // Assert - should round to nearest integer
@@ -254,8 +250,14 @@ void main() {
 
       final widget = ProviderScope(
         overrides: [
+          currentUserProvider.overrideWith(
+            (ref) async => mockUser,
+          ),
           userStatsProvider.overrideWith(
             (ref) => statsController.stream,
+          ),
+          expenseSummaryProvider.overrideWith(
+            (ref) async => mockExpenseSummary,
           ),
         ],
         child: AppThemeProvider(
@@ -296,8 +298,14 @@ void main() {
       // Arrange
       final widget = ProviderScope(
         overrides: [
+          currentUserProvider.overrideWith(
+            (ref) async => mockUser,
+          ),
           userStatsProvider.overrideWith(
             (ref) => Stream.error(Exception('Failed to load stats')),
+          ),
+          expenseSummaryProvider.overrideWith(
+            (ref) async => mockExpenseSummary,
           ),
         ],
         child: AppThemeProvider(

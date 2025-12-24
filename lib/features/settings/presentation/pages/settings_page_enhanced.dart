@@ -333,6 +333,22 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
               ],
             ),
 
+            // Travel Statistics Section
+            _buildSection(
+              context,
+              title: 'Your Travel',
+              items: [
+                _buildNavigationTile(
+                  context,
+                  icon: Icons.bar_chart,
+                  iconColor: Colors.teal,
+                  title: 'Travel Statistics',
+                  subtitle: 'View your travel insights and achievements',
+                  onTap: () => context.push('/settings/statistics'),
+                ),
+              ],
+            ),
+
             // Account Settings
             _buildSection(
               context,

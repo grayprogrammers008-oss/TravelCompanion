@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
@@ -11,15 +13,112 @@ import '../widgets/payment_options_sheet.dart';
 
 /// Settlement Summary Page
 /// Shows a clear report of all balances and who owes whom
-class SettlementSummaryPage extends ConsumerWidget {
+class SettlementSummaryPage extends ConsumerStatefulWidget {
   final String tripId;
 
   const SettlementSummaryPage({super.key, required this.tripId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final balancesAsync = ref.watch(tripBalancesProvider(tripId));
-    final settlementsAsync = ref.watch(tripSettlementsProvider(tripId));
+  ConsumerState<SettlementSummaryPage> createState() => _SettlementSummaryPageState();
+}
+
+class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
+  bool _isCreatingSettlement = false;
+
+  /// Handle payment flow: show UPI dialog, launch payment, create settlement on confirmation
+  Future<void> _handlePayment(
+    BuildContext context,
+    _DebtInfo debt,
+    String? currentUserId,
+  ) async {
+    if (currentUserId == null) return;
+
+    // Step 1: Get recipient's UPI ID
+    final upiId = await _showUPIInputDialog(context, debt.toUserName);
+    if (upiId == null || upiId.isEmpty || !context.mounted) return;
+
+    // Step 2: Show payment options and wait for confirmation
+    final confirmed = await PaymentOptionsSheet.show(
+      context,
+      recipientUPIId: upiId,
+      recipientName: debt.toUserName,
+      amount: debt.amount,
+      note: 'Settlement for trip expenses',
+    );
+
+    // Step 3: If user confirmed payment, create settlement record
+    if (confirmed == true && context.mounted) {
+      await _createSettlement(
+        context,
+        fromUser: currentUserId,
+        toUser: debt.toUserId,
+        amount: debt.amount,
+      );
+    }
+  }
+
+  /// Create a settlement record after payment confirmation
+  Future<void> _createSettlement(
+    BuildContext context, {
+    required String fromUser,
+    required String toUser,
+    required double amount,
+  }) async {
+    setState(() {
+      _isCreatingSettlement = true;
+    });
+
+    try {
+      await ref.read(expenseControllerProvider.notifier).createSettlement(
+            tripId: widget.tripId,
+            fromUser: fromUser,
+            toUser: toUser,
+            amount: amount,
+            paymentMethod: 'UPI',
+          );
+
+      // Refresh balances and settlements
+      ref.invalidate(tripBalancesProvider(widget.tripId));
+      ref.invalidate(tripSettlementsProvider(widget.tripId));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Text('Settlement of ${amount.toINR()} recorded!'),
+              ],
+            ),
+            backgroundColor: context.successColor,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to record settlement: ${e.toString()}'),
+            backgroundColor: context.errorColor,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCreatingSettlement = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final balancesAsync = ref.watch(tripBalancesProvider(widget.tripId));
+    final settlementsAsync = ref.watch(tripSettlementsProvider(widget.tripId));
     final currentUserId = ref.watch(authStateProvider).value;
 
     return Scaffold(
@@ -30,7 +129,7 @@ class SettlementSummaryPage extends ConsumerWidget {
             if (context.canPop()) {
               context.pop();
             } else {
-              context.go('/trips/$tripId/expenses');
+              context.go('/trips/${widget.tripId}/expenses');
             }
           },
         ),
@@ -56,7 +155,7 @@ class SettlementSummaryPage extends ConsumerWidget {
               Text('Error: ${error.toString()}'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.invalidate(tripBalancesProvider(tripId)),
+                onPressed: () => ref.invalidate(tripBalancesProvider(widget.tripId)),
                 child: const Text('Retry'),
               ),
             ],
@@ -388,23 +487,45 @@ class SettlementSummaryPage extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () async {
-                  final upiId = await _showUPIInputDialog(context, debt.toUserName);
-                  if (upiId != null && upiId.isNotEmpty && context.mounted) {
-                    PaymentOptionsSheet.show(
-                      context,
-                      recipientUPIId: upiId,
-                      recipientName: debt.toUserName,
-                      amount: debt.amount,
-                      note: 'Settlement for trip expenses',
-                    );
-                  }
-                },
-                icon: const Icon(Icons.payment),
-                label: Text('Pay ${debt.amount.toINR()}'),
+                onPressed: _isCreatingSettlement
+                    ? null
+                    : () => _handlePayment(context, debt, currentUserId),
+                icon: _isCreatingSettlement
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.payment),
+                label: Text(_isCreatingSettlement ? 'Processing...' : 'Pay ${debt.amount.toINR()}'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.successColor,
                   foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+
+          // Request payment button for current user who is owed money
+          if (isCurrentUserCreditor) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => _showPaymentReminderOptions(
+                  context,
+                  debtorName: debt.fromUserName,
+                  amount: debt.amount,
+                ),
+                icon: const Icon(Icons.notifications_active),
+                label: Text('Request ${debt.amount.toINR()} from ${debt.fromUserName}'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: context.primaryColor,
+                  side: BorderSide(color: context.primaryColor),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
@@ -696,6 +817,218 @@ class SettlementSummaryPage extends ConsumerWidget {
     }
 
     return debts;
+  }
+
+  /// Show payment reminder options (WhatsApp, SMS, Share)
+  void _showPaymentReminderOptions(
+    BuildContext context, {
+    required String debtorName,
+    required double amount,
+  }) {
+    final message = _buildReminderMessage(debtorName, amount);
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.notifications_active,
+                    color: context.primaryColor,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Send Payment Reminder',
+                    style: context.titleMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Choose how to send the reminder to $debtorName',
+                style: context.bodySmall.copyWith(
+                  color: context.textColor.withValues(alpha: 0.6),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Preview message
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.primaryColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: context.primaryColor.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Text(
+                  message,
+                  style: context.bodySmall,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // WhatsApp option
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF25D366).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.chat,
+                    color: Color(0xFF25D366),
+                  ),
+                ),
+                title: const Text('Send via WhatsApp'),
+                subtitle: const Text('Opens WhatsApp with message'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pop(context);
+                  _sendViaWhatsApp(context, message);
+                },
+              ),
+              const Divider(),
+
+              // SMS option
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.sms,
+                    color: Colors.blue,
+                  ),
+                ),
+                title: const Text('Send via SMS'),
+                subtitle: const Text('Opens Messages app'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pop(context);
+                  _sendViaSMS(context, message);
+                },
+              ),
+              const Divider(),
+
+              // Share option
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: context.primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.share,
+                    color: context.primaryColor,
+                  ),
+                ),
+                title: const Text('Share via Other Apps'),
+                subtitle: const Text('Choose any app to share'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pop(context);
+                  _shareMessage(message);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _buildReminderMessage(String debtorName, double amount) {
+    return '''Hi $debtorName! 👋
+
+This is a friendly reminder about the pending payment of ${amount.toINR()} for our trip expenses.
+
+Please settle up when you get a chance. You can pay via UPI or any other convenient method.
+
+Thanks! 🙏
+
+Sent from TravelCompanion''';
+  }
+
+  Future<void> _sendViaWhatsApp(BuildContext context, String message) async {
+    final encodedMessage = Uri.encodeComponent(message);
+    final whatsappUrl = Uri.parse('https://wa.me/?text=$encodedMessage');
+
+    try {
+      if (await canLaunchUrl(whatsappUrl)) {
+        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('WhatsApp is not installed'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open WhatsApp: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _sendViaSMS(BuildContext context, String message) async {
+    final encodedMessage = Uri.encodeComponent(message);
+    final smsUrl = Uri.parse('sms:?body=$encodedMessage');
+
+    try {
+      if (await canLaunchUrl(smsUrl)) {
+        await launchUrl(smsUrl);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open SMS app'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open SMS: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _shareMessage(String message) async {
+    await Share.share(
+      message,
+      subject: 'Payment Reminder - TravelCompanion',
+    );
   }
 }
 

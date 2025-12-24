@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb, visibleForTesting;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -70,6 +71,14 @@ class NotificationInitialization {
     try {
       debugPrint('🔵 [NotificationInit] Registering FCM token...');
 
+      // Check if Firebase is initialized before proceeding
+      try {
+        Firebase.app();
+      } catch (e) {
+        debugPrint('   ⚠️ Firebase not initialized, skipping token registration');
+        return;
+      }
+
       final supabase = Supabase.instance.client;
       final user = supabase.auth.currentUser;
 
@@ -99,6 +108,14 @@ class NotificationInitialization {
 
     try {
       debugPrint('🔵 [NotificationInit] Unregistering FCM token...');
+
+      // Check if Firebase is initialized before proceeding
+      try {
+        Firebase.app();
+      } catch (e) {
+        debugPrint('   ⚠️ Firebase not initialized, skipping token unregistration');
+        return;
+      }
 
       // Use FCMService's lazy-initialized FirebaseMessaging instance
       final fcmService = FCMService();

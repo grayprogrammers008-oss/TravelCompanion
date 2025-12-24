@@ -17,10 +17,19 @@ import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../expenses/presentation/widgets/quick_expense_sheet.dart';
 import '../../../checklists/presentation/providers/checklist_providers.dart';
+import '../../../checklists/domain/entities/checklist_entity.dart';
 import '../../../messaging/presentation/providers/conversation_providers.dart';
+import '../../../messaging/presentation/providers/messaging_providers.dart';
+import '../../../messaging/domain/entities/message_entity.dart';
 import '../widgets/trip_qr_share.dart';
 import '../widgets/add_member_bottom_sheet.dart';
+import '../widgets/copy_trip_dialog.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
+import '../../../../core/services/pdf_export_service.dart';
+import '../../../itinerary/presentation/providers/itinerary_providers.dart';
+import '../../../itinerary/domain/entities/itinerary_entity.dart';
+// TODO: Re-enable when budget tracking is fully implemented
+// import '../../../budget/presentation/widgets/budget_overview_card.dart';
 
 class TripDetailPage extends ConsumerStatefulWidget {
   final String tripId;
@@ -171,7 +180,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     final description = trip.trip.description as String?;
     final isPublic = trip.trip.isPublic ?? false;
     final memberCount = (trip.members as List).length;
-    final budget = trip.trip.budget as double?;
+    final cost = trip.trip.cost as double?;
     final currency = trip.trip.currency ?? 'INR';
 
     // Calculate duration
@@ -362,11 +371,11 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       icon: Icons.group,
                       label: '$memberCount',
                     ),
-                    if (budget != null && budget > 0) ...[
+                    if (cost != null && cost > 0) ...[
                       const SizedBox(width: 8),
                       _buildHeroStatChip(
-                        icon: Icons.account_balance_wallet,
-                        label: '${_getCurrencySymbol(currency)}${_formatAmount(budget)}',
+                        icon: Icons.payments_outlined,
+                        label: '${_getCurrencySymbol(currency)}${_formatAmount(cost)}',
                       ),
                     ],
                   ],
@@ -753,6 +762,10 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             checklistsAsync,
             unreadCountAsync,
           ),
+          // TODO: Re-enable Budget section when budget tracking is fully implemented
+          // const SizedBox(height: 20),
+          // // 3. BUDGET SECTION - Budget overview with progress and categories
+          // _buildBudgetSection(context, trip),
         ],
       ),
     );
@@ -802,6 +815,43 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
       ],
     );
   }
+
+  // TODO: Re-enable when budget tracking is fully implemented
+  // /// Budget section with overview card
+  // Widget _buildBudgetSection(BuildContext context, dynamic trip) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       // Section header
+  //       Padding(
+  //         padding: const EdgeInsets.only(left: 4, bottom: 8),
+  //         child: Row(
+  //           children: [
+  //             Icon(Icons.account_balance_wallet_outlined, size: 18, color: AppTheme.neutral500),
+  //             const SizedBox(width: 8),
+  //             Text(
+  //               'Budget',
+  //               style: TextStyle(
+  //                 fontSize: 14,
+  //                 fontWeight: FontWeight.w600,
+  //                 color: AppTheme.neutral500,
+  //                 letterSpacing: 0.5,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       // Budget overview card
+  //       BudgetOverviewCard(
+  //         tripId: widget.tripId,
+  //         onTap: () {
+  //           // Navigate to expenses page
+  //           context.push('/trips/${widget.tripId}/expenses');
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   /// Quick Actions section with 2x3 compact grid
   Widget _buildQuickActionsSection(
@@ -1969,22 +2019,216 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   }
 
   void _sendEmergencyBroadcast(dynamic trip) {
-    // Navigate to chat and send emergency message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Row(
+    _showBroadcastDialog(
+      context,
+      isEmergency: true,
+      tripName: trip.name ?? 'Trip',
+    );
+  }
+
+  /// Show broadcast message dialog
+  void _showBroadcastDialog(
+    BuildContext context, {
+    required bool isEmergency,
+    required String tripName,
+  }) {
+    final messageController = TextEditingController(
+      text: isEmergency ? '🚨 EMERGENCY: ' : '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
           children: [
-            Icon(Icons.broadcast_on_personal_rounded, color: Colors.white),
-            SizedBox(width: 12),
-            Expanded(child: Text('Emergency alert sent to all trip members!')),
+            Icon(
+              isEmergency ? Icons.emergency : Icons.campaign,
+              color: isEmergency ? AppTheme.error : context.primaryColor,
+            ),
+            const SizedBox(width: 12),
+            Text(isEmergency ? 'Emergency Broadcast' : 'Broadcast Message'),
           ],
         ),
-        backgroundColor: Color(0xFFE53935),
-        behavior: SnackBarBehavior.floating,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isEmergency
+                  ? 'Send an emergency alert to all trip members immediately.'
+                  : 'Send a message to all trip members.',
+              style: context.bodySmall.copyWith(
+                color: context.textColor.withValues(alpha: 0.7),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: messageController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: isEmergency
+                    ? 'Describe the emergency...'
+                    : 'Enter your message...',
+                border: const OutlineInputBorder(),
+                filled: true,
+                fillColor: isEmergency
+                    ? AppTheme.error.withValues(alpha: 0.05)
+                    : null,
+              ),
+              autofocus: true,
+            ),
+            if (isEmergency) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppTheme.error.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning_amber, color: AppTheme.error, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This will send an urgent notification to all members',
+                        style: context.bodySmall.copyWith(
+                          color: AppTheme.error,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              final message = messageController.text.trim();
+              if (message.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a message'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+                return;
+              }
+
+              Navigator.pop(dialogContext);
+              await _sendBroadcastMessage(message, isEmergency);
+            },
+            icon: Icon(isEmergency ? Icons.send : Icons.campaign),
+            label: Text(isEmergency ? 'Send Emergency Alert' : 'Send Broadcast'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isEmergency ? AppTheme.error : context.primaryColor,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
-    // TODO: Implement actual broadcast via messaging system
-    _openDefaultGroupChat();
+  }
+
+  /// Send broadcast message to the default group chat
+  Future<void> _sendBroadcastMessage(String message, bool isEmergency) async {
+    final currentUserId = ref.read(authStateProvider).value ?? '';
+
+    if (currentUserId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please sign in to send messages'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Show sending indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(isEmergency ? 'Sending emergency alert...' : 'Sending broadcast...'),
+            ],
+          ),
+          backgroundColor: isEmergency ? AppTheme.error : context.primaryColor,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Send the message via the messaging use case
+      final sendMessageUseCase = ref.read(sendMessageUseCaseProvider);
+      final result = await sendMessageUseCase.execute(
+        tripId: widget.tripId,
+        senderId: currentUserId,
+        message: message,
+        messageType: MessageType.text,
+      );
+
+      if (result.isSuccess) {
+        // Show success
+        if (mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(
+                    isEmergency ? Icons.check_circle : Icons.campaign,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      isEmergency
+                          ? 'Emergency alert sent to all members!'
+                          : 'Broadcast sent to all members!',
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: isEmergency ? AppTheme.error : AppTheme.success,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+
+          // Navigate to chat so user can see the message
+          _openDefaultGroupChat();
+        }
+      } else {
+        throw Exception(result.error ?? 'Failed to send message');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send broadcast: $e'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    }
   }
 
   void _shareLiveLocation(dynamic trip) {
@@ -2019,9 +2263,14 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         borderRadius: BorderRadius.circular(12),
       ),
       itemBuilder: (context) => [
+        _buildPopupItem('broadcast', Icons.campaign, 'Broadcast Announcement', Colors.orange),
+        _buildPopupItem('export_pdf', Icons.picture_as_pdf, 'Export to PDF', Colors.red),
+        const PopupMenuDivider(),
         _buildPopupItem('share_whatsapp', Icons.chat, 'Share via WhatsApp', const Color(0xFF25D366)),
         _buildPopupItem('share_general', Icons.share, 'Share via...', AppTheme.info),
         _buildPopupItem('share_qr', Icons.qr_code_2, 'Show QR Code', Colors.purple),
+        const PopupMenuDivider(),
+        _buildPopupItem('copy', Icons.copy, 'Copy Trip', Colors.blue),
         const PopupMenuDivider(),
         if (!trip.trip.isCompleted)
           _buildPopupItem('complete', Icons.check_circle, 'Mark Completed', AppTheme.success)
@@ -2052,6 +2301,16 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
 
   void _handleMenuAction(BuildContext context, String action, dynamic trip) async {
     switch (action) {
+      case 'broadcast':
+        _showBroadcastDialog(
+          context,
+          isEmergency: false,
+          tripName: trip.trip.name ?? 'Trip',
+        );
+        break;
+      case 'export_pdf':
+        await _exportTripToPdf(trip);
+        break;
       case 'share_whatsapp':
         final text = ShareService.formatTrip(trip.trip);
         await ShareService.shareToWhatsApp(text);
@@ -2062,6 +2321,9 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
         break;
       case 'share_qr':
         TripQrShare.show(context: context, tripId: widget.tripId, tripName: trip.trip.name);
+        break;
+      case 'copy':
+        await _showCopyTripDialog(trip);
         break;
       case 'complete':
         _showCompleteDialog(context, ref);
@@ -2075,10 +2337,163 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     }
   }
 
+  /// Export trip details to PDF
+  Future<void> _exportTripToPdf(dynamic tripWithMembers) async {
+    debugPrint('📄 _exportTripToPdf: Starting...');
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text('Preparing PDF...'),
+            ],
+          ),
+          backgroundColor: context.primaryColor,
+          duration: const Duration(seconds: 10),
+        ),
+      );
+
+      // Fetch additional data with timeouts to prevent hanging
+      debugPrint('📄 _exportTripToPdf: Fetching checklists...');
+      final checklistsData = await _fetchChecklists();
+      debugPrint('📄 _exportTripToPdf: Checklists fetched: ${checklistsData.length}');
+
+      debugPrint('📄 _exportTripToPdf: Fetching itinerary...');
+      var itinerary = <ItineraryItemEntity>[];
+      try {
+        // Use repository directly with Future (not StreamProvider which can hang)
+        final repository = ref.read(itineraryRepositoryProvider);
+        itinerary = await repository
+            .getTripItinerary(widget.tripId)
+            .timeout(const Duration(seconds: 10));
+      } catch (e) {
+        debugPrint('📄 _exportTripToPdf: Failed to fetch itinerary: $e');
+      }
+      debugPrint('📄 _exportTripToPdf: Itinerary fetched: ${itinerary.length}');
+
+      if (!mounted) {
+        debugPrint('📄 _exportTripToPdf: Widget not mounted, aborting');
+        return;
+      }
+
+      debugPrint('📄 _exportTripToPdf: Calling PdfExportService.exportTrip...');
+      // Generate and show PDF
+      await PdfExportService.exportTrip(
+        context: context,
+        trip: tripWithMembers.trip,
+        members: tripWithMembers.members,
+        checklists: checklistsData.cast<ChecklistWithItemsEntity>(),
+        itinerary: itinerary,
+      );
+      debugPrint('📄 _exportTripToPdf: PDF export completed');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    } catch (e, stackTrace) {
+      debugPrint('📄 _exportTripToPdf ERROR: $e');
+      debugPrint('📄 _exportTripToPdf STACK: $stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to export PDF: $e'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Fetch all checklists with their items
+  Future<List<dynamic>> _fetchChecklists() async {
+    try {
+      final checklists = await ref.read(tripChecklistsProvider(widget.tripId).future);
+      final checklistsWithItems = <dynamic>[];
+
+      for (final checklist in checklists) {
+        final withItems = await ref.read(checklistWithItemsProvider(checklist.id).future);
+        checklistsWithItems.add(withItems);
+      }
+
+      return checklistsWithItems;
+    } catch (e) {
+      debugPrint('Failed to fetch checklists: $e');
+      return [];
+    }
+  }
+
   // V2 legacy methods removed in V3.0 redesign
   // _buildTripStatusBadge, _buildHeroMemberAvatars, _buildStatsCards, etc.
   // All replaced by V3 hub layout
 
+  /// Show copy trip dialog and navigate to new trip on success
+  Future<void> _showCopyTripDialog(dynamic tripWithMembers) async {
+    // Get itinerary count
+    int itineraryCount = 0;
+    try {
+      final repository = ref.read(itineraryRepositoryProvider);
+      final itinerary = await repository.getTripItinerary(widget.tripId);
+      itineraryCount = itinerary.length;
+    } catch (e) {
+      debugPrint('Failed to get itinerary count: $e');
+    }
+
+    // Get checklist count and total items
+    int checklistCount = 0;
+    int checklistItemsCount = 0;
+    try {
+      final checklists = await ref.read(tripChecklistsProvider(widget.tripId).future);
+      checklistCount = checklists.length;
+      for (final checklist in checklists) {
+        final withItems = await ref.read(checklistWithItemsProvider(checklist.id).future);
+        checklistItemsCount += withItems.items.length;
+      }
+    } catch (e) {
+      debugPrint('Failed to get checklist count: $e');
+    }
+
+    if (!mounted) return;
+
+    // Show the copy dialog
+    final newTripId = await CopyTripDialog.show(
+      context,
+      trip: tripWithMembers.trip,
+      itineraryCount: itineraryCount,
+      checklistCount: checklistCount,
+      checklistItemsCount: checklistItemsCount,
+    );
+
+    // Navigate to new trip if copy was successful
+    if (newTripId != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 12),
+              const Expanded(child: Text('Trip copied successfully!')),
+            ],
+          ),
+          backgroundColor: AppTheme.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+      // Navigate to the new trip detail page
+      context.push('/trips/$newTripId');
+    }
+  }
 
   Widget _buildErrorState(BuildContext context, Object error) {
     return Center(

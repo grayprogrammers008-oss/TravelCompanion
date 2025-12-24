@@ -37,8 +37,9 @@ class MockTripRepository implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-    double? budget,
+    double? cost,
     String? currency,
+    bool isPublic = true,
   }) async {
     _createTripCalled = true;
     _lastCallParams = {
@@ -48,8 +49,9 @@ class MockTripRepository implements TripRepository {
       'startDate': startDate,
       'endDate': endDate,
       'coverImageUrl': coverImageUrl,
-      'budget': budget,
+      'cost': cost,
       'currency': currency,
+      'isPublic': isPublic,
     };
 
     if (_exceptionToThrow != null) {
@@ -71,8 +73,9 @@ class MockTripRepository implements TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
-    double? budget,
+    double? cost,
     String? currency,
+    bool? isPublic,
   }) async {
     throw UnimplementedError();
   }
@@ -131,6 +134,28 @@ class MockTripRepository implements TripRepository {
 
   @override
   Stream<UserTravelStats> watchUserStats() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<TripWithMembers>> getDiscoverableTrips() async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> joinTrip(String tripId) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> copyTrip({
+    required String sourceTripId,
+    required String newName,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+    bool copyItinerary = true,
+    bool copyChecklists = true,
+  }) async {
     throw UnimplementedError();
   }
 }
@@ -245,80 +270,104 @@ void main() {
             equals('https://example.com/image.jpg'));
       });
 
-      test('should create trip with budget and currency', () async {
+      test('should create trip with cost and currency', () async {
         // Arrange
-        final tripWithBudget = testTrip.copyWith(
-          budget: 50000.0,
+        final tripWithCost = testTrip.copyWith(
+          cost: 50000.0,
           currency: 'INR',
         );
-        mockRepository.setupCreateTrip(tripWithBudget);
+        mockRepository.setupCreateTrip(tripWithCost);
 
         // Act
         final result = await useCase(
           name: 'Summer Vacation',
-          budget: 50000.0,
+          cost: 50000.0,
           currency: 'INR',
         );
 
         // Assert
-        expect(result.budget, equals(50000.0));
+        expect(result.cost, equals(50000.0));
         expect(result.currency, equals('INR'));
         expect(mockRepository.wasCreateTripCalled, isTrue);
-        expect(mockRepository.lastCallParams?['budget'], equals(50000.0));
+        expect(mockRepository.lastCallParams?['cost'], equals(50000.0));
         expect(mockRepository.lastCallParams?['currency'], equals('INR'));
       });
 
-      test('should create trip with budget only (currency defaults to INR)', () async {
+      test('should create trip with cost only (currency defaults to INR)', () async {
         // Arrange
-        final tripWithBudget = testTrip.copyWith(
-          budget: 1000.0,
+        final tripWithCost = testTrip.copyWith(
+          cost: 1000.0,
         );
-        mockRepository.setupCreateTrip(tripWithBudget);
+        mockRepository.setupCreateTrip(tripWithCost);
 
         // Act
         final result = await useCase(
           name: 'Summer Vacation',
-          budget: 1000.0,
+          cost: 1000.0,
         );
 
         // Assert
-        expect(result.budget, equals(1000.0));
+        expect(result.cost, equals(1000.0));
         expect(mockRepository.wasCreateTripCalled, isTrue);
-        expect(mockRepository.lastCallParams?['budget'], equals(1000.0));
+        expect(mockRepository.lastCallParams?['cost'], equals(1000.0));
       });
 
-      test('should create trip with zero budget', () async {
+      test('should create trip with zero cost', () async {
         // Arrange
-        final tripWithZeroBudget = testTrip.copyWith(
-          budget: 0.0,
+        final tripWithZeroCost = testTrip.copyWith(
+          cost: 0.0,
         );
-        mockRepository.setupCreateTrip(tripWithZeroBudget);
+        mockRepository.setupCreateTrip(tripWithZeroCost);
 
         // Act
         final result = await useCase(
           name: 'Summer Vacation',
-          budget: 0.0,
+          cost: 0.0,
         );
 
         // Assert
-        expect(result.budget, equals(0.0));
+        expect(result.cost, equals(0.0));
         expect(mockRepository.wasCreateTripCalled, isTrue);
-        expect(mockRepository.lastCallParams?['budget'], equals(0.0));
+        expect(mockRepository.lastCallParams?['cost'], equals(0.0));
       });
 
-      test('should create trip without budget (null budget)', () async {
+      test('should create trip without cost (null cost)', () async {
         // Arrange
         mockRepository.setupCreateTrip(testTrip);
 
         // Act
         await useCase(
           name: 'Summer Vacation',
-          budget: null,
+          cost: null,
         );
 
         // Assert
         expect(mockRepository.wasCreateTripCalled, isTrue);
-        expect(mockRepository.lastCallParams?['budget'], isNull);
+        expect(mockRepository.lastCallParams?['cost'], isNull);
+      });
+
+      test('should create public trip by default', () async {
+        // Arrange
+        mockRepository.setupCreateTrip(testTrip);
+
+        // Act
+        await useCase(name: 'Summer Vacation');
+
+        // Assert
+        expect(mockRepository.wasCreateTripCalled, isTrue);
+        expect(mockRepository.lastCallParams?['isPublic'], isTrue);
+      });
+
+      test('should create private trip when isPublic is false', () async {
+        // Arrange
+        mockRepository.setupCreateTrip(testTrip);
+
+        // Act
+        await useCase(name: 'Summer Vacation', isPublic: false);
+
+        // Assert
+        expect(mockRepository.wasCreateTripCalled, isTrue);
+        expect(mockRepository.lastCallParams?['isPublic'], isFalse);
       });
     });
 
@@ -419,17 +468,17 @@ void main() {
         expect(mockRepository.lastCallParams?['endDate'], equals(DateTime(2025, 6, 10)));
       });
 
-      test('should throw exception when budget is negative', () async {
+      test('should throw exception when cost is negative', () async {
         // Act & Assert
         expect(
           () => useCase(
             name: 'Summer Vacation',
-            budget: -100.0,
+            cost: -100.0,
           ),
           throwsA(isA<Exception>().having(
             (e) => e.toString(),
             'message',
-            contains('Budget must be a positive number'),
+            contains('Cost must be a positive number'),
           )),
         );
 

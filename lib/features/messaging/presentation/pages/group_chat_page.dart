@@ -16,6 +16,7 @@ import '../../domain/entities/conversation_entity.dart';
 import '../../domain/entities/message_entity.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/conversation_providers.dart';
+import 'message_search_page.dart';
 
 /// Group Chat Page - Main chat interface for a conversation
 class GroupChatPage extends ConsumerStatefulWidget {
@@ -691,11 +692,30 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       ),
       actions: [
         IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () => _navigateToSearch(context, conversationAsync.value),
+          tooltip: 'Search Messages',
+        ),
+        IconButton(
           icon: const Icon(Icons.info_outline),
           onPressed: () => _navigateToInfo(context),
           tooltip: 'Group Info',
         ),
       ],
+    );
+  }
+
+  /// Navigate to message search page
+  void _navigateToSearch(BuildContext context, ConversationEntity? conversation) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MessageSearchPage(
+          tripId: widget.tripId,
+          conversationId: widget.conversationId,
+          conversationName: conversation?.name ?? 'Chat',
+          currentUserId: _effectiveUserId,
+        ),
+      ),
     );
   }
 

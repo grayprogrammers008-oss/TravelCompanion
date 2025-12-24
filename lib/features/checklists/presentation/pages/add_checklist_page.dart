@@ -4,6 +4,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/network/supabase_client.dart';
+import '../../data/packing_templates.dart';
 import '../providers/checklist_providers.dart';
 
 class AddChecklistPage extends ConsumerStatefulWidget {
@@ -22,6 +23,7 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   bool _isLoading = false;
+  PackingTemplate? _selectedTemplate;
 
   @override
   void dispose() {
@@ -68,6 +70,7 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
       debugPrint('Checklist Name: "$checklistName"');
       debugPrint('Trip ID: "$tripId"');
       debugPrint('User ID: "$userId"');
+      debugPrint('Template: ${_selectedTemplate?.name ?? "None"}');
       debugPrint('Calling controller.createChecklist...');
 
       final controller = ref.read(checklistControllerProvider.notifier);
@@ -87,6 +90,19 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
           debugPrint('   Trip ID: ${checklist.tripId}');
           debugPrint('   Created By: ${checklist.createdBy}');
           debugPrint('   Created At: ${checklist.createdAt}');
+
+          // If a template was selected, add all template items
+          if (_selectedTemplate != null) {
+            debugPrint('Adding ${_selectedTemplate!.items.length} items from template...');
+            for (final itemTitle in _selectedTemplate!.items) {
+              await controller.addItem(
+                checklistId: checklist.id,
+                title: itemTitle,
+              );
+            }
+            debugPrint('✅ All template items added!');
+          }
+
           debugPrint('========== CREATE CHECKLIST SUCCESS ==========');
 
           // Invalidate the trip checklists provider to refresh the list
@@ -95,7 +111,9 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
           Navigator.of(context).pop(true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Created "${checklist.name}"'),
+              content: Text(_selectedTemplate != null
+                  ? 'Created "${checklist.name}" with ${_selectedTemplate!.items.length} items'
+                  : 'Created "${checklist.name}"'),
               backgroundColor: AppTheme.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -138,6 +156,20 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _selectTemplate(PackingTemplate template) {
+    setState(() {
+      _selectedTemplate = template;
+      _nameController.text = template.name;
+    });
+  }
+
+  void _clearTemplate() {
+    setState(() {
+      _selectedTemplate = null;
+      _nameController.clear();
+    });
   }
 
   @override
@@ -184,13 +216,163 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.checklist,
+                  _selectedTemplate != null ? Icons.inventory_2 : Icons.checklist,
                   size: 64,
                   color: themeData.primaryColor,
                 ),
               ),
             ),
             const SizedBox(height: AppTheme.spacing2xl),
+
+            // Template section header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Start with a Template',
+                  style: context.titleSmall.copyWith(
+                    color: context.textColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (_selectedTemplate != null)
+                  TextButton.icon(
+                    onPressed: _clearTemplate,
+                    icon: const Icon(Icons.close, size: 16),
+                    label: const Text('Clear'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.neutral600,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+
+            // Template grid
+            SizedBox(
+              height: 130,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: PackingTemplates.all.length,
+                itemBuilder: (context, index) {
+                  final template = PackingTemplates.all[index];
+                  final isSelected = _selectedTemplate?.id == template.id;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: AppTheme.spacingSm,
+                      left: index == 0 ? 0 : 0,
+                    ),
+                    child: _buildTemplateCard(template, isSelected, themeData),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // Selected template preview
+            if (_selectedTemplate != null) ...[
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: themeData.primaryColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: themeData.primaryColor.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          _selectedTemplate!.icon,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _selectedTemplate!.name,
+                                style: context.titleSmall.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                '${_selectedTemplate!.items.length} items included',
+                                style: context.bodySmall.copyWith(
+                                  color: AppTheme.neutral600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.check_circle,
+                          color: themeData.primaryColor,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    const Divider(),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    // Show first 5 items as preview
+                    ...(_selectedTemplate!.items.take(5).map((item) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.check_box_outline_blank,
+                                size: 16,
+                                color: AppTheme.neutral400,
+                              ),
+                              const SizedBox(width: AppTheme.spacingXs),
+                              Text(
+                                item,
+                                style: context.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ))),
+                    if (_selectedTemplate!.items.length > 5)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          '+ ${_selectedTemplate!.items.length - 5} more items',
+                          style: context.bodySmall.copyWith(
+                            color: themeData.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+            ],
+
+            // Divider with "or"
+            if (_selectedTemplate == null) ...[
+              Row(
+                children: [
+                  const Expanded(child: Divider()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                    child: Text(
+                      'or create your own',
+                      style: context.bodySmall.copyWith(
+                        color: AppTheme.neutral500,
+                      ),
+                    ),
+                  ),
+                  const Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+            ],
 
             // Name field
             Text(
@@ -235,40 +417,41 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
                 return null;
               },
               textCapitalization: TextCapitalization.words,
-              autofocus: true,
+              autofocus: _selectedTemplate == null,
               enabled: !_isLoading,
             ),
             const SizedBox(height: AppTheme.spacingMd),
 
             // Helper text
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              decoration: BoxDecoration(
-                color: themeData.primaryColor.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(
-                  color: themeData.primaryColor.withValues(alpha: 0.1),
+            if (_selectedTemplate == null)
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: themeData.primaryColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: themeData.primaryColor.withValues(alpha: 0.1),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: themeData.primaryColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Expanded(
+                      child: Text(
+                        'You can add items to this checklist after creating it',
+                        style: context.bodySmall.copyWith(
+                              color: context.textColor.withValues(alpha: 0.87),
+                            ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.lightbulb_outline,
-                    color: themeData.primaryColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: AppTheme.spacingSm),
-                  Expanded(
-                    child: Text(
-                      'You can add items to this checklist after creating it',
-                      style: context.bodySmall.copyWith(
-                            color: context.textColor.withValues(alpha: 0.87),
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: AppTheme.spacing2xl),
 
             // Create button
@@ -293,13 +476,77 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
                           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
-                        'Create Checklist',
-                        style: TextStyle(
+                    : Text(
+                        _selectedTemplate != null
+                            ? 'Create with ${_selectedTemplate!.items.length} Items'
+                            : 'Create Checklist',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTemplateCard(PackingTemplate template, bool isSelected, dynamic themeData) {
+    return GestureDetector(
+      onTap: _isLoading ? null : () => _selectTemplate(template),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 100,
+        padding: const EdgeInsets.all(AppTheme.spacingSm),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? themeData.primaryColor.withValues(alpha: 0.1)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: isSelected
+                ? themeData.primaryColor
+                : AppTheme.neutral200,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: themeData.primaryColor.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : AppTheme.shadowSm,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              template.icon,
+              style: const TextStyle(fontSize: 28),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              template.name,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? themeData.primaryColor : AppTheme.neutral700,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '${template.items.length} items',
+              style: TextStyle(
+                fontSize: 10,
+                color: AppTheme.neutral500,
               ),
             ),
           ],

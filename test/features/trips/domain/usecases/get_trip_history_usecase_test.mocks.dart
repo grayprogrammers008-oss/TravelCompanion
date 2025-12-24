@@ -6,6 +6,7 @@
 import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart'
     as _i4;
 import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart'
@@ -65,8 +66,9 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-    double? budget,
+    double? cost,
     String? currency,
+    bool? isPublic = true,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createTrip, [], {
@@ -76,8 +78,9 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
               #startDate: startDate,
               #endDate: endDate,
               #coverImageUrl: coverImageUrl,
-              #budget: budget,
+              #cost: cost,
               #currency: currency,
+              #isPublic: isPublic,
             }),
             returnValue: _i5.Future<_i2.TripModel>.value(
               _FakeTripModel_0(
@@ -89,8 +92,9 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
                   #startDate: startDate,
                   #endDate: endDate,
                   #coverImageUrl: coverImageUrl,
-                  #budget: budget,
+                  #cost: cost,
                   #currency: currency,
+                  #isPublic: isPublic,
                 }),
               ),
             ),
@@ -132,8 +136,9 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
-    double? budget,
+    double? cost,
     String? currency,
+    bool? isPublic,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#updateTrip, [], {
@@ -147,8 +152,9 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
               #isCompleted: isCompleted,
               #completedAt: completedAt,
               #rating: rating,
-              #budget: budget,
+              #cost: cost,
               #currency: currency,
+              #isPublic: isPublic,
             }),
             returnValue: _i5.Future<_i2.TripModel>.value(
               _FakeTripModel_0(
@@ -164,8 +170,9 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
                   #isCompleted: isCompleted,
                   #completedAt: completedAt,
                   #rating: rating,
-                  #budget: budget,
+                  #cost: cost,
                   #currency: currency,
+                  #isPublic: isPublic,
                 }),
               ),
             ),
@@ -267,4 +274,57 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
             returnValue: _i5.Stream<_i3.UserTravelStats>.empty(),
           )
           as _i5.Stream<_i3.UserTravelStats>);
+
+  @override
+  _i5.Future<List<_i2.TripWithMembers>> getDiscoverableTrips() =>
+      (super.noSuchMethod(
+            Invocation.method(#getDiscoverableTrips, []),
+            returnValue: _i5.Future<List<_i2.TripWithMembers>>.value(
+              <_i2.TripWithMembers>[],
+            ),
+          )
+          as _i5.Future<List<_i2.TripWithMembers>>);
+
+  @override
+  _i5.Future<void> joinTrip(String? tripId) =>
+      (super.noSuchMethod(
+            Invocation.method(#joinTrip, [tripId]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<String> copyTrip({
+    required String? sourceTripId,
+    required String? newName,
+    required DateTime? newStartDate,
+    required DateTime? newEndDate,
+    bool? copyItinerary = true,
+    bool? copyChecklists = true,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#copyTrip, [], {
+              #sourceTripId: sourceTripId,
+              #newName: newName,
+              #newStartDate: newStartDate,
+              #newEndDate: newEndDate,
+              #copyItinerary: copyItinerary,
+              #copyChecklists: copyChecklists,
+            }),
+            returnValue: _i5.Future<String>.value(
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#copyTrip, [], {
+                  #sourceTripId: sourceTripId,
+                  #newName: newName,
+                  #newStartDate: newStartDate,
+                  #newEndDate: newEndDate,
+                  #copyItinerary: copyItinerary,
+                  #copyChecklists: copyChecklists,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<String>);
 }

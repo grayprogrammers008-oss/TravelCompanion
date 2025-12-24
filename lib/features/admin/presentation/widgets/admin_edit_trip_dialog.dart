@@ -24,7 +24,7 @@ class _AdminEditTripDialogState extends ConsumerState<AdminEditTripDialog> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _destinationController;
-  late TextEditingController _budgetController;
+  late TextEditingController _costController;
   late String _currency;
   late DateTime? _startDate;
   late DateTime? _endDate;
@@ -39,7 +39,7 @@ class _AdminEditTripDialogState extends ConsumerState<AdminEditTripDialog> {
         TextEditingController(text: widget.trip.description ?? '');
     _destinationController =
         TextEditingController(text: widget.trip.destination ?? '');
-    _budgetController =
+    _costController =
         TextEditingController(text: widget.trip.budget?.toString() ?? '');
     _currency = widget.trip.currency;
     _startDate = widget.trip.startDate;
@@ -52,7 +52,7 @@ class _AdminEditTripDialogState extends ConsumerState<AdminEditTripDialog> {
     _nameController.dispose();
     _descriptionController.dispose();
     _destinationController.dispose();
-    _budgetController.dispose();
+    _costController.dispose();
     super.dispose();
   }
 
@@ -106,9 +106,9 @@ class _AdminEditTripDialogState extends ConsumerState<AdminEditTripDialog> {
         destination: _destinationController.text.trim().isEmpty
             ? null
             : _destinationController.text.trim(),
-        budget: _budgetController.text.trim().isEmpty
+        budget: _costController.text.trim().isEmpty
             ? null
-            : double.tryParse(_budgetController.text.trim()),
+            : double.tryParse(_costController.text.trim()),
         currency: _currency,
         startDate: _startDate,
         endDate: _endDate,
@@ -336,13 +336,13 @@ class _AdminEditTripDialogState extends ConsumerState<AdminEditTripDialog> {
                           ),
                           const SizedBox(width: AppTheme.spacingMd),
 
-                          // Budget Amount
+                          // Cost Amount
                           Expanded(
                             child: TextFormField(
-                              controller: _budgetController,
+                              controller: _costController,
                               decoration: const InputDecoration(
-                                labelText: 'Budget',
-                                prefixIcon: Icon(Icons.attach_money),
+                                labelText: 'Cost',
+                                prefixIcon: Icon(Icons.payments_outlined),
                                 border: OutlineInputBorder(),
                               ),
                               keyboardType:

@@ -103,6 +103,10 @@ dependencies:
   # Speech Recognition (on-device, free)
   speech_to_text: ^7.0.0
 
+  # PDF Generation & Printing
+  pdf: ^3.11.1
+  printing: ^5.13.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

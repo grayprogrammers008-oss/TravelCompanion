@@ -83,6 +83,17 @@ abstract class TripRemoteDataSource {
 
   /// Get public trips that the current user can join (not already a member)
   Future<List<TripWithMembers>> getDiscoverableTrips();
+
+  /// Copy a trip with optional itinerary and checklists
+  /// Returns the new trip ID
+  Future<String> copyTrip({
+    required String sourceTripId,
+    required String newName,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+    bool copyItinerary = true,
+    bool copyChecklists = true,
+  });
 }
 
 class TripRemoteDataSourceImpl implements TripRemoteDataSource {
@@ -106,7 +117,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
             'start_date': trip.startDate?.toIso8601String(),
             'end_date': trip.endDate?.toIso8601String(),
             'cover_image_url': trip.coverImageUrl,
-            'budget': trip.budget,
+            'cost': trip.cost,
             'currency': trip.currency,
             'is_public': trip.isPublic,
             'created_by': SupabaseClientWrapper.currentUserId,
@@ -860,6 +871,51 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('❌ Error fetching discoverable trips: $e');
       }
       throw Exception('Failed to get discoverable trips: $e');
+    }
+  }
+
+  @override
+  Future<String> copyTrip({
+    required String sourceTripId,
+    required String newName,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+    bool copyItinerary = true,
+    bool copyChecklists = true,
+  }) async {
+    try {
+      if (kDebugMode) {
+        debugPrint('📋 Copying trip: $sourceTripId');
+        debugPrint('   New name: $newName');
+        debugPrint('   New dates: $newStartDate - $newEndDate');
+        debugPrint('   Copy itinerary: $copyItinerary');
+        debugPrint('   Copy checklists: $copyChecklists');
+      }
+
+      final response = await _client.rpc(
+        'copy_trip',
+        params: {
+          'p_source_trip_id': sourceTripId,
+          'p_new_name': newName,
+          'p_new_start_date': newStartDate.toIso8601String(),
+          'p_new_end_date': newEndDate.toIso8601String(),
+          'p_copy_itinerary': copyItinerary,
+          'p_copy_checklists': copyChecklists,
+        },
+      );
+
+      final newTripId = response as String;
+
+      if (kDebugMode) {
+        debugPrint('✅ Trip copied successfully! New trip ID: $newTripId');
+      }
+
+      return newTripId;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to copy trip: $e');
+      }
+      throw Exception('Failed to copy trip: $e');
     }
   }
 }

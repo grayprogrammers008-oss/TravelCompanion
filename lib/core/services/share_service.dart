@@ -86,12 +86,12 @@ class ShareService {
       buffer.writeln('⏱️ *Duration:* $duration ${duration == 1 ? 'day' : 'days'}');
     }
 
-    if (trip.budget != null && trip.budget! > 0) {
-      final budgetFormat = NumberFormat.currency(
+    if (trip.cost != null && trip.cost! > 0) {
+      final costFormat = NumberFormat.currency(
         symbol: trip.currency,
         decimalDigits: 0,
       );
-      buffer.writeln('💰 *Budget:* ${budgetFormat.format(trip.budget)}');
+      buffer.writeln('💰 *Cost:* ${costFormat.format(trip.cost)}');
     }
 
     if (trip.description != null && trip.description!.isNotEmpty) {

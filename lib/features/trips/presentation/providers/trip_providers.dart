@@ -18,6 +18,7 @@ import '../../domain/usecases/filter_trips_usecase.dart';
 import '../../domain/usecases/get_trip_cost_usecase.dart';
 import '../../domain/usecases/get_discoverable_trips_usecase.dart';
 import '../../domain/usecases/join_trip_usecase.dart';
+import '../../domain/usecases/copy_trip_usecase.dart';
 import '../../domain/models/trip_cost_summary.dart';
 import '../../../expenses/presentation/providers/expense_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
@@ -90,6 +91,12 @@ final getDiscoverableTripsUseCaseProvider = Provider<GetDiscoverableTripsUseCase
 final joinTripUseCaseProvider = Provider<JoinTripUseCase>((ref) {
   final repository = ref.watch(tripRepositoryProvider);
   return JoinTripUseCase(repository);
+});
+
+// Copy Trip Use Case Provider
+final copyTripUseCaseProvider = Provider<CopyTripUseCase>((ref) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return CopyTripUseCase(repository);
 });
 
 // Trip Cost Summary Provider - FutureProvider for trip cost
@@ -342,7 +349,7 @@ class TripController extends Notifier<TripState> {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-    double? budget,
+    double? cost,
     String? currency,
     bool isPublic = true,
   }) async {
@@ -355,7 +362,7 @@ class TripController extends Notifier<TripState> {
         startDate: startDate,
         endDate: endDate,
         coverImageUrl: coverImageUrl,
-        budget: budget,
+        cost: cost,
         currency: currency,
         isPublic: isPublic,
       );
@@ -380,7 +387,7 @@ class TripController extends Notifier<TripState> {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-    double? budget,
+    double? cost,
     String? currency,
     bool? isPublic,
   }) async {
@@ -394,7 +401,7 @@ class TripController extends Notifier<TripState> {
         startDate: startDate,
         endDate: endDate,
         coverImageUrl: coverImageUrl,
-        budget: budget,
+        cost: cost,
         currency: currency,
         isPublic: isPublic,
       );

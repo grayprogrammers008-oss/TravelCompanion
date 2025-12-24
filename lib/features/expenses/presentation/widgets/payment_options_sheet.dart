@@ -11,6 +11,7 @@ class PaymentOptionsSheet extends StatefulWidget {
   final double amount;
   final String note;
   final Function(PaymentResult)? onPaymentLaunched;
+  final Function(bool confirmed)? onPaymentConfirmed;
 
   const PaymentOptionsSheet({
     super.key,
@@ -19,17 +20,20 @@ class PaymentOptionsSheet extends StatefulWidget {
     required this.amount,
     required this.note,
     this.onPaymentLaunched,
+    this.onPaymentConfirmed,
   });
 
-  static Future<void> show(
+  /// Show payment options and return whether payment was confirmed
+  static Future<bool?> show(
     BuildContext context, {
     required String recipientUPIId,
     required String recipientName,
     required double amount,
     required String note,
     Function(PaymentResult)? onPaymentLaunched,
+    Function(bool confirmed)? onPaymentConfirmed,
   }) {
-    return showModalBottomSheet(
+    return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -39,6 +43,7 @@ class PaymentOptionsSheet extends StatefulWidget {
         amount: amount,
         note: note,
         onPaymentLaunched: onPaymentLaunched,
+        onPaymentConfirmed: onPaymentConfirmed,
       ),
     );
   }
@@ -90,19 +95,22 @@ class _PaymentOptionsSheetState extends State<PaymentOptionsSheet> {
 
       if (mounted) {
         if (result.success) {
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Payment app opened: ${result.appUsed?.displayName ?? "UPI"}'),
-              backgroundColor: AppTheme.success,
-            ),
-          );
-
-          // Call callback
+          // Call callback for app launched
           widget.onPaymentLaunched?.call(result);
 
-          // Close sheet
-          Navigator.of(context).pop();
+          // Show confirmation dialog after returning from UPI app
+          final confirmed = await _showPaymentConfirmationDialog(
+            context,
+            appName: result.appUsed?.displayName ?? 'UPI',
+          );
+
+          if (mounted) {
+            // Call confirmation callback
+            widget.onPaymentConfirmed?.call(confirmed);
+
+            // Close sheet and return result
+            Navigator.of(context).pop(confirmed);
+          }
         } else {
           // Show error
           ScaffoldMessenger.of(context).showSnackBar(
@@ -125,6 +133,101 @@ class _PaymentOptionsSheetState extends State<PaymentOptionsSheet> {
         });
       }
     }
+  }
+
+  /// Show confirmation dialog after UPI app returns
+  Future<bool> _showPaymentConfirmationDialog(
+    BuildContext context, {
+    required String appName,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.success.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.payment,
+                color: AppTheme.success,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Payment Status',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Did you complete the payment of ${_paymentService.formatAmount(widget.amount)} to ${widget.recipientName}?',
+              style: const TextStyle(fontSize: 15),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.neutral100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.info_outline,
+                    size: 20,
+                    color: AppTheme.neutral600,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Confirming will mark this as settled between you and ${widget.recipientName}.',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.neutral600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(
+              'Not Yet',
+              style: TextStyle(color: AppTheme.neutral600),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.check_circle, size: 18),
+            label: const Text('Yes, Paid'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.success,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return result ?? false;
   }
 
   void _copyUPIId() {

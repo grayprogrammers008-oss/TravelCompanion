@@ -471,14 +471,14 @@ class _HomePageState extends ConsumerState<HomePage>
         }
       }
 
-      // Budget filter (treat null budget as 0)
+      // Cost filter (treat null cost as 0)
       if (_minBudget != null) {
-        final tripBudget = trip.budget ?? 0.0;
-        if (tripBudget < _minBudget!) return false;
+        final tripCost = trip.cost ?? 0.0;
+        if (tripCost < _minBudget!) return false;
       }
       if (_maxBudget != null) {
-        final tripBudget = trip.budget ?? 0.0;
-        if (tripBudget > _maxBudget!) return false;
+        final tripCost = trip.cost ?? 0.0;
+        if (tripCost > _maxBudget!) return false;
       }
 
       // Date created filter
@@ -507,9 +507,9 @@ class _HomePageState extends ConsumerState<HomePage>
         break;
       case 'budget':
         filtered.sort((a, b) {
-          final aBudget = a.trip.budget ?? 0.0;
-          final bBudget = b.trip.budget ?? 0.0;
-          return bBudget.compareTo(aBudget); // High to low
+          final aCost = a.trip.cost ?? 0.0;
+          final bCost = b.trip.cost ?? 0.0;
+          return bCost.compareTo(aCost); // High to low
         });
         break;
       case 'recent':
@@ -3594,8 +3594,33 @@ class TripCard extends StatelessWidget {
 
       if (today.isBefore(startDate)) {
         final daysLeft = startDate.difference(today).inDays;
+        if (daysLeft == 0) {
+          return (
+            label: 'Starts today!',
+            color: const Color(0xFFE91E63), // Pink - excitement
+            icon: Icons.celebration,
+          );
+        } else if (daysLeft == 1) {
+          return (
+            label: 'Starts tomorrow',
+            color: const Color(0xFFFF9800), // Orange - urgency
+            icon: Icons.alarm,
+          );
+        } else if (daysLeft <= 3) {
+          return (
+            label: '$daysLeft days to go!',
+            color: const Color(0xFFFF9800), // Orange
+            icon: Icons.hourglass_bottom,
+          );
+        } else if (daysLeft <= 7) {
+          return (
+            label: '$daysLeft days left',
+            color: const Color(0xFF5C6BC0), // Indigo
+            icon: Icons.event_available,
+          );
+        }
         return (
-          label: daysLeft == 1 ? 'Starts tomorrow' : 'In $daysLeft days',
+          label: 'In $daysLeft days',
           color: const Color(0xFF5C6BC0), // Indigo
           icon: Icons.schedule,
         );
@@ -3865,12 +3890,12 @@ class TripCard extends StatelessWidget {
 
                     const SizedBox(height: AppTheme.spacingXs),
 
-                    // Bottom Row: Budget + Members
+                    // Bottom Row: Cost + Members
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Budget chip
-                        if (trip.budget != null)
+                        // Cost chip
+                        if (trip.cost != null)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -3884,13 +3909,13 @@ class TripCard extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  Icons.account_balance_wallet,
+                                  Icons.payments_outlined,
                                   size: 12,
                                   color: AppTheme.success,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _formatCurrency(trip.budget!, trip.currency),
+                                  _formatCurrency(trip.cost!, trip.currency),
                                   style: TextStyle(
                                     color: AppTheme.success,
                                     fontSize: 11,

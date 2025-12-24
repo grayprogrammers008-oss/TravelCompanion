@@ -11,7 +11,7 @@ abstract class TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-    double? budget,
+    double? cost,
     String? currency,
     bool isPublic = true,
   });
@@ -34,7 +34,7 @@ abstract class TripRepository {
     bool? isCompleted,
     DateTime? completedAt,
     double? rating,
-    double? budget,
+    double? cost,
     String? currency,
     bool? isPublic,
   });
@@ -72,4 +72,15 @@ abstract class TripRepository {
 
   /// Join a public trip
   Future<void> joinTrip(String tripId);
+
+  /// Copy a trip with optional itinerary and checklists
+  /// Returns the new trip ID
+  Future<String> copyTrip({
+    required String sourceTripId,
+    required String newName,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+    bool copyItinerary = true,
+    bool copyChecklists = true,
+  });
 }

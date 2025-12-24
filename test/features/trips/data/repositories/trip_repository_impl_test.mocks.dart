@@ -6,6 +6,7 @@
 import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:travel_crew/features/trips/data/datasources/trip_remote_datasource.dart'
     as _i4;
 import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart'
@@ -115,6 +116,24 @@ class MockTripRemoteDataSource extends _i1.Mock
           as _i5.Future<void>);
 
   @override
+  _i5.Future<List<_i4.SystemUserModel>> searchSystemUsers({
+    String? search,
+    List<String>? excludeUserIds,
+    int? limit = 50,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#searchSystemUsers, [], {
+              #search: search,
+              #excludeUserIds: excludeUserIds,
+              #limit: limit,
+            }),
+            returnValue: _i5.Future<List<_i4.SystemUserModel>>.value(
+              <_i4.SystemUserModel>[],
+            ),
+          )
+          as _i5.Future<List<_i4.SystemUserModel>>);
+
+  @override
   _i5.Stream<List<_i2.TripWithMembers>> watchUserTrips() =>
       (super.noSuchMethod(
             Invocation.method(#watchUserTrips, []),
@@ -158,4 +177,48 @@ class MockTripRemoteDataSource extends _i1.Mock
             returnValue: _i5.Stream<_i3.UserTravelStats>.empty(),
           )
           as _i5.Stream<_i3.UserTravelStats>);
+
+  @override
+  _i5.Future<List<_i2.TripWithMembers>> getDiscoverableTrips() =>
+      (super.noSuchMethod(
+            Invocation.method(#getDiscoverableTrips, []),
+            returnValue: _i5.Future<List<_i2.TripWithMembers>>.value(
+              <_i2.TripWithMembers>[],
+            ),
+          )
+          as _i5.Future<List<_i2.TripWithMembers>>);
+
+  @override
+  _i5.Future<String> copyTrip({
+    required String? sourceTripId,
+    required String? newName,
+    required DateTime? newStartDate,
+    required DateTime? newEndDate,
+    bool? copyItinerary = true,
+    bool? copyChecklists = true,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#copyTrip, [], {
+              #sourceTripId: sourceTripId,
+              #newName: newName,
+              #newStartDate: newStartDate,
+              #newEndDate: newEndDate,
+              #copyItinerary: copyItinerary,
+              #copyChecklists: copyChecklists,
+            }),
+            returnValue: _i5.Future<String>.value(
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#copyTrip, [], {
+                  #sourceTripId: sourceTripId,
+                  #newName: newName,
+                  #newStartDate: newStartDate,
+                  #newEndDate: newEndDate,
+                  #copyItinerary: copyItinerary,
+                  #copyChecklists: copyChecklists,
+                }),
+              ),
+            ),
+          )
+          as _i5.Future<String>);
 }
