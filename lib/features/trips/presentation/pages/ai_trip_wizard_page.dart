@@ -1233,7 +1233,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Languages marked unavailable need to be enabled in your device\'s Keyboard/Dictation settings.',
+                      'To enable Tamil/Hindi: First add it as a keyboard, then enable it in Dictation Languages.',
                       style: TextStyle(
                         color: Colors.blue.shade200,
                         fontSize: 12,
@@ -1391,17 +1391,20 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             ),
             const SizedBox(height: 8),
             if (isIOS) ...[
-              _buildSetupStep('1', 'Open Settings'),
-              _buildSetupStep('2', 'Go to General → Keyboard'),
-              _buildSetupStep('3', 'Tap Dictation Languages'),
-              _buildSetupStep('4', 'Enable $languageName'),
-              _buildSetupStep('5', 'Return to this app'),
+              _buildSetupStep('1', 'Open Settings → General → Keyboard'),
+              _buildSetupStep('2', 'Tap Keyboards → Add New Keyboard'),
+              _buildSetupStep('3', 'Select $languageName from the list'),
+              _buildSetupStep('4', 'Go back to Keyboard settings'),
+              _buildSetupStep('5', 'Tap Dictation Languages'),
+              _buildSetupStep('6', 'Enable $languageName (it will download)'),
+              _buildSetupStep('7', 'Return to this app'),
             ] else ...[
-              _buildSetupStep('1', 'Open Settings'),
-              _buildSetupStep('2', 'Go to System → Languages & Input'),
+              _buildSetupStep('1', 'Open Settings → System'),
+              _buildSetupStep('2', 'Tap Languages & Input'),
               _buildSetupStep('3', 'Tap On-screen keyboard → Gboard'),
-              _buildSetupStep('4', 'Tap Languages → Add $languageName'),
-              _buildSetupStep('5', 'Return to this app'),
+              _buildSetupStep('4', 'Tap Languages → Add keyboard'),
+              _buildSetupStep('5', 'Select $languageName'),
+              _buildSetupStep('6', 'Return to this app'),
             ],
           ],
         ),
