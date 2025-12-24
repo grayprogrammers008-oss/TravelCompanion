@@ -73,8 +73,10 @@ BEGIN
   ) RETURNING id INTO v_new_trip_id;
 
   -- Add current user as trip member (admin role)
+  -- Use ON CONFLICT in case a trigger already added the creator
   INSERT INTO trip_members (trip_id, user_id, role)
-  VALUES (v_new_trip_id, v_user_id, 'admin');
+  VALUES (v_new_trip_id, v_user_id, 'admin')
+  ON CONFLICT (trip_id, user_id) DO UPDATE SET role = 'admin';
 
   -- Copy itinerary if requested
   IF p_copy_itinerary THEN
