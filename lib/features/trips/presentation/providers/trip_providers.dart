@@ -632,3 +632,102 @@ final allSystemUsersProvider = FutureProvider.family<List<SystemUserModel>, Stri
     excludeUserIds: null, // Don't exclude anyone
   );
 });
+
+// ============ TRIP FAVORITES PROVIDERS ============
+
+/// Provider to get list of favorite trip IDs for the current user
+final favoriteTripIdsProvider = FutureProvider.autoDispose<List<String>>((ref) async {
+  final authState = ref.watch(authStateProvider);
+
+  // Not authenticated = no favorites
+  if (authState.value == null) {
+    return [];
+  }
+
+  final repository = ref.watch(tripRepositoryProvider);
+  return await repository.getFavoriteTripIds();
+});
+
+/// Provider that combines user trips with their favorite status
+/// This is the main provider to use when displaying trips with favorite indicators
+final userTripsWithFavoritesProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref) async* {
+  // Watch auth state
+  final authState = ref.watch(authStateProvider);
+  if (authState.value == null) {
+    yield [];
+    return;
+  }
+
+  final repository = ref.watch(tripRepositoryProvider);
+
+  // Get the favorite trip IDs
+  List<String> favoriteIds = [];
+  try {
+    favoriteIds = await repository.getFavoriteTripIds();
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('❌ Error fetching favorite trip IDs: $e');
+    }
+  }
+
+  // Stream trips and merge with favorite status
+  await for (final trips in repository.watchUserTrips()) {
+    // Update each trip with its favorite status
+    final tripsWithFavorites = trips.map((trip) {
+      final isFavorite = favoriteIds.contains(trip.trip.id);
+      return trip.copyWith(isFavorite: isFavorite);
+    }).toList();
+
+    yield tripsWithFavorites;
+  }
+});
+
+/// Check if a specific trip is a favorite
+final isTripFavoriteProvider = Provider.family<bool, String>((ref, tripId) {
+  final favoritesAsync = ref.watch(favoriteTripIdsProvider);
+  return favoritesAsync.when(
+    data: (favoriteIds) => favoriteIds.contains(tripId),
+    loading: () => false,
+    error: (_, _) => false,
+  );
+});
+
+/// Controller for managing trip favorites
+class TripFavoritesController extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() {
+    return const AsyncValue.data(null);
+  }
+
+  /// Toggle favorite status for a trip
+  /// Returns the new favorite status (true if now favorited, false if unfavorited)
+  Future<bool> toggleFavorite(String tripId) async {
+    state = const AsyncValue.loading();
+    try {
+      final repository = ref.read(tripRepositoryProvider);
+      final isFavorite = await repository.toggleFavorite(tripId);
+
+      if (kDebugMode) {
+        debugPrint('⭐ Trip $tripId is now ${isFavorite ? 'favorited' : 'unfavorited'}');
+      }
+
+      // Invalidate providers to refresh the state
+      ref.invalidate(favoriteTripIdsProvider);
+      ref.invalidate(userTripsWithFavoritesProvider);
+      ref.invalidate(userTripsProvider);
+
+      state = const AsyncValue.data(null);
+      return isFavorite;
+    } catch (e, st) {
+      if (kDebugMode) {
+        debugPrint('❌ Error toggling favorite: $e');
+      }
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+}
+
+final tripFavoritesControllerProvider = NotifierProvider<TripFavoritesController, AsyncValue<void>>(() {
+  return TripFavoritesController();
+});

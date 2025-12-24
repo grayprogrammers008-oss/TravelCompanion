@@ -426,10 +426,11 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   /// Get trip stats counts
-  ({int all, int active, int upcoming, int completed}) _getTripStats(List<TripWithMembers> trips) {
+  ({int all, int active, int upcoming, int completed, int favorites}) _getTripStats(List<TripWithMembers> trips) {
     int active = 0;
     int upcoming = 0;
     int completed = 0;
+    int favorites = 0;
 
     for (final t in trips) {
       final status = _getTripStatusCategory(t.trip);
@@ -444,9 +445,13 @@ class _HomePageState extends ConsumerState<HomePage>
           completed++;
           break;
       }
+      // Count favorites
+      if (t.isFavorite) {
+        favorites++;
+      }
     }
 
-    return (all: trips.length, active: active, upcoming: upcoming, completed: completed);
+    return (all: trips.length, active: active, upcoming: upcoming, completed: completed, favorites: favorites);
   }
 
   List<TripWithMembers> _filterTrips(List<TripWithMembers> trips) {
@@ -455,8 +460,12 @@ class _HomePageState extends ConsumerState<HomePage>
     var filtered = trips.where((tripWithMembers) {
       final trip = tripWithMembers.trip;
 
-      // Status filter
-      if (_statusFilter != 'all') {
+      // Favorites filter
+      if (_statusFilter == 'favorites') {
+        if (!tripWithMembers.isFavorite) return false;
+      }
+      // Status filter (active, upcoming, completed)
+      else if (_statusFilter != 'all') {
         final status = _getTripStatusCategory(trip);
         if (status != _statusFilter) return false;
       }
@@ -1112,7 +1121,7 @@ class _HomePageState extends ConsumerState<HomePage>
   /// Build compact stats header showing trip counts
   Widget _buildStatsHeader(
     BuildContext context,
-    ({int all, int active, int upcoming, int completed}) stats,
+    ({int all, int active, int upcoming, int completed, int favorites}) stats,
     AppThemeData themeData,
   ) {
     return Container(
@@ -1187,7 +1196,7 @@ class _HomePageState extends ConsumerState<HomePage>
   /// Build status filter chips and sort dropdown
   Widget _buildStatusFiltersAndSort(
     BuildContext context,
-    ({int all, int active, int upcoming, int completed}) stats,
+    ({int all, int active, int upcoming, int completed, int favorites}) stats,
     AppThemeData themeData,
   ) {
     return Container(
@@ -1207,6 +1216,8 @@ class _HomePageState extends ConsumerState<HomePage>
                 children: [
                   _buildFilterChip('all', 'All', stats.all, themeData),
                   const SizedBox(width: 8),
+                  _buildFavoriteFilterChip(stats.favorites, themeData),
+                  const SizedBox(width: 8),
                   _buildFilterChip('active', 'Active', stats.active, themeData),
                   const SizedBox(width: 8),
                   _buildFilterChip('upcoming', 'Upcoming', stats.upcoming, themeData),
@@ -1220,6 +1231,83 @@ class _HomePageState extends ConsumerState<HomePage>
           // Sort dropdown
           _buildSortButton(context, themeData),
         ],
+      ),
+    );
+  }
+
+  /// Build special favorite filter chip with heart icon
+  Widget _buildFavoriteFilterChip(int count, AppThemeData themeData) {
+    final isSelected = _statusFilter == 'favorites';
+    const favoriteColor = Color(0xFFE91E63); // Pink/Red color for favorites
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _statusFilter = 'favorites';
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 6,
+        ),
+        decoration: BoxDecoration(
+          // Light pink background when selected, white when not
+          color: isSelected ? favoriteColor.withValues(alpha: 0.15) : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+          border: Border.all(
+            color: isSelected ? favoriteColor : AppTheme.neutral300,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: favoriteColor.withValues(alpha: 0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSelected ? Icons.favorite : Icons.favorite_border,
+              size: 14,
+              // Red filled heart when selected
+              color: favoriteColor,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'Favorites',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? favoriteColor : AppTheme.neutral700,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? favoriteColor.withValues(alpha: 0.2)
+                    : AppTheme.neutral100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? favoriteColor : AppTheme.neutral600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1405,6 +1493,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 // Don't allow editing completed trips
                 onEdit: isCompleted ? null : () => _editTrip(context, tripWithMembers.trip),
                 onDelete: () => _deleteTrip(context, ref, tripWithMembers.trip),
+                onFavoriteToggle: () => _toggleFavorite(context, ref, tripWithMembers.trip.id),
                 currentUserId: currentUserId,
               ),
             );
@@ -1598,7 +1687,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Day badge + Role badge
+                        // Day badge + Role badge + Favorite button
                         Row(
                           children: [
                             Container(
@@ -1647,6 +1736,9 @@ class _HomePageState extends ConsumerState<HomePage>
                                 ),
                               ),
                             ],
+                            const Spacer(),
+                            // Favorite button
+                            _buildHeroFavoriteButton(context, primaryTrip),
                           ],
                         ),
                         const SizedBox(height: AppTheme.spacingMd),
@@ -2129,6 +2221,21 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
               const SizedBox(width: 4),
             ],
+            // Favorite button
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                _toggleFavorite(context, ref, trip.id);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Icon(
+                  tripWithMembers.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  size: 20,
+                  color: tripWithMembers.isFavorite ? const Color(0xFFE91E63) : AppTheme.neutral400,
+                ),
+              ),
+            ),
             // Arrow
             Icon(Icons.chevron_right, color: AppTheme.neutral400, size: 20),
           ],
@@ -2614,6 +2721,59 @@ class _HomePageState extends ConsumerState<HomePage>
   void _editTrip(BuildContext context, TripModel trip) {
     // TODO: Navigate to edit trip page
     context.push('/trips/${trip.id}/edit');
+  }
+
+  /// Toggle favorite status for a trip
+  Future<void> _toggleFavorite(
+      BuildContext context, WidgetRef ref, String tripId) async {
+    try {
+      final isFavorite = await ref.read(tripFavoritesControllerProvider.notifier).toggleFavorite(tripId);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isFavorite ? 'Added to favorites' : 'Removed from favorites',
+            ),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update favorite: $e'),
+            backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Build favorite button for hero cards (used in grouped view sections)
+  Widget _buildHeroFavoriteButton(BuildContext context, TripWithMembers tripWithMembers) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        _toggleFavorite(context, ref, tripWithMembers.trip.id);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: tripWithMembers.isFavorite
+              ? const Color(0xFFE91E63)
+              : Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          tripWithMembers.isFavorite ? Icons.favorite : Icons.favorite_border,
+          size: 20,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 
   Future<void> _deleteTrip(
@@ -3562,6 +3722,7 @@ class TripCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onEdit; // Optional - null for completed trips
   final VoidCallback onDelete;
+  final VoidCallback? onFavoriteToggle; // Toggle favorite status
   final String? currentUserId; // To determine if user is organizer
 
   const TripCard({
@@ -3570,6 +3731,7 @@ class TripCard extends StatelessWidget {
     required this.onTap,
     this.onEdit,
     required this.onDelete,
+    this.onFavoriteToggle,
     this.currentUserId,
   });
 
@@ -3780,6 +3942,15 @@ class TripCard extends StatelessWidget {
                                 // Actions
                                 Row(
                                   children: [
+                                    // Favorite button
+                                    if (onFavoriteToggle != null)
+                                      _buildFavoriteButton(
+                                        context,
+                                        tripWithMembers.isFavorite,
+                                        onFavoriteToggle!,
+                                      ),
+                                    if (onFavoriteToggle != null && (canEdit || true))
+                                      const SizedBox(width: 4),
                                     if (canEdit) ...[
                                       _buildActionButton(
                                         context,
@@ -3959,6 +4130,32 @@ class TripCard extends StatelessWidget {
           icon,
           size: 20,
           color: isDestructive ? Colors.white : AppTheme.neutral700,
+        ),
+        onPressed: onPressed,
+        constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+        padding: const EdgeInsets.all(8),
+      ),
+    );
+  }
+
+  /// Build favorite button with heart icon
+  Widget _buildFavoriteButton(
+    BuildContext context,
+    bool isFavorite,
+    VoidCallback onPressed,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isFavorite
+            ? const Color(0xFFE91E63).withValues(alpha: 0.9) // Pink when favorited
+            : Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+      ),
+      child: IconButton(
+        icon: Icon(
+          isFavorite ? Icons.favorite : Icons.favorite_border,
+          size: 20,
+          color: isFavorite ? Colors.white : const Color(0xFFE91E63),
         ),
         onPressed: onPressed,
         constraints: const BoxConstraints(minWidth: 36, minHeight: 36),

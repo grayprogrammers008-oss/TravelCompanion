@@ -83,4 +83,11 @@ abstract class TripRepository {
     bool copyItinerary = true,
     bool copyChecklists = true,
   });
+
+  /// Toggle favorite status for a trip
+  /// Returns true if the trip is now a favorite, false otherwise
+  Future<bool> toggleFavorite(String tripId);
+
+  /// Get list of favorite trip IDs for the current user
+  Future<List<String>> getFavoriteTripIds();
 }

@@ -357,15 +357,38 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   }
 
   /// Set a custom location (for searching by destination)
+  ///
+  /// When [country] is provided, category-specific coordinates will be used
+  /// (e.g., Phuket for beaches in Thailand instead of center of Thailand)
   Future<void> setLocation({
     required double latitude,
     required double longitude,
     String? locationName,
+    String? country,
   }) async {
+    // If country is provided and we have it in our popular destinations,
+    // use the category-specific coordinates for better results
+    double lat = latitude;
+    double lng = longitude;
+    String? displayName = locationName;
+
+    if (country != null && _popularDestinations.containsKey(country)) {
+      final coords = _getCoordinatesForCountryAndCategory(country, state.selectedCategory);
+      if (coords != null) {
+        lat = coords['lat']!;
+        lng = coords['lng']!;
+        final destName = _getPopularDestinationName(country, state.selectedCategory);
+        displayName = destName != null ? '$destName, $country' : locationName;
+        debugPrint('🎯 [Discover] Using category-specific location: $displayName');
+      }
+    }
+
     state = state.copyWith(
-      userLatitude: latitude,
-      userLongitude: longitude,
-      locationName: locationName,
+      userLatitude: lat,
+      userLongitude: lng,
+      locationName: displayName,
+      selectedCountry: country, // Set the country for category switching
+      isLocationFromSearch: true, // Location set via search
     );
     await loadPlaces(state.selectedCategory);
   }
@@ -688,7 +711,10 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   /// Clear the country filter and restore user's GPS location
   Future<void> clearCountry() async {
     debugPrint('🌍 [Discover] Clearing country filter, restoring GPS location');
-    state = state.copyWith(clearCountry: true);
+    state = state.copyWith(
+      clearCountry: true,
+      isLocationFromSearch: false, // Using GPS location
+    );
 
     // Get user's actual GPS location and reload places
     await _getUserLocation();

@@ -288,22 +288,26 @@ class TripWithMembers {
   final TripModel trip;
   final List<TripMemberModel> members;
   final int? memberCount;
+  final bool isFavorite; // Whether the current user has favorited this trip
 
   const TripWithMembers({
     required this.trip,
     required this.members,
     this.memberCount,
+    this.isFavorite = false,
   });
 
   TripWithMembers copyWith({
     TripModel? trip,
     List<TripMemberModel>? members,
     int? memberCount,
+    bool? isFavorite,
   }) {
     return TripWithMembers(
       trip: trip ?? this.trip,
       members: members ?? this.members,
       memberCount: memberCount ?? this.memberCount,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
@@ -312,6 +316,7 @@ class TripWithMembers {
       'trip': trip.toJson(),
       'members': members.map((m) => m.toJson()).toList(),
       'member_count': memberCount,
+      'is_favorite': isFavorite,
     };
   }
 
@@ -322,6 +327,7 @@ class TripWithMembers {
           .map((m) => TripMemberModel.fromJson(m as Map<String, dynamic>))
           .toList(),
       memberCount: json['member_count'] as int?,
+      isFavorite: json['is_favorite'] as bool? ?? false,
     );
   }
 
@@ -331,7 +337,8 @@ class TripWithMembers {
     return other is TripWithMembers &&
         other.trip == trip &&
         _listEquals(other.members, members) &&
-        other.memberCount == memberCount;
+        other.memberCount == memberCount &&
+        other.isFavorite == isFavorite;
   }
 
   @override
@@ -340,12 +347,13 @@ class TripWithMembers {
       trip,
       Object.hashAll(members),
       memberCount,
+      isFavorite,
     );
   }
 
   @override
   String toString() {
-    return 'TripWithMembers(trip: $trip, members: $members, memberCount: $memberCount)';
+    return 'TripWithMembers(trip: $trip, members: $members, memberCount: $memberCount, isFavorite: $isFavorite)';
   }
 }
 

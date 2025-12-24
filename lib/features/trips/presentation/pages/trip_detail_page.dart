@@ -371,6 +371,15 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                       icon: Icons.group,
                       label: '$memberCount',
                     ),
+                    // Rating display for completed trips
+                    if (trip.trip.isCompleted && trip.trip.rating > 0) ...[
+                      const SizedBox(width: 8),
+                      _buildHeroStatChip(
+                        icon: Icons.star,
+                        label: trip.trip.rating.toStringAsFixed(1),
+                        iconColor: Colors.amber,
+                      ),
+                    ],
                     if (cost != null && cost > 0) ...[
                       const SizedBox(width: 8),
                       _buildHeroStatChip(
@@ -447,6 +456,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   Widget _buildHeroStatChip({
     required IconData icon,
     required String label,
+    Color? iconColor,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -461,7 +471,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.white),
+          Icon(icon, size: 12, color: iconColor ?? Colors.white),
           const SizedBox(width: 4),
           Text(
             label,
@@ -655,6 +665,54 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
               ),
             ),
           ),
+        // Favorite button
+        Container(
+          margin: const EdgeInsets.only(right: 8),
+          decoration: BoxDecoration(
+            color: trip.isFavorite
+                ? const Color(0xFFE91E63).withValues(alpha: 0.9)
+                : Colors.black.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: Icon(
+              trip.isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.white,
+              size: 20,
+            ),
+            onPressed: () async {
+              HapticFeedback.lightImpact();
+              try {
+                final isFavorite = await ref
+                    .read(tripFavoritesControllerProvider.notifier)
+                    .toggleFavorite(widget.tripId);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFavorite
+                            ? 'Added to favorites'
+                            : 'Removed from favorites',
+                      ),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to update favorite: $e'),
+                      backgroundColor: AppTheme.error,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+        ),
         if (canEdit)
           Container(
             margin: const EdgeInsets.only(right: 8),

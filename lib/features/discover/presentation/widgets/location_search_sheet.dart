@@ -105,10 +105,12 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       }
 
       // Update the discover provider with the selected location
+      // Pass the country so category-specific coordinates can be used
       await ref.read(discoverStateProvider.notifier).setLocation(
         latitude: details.latitude!,
         longitude: details.longitude!,
         locationName: details.shortName,
+        country: details.country, // Pass country for category-specific search
       );
 
       // Close the bottom sheet
@@ -465,6 +467,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
             latitude: location.latitude,
             longitude: location.longitude,
             locationName: location.name,
+            country: location.country, // Pass country for category-specific search
           );
 
           if (mounted) {
@@ -541,6 +544,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       color: Colors.orange,
       latitude: 15.2993,
       longitude: 74.1240,
+      country: 'India',
     ),
     _QuickLocation(
       name: 'Phuket, Thailand',
@@ -549,6 +553,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       color: Colors.green,
       latitude: 7.8804,
       longitude: 98.3923,
+      country: 'Thailand',
     ),
     _QuickLocation(
       name: 'Bali, Indonesia',
@@ -557,6 +562,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       color: Colors.teal,
       latitude: -8.4095,
       longitude: 115.1889,
+      country: 'Indonesia',
     ),
     _QuickLocation(
       name: 'Paris, France',
@@ -565,6 +571,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       color: Colors.blue,
       latitude: 48.8566,
       longitude: 2.3522,
+      country: 'France',
     ),
     _QuickLocation(
       name: 'Tokyo, Japan',
@@ -573,6 +580,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       color: Colors.red,
       latitude: 35.6762,
       longitude: 139.6503,
+      country: 'Japan',
     ),
     _QuickLocation(
       name: 'Dubai, UAE',
@@ -581,6 +589,7 @@ class _LocationSearchSheetState extends ConsumerState<LocationSearchSheet> {
       color: Colors.amber,
       latitude: 25.2048,
       longitude: 55.2708,
+      country: 'UAE',
     ),
   ];
 }
@@ -593,6 +602,7 @@ class _QuickLocation {
   final Color color;
   final double latitude;
   final double longitude;
+  final String country; // Country name for category-specific coordinates
 
   const _QuickLocation({
     required this.name,
@@ -601,5 +611,6 @@ class _QuickLocation {
     required this.color,
     required this.latitude,
     required this.longitude,
+    required this.country,
   });
 }

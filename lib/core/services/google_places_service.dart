@@ -30,7 +30,7 @@ class GooglePlacesService {
   // Daily limits set to stay within FREE tier:
   static const int _dailyAutocompleteLimit = 300;  // 9,000/month (under 10K free)
   static const int _dailyDetailsLimit = 300;       // 9,000/month (under 10K free)
-  static const int _dailyPhotoLimit = 30;          // 900/month (under 1K free)
+  static const int _dailyPhotoLimit = 100;         // 3,000/month - increased for better UX
   static const int _dailyNearbyLimit = 50;         // 1,500/month (under 10K free, conservative)
   // Total monthly cost: $0 (all within free tiers!)
   // ============================================================
@@ -89,6 +89,24 @@ class GooglePlacesService {
     } catch (e) {
       debugPrint('⚠️ [PlacesAPI] Failed to initialize counters: $e');
       _initialized = true; // Continue anyway
+    }
+  }
+
+  /// Force reset all API counters (for debugging/testing)
+  Future<void> resetCounters() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_prefAutocompleteCount, 0);
+      await prefs.setInt(_prefDetailsCount, 0);
+      await prefs.setInt(_prefPhotoCount, 0);
+      await prefs.setInt(_prefNearbyCount, 0);
+      _autocompleteCount = 0;
+      _detailsCount = 0;
+      _photoCount = 0;
+      _nearbyCount = 0;
+      debugPrint('🔄 [PlacesAPI] All counters reset manually');
+    } catch (e) {
+      debugPrint('⚠️ [PlacesAPI] Failed to reset counters: $e');
     }
   }
 

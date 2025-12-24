@@ -94,6 +94,13 @@ abstract class TripRemoteDataSource {
     bool copyItinerary = true,
     bool copyChecklists = true,
   });
+
+  /// Toggle favorite status for a trip
+  /// Returns true if the trip is now a favorite, false otherwise
+  Future<bool> toggleFavorite(String tripId);
+
+  /// Get list of favorite trip IDs for the current user
+  Future<List<String>> getFavoriteTripIds();
 }
 
 class TripRemoteDataSourceImpl implements TripRemoteDataSource {
@@ -161,6 +168,14 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         return [];
       }
 
+      // Fetch favorite trip IDs for the current user
+      final favoriteIds = await getFavoriteTripIds();
+      final favoriteSet = favoriteIds.toSet();
+
+      if (kDebugMode) {
+        debugPrint('⭐ User has ${favoriteIds.length} favorite trips');
+      }
+
       // Then get all trips with ALL their members
       final response = await _client
           .from('trips')
@@ -183,7 +198,11 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
           .order('created_at', ascending: false);
 
       final trips = (response as List)
-          .map((tripData) => _parseTripWithMembers(tripData))
+          .map((tripData) {
+            final trip = _parseTripWithMembers(tripData);
+            // Set isFavorite based on whether trip ID is in favorites
+            return trip.copyWith(isFavorite: favoriteSet.contains(trip.trip.id));
+          })
           .toList();
 
       if (kDebugMode) {
@@ -916,6 +935,59 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('❌ Failed to copy trip: $e');
       }
       throw Exception('Failed to copy trip: $e');
+    }
+  }
+
+  @override
+  Future<bool> toggleFavorite(String tripId) async {
+    try {
+      if (kDebugMode) {
+        debugPrint('⭐ Toggling favorite for trip: $tripId');
+      }
+
+      final response = await _client.rpc(
+        'toggle_trip_favorite',
+        params: {'p_trip_id': tripId},
+      );
+
+      final isFavorite = response as bool;
+
+      if (kDebugMode) {
+        debugPrint('⭐ Trip $tripId is now ${isFavorite ? 'favorited' : 'unfavorited'}');
+      }
+
+      return isFavorite;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to toggle favorite: $e');
+      }
+      throw Exception('Failed to toggle favorite: $e');
+    }
+  }
+
+  @override
+  Future<List<String>> getFavoriteTripIds() async {
+    try {
+      if (kDebugMode) {
+        debugPrint('⭐ Fetching favorite trip IDs');
+      }
+
+      final response = await _client.rpc('get_user_favorite_trip_ids');
+
+      final tripIds = (response as List)
+          .map((row) => row['trip_id'] as String)
+          .toList();
+
+      if (kDebugMode) {
+        debugPrint('⭐ Found ${tripIds.length} favorite trips');
+      }
+
+      return tripIds;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to get favorite trip IDs: $e');
+      }
+      throw Exception('Failed to get favorite trip IDs: $e');
     }
   }
 }

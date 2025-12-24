@@ -98,6 +98,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       latitude: destination.latitude,
       longitude: destination.longitude,
       locationName: destination.name,
+      country: destination.country, // Pass country for category-specific search
     );
   }
 
@@ -384,32 +385,27 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
           ),
           const SizedBox(height: 12),
 
-          // Filter buttons row
-          Row(
-            children: [
-              // Distance filter button
-              Expanded(
-                child: _buildFilterButton(
-                  icon: Icons.radar,
-                  label: 'Distance',
-                  value: discoverState.selectedDistance.displayName,
-                  color: Colors.orange,
-                  onTap: () => _showDistanceSelector(discoverState),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Country filter button (optional)
-              Expanded(
-                child: _buildFilterButton(
-                  icon: Icons.public,
-                  label: 'Country',
-                  value: discoverState.selectedCountry ?? 'All Countries',
-                  color: discoverState.selectedCountry != null ? Colors.teal : Colors.grey,
-                  onTap: () => _showCountrySelector(discoverState),
-                ),
-              ),
-            ],
-          ),
+          // Filter buttons row - conditional based on location source
+          // GPS location: Show Distance only
+          // Searched location: Show Country only
+          if (!discoverState.isLocationFromSearch)
+            // Using GPS location - show Distance filter only
+            _buildFilterButton(
+              icon: Icons.radar,
+              label: 'Distance',
+              value: discoverState.selectedDistance.displayName,
+              color: Colors.orange,
+              onTap: () => _showDistanceSelector(discoverState),
+            )
+          else
+            // Using searched location - show Country filter only
+            _buildFilterButton(
+              icon: Icons.public,
+              label: 'Country',
+              value: discoverState.selectedCountry ?? 'All Countries',
+              color: discoverState.selectedCountry != null ? Colors.teal : Colors.grey,
+              onTap: () => _showCountrySelector(discoverState),
+            ),
         ],
       ),
     );
@@ -1093,35 +1089,45 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         // Distance
-                        Icon(
-                          Icons.near_me,
-                          size: 14,
-                          color: context.primaryColor,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.near_me,
+                              size: 14,
+                              color: context.primaryColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              distance,
+                              style: context.bodySmall.copyWith(
+                                color: context.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          distance,
-                          style: context.bodySmall.copyWith(
-                            color: context.primaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
                         // Rating
-                        if (place.rating != null) ...[
-                          Icon(Icons.star, size: 14, color: Colors.amber[700]),
-                          const SizedBox(width: 2),
-                          Text(
-                            place.ratingText,
-                            style: context.bodySmall,
+                        if (place.rating != null)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                              const SizedBox(width: 2),
+                              Text(
+                                place.ratingText,
+                                style: context.bodySmall,
+                              ),
+                            ],
                           ),
-                        ],
                         // Open status
-                        if (place.statusText != null) ...[
-                          const SizedBox(width: 8),
+                        if (place.statusText != null)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
@@ -1145,7 +1151,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                               ),
                             ),
                           ),
-                        ],
                       ],
                     ),
                   ],

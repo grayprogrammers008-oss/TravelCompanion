@@ -185,6 +185,7 @@ class DiscoverState {
   final bool isFromCache; // Indicates if current data is from offline cache
   final DiscoverDistance selectedDistance; // Distance filter
   final String? selectedCountry; // Optional country filter
+  final bool isLocationFromSearch; // True if location was set via search, false if using GPS
 
   const DiscoverState({
     this.selectedCategory = PlaceCategory.beach,
@@ -201,6 +202,7 @@ class DiscoverState {
     this.isFromCache = false,
     this.selectedDistance = DiscoverDistance.nearby,
     this.selectedCountry,
+    this.isLocationFromSearch = false,
   });
 
   DiscoverState copyWith({
@@ -219,6 +221,7 @@ class DiscoverState {
     DiscoverDistance? selectedDistance,
     String? selectedCountry,
     bool clearCountry = false, // Use this to explicitly set country to null
+    bool? isLocationFromSearch,
   }) {
     return DiscoverState(
       selectedCategory: selectedCategory ?? this.selectedCategory,
@@ -235,6 +238,7 @@ class DiscoverState {
       isFromCache: isFromCache ?? this.isFromCache,
       selectedDistance: selectedDistance ?? this.selectedDistance,
       selectedCountry: clearCountry ? null : (selectedCountry ?? this.selectedCountry),
+      isLocationFromSearch: isLocationFromSearch ?? this.isLocationFromSearch,
     );
   }
 

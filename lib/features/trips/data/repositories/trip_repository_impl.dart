@@ -301,4 +301,22 @@ class TripRepositoryImpl implements TripRepository {
       throw Exception('Failed to copy trip: $e');
     }
   }
+
+  @override
+  Future<bool> toggleFavorite(String tripId) async {
+    try {
+      return await _remoteDataSource.toggleFavorite(tripId);
+    } catch (e) {
+      throw Exception('Failed to toggle favorite: $e');
+    }
+  }
+
+  @override
+  Future<List<String>> getFavoriteTripIds() async {
+    try {
+      return await _remoteDataSource.getFavoriteTripIds();
+    } catch (e) {
+      throw Exception('Failed to get favorite trip IDs: $e');
+    }
+  }
 }

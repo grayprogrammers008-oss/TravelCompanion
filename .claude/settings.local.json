@@ -42,7 +42,12 @@
       "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" branch --show-current)",
       "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" add lib/features/auth/presentation/pages/forgot_password_page.dart lib/features/auth/presentation/pages/signup_page.dart lib/features/auth/presentation/providers/auth_providers.dart)",
       "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" pull origin main)",
-      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" log --oneline -10)"
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" log --oneline -10)",
+      "Bash(keytool:*)",
+      "Bash(findstr:*)",
+      "Bash(gradlew.bat signingReport:*)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" add -A)",
+      "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" commit -m \"$(cat <<''EOF''\nfeat: Add Trip Favorites feature with filter support\n\n- Add trip_favorites database table and RPC functions\n- Add isFavorite property to TripWithMembers model\n- Implement toggle favorite in repository and data source\n- Add tripFavoritesControllerProvider for state management\n- Add favorite heart button to:\n  - TripCard (home page flat list)\n  - Happening Now hero section\n  - Coming Up compact rows\n  - Past Trips compact rows\n  - Trip Detail page header\n- Add Favorites filter chip to home page filters\n- Filter shows only favorited trips when selected\n- Red filled heart when favorited, outline when not\n- Haptic feedback and SnackBar confirmation\n- Increase Google Places API photo limit to 100/day\n- Add resetCounters() method for debugging\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
