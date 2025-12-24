@@ -259,12 +259,13 @@ class _CopyTripDialogState extends ConsumerState<CopyTripDialog> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                // End date
+                // End date (disabled - auto-calculated based on trip duration)
                 Expanded(
                   child: _buildDateField(
                     label: 'End Date',
                     value: _endDate,
                     onTap: _selectEndDate,
+                    enabled: false,
                   ),
                 ),
               ],
@@ -375,17 +376,22 @@ class _CopyTripDialogState extends ConsumerState<CopyTripDialog> {
     required String label,
     required DateTime? value,
     required VoidCallback onTap,
+    bool enabled = true,
   }) {
+    final isDisabled = !enabled || _isLoading;
     return InkWell(
-      onTap: _isLoading ? null : onTap,
+      onTap: isDisabled ? null : onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
+          color: isDisabled ? AppTheme.neutral100 : null,
           border: Border.all(
-            color: value != null
-                ? context.primaryColor.withValues(alpha: 0.5)
-                : context.textColor.withValues(alpha: 0.23),
+            color: isDisabled
+                ? AppTheme.neutral300
+                : value != null
+                    ? context.primaryColor.withValues(alpha: 0.5)
+                    : context.textColor.withValues(alpha: 0.23),
           ),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
@@ -396,24 +402,34 @@ class _CopyTripDialogState extends ConsumerState<CopyTripDialog> {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: AppTheme.neutral500,
+                color: isDisabled ? AppTheme.neutral400 : AppTheme.neutral500,
               ),
             ),
             const SizedBox(height: 4),
             Row(
               children: [
                 Icon(
-                  Icons.calendar_today,
+                  isDisabled ? Icons.lock_outline : Icons.calendar_today,
                   size: 16,
-                  color: value != null ? context.primaryColor : AppTheme.neutral400,
+                  color: isDisabled
+                      ? AppTheme.neutral400
+                      : value != null
+                          ? context.primaryColor
+                          : AppTheme.neutral400,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  value != null ? _dateFormat.format(value) : 'Select',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: value != null ? context.textColor : AppTheme.neutral400,
-                    fontWeight: value != null ? FontWeight.w500 : FontWeight.normal,
+                Expanded(
+                  child: Text(
+                    value != null ? _dateFormat.format(value) : 'Select',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDisabled
+                          ? AppTheme.neutral500
+                          : value != null
+                              ? context.textColor
+                              : AppTheme.neutral400,
+                      fontWeight: value != null ? FontWeight.w500 : FontWeight.normal,
+                    ),
                   ),
                 ),
               ],
