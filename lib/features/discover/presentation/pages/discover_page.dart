@@ -8,6 +8,7 @@ import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/popular_destination.dart';
 import '../providers/discover_providers.dart';
+import '../widgets/location_search_sheet.dart';
 import '../widgets/place_card.dart';
 import '../widgets/place_detail_sheet.dart';
 import '../widgets/popular_destinations_section.dart';
@@ -106,15 +107,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     final filteredPlaces = discoverState.filteredPlaces;
 
     return Scaffold(
-      floatingActionButton: discoverState.favoriteIds.isNotEmpty
-          ? FloatingActionButton.extended(
-              onPressed: () => TripPlanningAssistantSheet.show(context),
-              icon: const Icon(Icons.auto_awesome),
-              label: const Text('Plan Trip'),
-              backgroundColor: context.primaryColor,
-              foregroundColor: Colors.white,
-            )
-          : null,
+      floatingActionButton: _buildFloatingActionButton(discoverState),
       body: CustomScrollView(
         slivers: [
           // App Bar
@@ -230,86 +223,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             child: _buildSearchBar(discoverState),
           ),
 
-          // Category Chips
+          // Category Selection Section
           SliverToBoxAdapter(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: PlaceCategory.values.map((category) {
-                    final isSelected = category == discoverState.selectedCategory;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: FilterChip(
-                        selected: isSelected,
-                        onSelected: (_) => _onCategorySelected(category),
-                        avatar: Icon(
-                          category.icon,
-                          size: 18,
-                          color: isSelected ? Colors.white : category.color,
-                        ),
-                        label: Text(category.displayName),
-                        labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : context.textColor,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                        backgroundColor: category.color.withValues(alpha: 0.1),
-                        selectedColor: category.color,
-                        checkmarkColor: Colors.white,
-                        side: BorderSide(
-                          color: isSelected ? category.color : category.color.withValues(alpha: 0.3),
-                          width: isSelected ? 2 : 1,
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ),
-
-          // Category Description & Results Count
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  Icon(
-                    discoverState.selectedCategory.icon,
-                    color: discoverState.selectedCategory.color,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      discoverState.selectedCategory.description,
-                      style: context.bodyMedium.copyWith(
-                        color: context.textColor.withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ),
-                  // Results count badge
-                  if (!discoverState.isLoading && discoverState.hasLocation)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: context.primaryColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${filteredPlaces.length} places',
-                        style: context.bodySmall.copyWith(
-                          color: context.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
+            child: _buildCategorySection(discoverState, filteredPlaces.length),
           ),
 
           // Content
@@ -380,143 +296,333 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     if (!discoverState.hasLocation) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            context.primaryColor.withValues(alpha: 0.1),
-            context.primaryColor.withValues(alpha: 0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.primaryColor.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: context.primaryColor.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.my_location,
-              color: context.primaryColor,
-              size: 20,
-            ),
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Your Location',
-                  style: context.bodySmall.copyWith(
-                    color: context.textColor.withValues(alpha: 0.6),
-                  ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title row
+          Row(
+            children: [
+              Icon(
+                Icons.travel_explore,
+                color: context.primaryColor,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Find Trip Ideas Near You',
+                style: context.titleMedium.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-                Text(
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Location info with search button
+          Row(
+            children: [
+              Icon(
+                Icons.location_on,
+                color: Colors.red[400],
+                size: 16,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
                   discoverState.locationName ?? 'Getting location...',
                   style: context.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
+                    color: context.textColor.withValues(alpha: 0.7),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
-          ),
-          // Filter chips row
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Optional Country filter (tappable)
-              GestureDetector(
-                onTap: () => _showCountrySelector(discoverState),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: discoverState.selectedCountry != null
-                        ? Colors.teal.withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: discoverState.selectedCountry != null
-                          ? Colors.teal.withValues(alpha: 0.3)
-                          : Colors.grey.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.public,
-                        size: 14,
-                        color: discoverState.selectedCountry != null
-                            ? Colors.teal[700]
-                            : Colors.grey[600],
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        discoverState.selectedCountry ?? 'All',
-                        style: context.bodySmall.copyWith(
-                          color: discoverState.selectedCountry != null
-                              ? Colors.teal[700]
-                              : Colors.grey[600],
-                          fontWeight: FontWeight.w600,
+              ),
+              // Search Location Button
+              Material(
+                color: context.primaryColor,
+                borderRadius: BorderRadius.circular(20),
+                child: InkWell(
+                  onTap: () => LocationSearchSheet.show(context),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 16,
                         ),
-                      ),
-                      const SizedBox(width: 2),
-                      Icon(
-                        Icons.arrow_drop_down,
-                        size: 16,
-                        color: discoverState.selectedCountry != null
-                            ? Colors.teal[700]
-                            : Colors.grey[600],
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        Text(
+                          'Search',
+                          style: context.bodySmall.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              // Radius indicator (tappable to change distance)
-              GestureDetector(
-                onTap: () => _showDistanceSelector(discoverState),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.orange.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.radar, size: 14, color: Colors.orange[700]),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${discoverState.selectedDistance.kilometers} km',
-                        style: context.bodySmall.copyWith(
-                          color: Colors.orange[700],
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 2),
-                      Icon(Icons.arrow_drop_down, size: 16, color: Colors.orange[700]),
-                    ],
-                  ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Filter buttons row
+          Row(
+            children: [
+              // Distance filter button
+              Expanded(
+                child: _buildFilterButton(
+                  icon: Icons.radar,
+                  label: 'Distance',
+                  value: discoverState.selectedDistance.displayName,
+                  color: Colors.orange,
+                  onTap: () => _showDistanceSelector(discoverState),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Country filter button (optional)
+              Expanded(
+                child: _buildFilterButton(
+                  icon: Icons.public,
+                  label: 'Country',
+                  value: discoverState.selectedCountry ?? 'All Countries',
+                  color: discoverState.selectedCountry != null ? Colors.teal : Colors.grey,
+                  onTap: () => _showCountrySelector(discoverState),
                 ),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilterButton({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: context.bodySmall.copyWith(
+                      color: context.textColor.withValues(alpha: 0.5),
+                      fontSize: 10,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: context.bodySmall.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_drop_down,
+              size: 18,
+              color: color,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategorySection(DiscoverState discoverState, int placesCount) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header with results count
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'What would you like to explore?',
+                style: context.titleSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.textColor.withValues(alpha: 0.8),
+                ),
+              ),
+              if (!discoverState.isLoading && discoverState.hasLocation)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: discoverState.selectedCategory.color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$placesCount found',
+                    style: context.bodySmall.copyWith(
+                      color: discoverState.selectedCategory.color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Category grid - 4 columns
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 0.9,
+            ),
+            itemCount: PlaceCategory.values.length,
+            itemBuilder: (context, index) {
+              final category = PlaceCategory.values[index];
+              final isSelected = category == discoverState.selectedCategory;
+              return _buildCategoryItem(category, isSelected);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryItem(PlaceCategory category, bool isSelected) {
+    return InkWell(
+      onTap: () => _onCategorySelected(category),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected
+              ? category.color.withValues(alpha: 0.2)
+              : context.cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? category.color
+                : context.textColor.withValues(alpha: 0.1),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: category.color.withValues(alpha: isSelected ? 0.3 : 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                category.icon,
+                size: 20,
+                color: isSelected ? category.color : category.color.withValues(alpha: 0.8),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              category.displayName,
+              style: context.bodySmall.copyWith(
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected
+                    ? category.color
+                    : context.textColor.withValues(alpha: 0.7),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget? _buildFloatingActionButton(DiscoverState discoverState) {
+    final hasFavorites = discoverState.favoriteIds.isNotEmpty;
+
+    if (hasFavorites) {
+      // Show "Plan Trip" when user has favorited places
+      return FloatingActionButton.extended(
+        onPressed: () => TripPlanningAssistantSheet.show(context),
+        icon: const Icon(Icons.auto_awesome),
+        label: Text('Plan Trip (${discoverState.favoriteIds.length})'),
+        backgroundColor: context.primaryColor,
+        foregroundColor: Colors.white,
+      );
+    }
+
+    // Show hint FAB to guide users
+    return FloatingActionButton.extended(
+      onPressed: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.favorite, color: Colors.white, size: 20),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Tap the heart on places you like to save them for trip planning!',
+                  ),
+                ),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      },
+      icon: const Icon(Icons.lightbulb_outline),
+      label: const Text('Get Trip Ideas'),
+      backgroundColor: Colors.amber[700],
+      foregroundColor: Colors.white,
     );
   }
 
