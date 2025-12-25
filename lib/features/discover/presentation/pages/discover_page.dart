@@ -10,6 +10,7 @@ import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/popular_destination.dart';
 import '../providers/discover_providers.dart';
+import '../widgets/location_map_widget.dart';
 import '../widgets/location_search_sheet.dart';
 import '../widgets/place_card.dart';
 import '../widgets/place_detail_sheet.dart';
@@ -123,13 +124,24 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: false,
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
-              title: Text(
-                'Discover',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.travel_explore,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Discover',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
               background: Container(
                 decoration: BoxDecoration(
@@ -141,30 +153,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                       context.primaryColor.withValues(alpha: 0.7),
                     ],
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    // Background explore icon - positioned to not overlap with title/actions
-                    Positioned(
-                      right: 60,
-                      bottom: 20,
-                      child: Icon(
-                        Icons.explore,
-                        size: 70,
-                        color: Colors.white.withValues(alpha: 0.15),
-                      ),
-                    ),
-                    // Secondary decorative icon
-                    Positioned(
-                      right: 10,
-                      top: 40,
-                      child: Icon(
-                        Icons.place,
-                        size: 40,
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -253,20 +241,17 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
           // Content
           if (discoverState.isGettingLocation)
-            const SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('Getting your location...'),
-                    SizedBox(height: 8),
-                    Text(
-                      'Please allow location access when prompted',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
+            SliverFillRemaining(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: LocationMapWidget(
+                  userLatitude: discoverState.userLatitude,
+                  userLongitude: discoverState.userLongitude,
+                  isLoading: true,
+                  locationName: discoverState.locationName,
+                  onRetry: () {
+                    ref.read(discoverStateProvider.notifier).initialize();
+                  },
                 ),
               ),
             )
