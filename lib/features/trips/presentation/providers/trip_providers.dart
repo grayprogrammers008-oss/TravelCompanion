@@ -715,6 +715,8 @@ class TripFavoritesController extends Notifier<AsyncValue<void>> {
       ref.invalidate(favoriteTripIdsProvider);
       ref.invalidate(userTripsWithFavoritesProvider);
       ref.invalidate(userTripsProvider);
+      // Also invalidate the specific trip provider to update trip detail page
+      ref.invalidate(tripProvider(tripId));
 
       state = const AsyncValue.data(null);
       return isFavorite;

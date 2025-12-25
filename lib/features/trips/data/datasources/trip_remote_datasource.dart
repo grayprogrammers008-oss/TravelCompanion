@@ -246,7 +246,13 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
 
       if (response == null) return null;
 
-      return _parseTripWithMembers(response);
+      final trip = _parseTripWithMembers(response);
+
+      // Check if this trip is a favorite
+      final favoriteIds = await getFavoriteTripIds();
+      final isFavorite = favoriteIds.contains(tripId);
+
+      return trip.copyWith(isFavorite: isFavorite);
     } catch (e) {
       throw Exception('Failed to get trip: $e');
     }
