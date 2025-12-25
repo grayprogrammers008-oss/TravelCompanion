@@ -702,7 +702,8 @@ class TripFavoritesController extends Notifier<AsyncValue<void>> {
   /// Toggle favorite status for a trip
   /// Returns the new favorite status (true if now favorited, false if unfavorited)
   Future<bool> toggleFavorite(String tripId) async {
-    state = const AsyncValue.loading();
+    // Don't set loading state - we want instant UI updates
+    // The favoriteTripIdsProvider will be invalidated and watched providers will rebuild
     try {
       final repository = ref.read(tripRepositoryProvider);
       final isFavorite = await repository.toggleFavorite(tripId);
@@ -711,14 +712,12 @@ class TripFavoritesController extends Notifier<AsyncValue<void>> {
         debugPrint('⭐ Trip $tripId is now ${isFavorite ? 'favorited' : 'unfavorited'}');
       }
 
-      // Invalidate providers to refresh the state
+      // Only invalidate favoriteTripIdsProvider - other providers watch it and will auto-update
+      // This prevents showing loading state on the entire list
       ref.invalidate(favoriteTripIdsProvider);
-      ref.invalidate(userTripsWithFavoritesProvider);
-      ref.invalidate(userTripsProvider);
       // Also invalidate the specific trip provider to update trip detail page
       ref.invalidate(tripProvider(tripId));
 
-      state = const AsyncValue.data(null);
       return isFavorite;
     } catch (e, st) {
       if (kDebugMode) {
@@ -732,4 +731,37 @@ class TripFavoritesController extends Notifier<AsyncValue<void>> {
 
 final tripFavoritesControllerProvider = NotifierProvider<TripFavoritesController, AsyncValue<void>>(() {
   return TripFavoritesController();
+});
+
+/// Provider that combines discoverable trips with their favorite status
+/// Used in BrowseTripsPage (Explore tab) to show favorites on public trips
+///
+/// Uses a separate cached provider for raw trips to avoid refetching when favorites change
+final discoverableTripsWithFavoritesProvider = Provider.autoDispose<AsyncValue<List<TripWithMembers>>>((ref) {
+  // Watch the raw discoverable trips (cached - doesn't refetch on favorite change)
+  final tripsAsync = ref.watch(discoverableTripsProvider);
+
+  // Watch the favorite trip IDs
+  final favoriteIdsAsync = ref.watch(favoriteTripIdsProvider);
+
+  // Combine both async values
+  return tripsAsync.when(
+    data: (trips) {
+      final favoriteIds = favoriteIdsAsync.when(
+        data: (ids) => ids,
+        loading: () => <String>[],
+        error: (e, s) => <String>[],
+      );
+
+      // Merge trips with favorite status
+      final tripsWithFavorites = trips.map((trip) {
+        final isFavorite = favoriteIds.contains(trip.trip.id);
+        return trip.copyWith(isFavorite: isFavorite);
+      }).toList();
+
+      return AsyncValue.data(tripsWithFavorites);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (e, st) => AsyncValue.error(e, st),
+  );
 });

@@ -186,6 +186,8 @@ class DiscoverState {
   final DiscoverDistance selectedDistance; // Distance filter
   final String? selectedCountry; // Optional country filter
   final bool isLocationFromSearch; // True if location was set via search, false if using GPS
+  final bool isGettingLocation; // True while fetching GPS location
+  final bool isPermissionDeniedForever; // True if location permission permanently denied
 
   const DiscoverState({
     this.selectedCategory = PlaceCategory.beach,
@@ -203,6 +205,8 @@ class DiscoverState {
     this.selectedDistance = DiscoverDistance.nearby,
     this.selectedCountry,
     this.isLocationFromSearch = false,
+    this.isGettingLocation = false,
+    this.isPermissionDeniedForever = false,
   });
 
   DiscoverState copyWith({
@@ -222,6 +226,8 @@ class DiscoverState {
     String? selectedCountry,
     bool clearCountry = false, // Use this to explicitly set country to null
     bool? isLocationFromSearch,
+    bool? isGettingLocation,
+    bool? isPermissionDeniedForever,
   }) {
     return DiscoverState(
       selectedCategory: selectedCategory ?? this.selectedCategory,
@@ -239,6 +245,8 @@ class DiscoverState {
       selectedDistance: selectedDistance ?? this.selectedDistance,
       selectedCountry: clearCountry ? null : (selectedCountry ?? this.selectedCountry),
       isLocationFromSearch: isLocationFromSearch ?? this.isLocationFromSearch,
+      isGettingLocation: isGettingLocation ?? this.isGettingLocation,
+      isPermissionDeniedForever: isPermissionDeniedForever ?? this.isPermissionDeniedForever,
     );
   }
 

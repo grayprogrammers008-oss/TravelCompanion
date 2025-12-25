@@ -42,7 +42,9 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>We need access to the local network to enable high-speed peer-to-peer messaging with nearby users.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location permission is required for Bluetooth scanning to discover nearby peers.</string>
+	<string>We need your location to discover amazing places, restaurants, and attractions near you.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to discover amazing places, restaurants, and attractions near you.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>We need speech recognition permission to create trips using your voice.</string>
 	<key>NSMicrophoneUsageDescription</key>

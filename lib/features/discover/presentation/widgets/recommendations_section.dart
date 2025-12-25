@@ -100,8 +100,8 @@ class RecommendationsSection extends ConsumerWidget {
           onPlaceTapped: onPlaceTapped,
           onQuickAdd: onQuickAdd,
           isFavorite: (placeId) => discoverState.isFavorite(placeId),
-          onToggleFavorite: (placeId) {
-            ref.read(discoverStateProvider.notifier).toggleFavorite(placeId);
+          onToggleFavorite: (place) {
+            ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId, place: place);
           },
           userLat: discoverState.userLatitude,
           userLng: discoverState.userLongitude,
@@ -119,7 +119,7 @@ class _RecommendationGroupWidget extends StatelessWidget {
   final Function(DiscoverPlace) onPlaceTapped;
   final Function(DiscoverPlace)? onQuickAdd;
   final bool Function(String) isFavorite;
-  final Function(String) onToggleFavorite;
+  final Function(DiscoverPlace) onToggleFavorite;
   final double? userLat;
   final double? userLng;
 
@@ -202,7 +202,7 @@ class _RecommendationGroupWidget extends StatelessWidget {
                 onTap: () => onPlaceTapped(rec.place),
                 onQuickAdd: onQuickAdd != null ? () => onQuickAdd!(rec.place) : null,
                 isFavorite: isFavorite(rec.place.placeId),
-                onToggleFavorite: () => onToggleFavorite(rec.place.placeId),
+                onToggleFavorite: () => onToggleFavorite(rec.place),
                 userLat: userLat,
                 userLng: userLng,
               );

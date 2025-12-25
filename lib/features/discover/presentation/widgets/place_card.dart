@@ -146,77 +146,73 @@ class PlaceCard extends ConsumerWidget {
                 ],
               ),
             ),
-            // Details
+            // Details - compact layout to prevent overflow
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Name
-                    Text(
-                      place.name,
-                      style: context.titleSmall.copyWith(
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: Text(
+                        place.name,
+                        style: context.titleSmall.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    // Rating
-                    if (place.rating != null)
-                      Row(
-                        children: [
+                    const SizedBox(height: 2),
+                    // Rating and Status in same row to save space
+                    Row(
+                      children: [
+                        if (place.rating != null) ...[
                           Icon(
                             Icons.star,
-                            size: 14,
+                            size: 12,
                             color: Colors.amber[700],
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 2),
                           Text(
                             place.ratingText,
                             style: context.bodySmall.copyWith(
                               fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              '(${place.reviewsText})',
-                              style: context.bodySmall.copyWith(
-                                color: context.textColor.withValues(alpha: 0.5),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                              fontSize: 10,
                             ),
                           ),
                         ],
-                      ),
-                    const Spacer(),
-                    // Status badge
-                    if (place.statusText != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: place.openNow == true
-                              ? Colors.green.withValues(alpha: 0.1)
-                              : Colors.red.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          place.statusText!,
-                          style: context.bodySmall.copyWith(
-                            color: place.openNow == true
-                                ? Colors.green[700]
-                                : Colors.red[700],
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
+                        if (place.statusText != null) ...[
+                          if (place.rating != null) const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 1,
+                            ),
+                            decoration: BoxDecoration(
+                              color: place.openNow == true
+                                  ? Colors.green.withValues(alpha: 0.1)
+                                  : Colors.red.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              place.statusText!,
+                              style: context.bodySmall.copyWith(
+                                color: place.openNow == true
+                                    ? Colors.green[700]
+                                    : Colors.red[700],
+                                fontWeight: FontWeight.w600,
+                                fontSize: 9,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),

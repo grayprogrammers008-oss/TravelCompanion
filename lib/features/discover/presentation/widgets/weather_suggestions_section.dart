@@ -178,6 +178,7 @@ class WeatherSuggestionsSection extends ConsumerWidget {
                 onToggleFavorite: () {
                   ref.read(discoverStateProvider.notifier).toggleFavorite(
                     suggestion.place.placeId,
+                    place: suggestion.place,
                   );
                 },
               );

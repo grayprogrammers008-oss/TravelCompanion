@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/services/google_maps_url_parser.dart';
@@ -111,18 +113,22 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       floatingActionButton: _buildFloatingActionButton(discoverState),
       body: CustomScrollView(
         slivers: [
-          // App Bar
+          // App Bar with proper header layout
           SliverAppBar(
-            expandedHeight: 120,
-            floating: true,
+            expandedHeight: 140,
+            floating: false,
             pinned: true,
             backgroundColor: context.primaryColor,
+            elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
+              centerTitle: false,
+              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
                 'Discover',
-                style: context.titleLarge.copyWith(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
               ),
               background: Container(
@@ -132,20 +138,33 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                     end: Alignment.bottomRight,
                     colors: [
                       context.primaryColor,
-                      context.primaryColor.withValues(alpha: 0.8),
+                      context.primaryColor.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Icon(
-                      Icons.explore,
-                      size: 80,
-                      color: Colors.white.withValues(alpha: 0.2),
+                child: Stack(
+                  children: [
+                    // Background explore icon - positioned to not overlap with title/actions
+                    Positioned(
+                      right: 60,
+                      bottom: 20,
+                      child: Icon(
+                        Icons.explore,
+                        size: 70,
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
                     ),
-                  ),
+                    // Secondary decorative icon
+                    Positioned(
+                      right: 10,
+                      top: 40,
+                      child: Icon(
+                        Icons.place,
+                        size: 40,
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -183,10 +202,13 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               // Refresh button
               IconButton(
                 icon: const Icon(Icons.refresh, color: Colors.white),
+                tooltip: 'Refresh places',
                 onPressed: () {
+                  HapticFeedback.mediumImpact();
                   ref.read(discoverStateProvider.notifier).refresh();
                 },
               ),
+              const SizedBox(width: 4),
             ],
           ),
 
@@ -230,9 +252,27 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
           ),
 
           // Content
-          if (discoverState.error != null)
+          if (discoverState.isGettingLocation)
+            const SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Getting your location...'),
+                    SizedBox(height: 8),
+                    Text(
+                      'Please allow location access when prompted',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else if (discoverState.error != null)
             SliverFillRemaining(
-              child: _buildErrorState(discoverState.error!),
+              child: _buildErrorState(discoverState.error!, discoverState.isPermissionDeniedForever),
             )
           else if (discoverState.isLoading)
             const SliverFillRemaining(
@@ -279,7 +319,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                       isFavorite: discoverState.isFavorite(place.placeId),
                       onTap: () => _onPlaceTapped(place),
                       onFavoriteToggle: () {
-                        ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId);
+                        ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId, place: place);
                       },
                       onQuickAdd: () => _showQuickAddToTrip(place),
                     );
@@ -544,32 +584,35 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: category.color.withValues(alpha: isSelected ? 0.3 : 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 category.icon,
-                size: 20,
+                size: 18,
                 color: isSelected ? category.color : category.color.withValues(alpha: 0.8),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              category.displayName,
-              style: context.bodySmall.copyWith(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? category.color
-                    : context.textColor.withValues(alpha: 0.7),
+            const SizedBox(height: 2),
+            Flexible(
+              child: Text(
+                category.displayName,
+                style: context.bodySmall.copyWith(
+                  fontSize: 9,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected
+                      ? category.color
+                      : context.textColor.withValues(alpha: 0.7),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -1176,7 +1219,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                   // Favorite button
                   IconButton(
                     onPressed: () {
-                      ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId);
+                      ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId, place: place);
                     },
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -1233,7 +1276,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     }
   }
 
-  Widget _buildErrorState(String error) {
+  Widget _buildErrorState(String error, [bool isPermissionDeniedForever = false]) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -1241,13 +1284,15 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.error_outline,
+              isPermissionDeniedForever ? Icons.location_off : Icons.error_outline,
               size: 64,
-              color: context.textColor.withValues(alpha: 0.3),
+              color: isPermissionDeniedForever
+                  ? context.primaryColor.withValues(alpha: 0.5)
+                  : context.textColor.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
-              'Oops! Something went wrong',
+              isPermissionDeniedForever ? 'Location Access Needed' : 'Oops! Something went wrong',
               style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -1260,13 +1305,30 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                ref.read(discoverStateProvider.notifier).refresh();
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
-            ),
+            if (isPermissionDeniedForever) ...[
+              ElevatedButton.icon(
+                onPressed: () async {
+                  await Geolocator.openAppSettings();
+                },
+                icon: const Icon(Icons.settings),
+                label: const Text('Open Settings'),
+              ),
+              const SizedBox(height: 12),
+              TextButton.icon(
+                onPressed: () {
+                  ref.read(discoverStateProvider.notifier).initialize();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try Again'),
+              ),
+            ] else
+              ElevatedButton.icon(
+                onPressed: () {
+                  ref.read(discoverStateProvider.notifier).refresh();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try Again'),
+              ),
           ],
         ),
       ),

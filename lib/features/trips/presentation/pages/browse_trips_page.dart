@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -33,6 +34,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
   String _statusFilter = 'all'; // all, upcoming, in_progress, ended
   int? _minMembers;
   int? _maxMembers;
+  bool _showFavoritesOnly = false; // Filter to show only favorited trips
 
   @override
   void initState() {
@@ -109,7 +111,14 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
       }).toList();
     }
 
-    // Step 4: Apply sorting
+    // Step 4: Apply favorites filter
+    if (_showFavoritesOnly) {
+      filteredTrips = filteredTrips.where((tripWithMembers) {
+        return tripWithMembers.isFavorite;
+      }).toList();
+    }
+
+    // Step 5: Apply sorting
     switch (_sortBy) {
       case 'nearest_date':
         filteredTrips.sort((a, b) {
@@ -1159,7 +1168,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
 
   @override
   Widget build(BuildContext context) {
-    final discoverableTripsAsync = ref.watch(discoverableTripsProvider);
+    final discoverableTripsAsync = ref.watch(discoverableTripsWithFavoritesProvider);
     final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
     return Scaffold(
@@ -1170,7 +1179,10 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
           displacement: 120,
           edgeOffset: 120,
           onRefresh: () async {
+            // Invalidate raw trips provider to refetch from server
             ref.invalidate(discoverableTripsProvider);
+            ref.invalidate(favoriteTripIdsProvider);
+            // Wait for trips to load
             await ref.read(discoverableTripsProvider.future);
           },
           child: CustomScrollView(
@@ -1215,6 +1227,20 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                 centerTitle: false,
                 titleSpacing: 4,
                 actions: [
+                  // Favorites filter
+                  IconButton(
+                    icon: Icon(
+                      _showFavoritesOnly ? Icons.favorite : Icons.favorite_border,
+                      color: _showFavoritesOnly ? Colors.red[300] : Colors.white,
+                    ),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _showFavoritesOnly = !_showFavoritesOnly;
+                      });
+                    },
+                    tooltip: _showFavoritesOnly ? 'Show all trips' : 'Show favorites only',
+                  ),
                   // Settings Icon
                   IconButton(
                     icon: const Icon(Icons.settings_outlined, color: Colors.white),
@@ -1738,7 +1764,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
 }
 
 /// Card widget for displaying discoverable trips
-class DiscoverableTripCard extends StatelessWidget {
+class DiscoverableTripCard extends ConsumerWidget {
   final TripWithMembers tripWithMembers;
   final VoidCallback onTap;
   final VoidCallback onJoin;
@@ -1750,11 +1776,18 @@ class DiscoverableTripCard extends StatelessWidget {
     required this.onJoin,
   });
 
+  /// Toggle favorite status with haptic feedback
+  void _toggleFavorite(WidgetRef ref, String tripId) {
+    HapticFeedback.lightImpact();
+    ref.read(tripFavoritesControllerProvider.notifier).toggleFavorite(tripId);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final trip = tripWithMembers.trip;
     final members = tripWithMembers.members;
     final memberCount = members.length;
+    final isFavorite = tripWithMembers.isFavorite;
 
     // Calculate trip status
     final now = DateTime.now();
@@ -1807,8 +1840,9 @@ class DiscoverableTripCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Public Badge
+                            // Public Badge and Favorite Button Row
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
                                   padding: const EdgeInsets.symmetric(
@@ -1837,6 +1871,31 @@ class DiscoverableTripCard extends StatelessWidget {
                                         ),
                                       ),
                                     ],
+                                  ),
+                                ),
+                                // Favorite Button
+                                GestureDetector(
+                                  onTap: () => _toggleFavorite(ref, trip.id),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: isFavorite
+                                          ? const Color(0xFFE91E63).withValues(alpha: 0.9)
+                                          : Colors.black.withValues(alpha: 0.4),
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.2),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ],

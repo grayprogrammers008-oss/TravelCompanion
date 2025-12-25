@@ -3,10 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/services/google_places_service.dart';
 import '../../data/datasources/discover_local_datasource.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/discover_place.dart';
+
+/// Provider for Supabase client
+final discoverSupabaseProvider = Provider<SupabaseClient>((ref) {
+  return Supabase.instance.client;
+});
 
 /// Provider for Google Places Service
 final googlePlacesServiceProvider = Provider<GooglePlacesService>((ref) {
@@ -36,6 +42,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
 
   GooglePlacesService get _placesService => ref.read(googlePlacesServiceProvider);
   DiscoverLocalDataSource get _localDataSource => ref.read(discoverLocalDataSourceProvider);
+  SupabaseClient get _supabase => ref.read(discoverSupabaseProvider);
 
   /// Check if device has internet connectivity
   Future<bool> _hasConnectivity() async {
@@ -48,7 +55,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
     }
   }
 
-  /// Initialize local cache
+  /// Initialize local cache and load favorites from Supabase
   Future<void> _initializeCache() async {
     if (_cacheInitialized) return;
     try {
@@ -56,15 +63,56 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       _cacheInitialized = true;
       debugPrint('✅ [Discover] Cache initialized');
 
-      // Load saved favorites
-      final savedFavorites = await _localDataSource.getFavorites();
-      if (savedFavorites.isNotEmpty) {
-        state = state.copyWith(favoriteIds: savedFavorites);
-        debugPrint('❤️ [Discover] Loaded ${savedFavorites.length} saved favorites');
-      }
+      // Try to load favorites from Supabase first
+      await _loadFavoritesFromSupabase();
     } catch (e) {
       debugPrint('⚠️ [Discover] Cache initialization failed: $e');
       _cacheInitialized = true; // Continue without cache
+    }
+  }
+
+  /// Load favorites from Supabase, fallback to local storage
+  Future<void> _loadFavoritesFromSupabase() async {
+    try {
+      // Check if user is authenticated
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
+        debugPrint('⚠️ [Discover] User not authenticated, loading from local');
+        final savedFavorites = await _localDataSource.getFavorites();
+        if (savedFavorites.isNotEmpty) {
+          state = state.copyWith(favoriteIds: savedFavorites);
+          debugPrint('❤️ [Discover] Loaded ${savedFavorites.length} favorites from local');
+        }
+        return;
+      }
+
+      // Fetch from Supabase
+      final response = await _supabase.rpc('get_user_discover_favorite_ids');
+      final favoriteIds = <String>{};
+
+      if (response != null && response is List) {
+        for (final item in response) {
+          if (item is Map && item['place_id'] != null) {
+            favoriteIds.add(item['place_id'].toString());
+          }
+        }
+      }
+
+      state = state.copyWith(favoriteIds: favoriteIds);
+      debugPrint('❤️ [Discover] Loaded ${favoriteIds.length} favorites from Supabase');
+
+      // Sync to local storage for offline access
+      if (_cacheInitialized) {
+        await _localDataSource.saveFavorites(favoriteIds);
+      }
+    } catch (e) {
+      debugPrint('⚠️ [Discover] Failed to load favorites from Supabase: $e');
+      // Fallback to local storage
+      final savedFavorites = await _localDataSource.getFavorites();
+      if (savedFavorites.isNotEmpty) {
+        state = state.copyWith(favoriteIds: savedFavorites);
+        debugPrint('❤️ [Discover] Loaded ${savedFavorites.length} favorites from local (fallback)');
+      }
     }
   }
 
@@ -89,6 +137,14 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   /// Get current user location
   Future<void> _getUserLocation() async {
     debugPrint('🚀 [Discover] _getUserLocation() called');
+
+    // Show loading state immediately
+    state = state.copyWith(
+      isGettingLocation: true,
+      isPermissionDeniedForever: false,
+      error: null,
+    );
+
     try {
       // Check if location services are enabled
       debugPrint('🔍 [Discover] Checking if location services are enabled...');
@@ -98,6 +154,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       if (!serviceEnabled) {
         debugPrint('❌ [Discover] Location services are disabled');
         state = state.copyWith(
+          isGettingLocation: false,
           error: 'Location services are disabled. Please enable GPS.',
         );
         return;
@@ -116,7 +173,8 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
         if (permission == LocationPermission.denied) {
           debugPrint('❌ [Discover] Permission still denied after request');
           state = state.copyWith(
-            error: 'Location permission denied.',
+            isGettingLocation: false,
+            error: 'Location permission denied. Please grant location access.',
           );
           return;
         }
@@ -125,7 +183,9 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       if (permission == LocationPermission.deniedForever) {
         debugPrint('🚫 [Discover] Permission permanently denied');
         state = state.copyWith(
-          error: 'Location permission permanently denied. Enable in settings.',
+          isGettingLocation: false,
+          isPermissionDeniedForever: true,
+          error: 'Location permission permanently denied. Please enable in device settings.',
         );
         return;
       }
@@ -185,6 +245,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       if (position == null) {
         debugPrint('❌ [Discover] Could not determine location');
         state = state.copyWith(
+          isGettingLocation: false,
           error: 'Could not determine your location. Please check GPS settings.',
         );
         return;
@@ -193,6 +254,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       state = state.copyWith(
         userLatitude: position.latitude,
         userLongitude: position.longitude,
+        isGettingLocation: false,
         error: null,
       );
 
@@ -204,6 +266,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       debugPrint('❌ [Discover] Location error: $e');
       debugPrint('📋 [Discover] Stack trace: $stackTrace');
       state = state.copyWith(
+        isGettingLocation: false,
         error: 'Failed to get location: $e',
       );
     }
@@ -350,9 +413,34 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
 
   /// Refresh places for current category
   Future<void> refresh() async {
-    await _getUserLocation();
-    if (state.hasLocation) {
-      await loadPlaces(state.selectedCategory);
+    debugPrint('🔄 [Discover] Refresh triggered');
+
+    // Show loading state immediately
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+    );
+
+    try {
+      // If location was from search, don't re-fetch GPS - just reload places
+      if (state.isLocationFromSearch && state.hasLocation) {
+        debugPrint('🔄 [Discover] Refreshing with search location');
+        await loadPlaces(state.selectedCategory);
+      } else {
+        // Re-fetch GPS location and then load places
+        debugPrint('🔄 [Discover] Refreshing with GPS location');
+        await _getUserLocation();
+        if (state.hasLocation) {
+          await loadPlaces(state.selectedCategory);
+        }
+      }
+      debugPrint('✅ [Discover] Refresh completed');
+    } catch (e) {
+      debugPrint('❌ [Discover] Refresh failed: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Refresh failed: $e',
+      );
     }
   }
 
@@ -417,25 +505,49 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
     state = state.copyWith(viewMode: mode);
   }
 
-  /// Toggle favorite status for a place (persisted to local storage)
-  void toggleFavorite(String placeId) {
+  /// Toggle favorite status for a place (persisted to Supabase and local storage)
+  Future<bool> toggleFavorite(String placeId, {DiscoverPlace? place}) async {
     final newFavorites = Set<String>.from(state.favoriteIds);
-    if (newFavorites.contains(placeId)) {
-      newFavorites.remove(placeId);
-      debugPrint('💔 [Discover] Removed from favorites: $placeId');
-      // Persist to local storage
-      if (_cacheInitialized) {
-        _localDataSource.removeFavorite(placeId);
-      }
-    } else {
+    final wasAdded = !newFavorites.contains(placeId);
+
+    // Optimistic update
+    if (wasAdded) {
       newFavorites.add(placeId);
-      debugPrint('❤️ [Discover] Added to favorites: $placeId');
-      // Persist to local storage
-      if (_cacheInitialized) {
-        _localDataSource.addFavorite(placeId);
-      }
+      debugPrint('❤️ [Discover] Adding to favorites: $placeId');
+    } else {
+      newFavorites.remove(placeId);
+      debugPrint('💔 [Discover] Removing from favorites: $placeId');
     }
     state = state.copyWith(favoriteIds: newFavorites);
+
+    // Persist to Supabase
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user != null) {
+        await _supabase.rpc('toggle_discover_favorite', params: {
+          'p_place_id': placeId,
+          'p_place_name': place?.name,
+          'p_place_category': place?.category.name,
+          'p_latitude': place?.latitude,
+          'p_longitude': place?.longitude,
+        });
+        debugPrint('✅ [Discover] Favorite synced to Supabase');
+      }
+    } catch (e) {
+      debugPrint('⚠️ [Discover] Failed to sync favorite to Supabase: $e');
+      // Continue with local storage even if Supabase fails
+    }
+
+    // Persist to local storage for offline access
+    if (_cacheInitialized) {
+      if (wasAdded) {
+        _localDataSource.addFavorite(placeId);
+      } else {
+        _localDataSource.removeFavorite(placeId);
+      }
+    }
+
+    return wasAdded;
   }
 
   /// Toggle show favorites only filter

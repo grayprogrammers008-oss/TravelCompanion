@@ -12,6 +12,9 @@ import '../providers/ai_suggestions_provider.dart';
 import '../providers/trip_providers.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../../../../shared/models/itinerary_model.dart';
+import '../../../discover/presentation/providers/discover_providers.dart';
+import '../../../discover/domain/entities/discover_place.dart';
+import '../../../discover/domain/entities/place_category.dart';
 
 /// AI-powered suggestions card that appears on the Home page
 /// Shows nearby places, weather, and travel tips based on context
@@ -89,6 +92,10 @@ class AiSuggestionsCard extends ConsumerWidget {
   }
 
   Widget _buildCard(BuildContext context, WidgetRef ref, AiSuggestions suggestions) {
+    // Watch discover state for favorites
+    final discoverState = ref.watch(discoverStateProvider);
+    final favoriteIds = discoverState.favoriteIds;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppTheme.spacingMd,
@@ -203,7 +210,7 @@ class AiSuggestionsCard extends ConsumerWidget {
 
             // Horizontal scrollable places - compact design
             SizedBox(
-              height: 100, // Reduced from 145 for more compact layout
+              height: 80, // Compact height that fits content without overflow
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.fromLTRB(
@@ -215,7 +222,8 @@ class AiSuggestionsCard extends ConsumerWidget {
                 itemCount: suggestions.places.length.clamp(0, 5),
                 itemBuilder: (context, index) {
                   final place = suggestions.places[index];
-                  return _buildPlaceCard(context, ref, place, index == 0);
+                  final isFavorite = favoriteIds.contains(place.placeId);
+                  return _buildPlaceCard(context, ref, place, index == 0, isFavorite);
                 },
               ),
             ),
@@ -225,7 +233,7 @@ class AiSuggestionsCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlaceCard(BuildContext context, WidgetRef ref, NearbyPlace place, bool isFirst) {
+  Widget _buildPlaceCard(BuildContext context, WidgetRef ref, NearbyPlace place, bool isFirst, bool isFavorite) {
     final placesService = GooglePlacesService();
     // Request higher quality photo (400px for crisp display on retina screens)
     final photoUrl = place.photos.isNotEmpty
@@ -243,7 +251,7 @@ class AiSuggestionsCard extends ConsumerWidget {
       child: GestureDetector(
         onTap: () => _showPlaceDetails(context, ref, place),
         child: Container(
-          width: 160, // Slightly wider for horizontal layout
+          width: 150, // Compact width for horizontal layout
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -255,78 +263,111 @@ class AiSuggestionsCard extends ConsumerWidget {
               ),
             ],
           ),
-          child: Row(
+          child: Stack(
             children: [
-              // Image - left side
-              ClipRRect(
-                borderRadius: const BorderRadius.horizontal(
-                  left: Radius.circular(AppTheme.radiusMd),
-                ),
-                child: Container(
-                  width: 56,
-                  color: AppTheme.neutral100,
-                  child: photoUrl != null
-                      ? Image.network(
-                          photoUrl,
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                          errorBuilder: (context, error, stack) => _buildPlaceholder(place),
-                        )
-                      : _buildPlaceholder(place),
-                ),
-              ),
-              // Info - right side
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        place.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1F2937),
-                          height: 1.2,
-                        ),
+              Row(
+                children: [
+                  // Image - left side
+                  ClipRRect(
+                    borderRadius: const BorderRadius.horizontal(
+                      left: Radius.circular(AppTheme.radiusMd),
+                    ),
+                    child: SizedBox(
+                      width: 50,
+                      height: double.infinity,
+                      child: Container(
+                        color: AppTheme.neutral100,
+                        child: photoUrl != null
+                            ? Image.network(
+                                photoUrl,
+                                fit: BoxFit.cover,
+                                width: 50,
+                                height: double.infinity,
+                                errorBuilder: (context, error, stack) => _buildPlaceholder(place),
+                              )
+                            : _buildPlaceholder(place),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
+                    ),
+                  ),
+                  // Info - right side
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (place.rating != null) ...[
-                            const Icon(
-                              Icons.star,
-                              size: 11,
-                              color: Color(0xFFFBBF24),
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              place.rating!.toStringAsFixed(1),
-                              style: TextStyle(
+                          Flexible(
+                            child: Text(
+                              place.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
                                 fontSize: 10,
-                                color: AppTheme.neutral600,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1F2937),
+                                height: 1.2,
                               ),
                             ),
-                          ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              if (place.rating != null) ...[
+                                const Icon(
+                                  Icons.star,
+                                  size: 10,
+                                  color: Color(0xFFFBBF24),
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  place.rating!.toStringAsFixed(1),
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    color: AppTheme.neutral600,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                              if (place.openNow != null) ...[
+                                if (place.rating != null) const SizedBox(width: 4),
+                                Text(
+                                  place.openNow! ? '• Open' : '• Closed',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w500,
+                                    color: place.openNow! ? Colors.green : Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ],
                       ),
-                      if (place.openNow != null) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          place.openNow! ? 'Open' : 'Closed',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            color: place.openNow! ? Colors.green : Colors.red,
-                          ),
-                        ),
-                      ],
-                    ],
+                    ),
+                  ),
+                ],
+              ),
+              // Favorite button - top right corner
+              Positioned(
+                top: 2,
+                right: 2,
+                child: GestureDetector(
+                  onTap: () => _toggleFavorite(ref, place),
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: isFavorite
+                          ? const Color(0xFFE91E63).withValues(alpha: 0.9)
+                          : Colors.black.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      size: 12,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -335,6 +376,26 @@ class AiSuggestionsCard extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// Toggle favorite for a place
+  void _toggleFavorite(WidgetRef ref, NearbyPlace place) {
+    HapticFeedback.lightImpact();
+    // Convert NearbyPlace to DiscoverPlace for the toggle
+    final discoverPlace = DiscoverPlace(
+      placeId: place.placeId,
+      name: place.name,
+      vicinity: place.vicinity,
+      latitude: place.latitude,
+      longitude: place.longitude,
+      types: place.types,
+      rating: place.rating,
+      userRatingsTotal: place.userRatingsTotal,
+      openNow: place.openNow,
+      photos: place.photos,
+      category: PlaceCategory.urban, // Default category for nearby places
+    );
+    ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId, place: discoverPlace);
   }
 
   Widget _buildPlaceholder(NearbyPlace place) {
