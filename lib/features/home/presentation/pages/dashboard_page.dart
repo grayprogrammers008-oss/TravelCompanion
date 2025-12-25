@@ -266,6 +266,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 Positioned.fill(
                   child: DestinationImage(
                     tripName: trip.destination ?? trip.name,
+                    tripId: trip.id,
                     height: 280,
                     fit: BoxFit.cover,
                   ),

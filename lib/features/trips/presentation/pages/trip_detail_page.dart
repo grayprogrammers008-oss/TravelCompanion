@@ -198,6 +198,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           DestinationImage(
             imageUrl: trip.trip.coverImageUrl,
             tripName: trip.trip.destination ?? trip.trip.name,
+            tripId: trip.trip.id,
             height: height + safeAreaTop,
             width: double.infinity,
             fit: BoxFit.cover,

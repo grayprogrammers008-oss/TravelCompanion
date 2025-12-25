@@ -14,6 +14,7 @@ import '../../features/expenses/presentation/pages/expense_list_page.dart';
 import '../../features/expenses/presentation/pages/add_expense_page.dart';
 import '../../features/expenses/presentation/pages/expense_test_page.dart';
 import '../../features/expenses/presentation/pages/settlement_summary_page.dart';
+import '../../features/expenses/presentation/pages/scan_bill_page.dart';
 import '../../features/trip_invites/presentation/pages/accept_invite_page.dart';
 import '../../features/trip_invites/presentation/pages/join_trip_by_code_page.dart';
 import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
@@ -88,6 +89,8 @@ class AppRoutes {
   static const String addExpense = '/trips/:tripId/expenses/add';
   static const String settlementSummary = '/trips/:tripId/expenses/settle';
   static const String addStandaloneExpense = '/expenses/add';
+  static const String scanBill = '/expenses/scan';
+  static const String scanBillForTrip = '/trips/:tripId/expenses/scan';
   static const String expenseTest = '/expenses/test';
   static const String acceptInvite = '/invite/:inviteCode';
   static const String joinByCode = '/join-trip';
@@ -359,6 +362,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'addStandaloneExpense',
         builder: (context, state) => const AddExpensePage(),
       ),
+      GoRoute(
+        path: AppRoutes.scanBill,
+        name: 'scanBill',
+        builder: (context, state) => const ScanBillPage(),
+      ),
       // IMPORTANT: Specific routes must come BEFORE parameterized routes
       GoRoute(
         path: AppRoutes.tripFilter,
@@ -436,6 +444,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final tripId = state.pathParameters['tripId']!;
           return SettlementSummaryPage(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.scanBillForTrip,
+        name: 'scanBillForTrip',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return ScanBillPage(tripId: tripId);
         },
       ),
       GoRoute(

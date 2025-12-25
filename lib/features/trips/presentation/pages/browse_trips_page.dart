@@ -640,6 +640,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                           ),
                           child: DestinationImage(
                             tripName: trip.destination ?? trip.name,
+                            tripId: trip.id,
                             height: 120,
                             width: double.infinity,
                             fit: BoxFit.cover,
@@ -1795,6 +1796,7 @@ class DiscoverableTripCard extends StatelessWidget {
                     ),
                     child: DestinationImage(
                       tripName: trip.destination ?? trip.name,
+                      tripId: trip.id,
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,

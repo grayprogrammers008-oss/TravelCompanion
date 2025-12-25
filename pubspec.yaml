@@ -103,9 +103,15 @@ dependencies:
   # Speech Recognition (on-device, free)
   speech_to_text: ^7.0.0
 
+  # Audio Recording (for cloud speech-to-text)
+  record: ^6.1.2
+
   # PDF Generation & Printing
   pdf: ^3.11.1
   printing: ^5.13.3
+
+  # ML Kit Text Recognition (for bill scanning)
+  google_mlkit_text_recognition: ^0.14.0
 
 dev_dependencies:
   flutter_test:

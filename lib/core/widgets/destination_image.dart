@@ -13,10 +13,12 @@ import '../services/image_service.dart';
 /// - Shows shimmer loading effect while fetching
 /// - Falls back to gradient if image unavailable
 /// - Caches images to reduce API calls
+/// - Uses tripId for unique caching per trip (prevents wrong images for similar destinations)
 class DestinationImage extends StatefulWidget {
   final String? imageUrl;
   final String? tripName;
   final String? destination;
+  final String? tripId; // Used for unique cache key per trip
   final double? width;
   final double? height;
   final BoxFit fit;
@@ -29,6 +31,7 @@ class DestinationImage extends StatefulWidget {
     this.imageUrl,
     this.tripName,
     this.destination,
+    this.tripId,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
@@ -50,32 +53,32 @@ class _DestinationImageState extends State<DestinationImage> {
   @override
   void initState() {
     super.initState();
-    // Force print to console - this MUST appear
-    print('🚨🚨🚨 [DestinationImage] initState called! tripName=${widget.tripName}, imageUrl=${widget.imageUrl}');
+    debugPrint('🖼️ [DestinationImage] initState called! tripName=${widget.tripName}, tripId=${widget.tripId}, imageUrl=${widget.imageUrl}');
     _loadImage();
   }
 
   Future<void> _loadImage() async {
-    // Using print instead of debugPrint for more reliable console output
-    print('🖼️ [DestinationImage] _loadImage called');
-    print('🖼️ [DestinationImage] imageUrl: ${widget.imageUrl}');
-    print('🖼️ [DestinationImage] tripName: ${widget.tripName}');
-    print('🖼️ [DestinationImage] destination: ${widget.destination}');
+    // Using debugPrint for console output
+    debugPrint('🖼️ [DestinationImage] _loadImage called');
+    debugPrint('🖼️ [DestinationImage] imageUrl: ${widget.imageUrl}');
+    debugPrint('🖼️ [DestinationImage] tripName: ${widget.tripName}');
+    debugPrint('🖼️ [DestinationImage] destination: ${widget.destination}');
+    debugPrint('🖼️ [DestinationImage] tripId: ${widget.tripId}');
 
     // If imageUrl is provided, use it directly
     if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
-      print('🖼️ [DestinationImage] Using provided imageUrl');
+      debugPrint('🖼️ [DestinationImage] Using provided imageUrl');
       return;
     }
 
     // Otherwise, try to fetch from Google Places using destination or tripName
     final searchQuery = widget.destination ?? widget.tripName;
     if (searchQuery == null || searchQuery.isEmpty) {
-      print('🖼️ [DestinationImage] No search query available, skipping fetch');
+      debugPrint('🖼️ [DestinationImage] No search query available, skipping fetch');
       return;
     }
 
-    print('🖼️ [DestinationImage] Fetching image for: $searchQuery');
+    debugPrint('🖼️ [DestinationImage] Fetching image for: $searchQuery (tripId: ${widget.tripId})');
 
     setState(() {
       _isLoading = true;
@@ -83,8 +86,12 @@ class _DestinationImageState extends State<DestinationImage> {
     });
 
     try {
-      final url = await _imageService.getDestinationImage(searchQuery);
-      print('🖼️ [DestinationImage] Received URL: ${url != null ? "${url.substring(0, 50)}..." : "null"}');
+      // Pass tripId as cacheKey for unique caching per trip
+      final url = await _imageService.getDestinationImage(
+        searchQuery,
+        cacheKey: widget.tripId,
+      );
+      debugPrint('🖼️ [DestinationImage] Received URL: ${url != null ? "${url.substring(0, 50)}..." : "null"}');
       if (mounted) {
         setState(() {
           _fetchedImageUrl = url;
@@ -92,8 +99,8 @@ class _DestinationImageState extends State<DestinationImage> {
         });
       }
     } catch (e, stackTrace) {
-      print('🖼️ [DestinationImage] Error loading image: $e');
-      print('🖼️ [DestinationImage] Stack: $stackTrace');
+      debugPrint('🖼️ [DestinationImage] Error loading image: $e');
+      debugPrint('🖼️ [DestinationImage] Stack: $stackTrace');
       if (mounted) {
         setState(() {
           _hasError = true;

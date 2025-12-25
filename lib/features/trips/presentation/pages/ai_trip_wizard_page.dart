@@ -1,8 +1,8 @@
 // AI Trip Wizard Page
 //
 // Unified AI-powered voice input for complete trip creation
-// Creates: Trip + AI Itinerary + AI Packing Checklist in one go
-// Features stunning Perplexity-like animations and real-time speech recognition
+// Uses Groq Whisper for speech-to-text (supports 99+ languages)
+// Flow: Record → Process → Show Preview → Generate Trip
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -11,7 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/app_theme_data.dart';
-import '../../../../core/services/voice_input_service.dart';
+import '../../../../core/services/groq_whisper_service.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import '../../../../core/widgets/ai_orb_animation.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/checklist_model.dart';
@@ -22,6 +25,18 @@ import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../providers/trip_providers.dart';
 import 'package:uuid/uuid.dart';
 
+/// Voice input states for clear UX flow
+enum VoiceState {
+  idle,           // Ready to record
+  recording,      // Recording audio
+  processing,     // Transcribing with Whisper
+  preview,        // Showing parsed preview (text only)
+  generatingPlan, // AI generating itinerary preview
+  planPreview,    // Showing full itinerary for review/refinement
+  refining,       // AI refining the plan based on user feedback
+  creating,       // Creating trip in database
+}
+
 class AiTripWizardPage extends ConsumerStatefulWidget {
   const AiTripWizardPage({super.key});
 
@@ -31,48 +46,56 @@ class AiTripWizardPage extends ConsumerStatefulWidget {
 
 class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     with TickerProviderStateMixin {
-  final VoiceInputService _voiceService = VoiceInputService();
+  // Groq Whisper service for cloud speech-to-text
+  late GroqWhisperService _whisperService;
+  late AudioRecorder _audioRecorder;
+  String? _currentRecordingPath;
 
-  // State
-  bool _isInitialized = false;
-  bool _isListening = false;
-  bool _hasError = false;
-  bool _isSimulator = false;
-  bool _isPermissionDenied = false; // Microphone permission denied
-  bool _isPermissionPermanentlyDenied = false; // User needs to go to Settings
-  String _errorMessage = '';
+  // Voice state machine
+  VoiceState _voiceState = VoiceState.idle;
   String _transcribedText = '';
-  String _interimText = '';
+  String? _errorMessage;
   double _soundLevel = 0.0;
 
-  // Language selection for speech recognition
-  // Key languages: English (en_IN), Tamil (ta_IN), Hindi (hi_IN)
-  String _selectedLanguage = 'en_IN'; // Default to English
-  static const Map<String, String> _languages = {
-    'en_IN': 'English',
-    'ta_IN': 'தமிழ்',
-    'hi_IN': 'हिंदी',
-  };
+  // Selected language for speech recognition
+  String _selectedLanguage = 'ta'; // Default to Tamil for better accuracy
 
-  // Track which languages are actually available for speech recognition
-  final Map<String, bool> _languageAvailability = {
-    'en_IN': true, // English is always available
-    'ta_IN': false,
-    'hi_IN': false,
-  };
+  // Auto-detected language from Whisper
+  String? _detectedLanguage;
 
-  /// Update language availability based on device's speech recognition locales
-  void _updateLanguageAvailability() {
-    for (final localeId in _languages.keys) {
-      _languageAvailability[localeId] = _voiceService.isLocaleAvailable(localeId);
-    }
-    debugPrint('🌐 Language availability: $_languageAvailability');
-  }
+  // Language names for display
+  static const Map<String, String> _languageNames = {
+    'en': 'English',
+    'ta': 'Tamil',
+    'hi': 'Hindi',
+    'te': 'Telugu',
+    'kn': 'Kannada',
+    'ml': 'Malayalam',
+    'mr': 'Marathi',
+    'bn': 'Bengali',
+    'gu': 'Gujarati',
+    'pa': 'Punjabi',
+    'ur': 'Urdu',
+    'es': 'Spanish',
+    'fr': 'French',
+    'de': 'German',
+    'zh': 'Chinese',
+    'ja': 'Japanese',
+    'ko': 'Korean',
+    'ar': 'Arabic',
+    'ru': 'Russian',
+  };
 
   // AI Generation state
-  bool _isGenerating = false;
   String _generationStatus = '';
-  int _generationStep = 0; // 0: none, 1: trip, 2: itinerary, 3: checklist
+  int _generationStep = 0;
+
+  // Plan preview and refinement state
+  AiCompleteTripPlan? _currentPlan;
+  int _refinementCount = 0;
+  static const int _maxRefinements = 3;
+  final TextEditingController _refinementController = TextEditingController();
+  bool _isRefiningWithVoice = false;
 
   // Animation controllers
   late AnimationController _fadeController;
@@ -80,6 +103,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   late AnimationController _scaleController;
   late AnimationController _pulseController;
   late AnimationController _backgroundController;
+  late AnimationController _recordingController;
 
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -88,8 +112,18 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   @override
   void initState() {
     super.initState();
+    _initWhisperService();
     _initAnimations();
-    _initVoiceService();
+  }
+
+  void _initWhisperService() {
+    const groqApiKey = String.fromEnvironment(
+      'GROQ_API_KEY',
+      defaultValue: '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',
+    );
+    _whisperService = GroqWhisperService(groqApiKey);
+    _audioRecorder = AudioRecorder();
+    debugPrint('✅ Whisper service initialized');
   }
 
   void _initAnimations() {
@@ -132,363 +166,275 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       duration: const Duration(seconds: 20),
     )..repeat();
 
+    _recordingController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
     // Start entrance animations
     _fadeController.forward();
     _slideController.forward();
     _scaleController.forward();
   }
 
-  Future<void> _initVoiceService() async {
-    _voiceService.onResult = (text, isFinal) {
+  /// Start recording audio for Whisper transcription
+  Future<void> _startRecording() async {
+    // Check microphone permission
+    if (!await _audioRecorder.hasPermission()) {
       setState(() {
-        if (isFinal) {
-          // If continuing from previous text, append the new text
-          if (_isContinuing && _previousText.isNotEmpty) {
-            _transcribedText = '$_previousText. $text';
-            _isContinuing = false; // Reset after appending
-          } else {
-            _transcribedText = text;
-          }
-          _interimText = '';
-          // No more local parsing - AI will handle everything
-        } else {
-          // Show interim text (with previous text if continuing)
-          if (_isContinuing && _previousText.isNotEmpty) {
-            _interimText = '$_previousText. $text';
-          } else {
-            _interimText = text;
-          }
-        }
-      });
-    };
-
-    _voiceService.onSoundLevelChange = (level) {
-      setState(() => _soundLevel = level);
-    };
-
-    _voiceService.onError = (error) {
-      setState(() {
-        _hasError = true;
-        _isListening = false;
-        _isContinuing = false; // Reset on error
-
-        // Handle special permission error codes
-        if (error == 'PERMISSION_DENIED') {
-          _isPermissionDenied = true;
-          _isPermissionPermanentlyDenied = false;
-          _errorMessage = 'Microphone permission required. Tap to allow.';
-        } else if (error == 'PERMISSION_PERMANENTLY_DENIED') {
-          _isPermissionDenied = true;
-          _isPermissionPermanentlyDenied = true;
-          _errorMessage = 'Microphone permission denied. Tap to open Settings.';
-        } else {
-          _isPermissionDenied = false;
-          _isPermissionPermanentlyDenied = false;
-          _errorMessage = error;
-        }
-      });
-    };
-
-    _voiceService.onListeningStarted = () {
-      setState(() {
-        _isListening = true;
-        _hasError = false;
-        // Only clear if NOT continuing
-        if (!_isContinuing) {
-          _transcribedText = '';
-        }
-        _interimText = '';
-      });
-      HapticFeedback.mediumImpact();
-    };
-
-    _voiceService.onListeningStopped = () {
-      setState(() {
-        _isListening = false;
-        _isContinuing = false; // Reset when stopped
-      });
-    };
-
-    // Check if we already have microphone permission before initializing
-    final hasPermission = await _voiceService.hasMicrophonePermission();
-    debugPrint('🎤 Current microphone permission: $hasPermission');
-
-    if (!hasPermission) {
-      // Don't initialize yet - wait for user to tap the mic button
-      // This defers permission request to when user actually wants to use voice input
-      debugPrint('🎤 Microphone permission not granted yet - will request on first mic tap');
-      setState(() {
-        _isInitialized = false;
-        _isSimulator = false; // Assume physical device until we check
-        _hasError = false; // Not an error - just not initialized yet
+        _errorMessage = 'Microphone permission required';
       });
       return;
     }
 
-    final initialized = await _voiceService.initialize();
+    try {
+      final tempDir = await getTemporaryDirectory();
+      _currentRecordingPath = '${tempDir.path}/whisper_${DateTime.now().millisecondsSinceEpoch}.wav';
 
-    // Update which languages are actually available for speech recognition
-    _updateLanguageAvailability();
+      // Use WAV format at 16kHz for optimal Whisper transcription
+      // Whisper works best with uncompressed audio at 16kHz sample rate
+      await _audioRecorder.start(
+        const RecordConfig(
+          encoder: AudioEncoder.wav,
+          sampleRate: 16000,  // Whisper's native sample rate
+          numChannels: 1,     // Mono is sufficient for speech
+        ),
+        path: _currentRecordingPath!,
+      );
 
-    // Set the selected language locale for speech recognition
-    _voiceService.setLocale(_selectedLanguage);
-
-    setState(() {
-      _isInitialized = initialized;
-      _isSimulator = _voiceService.isRunningOnSimulator;
-    });
-
-    debugPrint('🎤 AI Trip Wizard: initialized=$initialized, isSimulator=$_isSimulator');
-    debugPrint('🎤 Using language: $_selectedLanguage (${_languages[_selectedLanguage]})');
-
-    if (!initialized && _isSimulator && mounted) {
-      // ONLY enable demo mode for actual simulators/emulators
-      debugPrint('🎤 Enabling demo mode for simulator/emulator');
       setState(() {
-        _hasError = false;
-        _isInitialized = true; // Allow demo mode on simulator
+        _voiceState = VoiceState.recording;
+        _errorMessage = null;
+        _transcribedText = '';
       });
-    } else if (!initialized && !_isSimulator && mounted) {
-      // Physical device but speech failed - show error, DO NOT enable demo mode
-      debugPrint('❌ Speech recognition failed on PHYSICAL device - NOT enabling demo mode');
+
+      HapticFeedback.mediumImpact();
+      _recordingController.repeat(reverse: true);
+      _monitorAudioLevels();
+      debugPrint('🎙️ Recording started');
+    } catch (e) {
+      debugPrint('❌ Failed to start recording: $e');
       setState(() {
-        _hasError = true;
-        _errorMessage = 'Speech recognition not available. Please check microphone permissions in Settings.';
+        _errorMessage = 'Failed to start recording';
       });
     }
   }
 
-  /// Change language for speech recognition
-  void _changeLanguage(String locale) {
-    HapticFeedback.selectionClick();
-    setState(() {
-      _selectedLanguage = locale;
-      // Clear any previous error when changing language
-      _hasError = false;
-      _errorMessage = '';
-    });
-    _voiceService.setLocale(locale);
-    debugPrint('🌐 Language changed to: $locale (${_languages[locale]})');
-
-    // Note: We don't show a warning here anymore because:
-    // 1. The voice service will automatically fall back to device default if locale unavailable
-    // 2. Speech will still work with device default language
-    // 3. Only show error if actual speech recognition fails
-  }
-
-  /// Handle permission button tap - request permission or open settings
-  Future<void> _handlePermissionButtonTap() async {
-    HapticFeedback.lightImpact();
-
-    if (_isPermissionPermanentlyDenied) {
-      // Open app settings so user can enable microphone permission
-      debugPrint('🔧 Opening app settings for microphone permission...');
-      final opened = await _voiceService.openMicrophoneSettings();
-      if (opened) {
-        // Show a snackbar to guide the user
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Enable microphone permission in Settings, then return to the app'),
-              duration: Duration(seconds: 4),
-            ),
-          );
-        }
-      }
-    } else {
-      // Request permission directly
-      debugPrint('🎤 Requesting microphone permission...');
-      final granted = await _voiceService.requestMicrophonePermission();
-      if (granted) {
-        // Permission granted - reinitialize the voice service
-        setState(() {
-          _hasError = false;
-          _isPermissionDenied = false;
-          _isPermissionPermanentlyDenied = false;
-          _errorMessage = '';
-        });
-        await _initVoiceService();
-      } else {
-        // Permission denied - check if permanently denied
-        final isPermanentlyDenied = await _voiceService.isMicrophonePermissionPermanentlyDenied();
-        setState(() {
-          _isPermissionPermanentlyDenied = isPermanentlyDenied;
-          _errorMessage = isPermanentlyDenied
-              ? 'Microphone permission denied. Tap to open Settings.'
-              : 'Microphone permission required. Tap to allow.';
-        });
-      }
-    }
-  }
-
-  /// Track if user is continuing their input (appending to existing text)
-  bool _isContinuing = false;
-  String _previousText = '';
-
-  Future<void> _toggleListening() async {
-    HapticFeedback.lightImpact();
-    debugPrint('🎤🎤🎤 _toggleListening CALLED 🎤🎤🎤');
-    debugPrint('🎤 State: _isListening=$_isListening, _isSimulator=$_isSimulator, _isInitialized=$_isInitialized');
-
-    if (_isListening) {
-      debugPrint('🎤 Already listening, stopping...');
-      await _voiceService.stopListening();
-    } else {
-      // ALWAYS check and request microphone permission FIRST before anything else
-      debugPrint('🎤 Not listening, starting permission check...');
-      debugPrint('🎤 Calling hasMicrophonePermission()...');
-      final hasPermission = await _voiceService.hasMicrophonePermission();
-      debugPrint('🎤 hasMicrophonePermission returned: $hasPermission');
-
-      if (!hasPermission) {
-        debugPrint('🎤🎤🎤 PERMISSION NOT GRANTED - REQUESTING NOW 🎤🎤🎤');
-        final granted = await _voiceService.requestMicrophonePermission();
-        debugPrint('🎤🎤🎤 PERMISSION REQUEST RESULT: granted=$granted 🎤🎤🎤');
-
-        if (!granted) {
-          // Permission denied - update UI state
-          debugPrint('🎤 Permission was DENIED, checking if permanently denied...');
-          final isPermanentlyDenied = await _voiceService.isMicrophonePermissionPermanentlyDenied();
-          debugPrint('🎤 isPermanentlyDenied=$isPermanentlyDenied');
+  /// Monitor audio levels during recording
+  void _monitorAudioLevels() async {
+    while (_voiceState == VoiceState.recording) {
+      try {
+        final amplitude = await _audioRecorder.getAmplitude();
+        if (mounted && _voiceState == VoiceState.recording) {
           setState(() {
-            _hasError = true;
-            _isPermissionDenied = true;
-            _isPermissionPermanentlyDenied = isPermanentlyDenied;
-            _errorMessage = isPermanentlyDenied
-                ? 'Microphone permission denied. Tap to open Settings.'
-                : 'Microphone permission required. Tap to allow.';
+            // Convert amplitude to 0-1 scale
+            _soundLevel = ((amplitude.current + 50) / 50).clamp(0.0, 1.0);
           });
-          return; // Don't proceed without permission
         }
-        debugPrint('✅✅✅ Microphone permission GRANTED! ✅✅✅');
-        // Re-initialize voice service now that we have permission
-        await _initVoiceService();
-      } else {
-        debugPrint('🎤 Permission already granted, proceeding...');
-      }
+      } catch (_) {}
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+  }
 
-      // If there's already text, we're continuing (appending)
-      // Otherwise, starting fresh
-      if (_transcribedText.isNotEmpty) {
-        _isContinuing = true;
-        _previousText = _transcribedText;
-      } else {
-        _isContinuing = false;
-        _previousText = '';
-      }
+  /// Get language-specific prompt to improve Whisper accuracy
+  /// Note: Groq Whisper has 896 character limit for prompts
+  /// These prompts include common travel vocabulary to guide transcription
+  String? _getLanguagePrompt(String langCode) {
+    switch (langCode) {
+      case 'ta':
+        // Tamil travel vocabulary (under 896 chars)
+        return 'தமிழ் பயண திட்டமிடல். பயணம், சுற்றுலா, விடுமுறை, கோவில், கடற்கரை, மலை. '
+            'நாட்கள், வாரம். குடும்பம், நண்பர்கள். '
+            'கேரளா, கோவா, ஊட்டி, மூணார், மதுரை, திருப்பதி. '
+            'ஐந்து நாட்கள், மூன்று நாட்கள், ஒரு வாரம். '
+            'போக வேண்டும், செல்ல வேண்டும். அடுத்த வாரம், அடுத்த மாதம்.';
+      case 'hi':
+        // Hindi travel vocabulary (under 896 chars)
+        return 'हिंदी यात्रा योजना। यात्रा, घूमना, छुट्टी, मंदिर, समुद्र तट, पहाड़। '
+            'दिन, हफ्ता। परिवार, दोस्त। '
+            'गोवा, केरला, मनाली, शिमला, जयपुर, वाराणसी, लद्दाख। '
+            'पांच दिन, तीन दिन, एक हफ्ता। '
+            'जाना है, घूमना है। अगले हफ्ते, अगले महीने।';
+      case 'te':
+        // Telugu travel vocabulary
+        return 'తెలుగు ప్రయాణ ప్రణాళిక. ప్రయాణం, పర్యటన, సెలవు, గుడి, బీచ్, కొండలు. '
+            'రోజులు, వారం. కుటుంబం, స్నేహితులు. '
+            'గోవా, కేరళ, ఊటీ, తిరుపతి. ఐదు రోజులు, మూడు రోజులు.';
+      case 'kn':
+        // Kannada travel vocabulary
+        return 'ಕನ್ನಡ ಪ್ರಯಾಣ ಯೋಜನೆ. ಪ್ರಯಾಣ, ಪ್ರವಾಸ, ರಜೆ, ದೇವಸ್ಥಾನ, ಬೀಚ್, ಬೆಟ್ಟ. '
+            'ದಿನಗಳು, ವಾರ. ಕುಟುಂಬ, ಸ್ನೇಹಿತರು. '
+            'ಗೋವಾ, ಕೇರಳ, ಊಟಿ, ಮೈಸೂರು. ಐದು ದಿನ, ಮೂರು ದಿನ.';
+      case 'ml':
+        // Malayalam travel vocabulary
+        return 'മലയാളം യാത്രാ ആസൂത്രണം. യാത്ര, പര്യടനം, അവധി, ക്ഷേത്രം, ബീച്ച്, മല. '
+            'ദിവസങ്ങൾ, ആഴ്ച. കുടുംബം, സുഹൃത്തുക്കൾ. '
+            'ഗോവ, കേരളം, ഊട്ടി, മൂന്നാർ. അഞ്ച് ദിവസം, മൂന്ന് ദിവസം.';
+      case 'mr':
+        // Marathi travel vocabulary
+        return 'मराठी प्रवास नियोजन. प्रवास, सहल, सुट्टी, मंदिर, समुद्रकिनारा, डोंगर. '
+            'दिवस, आठवडा. कुटुंब, मित्र. '
+            'गोवा, केरळ, महाबळेश्वर. पाच दिवस, तीन दिवस.';
+      default:
+        return null; // No prompt needed for English
+    }
+  }
 
+  /// Stop recording and transcribe with Whisper
+  Future<void> _stopAndTranscribe() async {
+    if (_voiceState != VoiceState.recording) return;
+
+    _recordingController.stop();
+    HapticFeedback.lightImpact();
+
+    setState(() {
+      _voiceState = VoiceState.processing;
+      _soundLevel = 0;
+    });
+
+    try {
+      final path = await _audioRecorder.stop();
+      debugPrint('🎙️ Recording stopped: $path');
+
+      if (path != null) {
+        // Get file size for debugging
+        final file = File(path);
+        final fileSize = await file.length();
+        debugPrint('📊 [DEBUG] Audio file size: ${(fileSize / 1024).toStringAsFixed(1)} KB');
+        debugPrint('🌐 [DEBUG] Selected language for Whisper: $_selectedLanguage');
+
+        // Build language-specific prompt to help with accuracy
+        final prompt = _getLanguagePrompt(_selectedLanguage);
+        debugPrint('📝 [DEBUG] Language prompt: ${prompt ?? "none (English)"}');
+
+        // Pass selected language + prompt for better accuracy
+        final result = await _whisperService.transcribeFile(
+          audioFilePath: path,
+          language: _selectedLanguage,
+          prompt: prompt,
+        );
+
+        // Clean up recording file
+        try {
+          await File(path).delete();
+        } catch (_) {}
+
+        // Detailed debug output
+        debugPrint('═══════════════════════════════════════════════════════');
+        debugPrint('📊 [WHISPER RESULT]');
+        debugPrint('   Success: ${result.success}');
+        debugPrint('   Detected Language: ${result.detectedLanguage}');
+        debugPrint('   Duration: ${result.duration?.toStringAsFixed(1)}s');
+        debugPrint('   Error: ${result.error ?? "none"}');
+        debugPrint('───────────────────────────────────────────────────────');
+        debugPrint('   TRANSCRIBED TEXT:');
+        debugPrint('   "${result.text}"');
+        debugPrint('═══════════════════════════════════════════════════════');
+
+        // Check for language mismatch
+        if (result.detectedLanguage != null &&
+            result.detectedLanguage != _selectedLanguage) {
+          debugPrint('⚠️ [WARNING] Language mismatch!');
+          debugPrint('   Expected: $_selectedLanguage');
+          debugPrint('   Detected: ${result.detectedLanguage}');
+          debugPrint('   This could cause transcription issues.');
+        }
+
+        if (result.success && result.text.trim().isNotEmpty) {
+          setState(() {
+            _transcribedText = result.text.trim();
+            _detectedLanguage = result.detectedLanguage;
+            _voiceState = VoiceState.preview;
+          });
+          HapticFeedback.mediumImpact();
+          debugPrint('✅ Transcription stored: $_transcribedText');
+        } else {
+          setState(() {
+            _voiceState = VoiceState.idle;
+            _errorMessage = result.error ?? 'Could not understand. Please try again.';
+          });
+        }
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ Transcription error: $e');
+      debugPrint('📚 Stack: $stackTrace');
       setState(() {
-        _hasError = false;
-        _isPermissionDenied = false;
-        _isPermissionPermanentlyDenied = false;
-        // Don't clear text if continuing
-        if (!_isContinuing) {
-          _transcribedText = '';
-        }
+        _voiceState = VoiceState.idle;
+        _errorMessage = 'Transcription failed. Please try again.';
       });
+    }
+  }
 
-      if (_isSimulator) {
-        await _runWizardDemoMode();
-      } else {
-        await _voiceService.startListening();
+  /// Toggle recording on/off
+  Future<void> _toggleRecording() async {
+    if (_voiceState == VoiceState.recording) {
+      await _stopAndTranscribe();
+    } else if (_voiceState == VoiceState.idle || _voiceState == VoiceState.preview) {
+      // If in preview, user wants to re-record
+      if (_voiceState == VoiceState.preview) {
+        setState(() {
+          _transcribedText = '';
+        });
       }
+      await _startRecording();
     }
   }
 
-  /// Demo mode specifically for the wizard - randomly selects from India-wide destinations
-  Future<void> _runWizardDemoMode() async {
-    _voiceService.onListeningStarted?.call();
+  /// Generate AI plan preview (Step 1: Generate plan for review)
+  Future<void> _generatePlanPreview() async {
+    if (_voiceState == VoiceState.generatingPlan) return;
+    if (_transcribedText.trim().isEmpty) return;
 
-    // Randomly select a destination from India-wide list
-    final random = math.Random();
-    final idea = _randomTripIdeas[random.nextInt(_randomTripIdeas.length)];
-
-    // Generate varied demo phrases
-    final demoPhrases = [
-      'Plan a ${idea['duration']} day ${idea['type']} to ${idea['destination']}',
-      '${idea['duration']} day trip to ${idea['destination']} for ${idea['type']?.toString().toLowerCase()}',
-      'I want to visit ${idea['destination']} for ${idea['duration']} days',
-      'Plan my ${idea['type']?.toString().toLowerCase()} vacation to ${idea['destination']}',
-    ];
-    final demoPhrase = demoPhrases[random.nextInt(demoPhrases.length)];
-    final words = demoPhrase.split(' ');
-
-    for (int i = 0; i < words.length; i++) {
-      await Future.delayed(const Duration(milliseconds: 180));
-
-      _soundLevel = 0.3 + (i % 3) * 0.25;
-      _voiceService.onSoundLevelChange?.call(_soundLevel);
-
-      final interim = words.sublist(0, i + 1).join(' ');
-      _voiceService.onResult?.call(interim, false);
-
-      await Future.delayed(const Duration(milliseconds: 80));
-    }
-
-    await Future.delayed(const Duration(milliseconds: 300));
-    _soundLevel = 0.0;
-    _voiceService.onSoundLevelChange?.call(_soundLevel);
-    _voiceService.onResult?.call(demoPhrase, true);
-
-    _voiceService.onListeningStopped?.call();
-  }
-
-  /// Random trip ideas - comprehensive list
-  static const List<Map<String, dynamic>> _randomTripIdeas = [
-    {'destination': 'Kerala', 'duration': 5, 'type': 'Family beach & backwaters'},
-    {'destination': 'Goa', 'duration': 4, 'type': 'Beach party adventure'},
-    {'destination': 'Ladakh', 'duration': 7, 'type': 'Ultimate road trip'},
-    {'destination': 'Rajasthan', 'duration': 6, 'type': 'Heritage & culture tour'},
-    {'destination': 'Himachal', 'duration': 5, 'type': 'Mountain adventure'},
-    {'destination': 'Andaman', 'duration': 6, 'type': 'Island paradise'},
-    {'destination': 'Varanasi', 'duration': 3, 'type': 'Spiritual journey'},
-    {'destination': 'Darjeeling', 'duration': 4, 'type': 'Tea garden retreat'},
-    {'destination': 'Udaipur', 'duration': 3, 'type': 'Romantic getaway'},
-    {'destination': 'Rishikesh', 'duration': 4, 'type': 'Adventure & yoga'},
-    {'destination': 'Coorg', 'duration': 3, 'type': 'Coffee plantation bliss'},
-    {'destination': 'Jaipur', 'duration': 3, 'type': 'Pink city heritage'},
-    {'destination': 'Manali', 'duration': 5, 'type': 'Snow & adventure'},
-    {'destination': 'Munnar', 'duration': 4, 'type': 'Hill station retreat'},
-    {'destination': 'Sikkim', 'duration': 6, 'type': 'Northeast exploration'},
-  ];
-
-  void _generateRandomTrip() {
+    setState(() {
+      _voiceState = VoiceState.generatingPlan;
+      _generationStep = 1;
+      _generationStatus = 'AI is planning your trip...';
+      _refinementCount = 0;
+    });
     HapticFeedback.mediumImpact();
 
-    final random = math.Random();
-    final idea = _randomTripIdeas[random.nextInt(_randomTripIdeas.length)];
+    try {
+      debugPrint('🚀 Generating AI trip plan preview...');
+      debugPrint('   Voice input: $_transcribedText');
 
-    final phrases = [
-      'Plan a ${idea['duration']} day ${idea['type']} to ${idea['destination']}',
-      '${idea['duration']} day ${idea['type'].toString().toLowerCase()} in ${idea['destination']}',
-      'Family trip to ${idea['destination']} for ${idea['duration']} days',
-    ];
-    final phrase = phrases[random.nextInt(phrases.length)];
+      final aiService = ref.read(multiProviderAiServiceProvider);
+      final tripPlan = await aiService.generateCompleteTripPlanFromVoice(
+        voiceInput: _transcribedText,
+      );
+      debugPrint('✅ AI generated plan: ${tripPlan.destination}, ${tripPlan.durationDays} days');
 
-    setState(() {
-      _hasError = false;
-      _transcribedText = phrase;
-      // AI will parse this phrase - no local parsing needed
-    });
+      if (mounted) {
+        setState(() {
+          _currentPlan = tripPlan;
+          _voiceState = VoiceState.planPreview;
+          _errorMessage = null;
+        });
+        HapticFeedback.mediumImpact();
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error generating plan: $e');
+      debugPrint('📚 Stack trace: $stackTrace');
+      if (mounted) {
+        String userMessage = 'Failed to generate plan. Please try again.';
+        if (e.toString().contains('rate limit') || e.toString().contains('429')) {
+          userMessage = 'AI service is busy. Please wait a moment and try again.';
+        }
 
-    _scaleController.reset();
-    _scaleController.forward();
+        setState(() {
+          _voiceState = VoiceState.preview;
+          _errorMessage = userMessage;
+        });
+      }
+    }
   }
 
-  /// Create complete trip with AI-generated itinerary and checklist
-  /// The AI will parse the voice input and extract destination, duration, etc.
-  Future<void> _createCompleteTrip() async {
-    // Prevent multiple API calls
-    if (_isGenerating) {
-      debugPrint('⚠️ Already generating trip, ignoring duplicate request');
-      return;
-    }
-
-    // Only need transcribed text - AI will parse everything
-    if (_transcribedText.trim().isEmpty) {
+  /// Refine the plan based on user feedback
+  Future<void> _refinePlan(String refinementRequest) async {
+    if (_currentPlan == null) return;
+    if (_refinementCount >= _maxRefinements) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please describe your trip first'),
+          content: Text('Maximum refinements reached. Please create the trip or start over.'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -496,54 +442,176 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     }
 
     setState(() {
-      _isGenerating = true;
-      _generationStep = 1;
-      _generationStatus = 'AI is understanding your request...';
+      _voiceState = VoiceState.refining;
+      _generationStatus = 'AI is refining your plan...';
     });
     HapticFeedback.mediumImpact();
 
     try {
-      debugPrint('🚀 Starting AI trip generation...');
-      debugPrint('   Raw voice input: $_transcribedText');
-      debugPrint('   AI will parse destination, duration, and preferences from this text');
+      debugPrint('🔄 Refining plan with: $refinementRequest');
 
-      // Step 1: Let AI parse and generate complete trip plan
-      // The AI will extract destination, duration, trip type from the raw text
-      // Primary: Groq (1,000 RPD) -> Fallback: Gemini (25 RPD)
-      debugPrint('📡 Calling multiProviderAiService.generateCompleteTripPlanFromVoice()...');
       final aiService = ref.read(multiProviderAiServiceProvider);
-      final tripPlan = await aiService.generateCompleteTripPlanFromVoice(
-        voiceInput: _transcribedText,
+
+      // Build context with current plan + refinement request
+      final refinementPrompt = '''
+CURRENT PLAN:
+Trip: ${_currentPlan!.tripName}
+Destination: ${_currentPlan!.destination}
+Duration: ${_currentPlan!.durationDays} days
+Start: ${_currentPlan!.startDate?.toString().split(' ')[0] ?? 'TBD'}
+
+ITINERARY:
+${_currentPlan!.days.map((d) => '''
+Day ${d.dayNumber}: ${d.title}
+${d.activities.map((a) => '  • ${a.startTime ?? ''} ${a.title}').join('\n')}
+''').join('\n')}
+
+PACKING LIST:
+${_currentPlan!.packingList.map((p) => '• ${p.title}').join('\n')}
+
+USER'S REFINEMENT REQUEST: "$refinementRequest"
+
+Please update the plan according to the user's request. Keep everything else the same unless it conflicts with the changes.
+''';
+
+      final refinedPlan = await aiService.generateCompleteTripPlanFromVoice(
+        voiceInput: refinementPrompt,
       );
-      debugPrint('✅ AI trip plan generated successfully!');
-      debugPrint('   AI extracted destination: ${tripPlan.destination}');
-      debugPrint('   AI extracted duration: ${tripPlan.durationDays} days');
 
-      // Step 2: Create the trip in database
+      if (mounted) {
+        setState(() {
+          _currentPlan = refinedPlan;
+          _refinementCount++;
+          _voiceState = VoiceState.planPreview;
+          _refinementController.clear();
+          _isRefiningWithVoice = false;
+        });
+        HapticFeedback.mediumImpact();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Plan updated! ${_maxRefinements - _refinementCount} refinements remaining.'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error refining plan: $e');
+      if (mounted) {
+        setState(() {
+          _voiceState = VoiceState.planPreview;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to refine plan: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Start voice recording for refinement
+  Future<void> _startRefinementRecording() async {
+    if (!await _audioRecorder.hasPermission()) {
+      setState(() => _errorMessage = 'Microphone permission required');
+      return;
+    }
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      _currentRecordingPath = '${tempDir.path}/refinement_${DateTime.now().millisecondsSinceEpoch}.wav';
+
+      await _audioRecorder.start(
+        const RecordConfig(
+          encoder: AudioEncoder.wav,
+          sampleRate: 16000,
+          numChannels: 1,
+        ),
+        path: _currentRecordingPath!,
+      );
+
       setState(() {
-        _generationStep = 2;
-        _generationStatus = 'Creating your trip...';
+        _isRefiningWithVoice = true;
       });
+      HapticFeedback.mediumImpact();
+      _recordingController.repeat(reverse: true);
+      debugPrint('🎙️ Refinement recording started');
+    } catch (e) {
+      debugPrint('❌ Failed to start refinement recording: $e');
+    }
+  }
 
+  /// Stop refinement recording and transcribe
+  Future<void> _stopRefinementRecording() async {
+    if (!_isRefiningWithVoice) return;
+
+    _recordingController.stop();
+    HapticFeedback.lightImpact();
+
+    try {
+      final path = await _audioRecorder.stop();
+      if (path != null) {
+        final prompt = _getLanguagePrompt(_selectedLanguage);
+        final result = await _whisperService.transcribeFile(
+          audioFilePath: path,
+          language: _selectedLanguage,
+          prompt: prompt,
+        );
+
+        try {
+          await File(path).delete();
+        } catch (_) {}
+
+        if (result.success && result.text.trim().isNotEmpty) {
+          await _refinePlan(result.text.trim());
+        } else {
+          setState(() {
+            _isRefiningWithVoice = false;
+            _errorMessage = 'Could not understand. Please try again.';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Refinement transcription error: $e');
+      setState(() {
+        _isRefiningWithVoice = false;
+      });
+    }
+  }
+
+  /// Create the trip from the current plan (Step 2: Save to database)
+  Future<void> _createTripFromPlan() async {
+    if (_currentPlan == null) return;
+    if (_voiceState == VoiceState.creating) return;
+
+    final tripPlan = _currentPlan!;
+
+    setState(() {
+      _voiceState = VoiceState.creating;
+      _generationStep = 2;
+      _generationStatus = 'Creating your trip...';
+    });
+    HapticFeedback.mediumImpact();
+
+    try {
       final controller = ref.read(tripControllerProvider.notifier);
       final tripName = _ensurePeppyName(tripPlan.tripName, tripPlan.destination);
 
-      // Use AI-extracted dates (or fallback to 7 days from now)
       final durationDays = tripPlan.durationDays;
       DateTime startDate = tripPlan.startDate ?? DateTime.now().add(const Duration(days: 7));
       DateTime endDate = tripPlan.endDate ?? startDate.add(Duration(days: durationDays - 1));
 
-      debugPrint('📅 Trip dates: ${startDate.toString()} to ${endDate.toString()}');
-
       final trip = await controller.createTrip(
         name: tripName,
-        destination: tripPlan.destination, // Use AI-extracted destination
+        destination: tripPlan.destination,
         startDate: startDate,
         endDate: endDate,
         isPublic: false,
       );
 
-      // Step 3: Save itinerary items to database
+      // Step 3: Save itinerary
       setState(() {
         _generationStep = 3;
         _generationStatus = 'Saving your itinerary...';
@@ -552,7 +620,6 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       final itineraryDataSource = ref.read(itineraryRemoteDataSourceProvider);
       for (final day in tripPlan.days) {
         for (final activity in day.activities) {
-          // Parse start time string to DateTime
           DateTime? activityStartTime;
           DateTime? activityEndTime;
           if (activity.startTime != null) {
@@ -572,16 +639,10 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             if (timeParts.length >= 2) {
               final endHour = int.tryParse(timeParts[0]) ?? 10;
               final endMinute = int.tryParse(timeParts[1]) ?? 0;
-
-              // Calculate the base day for this activity
               var activityDay = startDate.day + day.dayNumber - 1;
-
-              // If we have a start time and end time is earlier than start time,
-              // the activity spans midnight - end time should be next day
               if (activityStartTime != null && endHour < activityStartTime.hour) {
-                activityDay += 1; // Move end time to next day
+                activityDay += 1;
               }
-
               activityEndTime = DateTime(
                 startDate.year,
                 startDate.month,
@@ -604,7 +665,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
         }
       }
 
-      // Step 4: Save checklist and items to database
+      // Step 4: Save checklist
       setState(() {
         _generationStep = 4;
         _generationStatus = 'Saving your packing list...';
@@ -615,7 +676,6 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       final uuid = const Uuid();
       final now = DateTime.now();
 
-      // Create checklist
       final checklistId = uuid.v4();
       final checklist = await checklistDataSource.upsertChecklist(
         ChecklistModel(
@@ -628,7 +688,6 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
         ),
       );
 
-      // Add checklist items
       for (int i = 0; i < tripPlan.packingList.length; i++) {
         final item = tripPlan.packingList[i];
         await checklistDataSource.upsertChecklistItem(
@@ -660,41 +719,26 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       debugPrint('❌ Error creating trip: $e');
       debugPrint('📚 Stack trace: $stackTrace');
       if (mounted) {
-        // Parse error message for user-friendly display
-        String userMessage = 'Failed to create trip';
+        String userMessage = 'Failed to create trip. Please try again.';
         if (e.toString().contains('rate limit') || e.toString().contains('429')) {
           userMessage = 'AI service is busy. Please wait a moment and try again.';
-        } else if (e.toString().contains('400')) {
-          userMessage = 'AI request failed. Please try again.';
-        } else if (e.toString().contains('unavailable')) {
-          userMessage = 'AI service temporarily unavailable. Please try again later.';
-        } else if (e.toString().contains('parse')) {
-          userMessage = 'AI response error. Please try again.';
-        } else {
-          userMessage = e.toString().replaceAll('Exception:', '').trim();
         }
 
         setState(() {
-          _isGenerating = false;
-          _hasError = true;
+          _voiceState = VoiceState.planPreview;
           _errorMessage = userMessage;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(userMessage),
             backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
             action: SnackBarAction(
               label: 'Retry',
               textColor: Colors.white,
-              onPressed: _createCompleteTrip,
+              onPressed: _createTripFromPlan,
             ),
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isGenerating = false);
       }
     }
   }
@@ -724,48 +768,25 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                 ),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.greenAccent,
-                size: 60,
-              ),
+              child: const Icon(Icons.check_circle, color: Colors.greenAccent, size: 60),
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Trip Created!',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
               tripName,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 16),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            _buildSuccessStat(
-              Icons.calendar_view_day,
-              '${tripPlan.days.length} days planned',
-              Colors.cyanAccent,
-            ),
+            _buildSuccessStat(Icons.calendar_view_day, '${tripPlan.days.length} days planned', Colors.cyanAccent),
             const SizedBox(height: 8),
-            _buildSuccessStat(
-              Icons.place,
-              '${_countActivities(tripPlan)} activities',
-              Colors.orangeAccent,
-            ),
+            _buildSuccessStat(Icons.place, '${_countActivities(tripPlan)} activities', Colors.orangeAccent),
             const SizedBox(height: 8),
-            _buildSuccessStat(
-              Icons.checklist,
-              '${tripPlan.packingList.length} packing items',
-              Colors.purpleAccent,
-            ),
+            _buildSuccessStat(Icons.checklist, '${tripPlan.packingList.length} packing items', Colors.purpleAccent),
           ],
         ),
         actions: [
@@ -777,18 +798,10 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF00D9FF), Color(0xFF8B5CF6)],
-                ),
+                gradient: const LinearGradient(colors: [Color(0xFF00D9FF), Color(0xFF8B5CF6)]),
                 borderRadius: BorderRadius.circular(25),
               ),
-              child: const Text(
-                'View Trip',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: const Text('View Trip', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -802,13 +815,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.9),
-            fontSize: 14,
-          ),
-        ),
+        Text(text, style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14)),
       ],
     );
   }
@@ -817,43 +824,182 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     return tripPlan.days.fold(0, (sum, day) => sum + day.activities.length);
   }
 
-  /// Ensures the trip name is peppy and creative, not boring "Trip to X"
   String _ensurePeppyName(String aiName, String destination) {
-    // If AI gave us a good name, use it
     if (aiName.isNotEmpty &&
         !aiName.toLowerCase().startsWith('trip to') &&
         !aiName.toLowerCase().startsWith('my trip')) {
       return aiName;
     }
 
-    // Generate a peppy fallback name based on destination
-    final peppyPrefixes = [
-      'Amazing', 'Magical', 'Dreamy', 'Epic', 'Blissful',
-      'Enchanting', 'Wanderlust', 'Spectacular', 'Vibrant', 'Glorious',
-    ];
-    final peppySuffixes = [
-      'Adventure', 'Escape', 'Getaway', 'Journey', 'Expedition',
-      'Voyage', 'Quest', 'Odyssey', 'Safari', 'Retreat',
-    ];
+    final peppyPrefixes = ['Amazing', 'Magical', 'Dreamy', 'Epic', 'Blissful', 'Enchanting'];
+    final peppySuffixes = ['Adventure', 'Escape', 'Getaway', 'Journey', 'Expedition', 'Voyage'];
 
     final random = math.Random();
     final prefix = peppyPrefixes[random.nextInt(peppyPrefixes.length)];
     final suffix = peppySuffixes[random.nextInt(peppySuffixes.length)];
-
-    // Extract clean destination name
     final cleanDest = destination.split(',').first.trim();
 
     return '$prefix $cleanDest $suffix';
   }
 
+  /// Random trip ideas
+  static const List<Map<String, dynamic>> _randomTripIdeas = [
+    {'destination': 'Kerala', 'duration': 5, 'type': 'Family beach & backwaters'},
+    {'destination': 'Goa', 'duration': 4, 'type': 'Beach party adventure'},
+    {'destination': 'Ladakh', 'duration': 7, 'type': 'Ultimate road trip'},
+    {'destination': 'Rajasthan', 'duration': 6, 'type': 'Heritage & culture tour'},
+    {'destination': 'Himachal', 'duration': 5, 'type': 'Mountain adventure'},
+    {'destination': 'Andaman', 'duration': 6, 'type': 'Island paradise'},
+    {'destination': 'Varanasi', 'duration': 3, 'type': 'Spiritual journey'},
+    {'destination': 'Darjeeling', 'duration': 4, 'type': 'Tea garden retreat'},
+    {'destination': 'Udaipur', 'duration': 3, 'type': 'Romantic getaway'},
+    {'destination': 'Rishikesh', 'duration': 4, 'type': 'Adventure & yoga'},
+    {'destination': 'Coorg', 'duration': 3, 'type': 'Coffee plantation bliss'},
+    {'destination': 'Jaipur', 'duration': 3, 'type': 'Pink city heritage'},
+    {'destination': 'Manali', 'duration': 5, 'type': 'Snow & adventure'},
+    {'destination': 'Munnar', 'duration': 4, 'type': 'Hill station retreat'},
+    {'destination': 'Sikkim', 'duration': 6, 'type': 'Northeast exploration'},
+  ];
+
+  /// Allow user to edit the transcribed text
+  void _editTranscription() {
+    final controller = TextEditingController(text: _transcribedText);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF1a1a2e),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.edit_note, color: Colors.white70, size: 24),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Edit Trip Request',
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white54),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Correct or modify the transcribed text:',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                maxLines: 4,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+                decoration: InputDecoration(
+                  hintText: 'e.g., 5 day family trip to Goa with beach activities',
+                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                  filled: true,
+                  fillColor: Colors.white.withValues(alpha: 0.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF00D9FF)),
+                  ),
+                ),
+                autofocus: true,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final newText = controller.text.trim();
+                        if (newText.isNotEmpty) {
+                          setState(() {
+                            _transcribedText = newText;
+                          });
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00D9FF),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _generateRandomTrip() {
+    HapticFeedback.mediumImpact();
+    final random = math.Random();
+    final idea = _randomTripIdeas[random.nextInt(_randomTripIdeas.length)];
+
+    final phrases = [
+      'Plan a ${idea['duration']} day ${idea['type']} to ${idea['destination']}',
+      '${idea['duration']} day ${idea['type'].toString().toLowerCase()} in ${idea['destination']}',
+      'Family trip to ${idea['destination']} for ${idea['duration']} days',
+    ];
+
+    setState(() {
+      _transcribedText = phrases[random.nextInt(phrases.length)];
+      _voiceState = VoiceState.preview;
+      _errorMessage = null;
+    });
+
+    _scaleController.reset();
+    _scaleController.forward();
+  }
+
   @override
   void dispose() {
-    _voiceService.dispose();
+    _audioRecorder.dispose();
+    _refinementController.dispose();
     _fadeController.dispose();
     _slideController.dispose();
     _scaleController.dispose();
     _pulseController.dispose();
     _backgroundController.dispose();
+    _recordingController.dispose();
     super.dispose();
   }
 
@@ -899,42 +1045,59 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             children: [
               _buildAppBar(themeData),
               Expanded(
-                child: _isGenerating
-                    ? _buildGeneratingView(themeData)
-                    : FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: SingleChildScrollView(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: size.height - 150,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const SizedBox(height: 16),
-                                  _buildVoiceOrb(themeData, size),
-                                  const SizedBox(height: 24),
-                                  _buildStatusText(themeData),
-                                  const SizedBox(height: 16),
-                                  if (_transcribedText.isNotEmpty || _interimText.isNotEmpty)
-                                    _buildTranscriptionArea(themeData),
-                                  if (_transcribedText.isNotEmpty)
-                                    _buildAiWillCreateSection(themeData),
-                                  const SizedBox(height: 16),
-                                  if (!_isListening && _transcribedText.isEmpty)
-                                    _buildHintText(),
-                                  _buildActionButtons(themeData),
-                                  const SizedBox(height: 24),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                child: _buildMainContent(themeData, size),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build main content based on current voice state
+  Widget _buildMainContent(AppThemeData themeData, Size size) {
+    // Show generating/refining/creating view with progress
+    if (_voiceState == VoiceState.generatingPlan ||
+        _voiceState == VoiceState.refining ||
+        _voiceState == VoiceState.creating) {
+      return _buildGeneratingView(themeData);
+    }
+
+    // Show full plan preview with refinement options
+    if (_voiceState == VoiceState.planPreview) {
+      return FadeTransition(
+        opacity: _fadeAnimation,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 16),
+          child: _buildPlanPreviewSection(themeData),
+        ),
+      );
+    }
+
+    // Default: show voice input UI (idle, recording, processing, preview)
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: size.height - 150),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(height: 16),
+                _buildVoiceOrb(themeData, size),
+                const SizedBox(height: 24),
+                _buildStatusSection(themeData),
+                const SizedBox(height: 16),
+                if (_voiceState == VoiceState.preview)
+                  _buildPreviewSection(themeData),
+                if (_voiceState == VoiceState.idle && _transcribedText.isEmpty)
+                  _buildHintSection(themeData),
+                _buildActionButtons(themeData),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),
@@ -946,37 +1109,28 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Animated orb during generation
-          AiOrbAnimation(
-            size: 200,
-            isActive: true,
-            soundLevel: 0.5,
-          ),
+          AiOrbAnimation(size: 200, isActive: true, soundLevel: 0.5),
           const SizedBox(height: 40),
-          // Generation status
           Text(
             _generationStatus,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          // Step indicators
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildStepIndicator(1, 'Trip', Icons.flight_takeoff),
+              _buildStepIndicator(1, 'Parse', Icons.psychology),
               _buildStepConnector(_generationStep >= 2),
-              _buildStepIndicator(2, 'Itinerary', Icons.calendar_month),
+              _buildStepIndicator(2, 'Trip', Icons.flight_takeoff),
               _buildStepConnector(_generationStep >= 3),
-              _buildStepIndicator(3, 'Packing', Icons.checklist),
+              _buildStepIndicator(3, 'Plan', Icons.calendar_month),
+              _buildStepConnector(_generationStep >= 4),
+              _buildStepIndicator(4, 'Pack', Icons.checklist),
             ],
           ),
           const SizedBox(height: 40),
-          if (_generationStep < 4)
+          if (_generationStep < 5)
             SizedBox(
               width: 200,
               child: LinearProgressIndicator(
@@ -996,8 +1150,8 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     return Column(
       children: [
         Container(
-          width: 50,
-          height: 50,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isCompleted
@@ -1021,15 +1175,15 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                 : isActive
                     ? const Color(0xFF00D9FF)
                     : Colors.white.withValues(alpha: 0.5),
-            size: 24,
+            size: 20,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           label,
           style: TextStyle(
             color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.5),
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -1039,12 +1193,10 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
 
   Widget _buildStepConnector(bool isActive) {
     return Container(
-      width: 40,
+      width: 24,
       height: 2,
       margin: const EdgeInsets.only(bottom: 20),
-      color: isActive
-          ? const Color(0xFF00D9FF)
-          : Colors.white.withValues(alpha: 0.2),
+      color: isActive ? const Color(0xFF00D9FF) : Colors.white.withValues(alpha: 0.2),
     );
   }
 
@@ -1075,17 +1227,11 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: const Color(0xFF00D9FF).withValues(alpha: 0.5),
-              ),
+              border: Border.all(color: const Color(0xFF00D9FF).withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.auto_awesome,
-                  color: Color(0xFF00D9FF),
-                  size: 18,
-                ),
+                const Icon(Icons.auto_awesome, color: Color(0xFF00D9FF), size: 18),
                 const SizedBox(width: 8),
                 ShaderMask(
                   shaderCallback: (bounds) => const LinearGradient(
@@ -1093,11 +1239,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                   ).createShader(bounds),
                   child: const Text(
                     'AI Trip Wizard',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
                   ),
                 ),
               ],
@@ -1111,356 +1253,64 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     );
   }
 
-  /// Language selector widget - tap to show language picker with availability
   Widget _buildLanguageSelector() {
-    final isCurrentLanguageAvailable = _languageAvailability[_selectedLanguage] ?? false;
+    final langName = _languageNames[_selectedLanguage] ?? _selectedLanguage.toUpperCase();
 
-    return GestureDetector(
-      onTap: _showLanguagePicker,
+    return PopupMenuButton<String>(
+      onSelected: (lang) {
+        setState(() {
+          _selectedLanguage = lang;
+        });
+        HapticFeedback.selectionClick();
+      },
+      itemBuilder: (context) => [
+        _buildLanguageMenuItem('ta', 'தமிழ் (Tamil)'),
+        _buildLanguageMenuItem('hi', 'हिंदी (Hindi)'),
+        _buildLanguageMenuItem('en', 'English'),
+        _buildLanguageMenuItem('te', 'తెలుగు (Telugu)'),
+        _buildLanguageMenuItem('kn', 'ಕನ್ನಡ (Kannada)'),
+        _buildLanguageMenuItem('ml', 'മലയാളം (Malayalam)'),
+      ],
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isCurrentLanguageAvailable
-                ? Colors.white.withValues(alpha: 0.2)
-                : Colors.orange.withValues(alpha: 0.5),
-          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.translate,
-              color: Colors.white.withValues(alpha: 0.8),
-              size: 16,
-            ),
+            const Icon(Icons.translate, color: Colors.white70, size: 18),
             const SizedBox(width: 6),
             Text(
-              _languages[_selectedLanguage] ?? 'English',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+              langName,
+              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
             ),
             const SizedBox(width: 4),
-            Icon(
-              isCurrentLanguageAvailable ? Icons.arrow_drop_down : Icons.warning_amber,
-              color: isCurrentLanguageAvailable
-                  ? Colors.white.withValues(alpha: 0.5)
-                  : Colors.orange,
-              size: 16,
-            ),
+            const Icon(Icons.arrow_drop_down, color: Colors.white70, size: 18),
           ],
         ),
       ),
     );
   }
 
-  /// Show language picker bottom sheet with availability status
-  void _showLanguagePicker() {
-    HapticFeedback.selectionClick();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF1a1a2e),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                const Icon(Icons.translate, color: Colors.white70, size: 24),
-                const SizedBox(width: 12),
-                const Text(
-                  'Speech Language',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white54),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Select a language for voice input',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-
-            // Language options
-            ..._languages.entries.map((entry) {
-              final localeId = entry.key;
-              final languageName = entry.value;
-              final isAvailable = _languageAvailability[localeId] ?? false;
-              final isSelected = _selectedLanguage == localeId;
-
-              return _buildLanguageOption(
-                localeId: localeId,
-                languageName: languageName,
-                isAvailable: isAvailable,
-                isSelected: isSelected,
-              );
-            }),
-
-            const SizedBox(height: 16),
-
-            // Help text
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: Colors.blue.shade300, size: 20),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'To enable Tamil/Hindi: First add it as a keyboard, then enable it in Dictation Languages.',
-                      style: TextStyle(
-                        color: Colors.blue.shade200,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Build a single language option in the picker
-  Widget _buildLanguageOption({
-    required String localeId,
-    required String languageName,
-    required bool isAvailable,
-    required bool isSelected,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            if (isAvailable) {
-              _changeLanguage(localeId);
-              Navigator.pop(context);
-            } else {
-              // Show setup instructions
-              Navigator.pop(context);
-              _showLanguageSetupDialog(localeId, languageName);
-            }
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? Colors.cyan.withValues(alpha: 0.2)
-                  : Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isSelected
-                    ? Colors.cyan.withValues(alpha: 0.5)
-                    : isAvailable
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.orange.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              children: [
-                // Language name
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        languageName,
-                        style: TextStyle(
-                          color: isAvailable ? Colors.white : Colors.white60,
-                          fontSize: 16,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        ),
-                      ),
-                      if (!isAvailable)
-                        Text(
-                          'Tap to setup',
-                          style: TextStyle(
-                            color: Colors.orange.shade300,
-                            fontSize: 12,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Status indicator
-                if (isAvailable)
-                  Icon(
-                    isSelected ? Icons.check_circle : Icons.check_circle_outline,
-                    color: isSelected ? Colors.cyan : Colors.green.withValues(alpha: 0.5),
-                    size: 24,
-                  )
-                else
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.download, color: Colors.orange.shade300, size: 14),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Setup',
-                          style: TextStyle(
-                            color: Colors.orange.shade300,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Show dialog with instructions to enable a language
-  void _showLanguageSetupDialog(String localeId, String languageName) {
-    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1a1a2e),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Icon(Icons.language, color: Colors.cyan),
-            const SizedBox(width: 12),
-            Text(
-              'Enable $languageName',
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '$languageName speech recognition needs to be downloaded on your device.',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              isIOS ? 'On iPhone:' : 'On Android:',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 8),
-            if (isIOS) ...[
-              _buildSetupStep('1', 'Open Settings → General → Keyboard'),
-              _buildSetupStep('2', 'Tap Keyboards → Add New Keyboard'),
-              _buildSetupStep('3', 'Select $languageName from the list'),
-              _buildSetupStep('4', 'Go back to Keyboard settings'),
-              _buildSetupStep('5', 'Tap Dictation Languages'),
-              _buildSetupStep('6', 'Enable $languageName (it will download)'),
-              _buildSetupStep('7', 'Return to this app'),
-            ] else ...[
-              _buildSetupStep('1', 'Open Settings → System'),
-              _buildSetupStep('2', 'Tap Languages & Input'),
-              _buildSetupStep('3', 'Tap On-screen keyboard → Gboard'),
-              _buildSetupStep('4', 'Tap Languages → Add keyboard'),
-              _buildSetupStep('5', 'Select $languageName'),
-              _buildSetupStep('6', 'Return to this app'),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Later', style: TextStyle(color: Colors.white54)),
-          ),
-          ElevatedButton.icon(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _voiceService.openMicrophoneSettings();
-            },
-            icon: const Icon(Icons.settings, size: 18),
-            label: const Text('Open Settings'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.cyan,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build a setup step row
-  Widget _buildSetupStep(String number, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+  PopupMenuItem<String> _buildLanguageMenuItem(String code, String name) {
+    final isSelected = _selectedLanguage == code;
+    return PopupMenuItem<String>(
+      value: code,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: Colors.cyan.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                number,
-                style: const TextStyle(
-                  color: Colors.cyan,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+          if (isSelected)
+            const Icon(Icons.check, color: Color(0xFF00D9FF), size: 18)
+          else
+            const SizedBox(width: 18),
+          const SizedBox(width: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? const Color(0xFF00D9FF) : null,
             ),
           ),
         ],
@@ -1469,13 +1319,14 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   }
 
   Widget _buildVoiceOrb(AppThemeData themeData, Size size) {
-    final sphereSize = size.width * 0.6;
+    final sphereSize = size.width * 0.55;
+    final isRecording = _voiceState == VoiceState.recording;
+    final isProcessing = _voiceState == VoiceState.processing;
 
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
-        // Always allow tapping - _toggleListening will request permission if needed
-        onTap: _toggleListening,
+        onTap: isProcessing ? null : _toggleRecording,
         child: SizedBox(
           width: sphereSize,
           height: sphereSize,
@@ -1484,34 +1335,63 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             children: [
               AiOrbAnimation(
                 size: sphereSize,
-                isActive: _isListening,
+                isActive: isRecording || isProcessing,
                 soundLevel: _soundLevel,
               ),
-              if (!_isListening)
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black.withValues(alpha: 0.3),
-                    border: Border.all(
-                      color: const Color(0xFF00D9FF).withValues(alpha: 0.5),
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF00D9FF).withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.mic,
-                    size: 30,
-                    color: Colors.white,
-                  ),
-                ),
+              // Center icon
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: isProcessing
+                    ? Column(
+                        key: const ValueKey('processing'),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              valueColor: AlwaysStoppedAnimation(
+                                Colors.white.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Processing...',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      )
+                    : isRecording
+                        // When recording, show nothing in center - let the animation be clean
+                        ? const SizedBox.shrink(key: ValueKey('recording'))
+                        : Container(
+                            key: const ValueKey('idle'),
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withValues(alpha: 0.3),
+                              border: Border.all(
+                                color: const Color(0xFF00D9FF).withValues(alpha: 0.5),
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF00D9FF).withValues(alpha: 0.3),
+                                  blurRadius: 20,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(Icons.mic, size: 30, color: Colors.white),
+                          ),
+              ),
             ],
           ),
         ),
@@ -1519,49 +1399,69 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     );
   }
 
-  Widget _buildStatusText(AppThemeData themeData) {
+  Widget _buildStatusSection(AppThemeData themeData) {
     String statusText;
     String? subText;
     Color statusColor;
     IconData? statusIcon;
-    bool showPermissionButton = false;
 
-    if (_hasError) {
-      statusText = _errorMessage;
-      statusColor = Colors.redAccent;
-      statusIcon = Icons.error_outline;
-
-      // Show permission button for permission errors
-      if (_isPermissionDenied) {
-        showPermissionButton = true;
-        statusIcon = _isPermissionPermanentlyDenied ? Icons.settings : Icons.mic_off;
-        statusColor = Colors.orangeAccent;
-      }
-    } else if (_isListening) {
-      statusText = 'Listening... take your time';
-      subText = 'You have 20 seconds between thoughts';
-      statusColor = const Color(0xFF00D9FF);
-      statusIcon = Icons.hearing;
-    } else if (_transcribedText.isNotEmpty) {
-      // Text recognized - AI will parse destination
-      statusText = 'Ready! AI will understand your request';
-      subText = 'Tap mic to add more, or tap Create Trip';
-      statusColor = Colors.greenAccent;
-      statusIcon = Icons.rocket_launch;
-    } else if (_isSimulator) {
-      statusText = 'Demo Mode - Tap to simulate';
-      statusColor = Colors.cyanAccent;
-      statusIcon = Icons.play_circle_outline;
-    } else {
-      statusText = 'Tap to plan your complete trip';
-      subText = 'Take your time - we\'ll wait while you think';
-      statusColor = Colors.white70;
+    switch (_voiceState) {
+      case VoiceState.idle:
+        if (_errorMessage != null) {
+          statusText = _errorMessage!;
+          statusColor = Colors.redAccent;
+          statusIcon = Icons.error_outline;
+        } else {
+          statusText = 'Tap to start recording';
+          subText = 'Speak in any language';
+          statusColor = Colors.white70;
+          statusIcon = Icons.mic_none;
+        }
+        break;
+      case VoiceState.recording:
+        statusText = 'Listening...';
+        subText = 'Tap the orb when done';
+        statusColor = Colors.redAccent;
+        statusIcon = Icons.graphic_eq;
+        break;
+      case VoiceState.processing:
+        statusText = 'Transcribing your speech...';
+        statusColor = const Color(0xFF00D9FF);
+        statusIcon = Icons.cloud_sync;
+        break;
+      case VoiceState.preview:
+        statusText = 'Ready to generate your plan!';
+        subText = 'Review below and tap Generate';
+        statusColor = Colors.greenAccent;
+        statusIcon = Icons.check_circle_outline;
+        break;
+      case VoiceState.generatingPlan:
+        statusText = _generationStatus;
+        statusColor = const Color(0xFF00D9FF);
+        statusIcon = Icons.auto_awesome;
+        break;
+      case VoiceState.planPreview:
+        statusText = 'Review your trip plan';
+        subText = 'Refine or create trip';
+        statusColor = Colors.greenAccent;
+        statusIcon = Icons.visibility;
+        break;
+      case VoiceState.refining:
+        statusText = _generationStatus;
+        statusColor = const Color(0xFF8B5CF6);
+        statusIcon = Icons.edit_note;
+        break;
+      case VoiceState.creating:
+        statusText = _generationStatus;
+        statusColor = const Color(0xFF00D9FF);
+        statusIcon = Icons.rocket_launch;
+        break;
     }
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: Padding(
-        key: ValueKey(statusText),
+        key: ValueKey('$_voiceState$_errorMessage'),
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1577,11 +1477,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                 Flexible(
                   child: Text(
                     statusText,
-                    style: TextStyle(
-                      color: statusColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(color: statusColor, fontSize: 16, fontWeight: FontWeight.w500),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -1599,190 +1495,156 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
                 textAlign: TextAlign.center,
               ),
             ],
-            // Permission button when microphone access is denied
-            if (showPermissionButton) ...[
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: _handlePermissionButtonTap,
-                icon: Icon(
-                  _isPermissionPermanentlyDenied ? Icons.settings : Icons.mic,
-                  size: 18,
-                ),
-                label: Text(
-                  _isPermissionPermanentlyDenied ? 'Open Settings' : 'Allow Microphone',
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orangeAccent,
-                  foregroundColor: Colors.black87,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTranscriptionArea(AppThemeData themeData) {
+  Widget _buildPreviewSection(AppThemeData themeData) {
+    // Get detected language name for display
+    final detectedLangName = _detectedLanguage != null
+        ? _languageNames[_detectedLanguage] ?? _detectedLanguage!.toUpperCase()
+        : null;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.format_quote,
-                color: Colors.white.withValues(alpha: 0.5),
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Your trip idea:',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _transcribedText.isNotEmpty ? _transcribedText : _interimText,
-            style: TextStyle(
-              color: _transcribedText.isNotEmpty
-                  ? Colors.white
-                  : Colors.white.withValues(alpha: 0.7),
-              fontSize: 16,
-              height: 1.5,
-              fontStyle:
-                  _transcribedText.isEmpty ? FontStyle.italic : FontStyle.normal,
+          // Transcribed text
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Shows what AI will create from the voice input
-  Widget _buildAiWillCreateSection(AppThemeData themeData) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF00D9FF).withValues(alpha: 0.2),
-            const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF00D9FF).withValues(alpha: 0.3),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.greenAccent.withValues(alpha: 0.3),
-                      Colors.cyanAccent.withValues(alpha: 0.2),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(10),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.record_voice_over, color: Colors.white.withValues(alpha: 0.5), size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        detectedLangName != null ? 'Transcribed ($detectedLangName):' : 'Transcribed:',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.5),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    // Edit button to modify transcription
+                    GestureDetector(
+                      onTap: _editTranscription,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.edit, color: Colors.white.withValues(alpha: 0.6), size: 14),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Edit',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Icon(Icons.auto_awesome, color: Colors.greenAccent, size: 20),
-              ),
-              const SizedBox(width: 12),
-              const Text(
-                'AI Will Create:',
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                const SizedBox(height: 12),
+                Text(
+                  _transcribedText,
+                  style: const TextStyle(color: Colors.white, fontSize: 16, height: 1.5),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 16),
-          _buildDetailRow(
-            Icons.psychology,
-            'Understanding',
-            'AI will parse your request',
-            const Color(0xFF00D9FF),
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            Icons.flight_takeoff,
-            'Trip',
-            'Complete trip with destination',
-            Colors.orangeAccent,
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            Icons.calendar_month,
-            'Itinerary',
-            'Day-by-day activities',
-            Colors.purpleAccent,
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            Icons.checklist,
-            'Packing List',
-            'AI-generated essentials',
-            Colors.pinkAccent,
+          // AI will create section
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF00D9FF).withValues(alpha: 0.2),
+                  const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF00D9FF).withValues(alpha: 0.3)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.greenAccent.withValues(alpha: 0.3),
+                            Colors.cyanAccent.withValues(alpha: 0.2),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.auto_awesome, color: Colors.greenAccent, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'AI Will Create:',
+                      style: TextStyle(color: Colors.greenAccent, fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildPreviewRow(Icons.place, 'Destination', 'Extracted from your speech', Colors.orangeAccent),
+                const SizedBox(height: 10),
+                _buildPreviewRow(Icons.calendar_today, 'Duration', 'Days & dates identified', Colors.cyanAccent),
+                const SizedBox(height: 10),
+                _buildPreviewRow(Icons.calendar_month, 'Itinerary', 'Day-by-day activities', Colors.purpleAccent),
+                const SizedBox(height: 10),
+                _buildPreviewRow(Icons.checklist, 'Packing List', 'Trip-specific essentials', Colors.pinkAccent),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value, Color color) {
+  Widget _buildPreviewRow(IconData icon, String label, String value, Color color) {
     return Row(
       children: [
         Icon(icon, color: color, size: 18),
         const SizedBox(width: 10),
-        Text(
-          '$label: ',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
-            fontSize: 14,
-          ),
-        ),
+        Text('$label: ', style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 14)),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildHintText() {
+  Widget _buildHintSection(AppThemeData themeData) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 40),
       padding: const EdgeInsets.all(16),
@@ -1793,7 +1655,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       child: Column(
         children: [
           Text(
-            'Speak or tap an example to try:',
+            'Try saying:',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.5),
               fontSize: 12,
@@ -1801,13 +1663,11 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             ),
           ),
           const SizedBox(height: 12),
-          _buildHintItem('"5 day family trip to Kerala with beaches"'),
+          _buildHintItem('"5 day family trip to Kerala"'),
           const SizedBox(height: 8),
-          _buildHintItem('"Adventure trip to Ladakh for a week"'),
+          _buildHintItem('"Adventure in Ladakh for a week"'),
           const SizedBox(height: 8),
-          _buildHintItem('"Romantic getaway to Udaipur for 3 days"'),
-          const SizedBox(height: 8),
-          _buildHintItem('"Weekend trip to Goa with friends"'),
+          _buildHintItem('"Romantic Udaipur getaway"'),
           const SizedBox(height: 16),
           _buildSurpriseMeButton(),
         ],
@@ -1815,55 +1675,14 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     );
   }
 
-  Widget _buildSurpriseMeButton() {
-    return GestureDetector(
-      onTap: _generateRandomTrip,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF8B5CF6).withValues(alpha: 0.3),
-              const Color(0xFF00D9FF).withValues(alpha: 0.3),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(
-            color: const Color(0xFF8B5CF6).withValues(alpha: 0.5),
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.shuffle_rounded, color: Colors.white.withValues(alpha: 0.9), size: 20),
-            const SizedBox(width: 10),
-            Text(
-              'Surprise Me!',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(Icons.auto_awesome, color: Colors.amber.withValues(alpha: 0.8), size: 16),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildHintItem(String text) {
-    // Remove quotes from the display text for cleaner tap action
     final cleanText = text.replaceAll('"', '');
-
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        // Set the example as transcribed text so user can see it and create trip
         setState(() {
           _transcribedText = cleanText;
+          _voiceState = VoiceState.preview;
         });
       },
       child: Container(
@@ -1871,9 +1690,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           children: [
@@ -1896,70 +1713,113 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
     );
   }
 
+  Widget _buildSurpriseMeButton() {
+    return GestureDetector(
+      onTap: _generateRandomTrip,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+              const Color(0xFF00D9FF).withValues(alpha: 0.3),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: const Color(0xFF8B5CF6).withValues(alpha: 0.5), width: 1.5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.shuffle_rounded, color: Colors.white.withValues(alpha: 0.9), size: 20),
+            const SizedBox(width: 10),
+            Text(
+              'Surprise Me!',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.auto_awesome, color: Colors.amber.withValues(alpha: 0.8), size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildActionButtons(AppThemeData themeData) {
+    final isPreview = _voiceState == VoiceState.preview;
+    final isRecording = _voiceState == VoiceState.recording;
+    final isProcessing = _voiceState == VoiceState.processing;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          if (_transcribedText.isNotEmpty) ...[
+          if (isPreview) ...[
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: _toggleListening,
+                onPressed: _toggleRecording,
                 icon: const Icon(Icons.replay),
-                label: const Text('Try Again'),
+                label: const Text('Re-record'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white70,
                   side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
               ),
             ),
             const SizedBox(width: 16),
           ],
           Expanded(
-            flex: _transcribedText.isNotEmpty ? 2 : 1,
+            flex: isPreview ? 2 : 1,
             child: ElevatedButton(
-              onPressed: _isGenerating
-                  ? null // Disable button while generating to prevent multiple API calls
-                  : (_transcribedText.isNotEmpty
-                      ? _createCompleteTrip // AI will parse the voice input
-                      : (_isListening ? _toggleListening : null)),
+              onPressed: isProcessing
+                  ? null
+                  : isPreview
+                      ? _generatePlanPreview  // Changed: now generates preview first
+                      : isRecording
+                          ? _stopAndTranscribe
+                          : _startRecording,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _transcribedText.isNotEmpty
+                backgroundColor: isPreview
                     ? Colors.greenAccent
-                    : const Color(0xFF00D9FF),
+                    : isRecording
+                        ? Colors.redAccent
+                        : const Color(0xFF00D9FF),
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 8,
-                shadowColor: (_transcribedText.isNotEmpty
+                shadowColor: (isPreview
                         ? Colors.greenAccent
-                        : const Color(0xFF00D9FF))
+                        : isRecording
+                            ? Colors.redAccent
+                            : const Color(0xFF00D9FF))
                     .withValues(alpha: 0.5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    _transcribedText.isNotEmpty
+                    isPreview
                         ? Icons.auto_awesome
-                        : (_isListening ? Icons.stop : Icons.mic),
+                        : isRecording
+                            ? Icons.stop
+                            : Icons.mic,
                     size: 22,
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    _transcribedText.isNotEmpty
-                        ? 'Create Complete Trip'
-                        : (_isListening ? 'Stop' : 'Start Speaking'),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    isPreview
+                        ? 'Generate Plan'  // Changed text
+                        : isRecording
+                            ? 'Stop Recording'
+                            : 'Start Recording',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
@@ -1968,5 +1828,494 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
         ],
       ),
     );
+  }
+
+  /// Build the full plan preview with itinerary and checklist
+  Widget _buildPlanPreviewSection(AppThemeData themeData) {
+    if (_currentPlan == null) return const SizedBox.shrink();
+
+    final plan = _currentPlan!;
+    final remainingRefinements = _maxRefinements - _refinementCount;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Trip header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF00D9FF).withValues(alpha: 0.2),
+                  const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF00D9FF).withValues(alpha: 0.3)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        plan.tripName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.greenAccent.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${plan.durationDays} days',
+                        style: const TextStyle(
+                          color: Colors.greenAccent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.place, color: Colors.orangeAccent, size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      plan.destination,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                if (plan.startDate != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today, color: Colors.cyanAccent, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${plan.startDate!.day}/${plan.startDate!.month}/${plan.startDate!.year}',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Itinerary section
+          Text(
+            'Itinerary',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.9),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Day cards
+          ...plan.days.map((day) => _buildDayCard(day)),
+
+          const SizedBox(height: 16),
+
+          // Packing list section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.checklist, color: Colors.pinkAccent, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Packing List (${plan.packingList.length} items)',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: plan.packingList.take(10).map((item) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      item.title,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 12,
+                      ),
+                    ),
+                  )).toList(),
+                ),
+                if (plan.packingList.length > 10)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      '+${plan.packingList.length - 10} more items',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Refinement input section
+          if (remainingRefinements > 0) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF8B5CF6).withValues(alpha: 0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.edit_note, color: Color(0xFF8B5CF6), size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Refine Plan ($remainingRefinements left)',
+                        style: const TextStyle(
+                          color: Color(0xFF8B5CF6),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _refinementController,
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'e.g., "Add a sunset point visit"',
+                            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                            filled: true,
+                            fillColor: Colors.white.withValues(alpha: 0.1),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          onSubmitted: (value) {
+                            if (value.trim().isNotEmpty) {
+                              _refinePlan(value.trim());
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Voice refinement button
+                      GestureDetector(
+                        onTap: _isRefiningWithVoice
+                            ? _stopRefinementRecording
+                            : _startRefinementRecording,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: _isRefiningWithVoice
+                                ? Colors.redAccent
+                                : const Color(0xFF8B5CF6),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            _isRefiningWithVoice ? Icons.stop : Icons.mic,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Send text refinement
+                      GestureDetector(
+                        onTap: () {
+                          final text = _refinementController.text.trim();
+                          if (text.isNotEmpty) {
+                            _refinePlan(text);
+                          }
+                        },
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00D9FF),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.send, color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Try: "Add camel ride", "Remove museum", "Add hiking shoes to packing"',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.4),
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+          ],
+
+          // Action buttons for plan preview
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _currentPlan = null;
+                      _voiceState = VoiceState.preview;
+                      _refinementCount = 0;
+                    });
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Regenerate'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white70,
+                    side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton.icon(
+                  onPressed: _createTripFromPlan,
+                  icon: const Icon(Icons.check_circle),
+                  label: const Text('Create Trip'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.greenAccent,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  /// Build a single day card for the itinerary
+  Widget _buildDayCard(AiItineraryDay day) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+          iconColor: Colors.white70,
+          collapsedIconColor: Colors.white54,
+          title: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF00D9FF).withValues(alpha: 0.3),
+                      const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    '${day.dayNumber}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  day.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          subtitle: Text(
+            '${day.activities.length} activities',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.5),
+              fontSize: 12,
+            ),
+          ),
+          children: day.activities.map((activity) => Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (activity.startTime != null)
+                  SizedBox(
+                    width: 50,
+                    child: Text(
+                      activity.startTime!,
+                      style: TextStyle(
+                        color: Colors.cyanAccent.withValues(alpha: 0.8),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  )
+                else
+                  const SizedBox(width: 50),
+                const SizedBox(width: 8),
+                Container(
+                  width: 8,
+                  height: 8,
+                  margin: const EdgeInsets.only(top: 4),
+                  decoration: BoxDecoration(
+                    color: _getActivityColor(activity.category),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        activity.title,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 13,
+                        ),
+                      ),
+                      if (activity.location != null && activity.location!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.place,
+                                size: 12,
+                                color: Colors.white.withValues(alpha: 0.4),
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  activity.location!,
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.4),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// Get color for activity category
+  Color _getActivityColor(String? category) {
+    switch (category?.toLowerCase()) {
+      case 'sightseeing':
+        return Colors.orangeAccent;
+      case 'food':
+        return Colors.pinkAccent;
+      case 'transport':
+        return Colors.blueAccent;
+      case 'accommodation':
+        return Colors.purpleAccent;
+      case 'activity':
+      case 'adventure':
+        return Colors.greenAccent;
+      case 'shopping':
+        return Colors.amberAccent;
+      default:
+        return Colors.cyanAccent;
+    }
   }
 }

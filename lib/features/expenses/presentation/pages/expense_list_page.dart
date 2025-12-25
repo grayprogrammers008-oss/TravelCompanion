@@ -95,7 +95,7 @@ class ExpenseListPage extends ConsumerWidget {
               duration: AppAnimations.slow,
               curve: AppAnimations.spring,
               child: AnimatedScaleButton(
-                onTap: () => context.push('/trips/$tripId/expenses/add'),
+                onTap: () => _showAddExpenseOptions(context, tripId),
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: themeData.glossyGradient,
@@ -133,6 +133,99 @@ class ExpenseListPage extends ConsumerWidget {
               ),
             )
           : null,
+    );
+  }
+
+  void _showAddExpenseOptions(BuildContext context, String tripId) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingLg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppTheme.neutral300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingLg),
+
+                // Title
+                Text(
+                  'Add Expense',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTheme.spacingLg),
+
+                // Manual Entry option
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(Icons.edit, color: Colors.blue),
+                  ),
+                  title: const Text(
+                    'Enter Manually',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: const Text('Type in expense details'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    context.push('/trips/$tripId/expenses/add');
+                  },
+                ),
+
+                const SizedBox(height: AppTheme.spacingSm),
+
+                // Scan Bill option
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: Colors.teal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(Icons.document_scanner, color: Colors.teal),
+                  ),
+                  title: const Text(
+                    'Scan Bill',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: const Text('Take a photo of your receipt'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    context.push('/trips/$tripId/expenses/scan');
+                  },
+                ),
+
+                const SizedBox(height: AppTheme.spacingMd),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

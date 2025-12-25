@@ -249,6 +249,7 @@ class _AdminTripListState extends ConsumerState<AdminTripList> {
                   ),
                   child: DestinationImage(
                     destination: trip.destination,
+                    tripId: trip.id,
                     height: 150,
                   ),
                 ),

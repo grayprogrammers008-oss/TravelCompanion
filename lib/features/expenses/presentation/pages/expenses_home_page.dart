@@ -965,6 +965,43 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
               const SizedBox(height: AppTheme.spacingSm),
 
+              // Scan Bill option
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingLg,
+                ),
+                child: Card(
+                  elevation: 0,
+                  color: AppTheme.neutral100,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    side: BorderSide(color: AppTheme.neutral200),
+                  ),
+                  child: ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingSm),
+                      decoration: BoxDecoration(
+                        color: Colors.teal.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      ),
+                      child: const Icon(Icons.document_scanner, color: Colors.teal),
+                    ),
+                    title: const Text(
+                      'Scan Bill',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text('Take a photo of your receipt'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.pop(bottomSheetContext);
+                      context.push('/expenses/scan');
+                    },
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: AppTheme.spacingSm),
+
               // Divider with "OR" text
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -1078,6 +1115,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                 height: 48,
                                 child: DestinationImage(
                                   tripName: trip.destination ?? trip.name,
+                                  tripId: trip.id,
                                   height: 48,
                                   fit: BoxFit.cover,
                                 ),

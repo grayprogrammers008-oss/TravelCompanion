@@ -120,6 +120,7 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
                 children: [
                   DestinationImage(
                     tripName: template.destination,
+                    tripId: template.id,
                     height: 280,
                     width: double.infinity,
                     fit: BoxFit.cover,

@@ -1660,6 +1660,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           DestinationImage(
                             imageUrl: trip.coverImageUrl,
                             tripName: trip.destination ?? trip.name,
+                            tripId: trip.id,
                             height: double.infinity,
                             width: double.infinity,
                             fit: BoxFit.cover,
@@ -2149,6 +2150,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 child: DestinationImage(
                   imageUrl: trip.coverImageUrl,
                   tripName: trip.destination ?? trip.name,
+                  tripId: trip.id,
                   height: 48,
                   width: 48,
                   fit: BoxFit.cover,
@@ -3841,6 +3843,7 @@ class TripCard extends StatelessWidget {
                 child: DestinationImage(
                   imageUrl: trip.coverImageUrl,
                   tripName: trip.destination ?? trip.name,
+                  tripId: trip.id,
                   height: 140,
                   fit: BoxFit.cover,
                   showOverlay: true,

@@ -45,6 +45,7 @@ class TemplateCard extends StatelessWidget {
                     ),
                     child: DestinationImage(
                       tripName: template.destination,
+                      tripId: template.id,
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,

@@ -27,47 +27,54 @@ class ImageService {
 
   /// Get image URL for a destination using Google Places
   /// Returns null if API fails (caller should fallback to gradient)
-  Future<String?> getDestinationImage(String destination) async {
-    debugPrint('🌍 [ImageService] getDestinationImage called for: "$destination"');
+  ///
+  /// [destination] - The destination to search for
+  /// [cacheKey] - Optional unique cache key (e.g., tripId) to prevent cache conflicts
+  ///              between similar destinations. If provided, uses "destination_cacheKey" as key.
+  Future<String?> getDestinationImage(String destination, {String? cacheKey}) async {
+    // Use cacheKey if provided to create unique cache entries per trip
+    final effectiveCacheKey = cacheKey != null ? '${destination}_$cacheKey' : destination;
+
+    debugPrint('🌍 [ImageService] getDestinationImage called for: "$destination" (cacheKey: $cacheKey)');
 
     try {
       // Check in-memory cache first
-      if (_memoryCache.containsKey(destination)) {
-        final cached = _memoryCache[destination]!;
+      if (_memoryCache.containsKey(effectiveCacheKey)) {
+        final cached = _memoryCache[effectiveCacheKey]!;
         if (!cached.isExpired) {
-          debugPrint('📦 [ImageService] Memory cache HIT for: $destination');
+          debugPrint('📦 [ImageService] Memory cache HIT for: $effectiveCacheKey');
           return cached.url;
         } else {
-          debugPrint('📦 [ImageService] Memory cache EXPIRED for: $destination');
-          _memoryCache.remove(destination);
+          debugPrint('📦 [ImageService] Memory cache EXPIRED for: $effectiveCacheKey');
+          _memoryCache.remove(effectiveCacheKey);
         }
       }
 
       // Check persistent cache
-      debugPrint('💾 [ImageService] Checking disk cache for: $destination');
-      final cachedUrl = await _getCachedUrl(destination);
+      debugPrint('💾 [ImageService] Checking disk cache for: $effectiveCacheKey');
+      final cachedUrl = await _getCachedUrl(effectiveCacheKey);
       if (cachedUrl != null) {
         // Add to memory cache
-        _memoryCache[destination] = CachedImage(
+        _memoryCache[effectiveCacheKey] = CachedImage(
           url: cachedUrl,
           cachedAt: DateTime.now(),
         );
-        debugPrint('💾 [ImageService] Disk cache HIT for: $destination');
+        debugPrint('💾 [ImageService] Disk cache HIT for: $effectiveCacheKey');
         return cachedUrl;
       }
-      debugPrint('💾 [ImageService] Disk cache MISS for: $destination');
+      debugPrint('💾 [ImageService] Disk cache MISS for: $effectiveCacheKey');
 
       // Fetch from Google Places API
       debugPrint('🌐 [ImageService] Fetching from Google Places API...');
       final url = await _fetchFromGooglePlaces(destination);
       if (url != null) {
-        // Cache the result
-        await _cacheUrl(destination, url);
-        _memoryCache[destination] = CachedImage(
+        // Cache the result with the effective cache key
+        await _cacheUrl(effectiveCacheKey, url);
+        _memoryCache[effectiveCacheKey] = CachedImage(
           url: url,
           cachedAt: DateTime.now(),
         );
-        debugPrint('✅ [ImageService] Got and cached URL for: $destination');
+        debugPrint('✅ [ImageService] Got and cached URL for: $effectiveCacheKey');
       } else {
         debugPrint('⚠️ [ImageService] No URL returned for: $destination');
       }

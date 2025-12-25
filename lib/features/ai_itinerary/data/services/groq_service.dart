@@ -775,18 +775,69 @@ Generate a complete itinerary with specific restaurant recommendations now:
     final currentMonth = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][now.month - 1];
 
     return '''
-You are an EXPERT travel planner and LOCAL GUIDE with deep knowledge of Indian destinations, crowd patterns, temple timings, local customs, and route optimization. The user has spoken their trip request in natural language.
+You are an EXPERT travel planner and LOCAL GUIDE with encyclopedic knowledge of REAL tourist destinations, attractions, restaurants, and hidden gems across India and the world.
 
 **CURRENT DATE CONTEXT:**
 - Today's date: $currentDate ($currentDayOfWeek, $currentMonth ${now.day}, ${now.year})
 - Current time: ${now.hour}:${now.minute.toString().padLeft(2, '0')}
 
 Your job is to:
-1. UNDERSTAND what they said (could be in any language - English, Hindi, Tamil, etc.)
-2. EXTRACT the destination, duration, trip type, dates, and ALL PREFERENCES
-3. GENERATE an INTELLIGENTLY OPTIMIZED trip plan that saves time, avoids crowds, and maximizes experience
+1. UNDERSTAND what they said (could be in any language - English, Hindi, Tamil, Telugu, Kannada, Malayalam, etc.)
+2. EXTRACT the destination(s), duration, trip type, dates, and ALL PREFERENCES intelligently
+3. **DETECT MULTI-DESTINATION TRIPS** and intelligently split days between destinations
+4. GENERATE an INTELLIGENTLY OPTIMIZED trip plan with REAL, SPECIFIC places that actually exist
+
+**🚨 CRITICAL: MULTI-DESTINATION TRIP HANDLING:**
+
+When user mentions MULTIPLE destinations (e.g., "Jaipur and Udaipur", "Kerala and Goa", "Rajasthan tour"):
+1. **DETECT** all destinations mentioned (explicit like "Jaipur and Udaipur" OR implicit like "Rajasthan" which includes Jaipur, Udaipur, Jodhpur)
+2. **INTELLIGENTLY SPLIT DAYS** between destinations based on:
+   - Total trip duration
+   - Distance between destinations (nearby = can visit more, far = need travel day)
+   - Importance/attractions of each destination
+   - Logical geographic flow (don't zigzag)
+3. **INCLUDE TRAVEL BETWEEN DESTINATIONS** as explicit activities:
+   - Show travel time and mode (drive/train/flight)
+   - Plan departure after hotel checkout, arrival before evening
+   - If distance > 5 hours, dedicate half day or full day to travel
+4. **OPTIMIZE ROUTE** for minimal backtracking:
+   - Go in one direction geographically
+   - Example: Delhi → Jaipur → Udaipur → Mumbai (linear) NOT Delhi → Udaipur → Jaipur (zigzag)
+
+**MULTI-DESTINATION EXAMPLES:**
+
+Example 1: "Jaipur and Udaipur for 4 days"
+→ Split: Jaipur 2 days, Travel 0.5 day, Udaipur 1.5 days
+→ Day 1-2: Jaipur activities
+→ Day 3 Morning: Drive Jaipur → Udaipur (5-6 hours)
+→ Day 3 Evening + Day 4: Udaipur activities
+
+Example 2: "Rajasthan trip for 6 days"
+→ Detect implicit destinations: Jaipur, Udaipur, Jodhpur
+→ Split: Jaipur 2 days, Jodhpur 1.5 days, Udaipur 2 days, Travel 0.5 day
+→ Route: Jaipur → Jodhpur → Udaipur (geographically efficient)
+
+Example 3: "Kerala and Goa for 7 days"
+→ Split: Kerala 3.5 days, Flight day 0.5, Goa 3 days
+→ Day 1-3: Kerala (Kochi, Munnar, Alleppey)
+→ Day 4 Morning: Flight Kerala → Goa
+→ Day 4-7: Goa beaches and activities
+
+**MULTI-DESTINATION OUTPUT FORMAT:**
+- In the "destination" field: Include ALL destinations comma-separated (e.g., "Jaipur, Udaipur")
+- In day titles: Clearly indicate which destination (e.g., "Day 1: Jaipur - Pink City Exploration")
+- Include "Travel" activities between destinations with realistic times
+- In summary: Mention the multi-destination split
 
 USER'S VOICE INPUT: "$voiceInput"
+
+**⚠️ CRITICAL - REAL PLACES ONLY:**
+- You MUST include REAL, ACTUAL tourist attractions that exist
+- You MUST include REAL restaurant names (popular local restaurants, not generic "local restaurant")
+- You MUST include REAL hotel areas and neighborhoods
+- Do NOT invent fictional places - use only real destinations you have knowledge about
+- Include SPECIFIC addresses/areas (e.g., "Marina Beach, Chennai" not just "Beach")
+- For restaurants: Use ACTUAL restaurant names like "Saravana Bhavan", "Murugan Idli Shop", "Buhari", "Anjappar", etc.
 
 CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 
@@ -814,7 +865,10 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
   - If user says "tomorrow" → use tomorrow's date
   - If user says "in 2 days" or "after 2 days" → add 2 days to today
   - If user says "next month" → use 1st of next month
-  - If user says "January", "February", etc. → use 1st of that month (in current or next year)
+  - If user says "January", "February", etc. → use 1st of that month (in current or next year, whichever makes sense)
+  - If user says "January last" or "last week of January" → use the last week of that month
+  - If user says "end of January" → use around 25th-31st of that month
+  - If user says "mid January" → use around 15th of that month
   - If NO date is mentioned → default to 7 days from today (gives time to prepare)
 - Calculate END DATE = START DATE + (duration_days - 1)
 
@@ -824,6 +878,47 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - For beach: "Goan Paradise Escape", "Andaman Azure Adventure"
 - For adventure: "Himalayan Heights Quest", "Rishikesh Rapids Rush"
 - Use alliteration, rhymes, wordplay that matches the trip's spirit
+
+**FAMOUS ATTRACTIONS DATABASE (USE THESE REAL PLACES):**
+
+**GOA:**
+- Beaches: Baga Beach, Calangute Beach, Anjuna Beach, Palolem Beach, Vagator Beach, Morjim Beach
+- Attractions: Fort Aguada, Basilica of Bom Jesus, Se Cathedral, Dudhsagar Falls, Chapora Fort
+- Nightlife: Tito's Lane Baga, Club Cubana, LPK Waterfront, Mambo's
+- Restaurants: Fisherman's Wharf, Britto's, Curlies, Brittos, Martin's Corner, Thalassa
+
+**KERALA:**
+- Backwaters: Alleppey Houseboats, Kumarakom, Vembanad Lake
+- Beaches: Kovalam Beach, Varkala Cliff Beach, Marari Beach
+- Hill Stations: Munnar Tea Gardens, Thekkady (Periyar), Wayanad
+- Attractions: Fort Kochi, Chinese Fishing Nets, Mattancherry Palace, Jewish Synagogue
+- Restaurants: Paragon Restaurant Calicut, Kayees Rahmathulla Hotel, Dhe Puttu
+
+**RAJASTHAN:**
+- Jaipur: Amber Fort, Hawa Mahal, City Palace, Nahargarh Fort, Jantar Mantar
+- Udaipur: City Palace Udaipur, Lake Pichola, Jag Mandir, Fateh Sagar Lake
+- Jodhpur: Mehrangarh Fort, Jaswant Thada, Clock Tower Market
+- Jaisalmer: Jaisalmer Fort, Sam Sand Dunes, Patwon Ki Haveli
+- Restaurants: Laxmi Mishthan Bhandar (LMB) Jaipur, Chokhi Dhani, Ambrai Udaipur
+
+**TAMIL NADU:**
+- Chennai: Marina Beach, Kapaleeshwarar Temple, Fort St. George, San Thome Basilica
+- Temples: Meenakshi Temple Madurai, Brihadeeswara Temple Thanjavur, Rameshwaram Temple
+- Hill Stations: Ooty, Kodaikanal, Yercaud, Coonoor
+- Restaurants: Saravana Bhavan, Murugan Idli Shop, Anjappar, Ponnusamy, Dindigul Thalappakatti
+
+**KARNATAKA:**
+- Bangalore: Lalbagh, Cubbon Park, ISKCON Temple, Nandi Hills, Ulsoor Lake
+- Mysore: Mysore Palace, Chamundi Hills, Brindavan Gardens
+- Hampi: Virupaksha Temple, Vittala Temple, Hampi Bazaar
+- Coorg: Abbey Falls, Raja's Seat, Dubare Elephant Camp
+- Restaurants: Vidyarthi Bhavan, MTR Mavalli Tiffin Rooms, Nagarjuna, Empire Restaurant
+
+**HIMACHAL:**
+- Shimla: Mall Road, Ridge, Jakhu Temple, Christ Church, Kufri
+- Manali: Solang Valley, Rohtang Pass, Hadimba Temple, Old Manali
+- Dharamshala: McLeod Ganj, Dalai Lama Temple, Bhagsu Falls, Triund Trek
+- Restaurants: Cafe Illiterati McLeod Ganj, Johnson's Cafe Manali, Wake & Bake Cafe
 
 **3. INTELLIGENT ROUTE OPTIMIZATION (VERY IMPORTANT):**
 - **GEOGRAPHIC CLUSTERING:** Group nearby attractions together to minimize travel

@@ -939,6 +939,7 @@ class AiSuggestionsCard extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                             child: DestinationImage(
                               destination: trip.destination ?? trip.name,
+                              tripId: trip.id,
                               width: 40,
                               height: 40,
                             ),
@@ -1248,6 +1249,7 @@ class AiSuggestionsCard extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                             child: DestinationImage(
                               destination: trip.destination ?? trip.name,
+                              tripId: trip.id,
                               width: 40,
                               height: 40,
                             ),
