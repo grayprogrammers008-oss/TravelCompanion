@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/popular_destination.dart';
 
-/// Section widget to display popular destinations by region
+/// Section widget to display popular destinations by country
 class PopularDestinationsSection extends StatefulWidget {
   final Function(PopularDestination) onDestinationTapped;
   final Function(PopularDestination)? onExploreNearby;
@@ -19,20 +19,20 @@ class PopularDestinationsSection extends StatefulWidget {
 }
 
 class _PopularDestinationsSectionState extends State<PopularDestinationsSection> {
-  String? _selectedRegion;
+  String? _selectedCountry;
 
   @override
   Widget build(BuildContext context) {
-    final regions = PopularDestinations.getRegions();
-    final destinationsByRegion = PopularDestinations.getByRegion();
+    final countries = PopularDestinations.getCountries();
+    final destinationsByCountry = PopularDestinations.groupByCountry();
 
     // Get destinations to show
     final List<PopularDestination> destinationsToShow;
-    if (_selectedRegion != null) {
-      destinationsToShow = destinationsByRegion[_selectedRegion] ?? [];
+    if (_selectedCountry != null) {
+      destinationsToShow = destinationsByCountry[_selectedCountry] ?? [];
     } else {
       // Show all destinations shuffled for variety
-      destinationsToShow = List.from(PopularDestinations.india)..shuffle();
+      destinationsToShow = List.from(PopularDestinations.all)..shuffle();
     }
 
     return Column(
@@ -68,44 +68,45 @@ class _PopularDestinationsSectionState extends State<PopularDestinationsSection>
           ),
         ),
 
-        // Region filter chips
+        // Country filter chips
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              // All regions chip
+              // All countries chip
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: FilterChip(
-                  selected: _selectedRegion == null,
+                  selected: _selectedCountry == null,
                   onSelected: (_) {
-                    setState(() => _selectedRegion = null);
+                    setState(() => _selectedCountry = null);
                   },
-                  avatar: const Icon(Icons.public, size: 16),
+                  avatar: const Text('🌍', style: TextStyle(fontSize: 14)),
                   label: const Text('All'),
                   selectedColor: context.primaryColor.withValues(alpha: 0.2),
                   checkmarkColor: context.primaryColor,
                 ),
               ),
-              // Region chips
-              ...regions.map((region) {
-                final info = RegionInfo.getInfo(region);
-                final isSelected = _selectedRegion == region;
+              // Country chips
+              ...countries.map((country) {
+                final info = CountryInfo.getInfo(country);
+                final isSelected = _selectedCountry == country;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
                     selected: isSelected,
                     onSelected: (_) {
-                      setState(() => _selectedRegion = isSelected ? null : region);
+                      setState(() => _selectedCountry = isSelected ? null : country);
                     },
-                    avatar: Icon(info.icon, size: 16, color: isSelected ? Colors.white : info.color),
-                    label: Text(region),
-                    selectedColor: info.color,
+                    avatar: Text(info.flag, style: const TextStyle(fontSize: 14)),
+                    label: Text(country),
+                    selectedColor: info.color.withValues(alpha: 0.3),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : context.textColor,
+                      color: isSelected ? info.color : context.textColor,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
-                    checkmarkColor: Colors.white,
+                    checkmarkColor: info.color,
                   ),
                 );
               }),
@@ -165,7 +166,7 @@ class _DestinationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final regionInfo = RegionInfo.getInfo(destination.region);
+    final countryInfo = CountryInfo.getInfo(destination.country);
 
     return GestureDetector(
       onTap: onTap,
@@ -191,20 +192,20 @@ class _DestinationCard extends StatelessWidget {
               imageUrl: destination.imageUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) => Container(
-                color: regionInfo.color.withValues(alpha: 0.2),
+                color: countryInfo.color.withValues(alpha: 0.2),
                 child: Center(
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: regionInfo.color,
+                    color: countryInfo.color,
                   ),
                 ),
               ),
               errorWidget: (context, url, error) => Container(
-                color: regionInfo.color.withValues(alpha: 0.2),
+                color: countryInfo.color.withValues(alpha: 0.2),
                 child: Icon(
-                  regionInfo.icon,
+                  countryInfo.icon,
                   size: 48,
-                  color: regionInfo.color,
+                  color: countryInfo.color,
                 ),
               ),
             ),
@@ -222,23 +223,25 @@ class _DestinationCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Region badge
+            // Country badge with flag
             Positioned(
               top: 8,
               left: 8,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: regionInfo.color,
+                  color: countryInfo.color.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(regionInfo.icon, size: 12, color: Colors.white),
+                    Text(countryInfo.flag, style: const TextStyle(fontSize: 12)),
                     const SizedBox(width: 4),
                     Text(
-                      destination.region.split(' ').first, // Just "North", "South", etc.
+                      destination.country.length > 8
+                          ? destination.country.substring(0, 8)
+                          : destination.country,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -323,7 +326,7 @@ class _DestinationCard extends StatelessWidget {
   }
 }
 
-/// Bottom sheet showing all destinations
+/// Bottom sheet showing all destinations grouped by country
 class _AllDestinationsSheet extends StatelessWidget {
   final Function(PopularDestination) onDestinationTapped;
   final Function(PopularDestination)? onExploreNearby;
@@ -335,7 +338,8 @@ class _AllDestinationsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final destinationsByRegion = PopularDestinations.getByRegion();
+    final destinationsByCountry = PopularDestinations.groupByCountry();
+    final countries = destinationsByCountry.keys.toList()..sort();
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -364,33 +368,48 @@ class _AllDestinationsSheet extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(Icons.star, color: Colors.amber[700]),
+                    Icon(Icons.public, color: context.primaryColor),
                     const SizedBox(width: 8),
                     Text(
-                      'All Popular Destinations',
+                      'Destinations Worldwide',
                       style: context.titleLarge.copyWith(
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: context.primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${PopularDestinations.all.length} places',
+                        style: context.bodySmall.copyWith(
+                          color: context.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               const Divider(height: 1),
-              // List
+              // List grouped by country
               Expanded(
                 child: ListView.builder(
                   controller: scrollController,
                   padding: const EdgeInsets.all(16),
-                  itemCount: destinationsByRegion.keys.length,
+                  itemCount: countries.length,
                   itemBuilder: (context, index) {
-                    final region = destinationsByRegion.keys.toList()[index];
-                    final destinations = destinationsByRegion[region]!;
-                    final info = RegionInfo.getInfo(region);
+                    final country = countries[index];
+                    final destinations = destinationsByCountry[country]!;
+                    final info = CountryInfo.getInfo(country);
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Region header
+                        // Country header with flag
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Row(
@@ -401,20 +420,35 @@ class _AllDestinationsSheet extends StatelessWidget {
                                   color: info.color.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Icon(info.icon, color: info.color, size: 20),
+                                child: Text(info.flag, style: const TextStyle(fontSize: 20)),
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                region,
+                                country,
                                 style: context.titleMedium.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: info.color,
                                 ),
                               ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: info.color.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${destinations.length}',
+                                  style: context.bodySmall.copyWith(
+                                    color: info.color,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        // Destinations in this region
+                        // Destinations in this country
                         ...destinations.map((dest) => _DestinationListTile(
                           destination: dest,
                           onTap: () {
@@ -456,6 +490,8 @@ class _DestinationListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final countryInfo = CountryInfo.getInfo(destination.country);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: InkWell(
@@ -476,13 +512,13 @@ class _DestinationListTile extends StatelessWidget {
                   placeholder: (context, url) => Container(
                     width: 60,
                     height: 60,
-                    color: context.primaryColor.withValues(alpha: 0.1),
+                    color: countryInfo.color.withValues(alpha: 0.1),
                   ),
                   errorWidget: (context, url, error) => Container(
                     width: 60,
                     height: 60,
-                    color: context.primaryColor.withValues(alpha: 0.1),
-                    child: const Icon(Icons.image),
+                    color: countryInfo.color.withValues(alpha: 0.1),
+                    child: Icon(countryInfo.icon, color: countryInfo.color),
                   ),
                 ),
               ),
@@ -492,11 +528,23 @@ class _DestinationListTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      destination.name,
-                      style: context.titleSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            destination.name,
+                            style: context.titleSmall.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          destination.region,
+                          style: context.bodySmall.copyWith(
+                            color: context.textColor.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(
