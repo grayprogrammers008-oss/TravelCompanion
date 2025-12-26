@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:printing/printing.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
@@ -305,7 +306,7 @@ class ExpenseListPage extends ConsumerWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
+      builder: (ctx) => const Center(
         child: CircularProgressIndicator(),
       ),
     );
@@ -314,26 +315,33 @@ class ExpenseListPage extends ConsumerWidget {
       // Convert ExpenseWithSplits to ExpenseModel list
       final expenses = expensesWithSplits.map((e) => e.expense).toList();
 
-      if (share) {
-        await ExpensePdfService.sharePdf(
-          trip: trip,
-          expenses: expenses,
-          budget: trip.cost,
-        );
-      } else {
-        await ExpensePdfService.printPdf(
-          trip: trip,
-          expenses: expenses,
-          budget: trip.cost,
-        );
+      // Generate PDF first
+      final pdfBytes = await ExpensePdfService.generateExpenseReport(
+        trip: trip,
+        expenses: expenses,
+        budget: trip.cost,
+      );
+
+      // Close loading dialog BEFORE opening share/print UI
+      if (context.mounted) {
+        Navigator.pop(context);
       }
 
-      if (context.mounted) {
-        Navigator.pop(context); // Close loading dialog
+      // Now open share or print (these open system UIs)
+      if (share) {
+        await Printing.sharePdf(
+          bytes: pdfBytes,
+          filename: '${trip.name.replaceAll(' ', '_')}_expenses.pdf',
+        );
+      } else {
+        await Printing.layoutPdf(
+          onLayout: (format) async => pdfBytes,
+          name: '${trip.name} - Expense Report',
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        Navigator.pop(context); // Close loading dialog
+        Navigator.pop(context); // Close loading dialog if still open
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error generating PDF: ${e.toString()}'),
