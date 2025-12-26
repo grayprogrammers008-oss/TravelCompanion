@@ -118,20 +118,14 @@ class GroqService {
 
       debugPrint('📥 Response status code: ${response.statusCode}');
 
-      // Handle rate limiting (429) with exponential backoff
+      // Handle rate limiting (429) - DON'T retry to save quota
+      // Groq free tier: 30 RPM, 1000 RPD - retrying wastes requests
       if (response.statusCode == 429) {
-        retryCount++;
-        if (retryCount > maxRetries) {
-          debugPrint('❌ Groq: Max retries exceeded for rate limiting');
-          throw Exception('Groq rate limited: 429');
-        }
-        debugPrint('⏳ Groq rate limited (429). Waiting ${delaySeconds}s before retry $retryCount/$maxRetries...');
-        await Future.delayed(Duration(seconds: delaySeconds));
-        delaySeconds *= 2;
-        continue;
+        debugPrint('❌ Groq rate limited (429). NOT retrying to save quota.');
+        throw Exception('Groq rate limited: 429. Please wait a moment.');
       }
 
-      // Handle server errors with retry
+      // Handle server errors with retry (5xx are transient)
       if (response.statusCode >= 500 && response.statusCode < 600) {
         retryCount++;
         if (retryCount > maxRetries) {
@@ -434,17 +428,13 @@ Generate the complete trip plan now:
 
       debugPrint('📥 Response status code: ${response.statusCode}');
 
+      // Handle rate limiting (429) - DON'T retry to save quota
       if (response.statusCode == 429) {
-        retryCount++;
-        if (retryCount > maxRetries) {
-          throw Exception('Groq rate limited: 429');
-        }
-        debugPrint('⏳ Rate limited. Waiting ${delaySeconds}s...');
-        await Future.delayed(Duration(seconds: delaySeconds));
-        delaySeconds *= 2;
-        continue;
+        debugPrint('❌ Groq rate limited (429). NOT retrying to save quota.');
+        throw Exception('Groq rate limited: 429. Please wait a moment.');
       }
 
+      // Handle server errors with retry (5xx are transient)
       if (response.statusCode >= 500) {
         retryCount++;
         if (retryCount > maxRetries) {
@@ -508,6 +498,257 @@ Generate the complete trip plan now:
     throw Exception('Failed to generate trip plan after multiple attempts');
   }
 
+  /// Refine an existing trip plan based on user's refinement request
+  /// This method understands that we're MODIFYING an existing plan, not creating a new one
+  Future<AiCompleteTripPlan> refineTripPlan({
+    required AiCompleteTripPlan currentPlan,
+    required String refinementRequest,
+  }) async {
+    debugPrint('🔄 GroqService.refineTripPlan() called');
+    debugPrint('📝 Refinement request: $refinementRequest');
+    debugPrint('📍 Current destination: ${currentPlan.destination}');
+
+    final prompt = _buildRefinementPrompt(
+      currentPlan: currentPlan,
+      refinementRequest: refinementRequest,
+    );
+    debugPrint('📝 Refinement prompt built (${prompt.length} chars)');
+
+    // Retry logic with exponential backoff
+    const maxRetries = 3;
+    int retryCount = 0;
+    int delaySeconds = 2;
+
+    while (retryCount <= maxRetries) {
+      debugPrint('🌐 Making POST request to Groq API for refinement (attempt ${retryCount + 1}/${maxRetries + 1})...');
+
+      final requestBody = {
+        'model': _model,
+        'messages': [
+          {
+            'role': 'system',
+            'content': '''You are an expert travel planner helping to MODIFY an existing trip plan.
+Your job is to REFINE the plan based on the user's request while keeping everything else the same.
+
+IMPORTANT RULES:
+1. You are UPDATING an existing plan, NOT creating a new one
+2. Only change what the user specifically asks for
+3. Keep the same destination, dates, and duration unless explicitly asked to change
+4. Keep activities that weren't mentioned - only modify/add/remove what was requested
+5. Maintain the same JSON structure exactly
+6. You MUST respond with valid JSON only - no markdown, no code blocks, no explanations''',
+          },
+          {
+            'role': 'user',
+            'content': prompt,
+          },
+        ],
+        'temperature': 0.5, // Lower temperature for more consistent refinements
+        'max_tokens': 8192,
+      };
+
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_apiKey',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      debugPrint('📥 Refinement response status code: ${response.statusCode}');
+
+      // Handle rate limiting (429) - DON'T retry to save quota
+      if (response.statusCode == 429) {
+        debugPrint('❌ Groq rate limited (429). NOT retrying to save quota.');
+        throw Exception('Groq rate limited: 429. Please wait a moment.');
+      }
+
+      // Handle server errors with retry (5xx are transient)
+      if (response.statusCode >= 500) {
+        retryCount++;
+        if (retryCount > maxRetries) {
+          throw Exception('Groq server error during refinement: ${response.statusCode}');
+        }
+        await Future.delayed(Duration(seconds: delaySeconds));
+        delaySeconds *= 2;
+        continue;
+      }
+
+      if (response.statusCode != 200) {
+        debugPrint('❌ Groq API Error during refinement: ${response.statusCode}');
+        debugPrint('Response body: ${response.body}');
+        String errorDetail = '';
+        try {
+          final errorJson = jsonDecode(response.body) as Map<String, dynamic>;
+          final error = errorJson['error'] as Map<String, dynamic>?;
+          errorDetail = error?['message'] as String? ?? '';
+        } catch (_) {}
+        throw Exception('Groq API refinement error: ${response.statusCode}${errorDetail.isNotEmpty ? ' - $errorDetail' : ''}');
+      }
+
+      debugPrint('✅ Groq API refinement returned 200 OK');
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      final choices = jsonResponse['choices'] as List?;
+
+      if (choices == null || choices.isEmpty) {
+        throw Exception('No refinement response from Groq AI');
+      }
+
+      final message = choices[0]['message'] as Map<String, dynamic>?;
+      final content = message?['content'] as String?;
+
+      if (content == null || content.isEmpty) {
+        throw Exception('Empty refinement response from Groq AI');
+      }
+
+      debugPrint('📄 Refined plan text length: ${content.length} chars');
+
+      try {
+        final cleanContent = _cleanJsonResponse(content);
+        final planJson = jsonDecode(cleanContent) as Map<String, dynamic>;
+        final plan = AiCompleteTripPlan.fromJson(planJson);
+        debugPrint('✅ Successfully parsed refined trip plan');
+        debugPrint('   - Destination: ${plan.destination}');
+        debugPrint('   - Duration: ${plan.durationDays} days');
+        return plan;
+      } catch (e) {
+        debugPrint('❌ Failed to parse refined plan response: $content');
+        debugPrint('Error: $e');
+        throw Exception('Failed to parse refined plan response');
+      }
+    }
+
+    throw Exception('Failed to refine trip plan after multiple attempts');
+  }
+
+  /// Build prompt for refining an existing plan
+  String _buildRefinementPrompt({
+    required AiCompleteTripPlan currentPlan,
+    required String refinementRequest,
+  }) {
+    // Build the current itinerary as text
+    final itineraryText = currentPlan.days.map((d) => '''
+Day ${d.dayNumber}: ${d.title}
+${d.activities.map((a) => '  • ${a.startTime ?? ''} - ${a.title}${a.description != null ? ' (${a.description})' : ''}').join('\n')}
+''').join('\n');
+
+    // Build packing list
+    final packingText = currentPlan.packingList.map((p) => '• ${p.title}').join('\n');
+
+    return '''
+CURRENT TRIP PLAN (This is what you need to MODIFY):
+
+**TRIP DETAILS:**
+- Trip Name: ${currentPlan.tripName}
+- Destination: ${currentPlan.destination}
+- Duration: ${currentPlan.durationDays} days
+- Start Date: ${currentPlan.startDate?.toString().split(' ')[0] ?? 'Not specified'}
+- End Date: ${currentPlan.endDate?.toString().split(' ')[0] ?? 'Not specified'}
+- Theme: ${currentPlan.tripTheme ?? 'mixed'}
+- Summary: ${currentPlan.summary}
+
+**CURRENT ITINERARY:**
+$itineraryText
+
+**CURRENT PACKING LIST:**
+$packingText
+
+---
+
+**USER'S REFINEMENT REQUEST:** "$refinementRequest"
+
+---
+
+**YOUR TASK:**
+1. UNDERSTAND what the user wants to change (could be in any language - English, Hindi, Tamil, etc.)
+2. MODIFY the plan accordingly:
+
+   *For ITINERARY changes:*
+   - If they want to ADD an activity: Add it to the appropriate day(s) in the "days" array
+   - If they want to REMOVE an activity: Remove it from the itinerary
+   - If they want to CHANGE an activity: Replace/modify that activity
+   - If they want MORE of something: Add more similar activities
+   - If they want LESS of something: Remove some of those activities
+
+   *For PACKING LIST changes:*
+   - If they mention packing items, clothes, gear, equipment: Modify the "packing_list" array
+   - "Add hiking shoes" → Add to packing_list with appropriate category
+   - "Remove formal clothes" → Remove matching items from packing_list
+   - "Add warm clothes" → Add jacket, sweater, etc. to packing_list
+
+3. KEEP everything else the same (dates, destination, unmentioned activities/items)
+4. Ensure the modified plan is still logical and well-structured
+
+**EXAMPLES OF REFINEMENT REQUESTS:**
+
+*Itinerary Changes:*
+- "Add camel ride" → Add a camel ride activity to an appropriate day
+- "Remove the museum visit" → Find and remove museum activities
+- "I want more temples" → Add more temple visits across days
+- "Add beach activities on day 2" → Add beach activities specifically to day 2
+- "Change dinner to a vegetarian restaurant" → Update restaurant recommendations
+- "ஒட்டகச் சவாரி சேர்க்கவும்" (Tamil: Add camel ride) → Add camel ride activity
+
+*Packing List Changes:*
+- "Add hiking shoes" → Add hiking shoes to packing_list
+- "Add sunscreen and hat" → Add sunscreen and hat items to packing_list
+- "Remove formal clothes" → Remove formal clothing items from packing_list
+- "Add camera and tripod" → Add photography equipment to packing_list
+- "I need warm clothes" → Add warm clothing items (jacket, sweater, etc.) to packing_list
+- "Add medicines" → Add first aid/medicine items to packing_list
+- "பெட்டி பொருள்கள் சேர்க்கவும்" (Tamil: Add packing items) → Add relevant items
+
+**OUTPUT FORMAT:**
+Return the COMPLETE updated plan in the exact same JSON format:
+{
+  "trip_name": "string",
+  "destination": "string",
+  "duration_days": number,
+  "start_date": "YYYY-MM-DD",
+  "end_date": "YYYY-MM-DD",
+  "summary": "string (1-2 sentences describing the updated trip)",
+  "trip_theme": "string",
+  "days": [
+    {
+      "day_number": number,
+      "title": "string",
+      "activities": [
+        {
+          "title": "string",
+          "description": "string",
+          "start_time": "HH:MM",
+          "end_time": "HH:MM",
+          "location": "string",
+          "category": "string",
+          "tips": "string"
+        }
+      ]
+    }
+  ],
+  "packing_list": [
+    {
+      "title": "string",
+      "category": "string"
+    }
+  ],
+  "budget_estimate": {
+    "total": number,
+    "currency": "INR",
+    "breakdown": {
+      "accommodation": number,
+      "food": number,
+      "transport": number,
+      "activities": number
+    }
+  }
+}
+
+IMPORTANT: Return ONLY the JSON object, no explanation, no markdown.
+''';
+  }
+
   /// Generate an itinerary using Groq API (same format as GeminiService)
   /// Includes retry logic with exponential backoff for rate limiting (429 errors)
   Future<AiGeneratedItinerary> generateItinerary(AiItineraryRequest request) async {
@@ -553,20 +794,13 @@ Generate the complete trip plan now:
 
       debugPrint('📥 Response status code: ${response.statusCode}');
 
-      // Handle rate limiting (429) with exponential backoff
+      // Handle rate limiting (429) - DON'T retry to save quota
       if (response.statusCode == 429) {
-        retryCount++;
-        if (retryCount > maxRetries) {
-          debugPrint('❌ Groq: Max retries exceeded for rate limiting');
-          throw Exception('Groq rate limited: 429');
-        }
-        debugPrint('⏳ Groq rate limited (429). Waiting ${delaySeconds}s before retry $retryCount/$maxRetries...');
-        await Future.delayed(Duration(seconds: delaySeconds));
-        delaySeconds *= 2;
-        continue;
+        debugPrint('❌ Groq rate limited (429). NOT retrying to save quota.');
+        throw Exception('Groq rate limited: 429. Please wait a moment.');
       }
 
-      // Handle server errors with retry
+      // Handle server errors with retry (5xx are transient)
       if (response.statusCode >= 500 && response.statusCode < 600) {
         retryCount++;
         if (retryCount > maxRetries) {
@@ -790,34 +1024,60 @@ Your job is to:
 **🚨 CRITICAL: MULTI-DESTINATION TRIP HANDLING:**
 
 When user mentions MULTIPLE destinations (e.g., "Jaipur and Udaipur", "Kerala and Goa", "Rajasthan tour"):
+
+**⚠️ ABSOLUTELY CRITICAL - USER-SPECIFIED DURATIONS ARE MANDATORY!**
+
+When user specifies EXACT days per destination, you MUST follow it EXACTLY:
+- "Singapore 5 days, Malaysia 2 days" = EXACTLY 5 days of Singapore activities + 2 days of Malaysia activities
+- Total trip = 5 + 2 + travel days (if needed)
+- DO NOT reduce Singapore days to add travel days - travel is EXTRA
+- DO NOT redistribute days "intelligently" - follow user's EXACT request
+
+WRONG ❌: Singapore 3 days + Travel 1 day + Malaysia 3 days (ignores user's 5-2 split)
+CORRECT ✅: Singapore 5 days + Travel to Malaysia + Malaysia 2 days
+
+Parse the user's input carefully:
+- "சிங்கப்பூருக்கு 5 நாட்கள்" = Singapore for 5 days (FIVE days)
+- "மலேஷியாக்கு 2 நாட்கள்" = Malaysia for 2 days (TWO days)
+- Numbers in Tamil: ஐந்து=5, நான்கு=4, மூன்று=3, இரண்டு=2, ஒன்று=1
+
 1. **DETECT** all destinations mentioned (explicit like "Jaipur and Udaipur" OR implicit like "Rajasthan" which includes Jaipur, Udaipur, Jodhpur)
-2. **INTELLIGENTLY SPLIT DAYS** between destinations based on:
-   - Total trip duration
-   - Distance between destinations (nearby = can visit more, far = need travel day)
-   - Importance/attractions of each destination
-   - Logical geographic flow (don't zigzag)
-3. **INCLUDE TRAVEL BETWEEN DESTINATIONS** as explicit activities:
+2. **RESPECT USER-SPECIFIED DURATIONS** - If user says "X for 5 days, Y for 2 days", use EXACTLY those durations
+3. **ONLY intelligently split days** if user does NOT specify per-destination duration (e.g., "Singapore and Malaysia for 7 days" without specifying split)
+4. **INCLUDE TRAVEL BETWEEN DESTINATIONS** as explicit activities:
    - Show travel time and mode (drive/train/flight)
    - Plan departure after hotel checkout, arrival before evening
    - If distance > 5 hours, dedicate half day or full day to travel
-4. **OPTIMIZE ROUTE** for minimal backtracking:
+5. **OPTIMIZE ROUTE** for minimal backtracking:
    - Go in one direction geographically
    - Example: Delhi → Jaipur → Udaipur → Mumbai (linear) NOT Delhi → Udaipur → Jaipur (zigzag)
 
 **MULTI-DESTINATION EXAMPLES:**
 
-Example 1: "Jaipur and Udaipur for 4 days"
+Example 1 (USER SPECIFIES EXACT DAYS - MANDATORY!):
+Input: "Singapore 5 days, Malaysia 2 days" OR "சிங்கப்பூருக்கு 5 நாட்கள், மலேஷியாக்கு 2 நாட்கள்"
+
+CORRECT OUTPUT (8 days total):
+→ Day 1: Singapore - Arrival and Exploration
+→ Day 2: Singapore - Marina Bay and Gardens
+→ Day 3: Singapore - Sentosa Island
+→ Day 4: Singapore - Cultural Districts
+→ Day 5: Singapore - Shopping and Departure Prep
+→ Day 6: Travel to Malaysia + Kuala Lumpur Arrival
+→ Day 7: Malaysia - Petronas Towers and City
+→ Day 8: Malaysia - Final Day and Departure
+
+Key: Singapore gets 5 FULL days (Day 1-5), Malaysia gets 2 FULL days (Day 7-8), Travel is Day 6
+
+Example 2 (No specific days - AI splits intelligently):
+"Jaipur and Udaipur for 4 days"
 → Split: Jaipur 2 days, Travel 0.5 day, Udaipur 1.5 days
 → Day 1-2: Jaipur activities
 → Day 3 Morning: Drive Jaipur → Udaipur (5-6 hours)
 → Day 3 Evening + Day 4: Udaipur activities
 
-Example 2: "Rajasthan trip for 6 days"
-→ Detect implicit destinations: Jaipur, Udaipur, Jodhpur
-→ Split: Jaipur 2 days, Jodhpur 1.5 days, Udaipur 2 days, Travel 0.5 day
-→ Route: Jaipur → Jodhpur → Udaipur (geographically efficient)
-
-Example 3: "Kerala and Goa for 7 days"
+Example 3 (No specific days - AI splits intelligently):
+"Kerala and Goa for 7 days"
 → Split: Kerala 3.5 days, Flight day 0.5, Goa 3 days
 → Day 1-3: Kerala (Kochi, Munnar, Alleppey)
 → Day 4 Morning: Flight Kerala → Goa

@@ -139,6 +139,33 @@ class MultiProviderAiService {
     }
   }
 
+  /// Refine an existing trip plan based on user's refinement request
+  /// Uses Groq only for now (no fallback implemented for refinement in Gemini)
+  Future<AiCompleteTripPlan> refineTripPlan({
+    required AiCompleteTripPlan currentPlan,
+    required String refinementRequest,
+  }) async {
+    debugPrint('🔄 MultiProviderAiService: Starting plan refinement');
+    debugPrint('   Refinement request: $refinementRequest');
+    debugPrint('   Current destination: ${currentPlan.destination}');
+
+    // Use Groq for refinement (primary provider with dedicated refinement logic)
+    try {
+      debugPrint('🚀 Refining plan with Groq...');
+      final refinedPlan = await _groqService.refineTripPlan(
+        currentPlan: currentPlan,
+        refinementRequest: refinementRequest,
+      );
+      debugPrint('✅ Plan refinement succeeded!');
+      debugPrint('   Updated trip name: ${refinedPlan.tripName}');
+      return refinedPlan;
+    } catch (groqError, groqStack) {
+      debugPrint('❌ Plan refinement failed: $groqError');
+      debugPrint('   Stack: $groqStack');
+      throw Exception('Failed to refine trip plan: $groqError');
+    }
+  }
+
   /// Generate itinerary with automatic failover
   /// Tries Groq first (1,000 RPD), falls back to Gemini (25 RPD) if rate limited
   Future<AiGeneratedItinerary> generateItinerary(AiItineraryRequest request) async {

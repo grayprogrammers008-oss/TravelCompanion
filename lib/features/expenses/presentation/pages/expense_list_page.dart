@@ -9,6 +9,7 @@ import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/trip_permissions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/services/expense_pdf_service.dart';
 import '../../../../shared/models/expense_model.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
@@ -52,6 +53,12 @@ class ExpenseListPage extends ConsumerWidget {
         ),
         title: const Text('Expenses'),
         actions: [
+          // Export PDF button
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: () => _showExportOptions(context, ref, tripAsync, expensesAsync),
+            tooltip: 'Export Report',
+          ),
           IconButton(
             icon: const Icon(Icons.account_balance_wallet),
             onPressed: () {
@@ -134,6 +141,207 @@ class ExpenseListPage extends ConsumerWidget {
             )
           : null,
     );
+  }
+
+  void _showExportOptions(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<TripWithMembers> tripAsync,
+    AsyncValue<List<ExpenseWithSplits>> expensesAsync,
+  ) {
+    final trip = tripAsync.whenOrNull(data: (data) => data.trip);
+    final expenses = expensesAsync.whenOrNull(data: (data) => data);
+
+    if (trip == null || expenses == null || expenses.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No expenses to export'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingLg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppTheme.neutral300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingLg),
+
+                // Title
+                Text(
+                  'Export Expense Report',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
+
+                // Summary
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            '${expenses.length}',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          const Text('Expenses', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            expenses.fold<double>(0, (sum, e) => sum + e.expense.amount).toINR(),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          const Text('Total', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingLg),
+
+                // Share option
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(Icons.share, color: Colors.green),
+                  ),
+                  title: const Text(
+                    'Share PDF',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: const Text('Send via WhatsApp, Email, etc.'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    _exportPdf(context, trip, expenses, share: true);
+                  },
+                ),
+
+                const SizedBox(height: AppTheme.spacingSm),
+
+                // Print/Preview option
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: const Icon(Icons.print, color: Colors.purple),
+                  ),
+                  title: const Text(
+                    'Preview & Print',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: const Text('View PDF and print if needed'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    _exportPdf(context, trip, expenses, share: false);
+                  },
+                ),
+
+                const SizedBox(height: AppTheme.spacingMd),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _exportPdf(
+    BuildContext context,
+    TripModel trip,
+    List<ExpenseWithSplits> expensesWithSplits,
+    {required bool share}
+  ) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Convert ExpenseWithSplits to ExpenseModel list
+      final expenses = expensesWithSplits.map((e) => e.expense).toList();
+
+      if (share) {
+        await ExpensePdfService.sharePdf(
+          trip: trip,
+          expenses: expenses,
+          budget: trip.cost,
+        );
+      } else {
+        await ExpensePdfService.printPdf(
+          trip: trip,
+          expenses: expenses,
+          budget: trip.cost,
+        );
+      }
+
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading dialog
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error generating PDF: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showAddExpenseOptions(BuildContext context, String tripId) {

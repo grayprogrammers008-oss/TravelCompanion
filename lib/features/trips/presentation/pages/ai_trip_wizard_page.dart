@@ -416,14 +416,31 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       debugPrint('📚 Stack trace: $stackTrace');
       if (mounted) {
         String userMessage = 'Failed to generate plan. Please try again.';
-        if (e.toString().contains('rate limit') || e.toString().contains('429')) {
-          userMessage = 'AI service is busy. Please wait a moment and try again.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('rate limit') || errorStr.contains('429') || errorStr.contains('busy')) {
+          userMessage = 'AI service is rate limited. Please wait 1-2 minutes and tap "Generate Plan" again.';
+        } else if (errorStr.contains('unavailable')) {
+          userMessage = 'AI service temporarily unavailable. Please wait a moment and try again.';
         }
 
         setState(() {
           _voiceState = VoiceState.preview;
           _errorMessage = userMessage;
         });
+
+        // Show snackbar with retry hint
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(userMessage),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: _generatePlanPreview,
+            ),
+          ),
+        );
       }
     }
   }
@@ -452,30 +469,10 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
 
       final aiService = ref.read(multiProviderAiServiceProvider);
 
-      // Build context with current plan + refinement request
-      final refinementPrompt = '''
-CURRENT PLAN:
-Trip: ${_currentPlan!.tripName}
-Destination: ${_currentPlan!.destination}
-Duration: ${_currentPlan!.durationDays} days
-Start: ${_currentPlan!.startDate?.toString().split(' ')[0] ?? 'TBD'}
-
-ITINERARY:
-${_currentPlan!.days.map((d) => '''
-Day ${d.dayNumber}: ${d.title}
-${d.activities.map((a) => '  • ${a.startTime ?? ''} ${a.title}').join('\n')}
-''').join('\n')}
-
-PACKING LIST:
-${_currentPlan!.packingList.map((p) => '• ${p.title}').join('\n')}
-
-USER'S REFINEMENT REQUEST: "$refinementRequest"
-
-Please update the plan according to the user's request. Keep everything else the same unless it conflicts with the changes.
-''';
-
-      final refinedPlan = await aiService.generateCompleteTripPlanFromVoice(
-        voiceInput: refinementPrompt,
+      // Use dedicated refinement method that understands we're UPDATING, not creating
+      final refinedPlan = await aiService.refineTripPlan(
+        currentPlan: _currentPlan!,
+        refinementRequest: refinementRequest,
       );
 
       if (mounted) {
