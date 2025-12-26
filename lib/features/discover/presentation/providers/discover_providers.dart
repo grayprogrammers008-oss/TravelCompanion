@@ -116,21 +116,22 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
     }
   }
 
-  /// Initialize and get user location
+  /// Initialize cache and favorites only (no location fetching)
   Future<void> initialize() async {
     debugPrint('🎬 [Discover] initialize() called');
     debugPrint('📊 [Discover] Current state - hasLocation: ${state.hasLocation}, error: ${state.error}');
 
-    // Initialize cache first
+    // Initialize cache and load favorites only - don't auto-fetch location
     await _initializeCache();
+    debugPrint('✅ [Discover] Initialized - waiting for user to choose location method');
+  }
 
+  /// Public method to get user's GPS location (called when user clicks "Use My Location")
+  Future<void> getUserLocation() async {
     await _getUserLocation();
-    debugPrint('📊 [Discover] After _getUserLocation - hasLocation: ${state.hasLocation}, error: ${state.error}');
     if (state.hasLocation) {
       debugPrint('✅ [Discover] Has location, loading places...');
       await loadPlaces(state.selectedCategory);
-    } else {
-      debugPrint('⚠️ [Discover] No location available, cannot load places');
     }
   }
 

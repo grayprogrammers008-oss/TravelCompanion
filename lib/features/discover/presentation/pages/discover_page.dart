@@ -10,7 +10,6 @@ import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/popular_destination.dart';
 import '../providers/discover_providers.dart';
-import '../widgets/location_map_widget.dart';
 import '../widgets/location_search_sheet.dart';
 import '../widgets/place_card.dart';
 import '../widgets/place_detail_sheet.dart';
@@ -241,17 +240,15 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
           // Content
           if (discoverState.isGettingLocation)
-            SliverFillRemaining(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: LocationMapWidget(
-                  userLatitude: discoverState.userLatitude,
-                  userLongitude: discoverState.userLongitude,
-                  isLoading: true,
-                  locationName: discoverState.locationName,
-                  onRetry: () {
-                    ref.read(discoverStateProvider.notifier).initialize();
-                  },
+            const SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Getting your location...'),
+                  ],
                 ),
               ),
             )
@@ -1323,38 +1320,135 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   Widget _buildLocationPermissionState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.location_off,
-              size: 64,
-              color: context.primaryColor.withValues(alpha: 0.5),
+            // Header icon
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: context.primaryColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.travel_explore,
+                size: 48,
+                color: context.primaryColor,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             Text(
-              'Location Required',
-              style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
+              'How would you like to discover?',
+              style: context.titleLarge.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Enable location to discover amazing places near you',
+              'Choose your preferred way to find amazing places',
               style: context.bodyMedium.copyWith(
                 color: context.textColor.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                ref.read(discoverStateProvider.notifier).initialize();
+            const SizedBox(height: 32),
+
+            // Option 1: Use My Location
+            _buildLocationOptionCard(
+              icon: Icons.my_location,
+              iconColor: Colors.blue,
+              title: 'Use My Location',
+              subtitle: 'Find places near your current location',
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                ref.read(discoverStateProvider.notifier).getUserLocation();
               },
-              icon: const Icon(Icons.location_on),
-              label: const Text('Enable Location'),
+            ),
+            const SizedBox(height: 16),
+
+            // Option 2: Select Country
+            _buildLocationOptionCard(
+              icon: Icons.public,
+              iconColor: Colors.teal,
+              title: 'Select a Country',
+              subtitle: 'Explore places in a specific country',
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                _showCountrySelector(ref.read(discoverStateProvider));
+              },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationOptionCard({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: context.cardColor,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: iconColor.withValues(alpha: 0.2),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: context.titleSmall.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: context.bodySmall.copyWith(
+                        color: context.textColor.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: context.textColor.withValues(alpha: 0.4),
+              ),
+            ],
+          ),
         ),
       ),
     );

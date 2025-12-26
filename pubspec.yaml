@@ -72,10 +72,6 @@ dependencies:
   # Location Services
   geolocator: ^13.0.2
 
-  # Maps (OpenStreetMap - free)
-  flutter_map: ^7.0.2
-  latlong2: ^0.9.1
-
   # Device Info
   device_info_plus: ^11.1.0
 
