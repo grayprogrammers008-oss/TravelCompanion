@@ -846,24 +846,39 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
     if (!state.hasLocation) return;
 
     try {
-      // Use a simple approach - get the nearest place and use its vicinity
+      // Try to get nearby place for location name
       final nearbyPlaces = await _placesService.searchNearby(
         latitude: state.userLatitude!,
         longitude: state.userLongitude!,
-        radius: 1000, // 1km radius
-        type: 'locality',
+        radius: 5000, // 5km radius for better results
+        type: 'point_of_interest',
       );
 
+      String locationName = 'Current Location';
+
       if (nearbyPlaces.isNotEmpty) {
-        final locationName = nearbyPlaces.first.vicinity ?? nearbyPlaces.first.name;
-        state = state.copyWith(locationName: locationName);
-        debugPrint('📍 [Discover] Location name: $locationName');
+        // Try to extract city/area from vicinity or use place name
+        final place = nearbyPlaces.first;
+        if (place.vicinity != null && place.vicinity!.isNotEmpty) {
+          // Extract the last part of vicinity (usually the city/area)
+          final parts = place.vicinity!.split(',');
+          if (parts.length >= 2) {
+            locationName = parts.sublist(parts.length - 2).join(',').trim();
+          } else {
+            locationName = place.vicinity!;
+          }
+        } else if (place.name.isNotEmpty) {
+          locationName = place.name;
+        }
       }
+
+      state = state.copyWith(locationName: locationName);
+      debugPrint('📍 [Discover] Location name: $locationName');
     } catch (e) {
       debugPrint('⚠️ [Discover] Reverse geocoding failed: $e');
-      // Use coordinates as fallback
+      // Use "Current Location" as fallback with coordinates info
       state = state.copyWith(
-        locationName: '${state.userLatitude!.toStringAsFixed(4)}, ${state.userLongitude!.toStringAsFixed(4)}',
+        locationName: 'Current Location',
       );
     }
   }
