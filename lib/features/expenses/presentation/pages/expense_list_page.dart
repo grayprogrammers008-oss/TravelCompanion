@@ -302,7 +302,8 @@ class ExpenseListPage extends ConsumerWidget {
     List<ExpenseWithSplits> expensesWithSplits,
     {required bool share}
   ) async {
-    // Show loading indicator
+    // Show loading indicator and track if it's showing
+    bool isDialogShowing = true;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -310,6 +311,13 @@ class ExpenseListPage extends ConsumerWidget {
         child: CircularProgressIndicator(),
       ),
     );
+
+    void dismissDialog() {
+      if (isDialogShowing && context.mounted) {
+        isDialogShowing = false;
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+    }
 
     try {
       // Convert ExpenseWithSplits to ExpenseModel list
@@ -323,9 +331,7 @@ class ExpenseListPage extends ConsumerWidget {
       );
 
       // Close loading dialog BEFORE opening share/print UI
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      dismissDialog();
 
       // Now open share or print (these open system UIs)
       if (share) {
@@ -340,8 +346,8 @@ class ExpenseListPage extends ConsumerWidget {
         );
       }
     } catch (e) {
+      dismissDialog();
       if (context.mounted) {
-        Navigator.pop(context); // Close loading dialog if still open
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error generating PDF: ${e.toString()}'),
