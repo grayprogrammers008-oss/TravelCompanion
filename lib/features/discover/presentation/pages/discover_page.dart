@@ -1342,67 +1342,63 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   }
 
   Widget _buildLocationPermissionState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Header icon
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: context.primaryColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.travel_explore,
-                size: 48,
-                color: context.primaryColor,
-              ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Header icon
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: context.primaryColor.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 24),
-            Text(
-              'How would you like to discover?',
-              style: context.titleLarge.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+            child: Icon(
+              Icons.travel_explore,
+              size: 48,
+              color: context.primaryColor,
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Choose your preferred way to find amazing places',
-              style: context.bodyMedium.copyWith(
-                color: context.textColor.withValues(alpha: 0.6),
-              ),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'How would you like to discover?',
+            style: context.titleLarge.copyWith(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Choose your preferred way to find amazing places',
+            style: context.bodyMedium.copyWith(
+              color: context.textColor.withValues(alpha: 0.6),
             ),
-            const SizedBox(height: 32),
-
-            // Option 1: Use My Location
-            _buildLocationOptionCard(
-              icon: Icons.my_location,
-              iconColor: Colors.blue,
-              title: 'Use My Location',
-              subtitle: 'Find places near your current location',
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                ref.read(discoverStateProvider.notifier).getUserLocation();
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Option 2: Select Country
-            _buildLocationOptionCard(
-              icon: Icons.public,
-              iconColor: Colors.teal,
-              title: 'Select a Country',
-              subtitle: 'Explore places in a specific country',
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                _showCountrySelector(ref.read(discoverStateProvider));
-              },
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          // Option 1: Use My Location
+          _buildLocationOptionCard(
+            icon: Icons.my_location,
+            iconColor: Colors.blue,
+            title: 'Use My Location',
+            subtitle: 'Find places near your current location',
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              ref.read(discoverStateProvider.notifier).getUserLocation();
+            },
+          ),
+          const SizedBox(height: 16),
+          // Option 2: Select Country
+          _buildLocationOptionCard(
+            icon: Icons.public,
+            iconColor: Colors.teal,
+            title: 'Select a Country',
+            subtitle: 'Explore places in a specific country',
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              _showCountrySelector(ref.read(discoverStateProvider));
+            },
+          ),
+        ],
       ),
     );
   }
