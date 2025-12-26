@@ -54,11 +54,11 @@ class ExpenseListPage extends ConsumerWidget {
         ),
         title: const Text('Expenses'),
         actions: [
-          // Export PDF button
+          // Share Expense Report button
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
-            onPressed: () => _showExportOptions(context, ref, tripAsync, expensesAsync),
-            tooltip: 'Export Report',
+            icon: const Icon(Icons.ios_share),
+            onPressed: () => _shareExpenseReport(context, tripAsync, expensesAsync),
+            tooltip: 'Share Expense Report',
           ),
           IconButton(
             icon: const Icon(Icons.account_balance_wallet),
@@ -144,165 +144,25 @@ class ExpenseListPage extends ConsumerWidget {
     );
   }
 
-  void _showExportOptions(
+  Future<void> _shareExpenseReport(
     BuildContext context,
-    WidgetRef ref,
     AsyncValue<TripWithMembers> tripAsync,
     AsyncValue<List<ExpenseWithSplits>> expensesAsync,
-  ) {
+  ) async {
     final trip = tripAsync.whenOrNull(data: (data) => data.trip);
-    final expenses = expensesAsync.whenOrNull(data: (data) => data);
+    final expensesList = expensesAsync.whenOrNull(data: (data) => data);
 
-    if (trip == null || expenses == null || expenses.isEmpty) {
+    if (trip == null || expensesList == null || expensesList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No expenses to export'),
+          content: Text('No expenses to share'),
           backgroundColor: Colors.orange,
         ),
       );
       return;
     }
 
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (bottomSheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingLg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Handle bar
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: AppTheme.neutral300,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingLg),
-
-                // Title
-                Text(
-                  'Export Expense Report',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppTheme.spacingMd),
-
-                // Summary
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            '${expenses.length}',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          const Text('Expenses', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            expenses.fold<double>(0, (sum, e) => sum + e.expense.amount).toINR(),
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          const Text('Total', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingLg),
-
-                // Share option
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: const Icon(Icons.share, color: Colors.green),
-                  ),
-                  title: const Text(
-                    'Share PDF',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: const Text('Send via WhatsApp, Email, etc.'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () async {
-                    Navigator.pop(bottomSheetContext);
-                    _exportPdf(context, trip, expenses, share: true);
-                  },
-                ),
-
-                const SizedBox(height: AppTheme.spacingSm),
-
-                // Print/Preview option
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: Colors.purple.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: const Icon(Icons.print, color: Colors.purple),
-                  ),
-                  title: const Text(
-                    'Preview & Print',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: const Text('View PDF and print if needed'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () async {
-                    Navigator.pop(bottomSheetContext);
-                    _exportPdf(context, trip, expenses, share: false);
-                  },
-                ),
-
-                const SizedBox(height: AppTheme.spacingMd),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _exportPdf(
-    BuildContext context,
-    TripModel trip,
-    List<ExpenseWithSplits> expensesWithSplits,
-    {required bool share}
-  ) async {
-    // Show loading indicator and track if it's showing
+    // Show loading indicator
     bool isDialogShowing = true;
     showDialog(
       context: context,
@@ -321,36 +181,29 @@ class ExpenseListPage extends ConsumerWidget {
 
     try {
       // Convert ExpenseWithSplits to ExpenseModel list
-      final expenses = expensesWithSplits.map((e) => e.expense).toList();
+      final expenses = expensesList.map((e) => e.expense).toList();
 
-      // Generate PDF first
+      // Generate PDF
       final pdfBytes = await ExpensePdfService.generateExpenseReport(
         trip: trip,
         expenses: expenses,
         budget: trip.cost,
       );
 
-      // Close loading dialog BEFORE opening share/print UI
+      // Close loading dialog before opening share UI
       dismissDialog();
 
-      // Now open share or print (these open system UIs)
-      if (share) {
-        await Printing.sharePdf(
-          bytes: pdfBytes,
-          filename: '${trip.name.replaceAll(' ', '_')}_expenses.pdf',
-        );
-      } else {
-        await Printing.layoutPdf(
-          onLayout: (format) async => pdfBytes,
-          name: '${trip.name} - Expense Report',
-        );
-      }
+      // Open share sheet
+      await Printing.sharePdf(
+        bytes: pdfBytes,
+        filename: '${trip.name.replaceAll(' ', '_')}_expense_report.pdf',
+      );
     } catch (e) {
       dismissDialog();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error generating PDF: ${e.toString()}'),
+            content: Text('Error generating report: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
