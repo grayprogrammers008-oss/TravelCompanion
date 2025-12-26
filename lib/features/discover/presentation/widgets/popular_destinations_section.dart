@@ -370,13 +370,16 @@ class _AllDestinationsSheet extends StatelessWidget {
                   children: [
                     Icon(Icons.public, color: context.primaryColor),
                     const SizedBox(width: 8),
-                    Text(
-                      'Destinations Worldwide',
-                      style: context.titleLarge.copyWith(
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        'Destinations Worldwide',
+                        style: context.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
@@ -423,14 +426,17 @@ class _AllDestinationsSheet extends StatelessWidget {
                                 child: Text(info.flag, style: const TextStyle(fontSize: 20)),
                               ),
                               const SizedBox(width: 12),
-                              Text(
-                                country,
-                                style: context.titleMedium.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: info.color,
+                              Expanded(
+                                child: Text(
+                                  country,
+                                  style: context.titleMedium.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: info.color,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const Spacer(),
+                              const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
