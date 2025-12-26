@@ -5,6 +5,9 @@ import '../../../../core/theme/theme_access.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../data/packing_templates.dart';
+import '../../data/smart_checklist_generator.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
+import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../providers/checklist_providers.dart';
 
 class AddChecklistPage extends ConsumerStatefulWidget {
@@ -24,6 +27,8 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
   final _nameController = TextEditingController();
   bool _isLoading = false;
   PackingTemplate? _selectedTemplate;
+  bool _useSmartChecklist = false;
+  List<SmartChecklistItem>? _smartItems;
 
   @override
   void dispose() {
@@ -71,6 +76,7 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
       debugPrint('Trip ID: "$tripId"');
       debugPrint('User ID: "$userId"');
       debugPrint('Template: ${_selectedTemplate?.name ?? "None"}');
+      debugPrint('Smart Checklist: $_useSmartChecklist');
       debugPrint('Calling controller.createChecklist...');
 
       final controller = ref.read(checklistControllerProvider.notifier);
@@ -91,8 +97,19 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
           debugPrint('   Created By: ${checklist.createdBy}');
           debugPrint('   Created At: ${checklist.createdAt}');
 
+          // If smart checklist is enabled, add smart items
+          if (_useSmartChecklist && _smartItems != null) {
+            debugPrint('Adding ${_smartItems!.length} smart checklist items...');
+            for (final smartItem in _smartItems!) {
+              await controller.addItem(
+                checklistId: checklist.id,
+                title: smartItem.title,
+              );
+            }
+            debugPrint('✅ All smart items added!');
+          }
           // If a template was selected, add all template items
-          if (_selectedTemplate != null) {
+          else if (_selectedTemplate != null) {
             debugPrint('Adding ${_selectedTemplate!.items.length} items from template...');
             for (final itemTitle in _selectedTemplate!.items) {
               await controller.addItem(
@@ -109,10 +126,15 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
           ref.invalidate(tripChecklistsProvider(tripId));
 
           Navigator.of(context).pop(true);
+
+          final itemCount = _useSmartChecklist && _smartItems != null
+              ? _smartItems!.length
+              : _selectedTemplate?.items.length;
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(_selectedTemplate != null
-                  ? 'Created "${checklist.name}" with ${_selectedTemplate!.items.length} items'
+              content: Text(itemCount != null
+                  ? 'Created "${checklist.name}" with $itemCount items'
                   : 'Created "${checklist.name}"'),
               backgroundColor: AppTheme.success,
               behavior: SnackBarBehavior.floating,
@@ -161,13 +183,66 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
   void _selectTemplate(PackingTemplate template) {
     setState(() {
       _selectedTemplate = template;
+      _useSmartChecklist = false;
+      _smartItems = null;
       _nameController.text = template.name;
     });
+  }
+
+  Future<void> _selectSmartChecklist() async {
+    // Fetch trip data and itinerary
+    final tripAsync = ref.read(tripProvider(widget.tripId));
+    final itineraryAsync = ref.read(tripItineraryProvider(widget.tripId));
+
+    tripAsync.when(
+      data: (tripWithMembers) {
+        final trip = tripWithMembers.trip;
+
+        // Get itinerary items if available
+        final itinerary = itineraryAsync.when(
+          data: (items) => items,
+          loading: () => <dynamic>[],
+          error: (_, _) => <dynamic>[],
+        );
+
+        // Generate smart checklist
+        final smartItems = SmartChecklistGenerator.generate(
+          trip: trip,
+          itinerary: itinerary.isNotEmpty ? itinerary.cast() : null,
+        );
+
+        setState(() {
+          _useSmartChecklist = true;
+          _smartItems = smartItems;
+          _selectedTemplate = null;
+          _nameController.text = 'Smart Packing List for ${trip.destination ?? trip.name}';
+        });
+      },
+      loading: () {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Loading trip data...')),
+          );
+        }
+      },
+      error: (error, _) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to load trip: $error'),
+              backgroundColor: AppTheme.error,
+            ),
+          );
+        }
+      },
+    );
   }
 
   void _clearTemplate() {
     setState(() {
       _selectedTemplate = null;
+      _useSmartChecklist = false;
+      _smartItems = null;
       _nameController.clear();
     });
   }
@@ -235,7 +310,7 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                if (_selectedTemplate != null)
+                if (_selectedTemplate != null || _useSmartChecklist)
                   TextButton.icon(
                     onPressed: _clearTemplate,
                     icon: const Icon(Icons.close, size: 16),
@@ -249,29 +324,129 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
             ),
             const SizedBox(height: AppTheme.spacingSm),
 
-            // Template grid
+            // Template grid with Smart Packing List
             SizedBox(
               height: 130,
-              child: ListView.builder(
+              child: ListView(
                 scrollDirection: Axis.horizontal,
-                itemCount: PackingTemplates.all.length,
-                itemBuilder: (context, index) {
-                  final template = PackingTemplates.all[index];
-                  final isSelected = _selectedTemplate?.id == template.id;
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      right: AppTheme.spacingSm,
-                      left: index == 0 ? 0 : 0,
-                    ),
-                    child: _buildTemplateCard(template, isSelected, themeData),
-                  );
-                },
+                children: [
+                  // Smart Packing List (first option)
+                  Padding(
+                    padding: const EdgeInsets.only(right: AppTheme.spacingSm),
+                    child: _buildSmartChecklistCard(themeData),
+                  ),
+                  // Regular templates
+                  ...PackingTemplates.all.map((template) {
+                    final isSelected = _selectedTemplate?.id == template.id;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: AppTheme.spacingSm),
+                      child: _buildTemplateCard(template, isSelected, themeData),
+                    );
+                  }),
+                ],
               ),
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
-            // Selected template preview
-            if (_selectedTemplate != null) ...[
+            // Selected template/smart checklist preview
+            if (_useSmartChecklist && _smartItems != null) ...[
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      themeData.primaryColor.withValues(alpha: 0.1),
+                      Colors.purple.withValues(alpha: 0.1),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: themeData.primaryColor.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [themeData.primaryColor, Colors.purple],
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Smart Packing List',
+                                style: context.titleSmall.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                '${_smartItems!.length} items (AI-generated)',
+                                style: context.bodySmall.copyWith(
+                                  color: AppTheme.neutral600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.check_circle,
+                          color: themeData.primaryColor,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    const Divider(),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    // Group by category
+                    ...(_smartItems!
+                        .take(8)
+                        .map((item) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _getPriorityIcon(item.priority),
+                                    size: 14,
+                                    color: _getPriorityColor(item.priority),
+                                  ),
+                                  const SizedBox(width: AppTheme.spacingXs),
+                                  Expanded(
+                                    child: Text(
+                                      item.title,
+                                      style: context.bodySmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ))),
+                    if (_smartItems!.length > 8)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          '+ ${_smartItems!.length - 8} more items',
+                          style: context.bodySmall.copyWith(
+                            color: themeData.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+            ] else if (_selectedTemplate != null) ...[
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
@@ -477,9 +652,11 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
                         ),
                       )
                     : Text(
-                        _selectedTemplate != null
-                            ? 'Create with ${_selectedTemplate!.items.length} Items'
-                            : 'Create Checklist',
+                        _useSmartChecklist && _smartItems != null
+                            ? 'Create with ${_smartItems!.length} Smart Items'
+                            : _selectedTemplate != null
+                                ? 'Create with ${_selectedTemplate!.items.length} Items'
+                                : 'Create Checklist',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -553,5 +730,112 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildSmartChecklistCard(dynamic themeData) {
+    final isSelected = _useSmartChecklist;
+    return GestureDetector(
+      onTap: _isLoading ? null : _selectSmartChecklist,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 120,
+        padding: const EdgeInsets.all(AppTheme.spacingSm),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    themeData.primaryColor.withValues(alpha: 0.2),
+                    Colors.purple.withValues(alpha: 0.2),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: isSelected ? null : Colors.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: isSelected
+                ? themeData.primaryColor
+                : AppTheme.neutral200,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: themeData.primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : AppTheme.shadowSm,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [themeData.primaryColor, Colors.purple],
+                ),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Smart\nPacking',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? themeData.primaryColor : AppTheme.neutral700,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'AI-generated',
+              style: TextStyle(
+                fontSize: 9,
+                color: isSelected ? themeData.primaryColor : AppTheme.neutral500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getPriorityIcon(SmartItemPriority priority) {
+    switch (priority) {
+      case SmartItemPriority.critical:
+        return Icons.error;
+      case SmartItemPriority.high:
+        return Icons.priority_high;
+      case SmartItemPriority.medium:
+        return Icons.circle;
+      case SmartItemPriority.low:
+        return Icons.circle_outlined;
+    }
+  }
+
+  Color _getPriorityColor(SmartItemPriority priority) {
+    switch (priority) {
+      case SmartItemPriority.critical:
+        return AppTheme.error;
+      case SmartItemPriority.high:
+        return Colors.orange;
+      case SmartItemPriority.medium:
+        return Colors.blue;
+      case SmartItemPriority.low:
+        return AppTheme.neutral400;
+    }
   }
 }
