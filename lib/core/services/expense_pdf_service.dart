@@ -18,14 +18,14 @@ import '../../shared/models/trip_model.dart';
 
 /// Service for generating expense report PDFs
 class ExpensePdfService {
-  /// Category icons mapping (emoji for PDF)
-  static const Map<String, String> _categoryIcons = {
-    'food': '🍔',
-    'transport': '🚗',
-    'stay': '🏨',
-    'activities': '🎟️',
-    'shopping': '🛍️',
-    'other': '📦',
+  /// Category labels for PDF (using text instead of emoji for font compatibility)
+  static const Map<String, String> _categoryLabels = {
+    'food': 'Food',
+    'transport': 'Transport',
+    'stay': 'Stay',
+    'activities': 'Activities',
+    'shopping': 'Shopping',
+    'other': 'Other',
   };
 
 
@@ -55,6 +55,9 @@ class ExpensePdfService {
       final payer = expense.payerName ?? 'Unknown';
       payerTotals[payer] = (payerTotals[payer] ?? 0) + expense.amount;
     }
+
+    // Calculate who owes whom (simplified settlement)
+    final settlements = _calculateSettlements(payerTotals, totalSpent);
 
     // Sort expenses by date
     final sortedExpenses = List<ExpenseModel>.from(expenses)
@@ -95,6 +98,14 @@ class ExpensePdfService {
             _buildSectionTitle('Who Paid What'),
             pw.SizedBox(height: 10),
             _buildPayerSummary(payerTotals, currencySymbol),
+            pw.SizedBox(height: 20),
+          ],
+
+          // Who Owes Whom (Settlements)
+          if (settlements.isNotEmpty) ...[
+            _buildSectionTitle('Who Owes Whom'),
+            pw.SizedBox(height: 10),
+            _buildSettlementSection(settlements, currencySymbol),
             pw.SizedBox(height: 20),
           ],
 
@@ -308,10 +319,10 @@ class ExpensePdfService {
         // Data rows
         ...sortedCategories.map((entry) {
           final percentage = totalSpent > 0 ? (entry.value / totalSpent * 100) : 0;
-          final icon = _categoryIcons[entry.key] ?? '📦';
+          final label = _categoryLabels[entry.key] ?? 'Other';
           return pw.TableRow(
             children: [
-              _buildTableCell('$icon ${_capitalize(entry.key)}'),
+              _buildTableCell(label),
               _buildTableCell(
                 '$currencySymbol${_formatAmount(entry.value)}',
                 align: pw.TextAlign.right,
@@ -393,7 +404,7 @@ class ExpensePdfService {
         ...expenses.map((expense) {
           final date = expense.transactionDate ?? expense.createdAt;
           final category = expense.category?.toLowerCase() ?? 'other';
-          final icon = _categoryIcons[category] ?? '📦';
+          final label = _categoryLabels[category] ?? 'Other';
           return pw.TableRow(
             children: [
               _buildTableCell(
@@ -401,7 +412,7 @@ class ExpensePdfService {
                 fontSize: 9,
               ),
               _buildTableCell(expense.title, fontSize: 9),
-              _buildTableCell('$icon ${_capitalize(category)}', fontSize: 9),
+              _buildTableCell(label, fontSize: 9),
               _buildTableCell(
                 '$currencySymbol${_formatAmount(expense.amount)}',
                 align: pw.TextAlign.right,
@@ -458,32 +469,125 @@ class ExpensePdfService {
     return amount.toStringAsFixed(2);
   }
 
-  /// Get currency symbol
+  /// Calculate settlements (who owes whom)
+  /// Returns a list of maps with 'from', 'to', and 'amount' keys
+  static List<Map<String, dynamic>> _calculateSettlements(
+    Map<String, double> payerTotals,
+    double totalSpent,
+  ) {
+    if (payerTotals.length <= 1) return [];
+
+    final numPeople = payerTotals.length;
+    final fairShare = totalSpent / numPeople;
+
+    // Calculate balances: positive = owed money, negative = owes money
+    final balances = <String, double>{};
+    for (final entry in payerTotals.entries) {
+      balances[entry.key] = entry.value - fairShare;
+    }
+
+    // Sort by balance: creditors (positive) first, then debtors (negative)
+    final creditors = balances.entries
+        .where((e) => e.value > 0.01)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    final debtors = balances.entries
+        .where((e) => e.value < -0.01)
+        .toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
+
+    final settlements = <Map<String, dynamic>>[];
+
+    // Simple settlement algorithm
+    int i = 0, j = 0;
+    while (i < creditors.length && j < debtors.length) {
+      final creditor = creditors[i];
+      final debtor = debtors[j];
+
+      final amount = creditor.value < -debtor.value
+          ? creditor.value
+          : -debtor.value;
+
+      if (amount > 0.01) {
+        settlements.add({
+          'from': debtor.key,
+          'to': creditor.key,
+          'amount': amount,
+        });
+      }
+
+      // Update remaining balances
+      creditors[i] = MapEntry(creditor.key, creditor.value - amount);
+      debtors[j] = MapEntry(debtor.key, debtor.value + amount);
+
+      if (creditors[i].value < 0.01) i++;
+      if (debtors[j].value > -0.01) j++;
+    }
+
+    return settlements;
+  }
+
+  /// Build settlement section (Who Owes Whom)
+  static pw.Widget _buildSettlementSection(
+    List<Map<String, dynamic>> settlements,
+    String currencySymbol,
+  ) {
+    return pw.Table(
+      border: pw.TableBorder.all(color: PdfColors.grey300),
+      columnWidths: {
+        0: const pw.FlexColumnWidth(2),
+        1: const pw.FlexColumnWidth(1),
+        2: const pw.FlexColumnWidth(2),
+        3: const pw.FlexColumnWidth(2),
+      },
+      children: [
+        // Header
+        pw.TableRow(
+          decoration: const pw.BoxDecoration(color: PdfColors.orange50),
+          children: [
+            _buildTableCell('From', isHeader: true),
+            _buildTableCell('', isHeader: true, align: pw.TextAlign.center),
+            _buildTableCell('To', isHeader: true),
+            _buildTableCell('Amount', isHeader: true, align: pw.TextAlign.right),
+          ],
+        ),
+        // Data rows
+        ...settlements.map((settlement) => pw.TableRow(
+          children: [
+            _buildTableCell(settlement['from'] as String),
+            _buildTableCell('owes', align: pw.TextAlign.center),
+            _buildTableCell(settlement['to'] as String),
+            _buildTableCell(
+              '$currencySymbol${_formatAmount(settlement['amount'] as double)}',
+              align: pw.TextAlign.right,
+            ),
+          ],
+        )),
+      ],
+    );
+  }
+
+  /// Get currency symbol (using ASCII-safe symbols for PDF compatibility)
   static String _getCurrencySymbol(String currency) {
     switch (currency.toUpperCase()) {
       case 'INR':
-        return '₹';
+        return 'Rs.';
       case 'USD':
         return '\$';
       case 'EUR':
-        return '€';
+        return 'EUR ';
       case 'GBP':
-        return '£';
+        return 'GBP ';
       case 'SGD':
         return 'S\$';
       case 'MYR':
-        return 'RM';
+        return 'RM ';
       case 'THB':
-        return '฿';
+        return 'THB ';
       default:
-        return currency;
+        return '$currency ';
     }
-  }
-
-  /// Capitalize first letter
-  static String _capitalize(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
   }
 
   /// Share or print the PDF
