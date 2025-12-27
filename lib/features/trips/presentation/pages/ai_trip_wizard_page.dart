@@ -615,8 +615,19 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       });
 
       final itineraryDataSource = ref.read(itineraryRemoteDataSourceProvider);
+      debugPrint('📅 Saving ${tripPlan.days.length} days of itinerary...');
+
       for (final day in tripPlan.days) {
+        debugPrint('  Day ${day.dayNumber}: ${day.activities.length} activities');
+
         for (final activity in day.activities) {
+          // Validate activity has a title
+          final activityTitle = activity.title.trim();
+          if (activityTitle.isEmpty) {
+            debugPrint('⚠️ Skipping activity with empty title on day ${day.dayNumber}');
+            continue;
+          }
+
           DateTime? activityStartTime;
           DateTime? activityEndTime;
           if (activity.startTime != null) {
@@ -650,17 +661,24 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
             }
           }
 
-          await itineraryDataSource.createItem(
-            tripId: trip.id,
-            title: activity.title,
-            description: activity.description ?? activity.tip,
-            location: activity.location,
-            startTime: activityStartTime,
-            endTime: activityEndTime,
-            dayNumber: day.dayNumber,
-          );
+          try {
+            await itineraryDataSource.createItem(
+              tripId: trip.id,
+              title: activityTitle,
+              description: activity.description ?? activity.tip,
+              location: activity.location,
+              startTime: activityStartTime,
+              endTime: activityEndTime,
+              dayNumber: day.dayNumber,
+            );
+            debugPrint('    ✅ Added: $activityTitle');
+          } catch (e) {
+            debugPrint('    ❌ Failed to add activity "$activityTitle": $e');
+            // Continue with other activities
+          }
         }
       }
+      debugPrint('✅ Itinerary saved successfully');
 
       // Step 4: Save checklist
       setState(() {
@@ -668,12 +686,16 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
         _generationStatus = 'Saving your packing list...';
       });
 
+      debugPrint('📦 Saving packing list with ${tripPlan.packingList.length} items...');
+
       final checklistDataSource = ref.read(checklistRemoteDataSourceProvider);
       final userId = SupabaseClientWrapper.currentUserId;
       final uuid = const Uuid();
       final now = DateTime.now();
 
       final checklistId = uuid.v4();
+      debugPrint('  Creating checklist with ID: $checklistId');
+
       final checklist = await checklistDataSource.upsertChecklist(
         ChecklistModel(
           id: checklistId,
@@ -684,21 +706,37 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
           updatedAt: now,
         ),
       );
+      debugPrint('  ✅ Checklist created: ${checklist.id}');
 
       for (int i = 0; i < tripPlan.packingList.length; i++) {
         final item = tripPlan.packingList[i];
-        await checklistDataSource.upsertChecklistItem(
-          ChecklistItemModel(
-            id: uuid.v4(),
-            checklistId: checklist.id,
-            title: item.title,
-            isCompleted: false,
-            orderIndex: i,
-            createdAt: now,
-            updatedAt: now,
-          ),
-        );
+
+        // Validate that the item has a non-empty title
+        final itemTitle = item.title.trim();
+        if (itemTitle.isEmpty) {
+          debugPrint('⚠️ Skipping packing list item with empty title at index $i');
+          continue;
+        }
+
+        try {
+          await checklistDataSource.upsertChecklistItem(
+            ChecklistItemModel(
+              id: uuid.v4(),
+              checklistId: checklist.id,
+              title: itemTitle,
+              isCompleted: false,
+              orderIndex: i,
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+          debugPrint('✅ Added packing item: $itemTitle');
+        } catch (e) {
+          debugPrint('❌ Failed to add packing item "$itemTitle": $e');
+          // Continue with other items even if one fails
+        }
       }
+      debugPrint('✅ Packing list saved successfully');
 
       // Success!
       setState(() {
@@ -717,8 +755,28 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
       debugPrint('📚 Stack trace: $stackTrace');
       if (mounted) {
         String userMessage = 'Failed to create trip. Please try again.';
-        if (e.toString().contains('rate limit') || e.toString().contains('429')) {
+        String? detailedError;
+
+        // Provide more specific error messages
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('rate limit') || errorStr.contains('429')) {
           userMessage = 'AI service is busy. Please wait a moment and try again.';
+        } else if (errorStr.contains('checklist')) {
+          userMessage = 'Failed to save packing list. Please try again.';
+          detailedError = 'Checklist error: ${e.toString()}';
+        } else if (errorStr.contains('itinerary')) {
+          userMessage = 'Failed to save itinerary. Please try again.';
+          detailedError = 'Itinerary error: ${e.toString()}';
+        } else if (errorStr.contains('trip')) {
+          userMessage = 'Failed to create trip. Please try again.';
+          detailedError = 'Trip creation error: ${e.toString()}';
+        } else {
+          detailedError = e.toString();
+        }
+
+        debugPrint('💬 User message: $userMessage');
+        if (detailedError != null) {
+          debugPrint('🔍 Detailed error: $detailedError');
         }
 
         setState(() {
