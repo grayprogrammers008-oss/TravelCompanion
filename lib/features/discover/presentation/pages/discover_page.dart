@@ -5,18 +5,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/services/google_maps_url_parser.dart';
+import '../../../../core/services/google_places_service.dart';
 import '../../../itinerary/presentation/widgets/add_location_to_trip_sheet.dart';
 import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/popular_destination.dart';
 import '../providers/discover_providers.dart';
-import '../widgets/location_search_sheet.dart';
 import '../widgets/place_card.dart';
 import '../widgets/place_detail_sheet.dart';
 import '../widgets/popular_destinations_section.dart';
 import '../widgets/recommendations_section.dart';
 import '../widgets/trip_planning_assistant_sheet.dart';
-import '../widgets/weather_suggestions_section.dart';
 
 /// Discover Page - Browse tourist places by category
 /// Uses Google Places API to fetch real data based on user location
@@ -28,8 +27,6 @@ class DiscoverPage extends ConsumerStatefulWidget {
 }
 
 class _DiscoverPageState extends ConsumerState<DiscoverPage> {
-  final _searchController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -41,14 +38,27 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     });
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   void _onCategorySelected(PlaceCategory category) {
     ref.read(discoverStateProvider.notifier).changeCategory(category);
+  }
+
+  void _showDestinationSearch() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _DestinationSearchSheet(
+        onDestinationSelected: (lat, lng, name) {
+          // Set the searched location and load places
+          ref.read(discoverStateProvider.notifier).setLocation(
+            latitude: lat,
+            longitude: lng,
+            locationName: name,
+          );
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 
   void _onPlaceTapped(DiscoverPlace place) {
@@ -58,10 +68,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       backgroundColor: Colors.transparent,
       builder: (context) => PlaceDetailSheet(place: place),
     );
-  }
-
-  void _onSearchChanged(String query) {
-    ref.read(discoverStateProvider.notifier).setSearchQuery(query);
   }
 
   void _showQuickAddToTrip(DiscoverPlace place) {
@@ -156,6 +162,12 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               ),
             ),
             actions: [
+              // Search destination
+              IconButton(
+                icon: const Icon(Icons.search, color: Colors.white),
+                tooltip: 'Search destination',
+                onPressed: () => _showDestinationSearch(),
+              ),
               // View mode toggle
               IconButton(
                 icon: Icon(
@@ -199,9 +211,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             ],
           ),
 
-          // Location Header
+          // Country/Location Selector (always visible)
           SliverToBoxAdapter(
-            child: _buildLocationHeader(discoverState),
+            child: _buildCountrySelector(discoverState),
           ),
 
           // Popular Destinations Section
@@ -218,19 +230,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               onPlaceTapped: _onPlaceTapped,
               onQuickAdd: _showQuickAddToTrip,
             ),
-          ),
-
-          // Weather-Based Suggestions Section
-          SliverToBoxAdapter(
-            child: WeatherSuggestionsSection(
-              onPlaceTapped: _onPlaceTapped,
-              onQuickAdd: _showQuickAddToTrip,
-            ),
-          ),
-
-          // Search Bar
-          SliverToBoxAdapter(
-            child: _buildSearchBar(discoverState),
           ),
 
           // Category Selection Section
@@ -269,11 +268,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 ),
               ),
             )
-          else if (!discoverState.hasLocation)
-            SliverFillRemaining(
-              child: _buildLocationPermissionState(),
-            )
-          else if (filteredPlaces.isEmpty)
+          else if (filteredPlaces.isEmpty && discoverState.hasLocation)
             SliverFillRemaining(
               child: _buildEmptyState(discoverState),
             )
@@ -311,205 +306,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               ),
             ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLocationHeader(DiscoverState discoverState) {
-    if (!discoverState.hasLocation) return const SizedBox.shrink();
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title row
-          Row(
-            children: [
-              Icon(
-                Icons.travel_explore,
-                color: context.primaryColor,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Find Trip Ideas Near You',
-                style: context.titleMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Location info with search button
-          Row(
-            children: [
-              // Show GPS icon for current location, pin for searched location
-              Icon(
-                discoverState.isLocationFromSearch
-                    ? Icons.location_on
-                    : Icons.my_location,
-                color: discoverState.isLocationFromSearch
-                    ? Colors.red[400]
-                    : Colors.blue[600],
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              // Show "(GPS)" label when using current location
-              if (!discoverState.isLocationFromSearch)
-                Container(
-                  margin: const EdgeInsets.only(right: 6),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue[200]!),
-                  ),
-                  child: Text(
-                    'GPS',
-                    style: context.labelSmall.copyWith(
-                      color: Colors.blue[700],
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-              Expanded(
-                child: Text(
-                  discoverState.locationName ?? 'Getting location...',
-                  style: context.bodyMedium.copyWith(
-                    color: context.textColor.withValues(alpha: 0.7),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              // Search Location Button
-              Material(
-                color: context.primaryColor,
-                borderRadius: BorderRadius.circular(20),
-                child: InkWell(
-                  onTap: () => LocationSearchSheet.show(context),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.search,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Search',
-                          style: context.bodySmall.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Filter buttons row - conditional based on location source
-          // GPS location: Show Distance only
-          // Searched location: Show Country only
-          if (!discoverState.isLocationFromSearch)
-            // Using GPS location - show Distance filter only
-            _buildFilterButton(
-              icon: Icons.radar,
-              label: 'Distance',
-              value: discoverState.selectedDistance.displayName,
-              color: Colors.orange,
-              onTap: () => _showDistanceSelector(discoverState),
-            )
-          else
-            // Using searched location - show Country filter only
-            _buildFilterButton(
-              icon: Icons.public,
-              label: 'Country',
-              value: discoverState.selectedCountry ?? 'All Countries',
-              color: discoverState.selectedCountry != null ? Colors.teal : Colors.grey,
-              onTap: () => _showCountrySelector(discoverState),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterButton({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: color),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: context.bodySmall.copyWith(
-                      color: context.textColor.withValues(alpha: 0.5),
-                      fontSize: 10,
-                    ),
-                  ),
-                  Text(
-                    value,
-                    style: context.bodySmall.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_drop_down,
-              size: 18,
-              color: color,
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -668,315 +464,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       label: const Text('Get Trip Ideas'),
       backgroundColor: Colors.amber[700],
       foregroundColor: Colors.white,
-    );
-  }
-
-  void _showDistanceSelector(DiscoverState discoverState) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: context.cardColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            // Title
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Search Distance',
-                style: context.titleMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            // Distance options
-            ...DiscoverDistance.values.map((distance) {
-              final isSelected = distance == discoverState.selectedDistance;
-              return ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? context.primaryColor.withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.radar,
-                    color: isSelected ? context.primaryColor : Colors.grey,
-                    size: 20,
-                  ),
-                ),
-                title: Text(
-                  distance.displayName,
-                  style: context.bodyLarge.copyWith(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? context.primaryColor : null,
-                  ),
-                ),
-                trailing: isSelected
-                    ? Icon(Icons.check_circle, color: context.primaryColor)
-                    : null,
-                onTap: () {
-                  Navigator.pop(context);
-                  ref.read(discoverStateProvider.notifier).changeDistance(distance);
-                },
-              );
-            }),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// List of popular countries for travel
-  static const List<String> _popularCountries = [
-    'India',
-    'Thailand',
-    'Indonesia',
-    'Vietnam',
-    'Malaysia',
-    'Singapore',
-    'Japan',
-    'South Korea',
-    'Australia',
-    'New Zealand',
-    'United States',
-    'United Kingdom',
-    'France',
-    'Italy',
-    'Spain',
-    'Germany',
-    'Switzerland',
-    'Greece',
-    'Turkey',
-    'Egypt',
-    'South Africa',
-    'Morocco',
-    'UAE',
-    'Maldives',
-    'Sri Lanka',
-    'Nepal',
-    'Bhutan',
-    'Philippines',
-    'Cambodia',
-    'Myanmar',
-  ];
-
-  void _showCountrySelector(DiscoverState discoverState) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.4,
-        maxChildSize: 0.9,
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: context.cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              // Handle bar
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Title row with clear button
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Country (Optional)',
-                      style: context.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (discoverState.selectedCountry != null)
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          ref.read(discoverStateProvider.notifier).clearCountry();
-                        },
-                        icon: const Icon(Icons.clear, size: 16),
-                        label: const Text('Clear'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.red[600],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              // Current location option
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: discoverState.selectedCountry == null
-                        ? context.primaryColor.withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.my_location,
-                    color: discoverState.selectedCountry == null
-                        ? context.primaryColor
-                        : Colors.grey,
-                    size: 20,
-                  ),
-                ),
-                title: Text(
-                  'Current Location (All Countries)',
-                  style: context.bodyLarge.copyWith(
-                    fontWeight: discoverState.selectedCountry == null
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: discoverState.selectedCountry == null
-                        ? context.primaryColor
-                        : null,
-                  ),
-                ),
-                trailing: discoverState.selectedCountry == null
-                    ? Icon(Icons.check_circle, color: context.primaryColor)
-                    : null,
-                onTap: () {
-                  Navigator.pop(context);
-                  ref.read(discoverStateProvider.notifier).clearCountry();
-                },
-              ),
-              const Divider(),
-              // Country list header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Row(
-                  children: [
-                    Icon(Icons.public, size: 16, color: Colors.grey[600]),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Popular Countries',
-                      style: context.bodySmall.copyWith(
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Country list
-              Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: _popularCountries.length,
-                  itemBuilder: (context, index) {
-                    final country = _popularCountries[index];
-                    final isSelected = country == discoverState.selectedCountry;
-                    return ListTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.teal.withValues(alpha: 0.15)
-                              : Colors.grey.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.flag,
-                          color: isSelected ? Colors.teal : Colors.grey,
-                          size: 20,
-                        ),
-                      ),
-                      title: Text(
-                        country,
-                        style: context.bodyLarge.copyWith(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? Colors.teal : null,
-                        ),
-                      ),
-                      trailing: isSelected
-                          ? const Icon(Icons.check_circle, color: Colors.teal)
-                          : null,
-                      onTap: () {
-                        Navigator.pop(context);
-                        ref.read(discoverStateProvider.notifier).setCountry(country);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(DiscoverState discoverState) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: TextField(
-        controller: _searchController,
-        onChanged: _onSearchChanged,
-        decoration: InputDecoration(
-          hintText: 'Search places...',
-          prefixIcon: Icon(
-            Icons.search,
-            color: context.textColor.withValues(alpha: 0.5),
-          ),
-          suffixIcon: discoverState.searchQuery.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    ref.read(discoverStateProvider.notifier).clearSearch();
-                  },
-                )
-              : null,
-          filled: true,
-          fillColor: context.cardColor,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: context.textColor.withValues(alpha: 0.1),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: context.primaryColor,
-              width: 2,
-            ),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        ),
-      ),
     );
   }
 
@@ -1341,141 +828,258 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     );
   }
 
-  Widget _buildLocationPermissionState() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+  /// Country/Location selector with dropdown
+  Widget _buildCountrySelector(DiscoverState discoverState) {
+    final countries = DiscoverStateNotifier.getAvailableCountries();
+    final selectedCountry = discoverState.selectedCountry;
+    final selectedInfo = selectedCountry != null ? _getCountryInfo(selectedCountry) : null;
+    final isCurrentLocation = selectedCountry == null;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Row(
         children: [
-          // Header icon
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: context.primaryColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+          // Location icon
+          Icon(
+            discoverState.isGettingLocation
+                ? Icons.location_searching
+                : (selectedCountry != null ? Icons.public : Icons.my_location),
+            size: 20,
+            color: selectedCountry != null
+                ? selectedInfo!.color
+                : context.primaryColor,
+          ),
+          const SizedBox(width: 8),
+          // Country/Location Dropdown
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: context.cardColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: selectedCountry != null
+                      ? selectedInfo!.color.withValues(alpha: 0.5)
+                      : context.primaryColor.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String?>(
+                  value: selectedCountry,
+                  isExpanded: true,
+                  menuMaxHeight: 300, // Limit dropdown height to prevent overflow
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: selectedCountry != null
+                        ? selectedInfo!.color
+                        : context.primaryColor,
+                  ),
+                  hint: Row(
+                    children: [
+                      const Text('📍 ', style: TextStyle(fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          discoverState.isGettingLocation
+                              ? 'Getting location...'
+                              : (discoverState.locationName ?? 'Current Location'),
+                          style: context.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.primaryColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  selectedItemBuilder: (context) {
+                    // Get the actual location name from state
+                    final locationText = discoverState.isGettingLocation
+                        ? 'Getting location...'
+                        : (discoverState.locationName ?? 'Current Location');
+                    return [
+                      // Current Location option - shows actual detected location
+                      Row(
+                        children: [
+                          const Text('📍 ', style: TextStyle(fontSize: 16)),
+                          Expanded(
+                            child: Text(
+                              locationText,
+                              style: this.context.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: this.context.primaryColor,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Country options
+                      ...countries.map((country) {
+                        final info = _getCountryInfo(country);
+                        return Row(
+                          children: [
+                            Text('${info.flag} ', style: const TextStyle(fontSize: 16)),
+                            Expanded(
+                              child: Text(
+                                country,
+                                style: this.context.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: info.color,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    ];
+                  },
+                  items: [
+                    // Current Location option (value = null)
+                    DropdownMenuItem<String?>(
+                      value: null,
+                      child: Row(
+                        children: [
+                          const Text('📍 ', style: TextStyle(fontSize: 18)),
+                          const SizedBox(width: 8),
+                          Icon(Icons.my_location, size: 18, color: context.primaryColor),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Current Location',
+                            style: context.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: context.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Country options
+                    ...countries.map((country) {
+                      final info = _getCountryInfo(country);
+                      return DropdownMenuItem<String?>(
+                        value: country,
+                        child: Row(
+                          children: [
+                            Text(info.flag, style: const TextStyle(fontSize: 18)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                country,
+                                style: context.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                  onChanged: (value) {
+                    HapticFeedback.selectionClick();
+                    if (value == null) {
+                      ref.read(discoverStateProvider.notifier).clearCountry();
+                    } else {
+                      ref.read(discoverStateProvider.notifier).setCountry(value);
+                    }
+                  },
+                ),
+              ),
             ),
-            child: Icon(
-              Icons.travel_explore,
-              size: 48,
-              color: context.primaryColor,
+          ),
+          // Distance selector - only show when using current location
+          if (isCurrentLocation) ...[
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: context.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: context.primaryColor.withValues(alpha: 0.3),
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<DiscoverDistance>(
+                  value: discoverState.selectedDistance,
+                  isDense: true,
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 16,
+                    color: context.primaryColor,
+                  ),
+                  style: context.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.primaryColor,
+                    fontSize: 11,
+                  ),
+                  items: DiscoverDistance.values.map((distance) {
+                    return DropdownMenuItem<DiscoverDistance>(
+                      value: distance,
+                      child: Text(
+                        '${distance.kilometers} km',
+                        style: context.bodySmall.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      HapticFeedback.selectionClick();
+                      ref.read(discoverStateProvider.notifier).changeDistance(value);
+                    }
+                  },
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'How would you like to discover?',
-            style: context.titleLarge.copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Choose your preferred way to find amazing places',
-            style: context.bodyMedium.copyWith(
-              color: context.textColor.withValues(alpha: 0.6),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          // Option 1: Use My Location
-          _buildLocationOptionCard(
-            icon: Icons.my_location,
-            iconColor: Colors.blue,
-            title: 'Use My Location',
-            subtitle: 'Find places near your current location',
-            onTap: () {
-              HapticFeedback.mediumImpact();
-              ref.read(discoverStateProvider.notifier).getUserLocation();
-            },
-          ),
-          const SizedBox(height: 16),
-          // Option 2: Select Country
-          _buildLocationOptionCard(
-            icon: Icons.public,
-            iconColor: Colors.teal,
-            title: 'Select a Country',
-            subtitle: 'Explore places in a specific country',
-            onTap: () {
-              HapticFeedback.mediumImpact();
-              _showCountrySelector(ref.read(discoverStateProvider));
-            },
-          ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildLocationOptionCard({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: context.cardColor,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 2,
-      shadowColor: Colors.black.withValues(alpha: 0.1),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: iconColor.withValues(alpha: 0.2),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  icon,
-                  color: iconColor,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: context.titleSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: context.bodySmall.copyWith(
-                        color: context.textColor.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: context.textColor.withValues(alpha: 0.4),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  /// Get country info (flag and color) for display
+  _CountryDisplayInfo _getCountryInfo(String country) {
+    const countryData = <String, _CountryDisplayInfo>{
+      'Australia': _CountryDisplayInfo('🇦🇺', Color(0xFF00BCD4)),
+      'Brazil': _CountryDisplayInfo('🇧🇷', Color(0xFF4CAF50)),
+      'Cambodia': _CountryDisplayInfo('🇰🇭', Color(0xFFE91E63)),
+      'Canada': _CountryDisplayInfo('🇨🇦', Color(0xFFF44336)),
+      'Egypt': _CountryDisplayInfo('🇪🇬', Color(0xFFFF9800)),
+      'France': _CountryDisplayInfo('🇫🇷', Color(0xFF2196F3)),
+      'Germany': _CountryDisplayInfo('🇩🇪', Color(0xFF212121)),
+      'Greece': _CountryDisplayInfo('🇬🇷', Color(0xFF2196F3)),
+      'India': _CountryDisplayInfo('🇮🇳', Color(0xFFFF9933)),
+      'Indonesia': _CountryDisplayInfo('🇮🇩', Color(0xFFF44336)),
+      'Italy': _CountryDisplayInfo('🇮🇹', Color(0xFF4CAF50)),
+      'Japan': _CountryDisplayInfo('🇯🇵', Color(0xFFE91E63)),
+      'Malaysia': _CountryDisplayInfo('🇲🇾', Color(0xFFFFEB3B)),
+      'Maldives': _CountryDisplayInfo('🇲🇻', Color(0xFF00BCD4)),
+      'Mexico': _CountryDisplayInfo('🇲🇽', Color(0xFF4CAF50)),
+      'Myanmar': _CountryDisplayInfo('🇲🇲', Color(0xFFFFEB3B)),
+      'Nepal': _CountryDisplayInfo('🇳🇵', Color(0xFFF44336)),
+      'New Zealand': _CountryDisplayInfo('🇳🇿', Color(0xFF212121)),
+      'Philippines': _CountryDisplayInfo('🇵🇭', Color(0xFF2196F3)),
+      'Singapore': _CountryDisplayInfo('🇸🇬', Color(0xFFF44336)),
+      'South Africa': _CountryDisplayInfo('🇿🇦', Color(0xFF4CAF50)),
+      'Spain': _CountryDisplayInfo('🇪🇸', Color(0xFFF44336)),
+      'Sri Lanka': _CountryDisplayInfo('🇱🇰', Color(0xFFFF9800)),
+      'Switzerland': _CountryDisplayInfo('🇨🇭', Color(0xFFF44336)),
+      'Thailand': _CountryDisplayInfo('🇹🇭', Color(0xFF2196F3)),
+      'Turkey': _CountryDisplayInfo('🇹🇷', Color(0xFFF44336)),
+      'UAE': _CountryDisplayInfo('🇦🇪', Color(0xFF4CAF50)),
+      'UK': _CountryDisplayInfo('🇬🇧', Color(0xFF3F51B5)),
+      'USA': _CountryDisplayInfo('🇺🇸', Color(0xFF2196F3)),
+      'Vietnam': _CountryDisplayInfo('🇻🇳', Color(0xFFF44336)),
+    };
+    return countryData[country] ?? const _CountryDisplayInfo('🌍', Color(0xFF607D8B));
   }
 
   Widget _buildEmptyState(DiscoverState discoverState) {
-    final isSearching = discoverState.searchQuery.isNotEmpty;
     final isShowingFavorites = discoverState.showFavoritesOnly;
 
     String message;
@@ -1484,11 +1088,8 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     if (isShowingFavorites) {
       message = 'No favorite places yet. Tap the heart icon on places to add them to your favorites.';
       icon = Icons.favorite_border;
-    } else if (isSearching) {
-      message = 'No places found matching "${discoverState.searchQuery}". Try a different search term.';
-      icon = Icons.search_off;
     } else {
-      message = 'No ${discoverState.selectedCategory.displayName.toLowerCase()} found nearby. Try a different category or location.';
+      message = 'No ${discoverState.selectedCategory.displayName.toLowerCase()} found nearby. Try a different category or increase the distance.';
       icon = discoverState.selectedCategory.icon;
     }
 
@@ -1518,19 +1119,13 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            if (isSearching || isShowingFavorites)
+            if (isShowingFavorites)
               OutlinedButton.icon(
                 onPressed: () {
-                  if (isSearching) {
-                    _searchController.clear();
-                    ref.read(discoverStateProvider.notifier).clearSearch();
-                  }
-                  if (isShowingFavorites) {
-                    ref.read(discoverStateProvider.notifier).toggleShowFavoritesOnly();
-                  }
+                  ref.read(discoverStateProvider.notifier).toggleShowFavoritesOnly();
                 },
                 icon: const Icon(Icons.clear),
-                label: Text(isShowingFavorites ? 'Show All Places' : 'Clear Search'),
+                label: const Text('Show All Places'),
               )
             else
               ElevatedButton.icon(
@@ -1766,5 +1361,198 @@ class _DestinationDetailSheet extends StatelessWidget {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
+  }
+}
+
+/// Helper class to store country display info (flag and color)
+class _CountryDisplayInfo {
+  final String flag;
+  final Color color;
+
+  const _CountryDisplayInfo(this.flag, this.color);
+}
+
+/// Bottom sheet for searching destinations
+class _DestinationSearchSheet extends StatefulWidget {
+  final void Function(double lat, double lng, String name) onDestinationSelected;
+
+  const _DestinationSearchSheet({required this.onDestinationSelected});
+
+  @override
+  State<_DestinationSearchSheet> createState() => _DestinationSearchSheetState();
+}
+
+class _DestinationSearchSheetState extends State<_DestinationSearchSheet> {
+  final _searchController = TextEditingController();
+  final _placesService = GooglePlacesService();
+  List<PlacePrediction> _predictions = [];
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onSearchChanged(String query) async {
+    if (query.length < 2) {
+      setState(() => _predictions = []);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final results = await _placesService.getAutocomplete(
+      query: query,
+      types: '(regions)', // Search for cities, regions, countries
+    );
+
+    setState(() {
+      _predictions = results;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _onPredictionSelected(PlacePrediction prediction) async {
+    setState(() => _isLoading = true);
+
+    // Get place details to get coordinates
+    final details = await _placesService.getPlaceDetails(
+      placeId: prediction.placeId,
+    );
+
+    setState(() => _isLoading = false);
+
+    if (details != null && details.latitude != null && details.longitude != null) {
+      widget.onDestinationSelected(
+        details.latitude!,
+        details.longitude!,
+        prediction.mainText,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Title
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Search Destination',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          // Search field
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _searchController,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Search city, region or place...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _predictions = []);
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: Theme.of(context).cardColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 2,
+                  ),
+                ),
+              ),
+              onChanged: _onSearchChanged,
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Results
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _predictions.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.travel_explore,
+                              size: 64,
+                              color: Colors.grey.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _searchController.text.isEmpty
+                                  ? 'Search for a destination\nlike "Ooty" or "Goa"'
+                                  : 'No results found',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _predictions.length,
+                        itemBuilder: (context, index) {
+                          final prediction = _predictions[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                              child: Text(
+                                prediction.typeIcon,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            title: Text(
+                              prediction.mainText,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              prediction.secondaryText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            onTap: () => _onPredictionSelected(prediction),
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+    );
   }
 }

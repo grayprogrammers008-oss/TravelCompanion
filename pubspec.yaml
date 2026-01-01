@@ -71,6 +71,7 @@ dependencies:
 
   # Location Services
   geolocator: ^13.0.2
+  geocoding: ^3.0.0  # Native reverse geocoding (free, no API quota)
 
   # Device Info
   device_info_plus: ^11.1.0

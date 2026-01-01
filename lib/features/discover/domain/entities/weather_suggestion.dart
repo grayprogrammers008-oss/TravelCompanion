@@ -5,22 +5,18 @@ import 'place_category.dart';
 /// Weather condition types
 enum WeatherCondition {
   sunny,
-  cloudy,
   rainy,
   stormy,
   snowy,
   foggy,
   windy,
   hot,
-  cold,
-  pleasant;
+  cold;
 
   String get displayName {
     switch (this) {
       case WeatherCondition.sunny:
         return 'Sunny';
-      case WeatherCondition.cloudy:
-        return 'Cloudy';
       case WeatherCondition.rainy:
         return 'Rainy';
       case WeatherCondition.stormy:
@@ -35,8 +31,6 @@ enum WeatherCondition {
         return 'Hot';
       case WeatherCondition.cold:
         return 'Cold';
-      case WeatherCondition.pleasant:
-        return 'Pleasant';
     }
   }
 
@@ -44,8 +38,6 @@ enum WeatherCondition {
     switch (this) {
       case WeatherCondition.sunny:
         return Icons.wb_sunny;
-      case WeatherCondition.cloudy:
-        return Icons.cloud;
       case WeatherCondition.rainy:
         return Icons.water_drop;
       case WeatherCondition.stormy:
@@ -60,8 +52,6 @@ enum WeatherCondition {
         return Icons.whatshot;
       case WeatherCondition.cold:
         return Icons.severe_cold;
-      case WeatherCondition.pleasant:
-        return Icons.wb_twilight;
     }
   }
 
@@ -69,8 +59,6 @@ enum WeatherCondition {
     switch (this) {
       case WeatherCondition.sunny:
         return Colors.orange;
-      case WeatherCondition.cloudy:
-        return Colors.blueGrey;
       case WeatherCondition.rainy:
         return Colors.blue;
       case WeatherCondition.stormy:
@@ -85,8 +73,6 @@ enum WeatherCondition {
         return Colors.red;
       case WeatherCondition.cold:
         return Colors.indigo;
-      case WeatherCondition.pleasant:
-        return Colors.green;
     }
   }
 
@@ -95,21 +81,12 @@ enum WeatherCondition {
   List<PlaceCategory> get suggestedCategories {
     switch (this) {
       case WeatherCondition.sunny:
-      case WeatherCondition.pleasant:
         return [
           PlaceCategory.beach,
           PlaceCategory.nature,
           PlaceCategory.hillStation,
           PlaceCategory.adventure,
           PlaceCategory.wildlife,
-        ];
-      case WeatherCondition.cloudy:
-        return [
-          PlaceCategory.heritage,
-          PlaceCategory.nature,
-          PlaceCategory.hillStation,
-          PlaceCategory.urban,
-          PlaceCategory.religious,
         ];
       case WeatherCondition.rainy:
       case WeatherCondition.stormy:
@@ -211,7 +188,7 @@ class WeatherData {
   WeatherCondition get temperatureCondition {
     if (temperature >= 35) return WeatherCondition.hot;
     if (temperature <= 10) return WeatherCondition.cold;
-    return WeatherCondition.pleasant;
+    return WeatherCondition.sunny;
   }
 
   /// Get the primary condition considering both weather and temperature
@@ -276,8 +253,8 @@ class WeatherData {
       return WeatherCondition.foggy;
     }
     if (weatherId == 800) return WeatherCondition.sunny;
-    if (weatherId > 800) return WeatherCondition.cloudy;
-    return WeatherCondition.pleasant;
+    if (weatherId > 800) return WeatherCondition.sunny; // Map cloudy to sunny for better UX
+    return WeatherCondition.sunny;
   }
 }
 
@@ -382,17 +359,10 @@ class WeatherSuggestionEngine {
   }) {
     switch (weather) {
       case WeatherCondition.sunny:
-      case WeatherCondition.pleasant:
         if (isIndoor) {
           return 'Great weather to explore or stay cool inside';
         }
         return 'Perfect weather for outdoor activities';
-
-      case WeatherCondition.cloudy:
-        if (isIndoor) {
-          return 'Ideal for indoor exploration';
-        }
-        return 'Good weather for sightseeing';
 
       case WeatherCondition.rainy:
         return isIndoor ? 'Stay dry while having fun' : 'Covered area available';
@@ -433,8 +403,6 @@ class WeatherSuggestionEngine {
     switch (condition) {
       case WeatherCondition.sunny:
         return "It's a beautiful sunny day! Perfect for outdoor adventures.";
-      case WeatherCondition.cloudy:
-        return "Cloudy but comfortable. Great for sightseeing.";
       case WeatherCondition.rainy:
         return "Rainy weather ahead. We recommend indoor activities.";
       case WeatherCondition.stormy:
@@ -449,8 +417,6 @@ class WeatherSuggestionEngine {
         return "It's hot outside! Head to the beach or find air-conditioned spots.";
       case WeatherCondition.cold:
         return "Bundle up! It's cold outside. We recommend warm indoor spots.";
-      case WeatherCondition.pleasant:
-        return "Perfect weather! Enjoy any activity you like.";
     }
   }
 }

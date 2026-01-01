@@ -542,12 +542,17 @@ class _DestinationListTile extends StatelessWidget {
                             style: context.titleSmall.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Text(
-                          destination.region,
-                          style: context.bodySmall.copyWith(
-                            color: context.textColor.withValues(alpha: 0.5),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            destination.region,
+                            style: context.bodySmall.copyWith(
+                              color: context.textColor.withValues(alpha: 0.5),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

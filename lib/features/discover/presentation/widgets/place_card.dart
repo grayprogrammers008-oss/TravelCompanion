@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
@@ -26,6 +27,17 @@ class PlaceCard extends ConsumerWidget {
     this.onFavoriteToggle,
     this.onQuickAdd,
   });
+
+  Future<void> _openDirections() async {
+    if (place.latitude != null && place.longitude != null) {
+      final url = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}',
+      );
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,30 +66,59 @@ class PlaceCard extends ConsumerWidget {
                 fit: StackFit.expand,
                 children: [
                   _buildImage(context, ref),
-                  // Favorite button
+                  // Top right buttons (Favorite & Directions)
                   Positioned(
                     top: 8,
                     right: 8,
-                    child: GestureDetector(
-                      onTap: onFavoriteToggle,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 4,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Directions button
+                        GestureDetector(
+                          onTap: _openDirections,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
-                          ],
+                            child: Icon(
+                              Icons.directions,
+                              size: 18,
+                              color: Colors.blue[600],
+                            ),
+                          ),
                         ),
-                        child: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          size: 18,
-                          color: isFavorite ? Colors.red : Colors.grey[600],
+                        const SizedBox(width: 6),
+                        // Favorite button
+                        GestureDetector(
+                          onTap: onFavoriteToggle,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              size: 18,
+                              color: isFavorite ? Colors.red : Colors.grey[600],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                   // Distance badge

@@ -372,6 +372,14 @@ class TripPlanEngine {
         return const Duration(hours: 2);
       case PlaceCategory.urban:
         return const Duration(hours: 2);
+      case PlaceCategory.familyKids:
+        return const Duration(hours: 3);
+      case PlaceCategory.honeymoon:
+        return const Duration(hours: 2);
+      case PlaceCategory.pilgrimage:
+        return const Duration(hours: 2);
+      case PlaceCategory.seniorFriendly:
+        return const Duration(hours: 2);
     }
   }
 
@@ -406,7 +414,23 @@ class TripPlanEngine {
       case PlaceCategory.wildlife:
         notes.add('Bring binoculars and camera');
         break;
-      default:
+      case PlaceCategory.nature:
+        notes.add('Enjoy the natural scenery');
+        break;
+      case PlaceCategory.urban:
+        notes.add('Check local timings and events');
+        break;
+      case PlaceCategory.familyKids:
+        notes.add('Fun activities for the whole family');
+        break;
+      case PlaceCategory.honeymoon:
+        notes.add('Romantic setting for couples');
+        break;
+      case PlaceCategory.pilgrimage:
+        notes.add('Dress modestly and follow temple customs');
+        break;
+      case PlaceCategory.seniorFriendly:
+        notes.add('Accessible paths and seating available');
         break;
     }
 

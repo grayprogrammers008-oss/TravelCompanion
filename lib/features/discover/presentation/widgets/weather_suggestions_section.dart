@@ -21,14 +21,23 @@ class WeatherSuggestionsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final discoverState = ref.watch(discoverStateProvider);
+    final weatherAsync = ref.watch(locationWeatherProvider);
 
     // Only show if we have places loaded
     if (discoverState.places.isEmpty || discoverState.isLoading) {
       return const SizedBox.shrink();
     }
 
-    // Use mock weather data for now (can be replaced with real API call)
-    final weather = _getMockWeather();
+    // Get weather data from provider (location-based)
+    // Use .when to handle loading/error states, fallback to mock if needed
+    final weather = weatherAsync.when(
+      data: (data) => data,
+      loading: () => null,
+      error: (_, __) => null,
+    );
+    if (weather == null) {
+      return const SizedBox.shrink();
+    }
 
     // Generate weather-based suggestions
     final suggestions = WeatherSuggestionEngine.generateSuggestions(
@@ -95,27 +104,53 @@ class WeatherSuggestionsSection extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: weather.effectiveCondition.color,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            weather.effectiveCondition.displayName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: weather.effectiveCondition.color,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              weather.effectiveCondition.displayName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 4),
+                    // Location name
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 12,
+                          color: context.textColor.withValues(alpha: 0.5),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            weather.locationName,
+                            style: context.bodySmall.copyWith(
+                              color: context.textColor.withValues(alpha: 0.6),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
                     Text(
                       weatherSummary,
                       style: context.bodySmall.copyWith(
@@ -189,24 +224,6 @@ class WeatherSuggestionsSection extends ConsumerWidget {
         const SizedBox(height: 8),
       ],
     );
-  }
-
-  /// Get mock weather data based on time of day and random conditions
-  WeatherData _getMockWeather() {
-    final hour = DateTime.now().hour;
-
-    // Simulate different weather based on time
-    if (hour >= 6 && hour < 10) {
-      return WeatherData.mock(temperature: 24, condition: WeatherCondition.pleasant);
-    } else if (hour >= 10 && hour < 14) {
-      return WeatherData.mock(temperature: 32, condition: WeatherCondition.sunny);
-    } else if (hour >= 14 && hour < 18) {
-      return WeatherData.mock(temperature: 30, condition: WeatherCondition.cloudy);
-    } else if (hour >= 18 && hour < 21) {
-      return WeatherData.mock(temperature: 26, condition: WeatherCondition.pleasant);
-    } else {
-      return WeatherData.mock(temperature: 22, condition: WeatherCondition.cloudy);
-    }
   }
 }
 
