@@ -83,21 +83,24 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
     setState(() {
       _selectedTrip = trip;
       _step = 1;
-      // Default to day 1 or today if trip is ongoing
-      if (trip.startDate != null) {
-        final now = DateTime.now();
-        final tripStart = DateTime(trip.startDate!.year, trip.startDate!.month, trip.startDate!.day);
-        final today = DateTime(now.year, now.month, now.day);
-
-        if (today.isAfter(tripStart) || today.isAtSameMomentAs(tripStart)) {
-          _selectedDay = today.difference(tripStart).inDays + 1;
-        } else {
-          _selectedDay = 1;
-        }
-      } else {
-        _selectedDay = 1;
-      }
+      // Set to first valid day (today or day 1 if trip hasn't started)
+      _selectedDay = _getFirstValidDayForTrip(trip);
     });
+  }
+
+  /// Get first valid day for a specific trip (before _selectedTrip is set)
+  int _getFirstValidDayForTrip(TripModel trip) {
+    if (trip.startDate == null) return 1;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tripStart = DateTime(trip.startDate!.year, trip.startDate!.month, trip.startDate!.day);
+
+    if (today.isBefore(tripStart)) {
+      return 1;
+    } else {
+      return today.difference(tripStart).inDays + 1;
+    }
   }
 
   Future<void> _addToTrip() async {
@@ -427,7 +430,7 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
 
   /// Step 2: Select day and time
   Widget _buildDayTimeStep(BuildContext context, ScrollController scrollController) {
-    final tripDays = _getTripDays(_selectedTrip!);
+    final validDays = _getValidDays();
 
     return Expanded(
       child: Column(
@@ -435,201 +438,220 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
           // Header with back button
           Padding(
             padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () => setState(() {
-                        _step = 0;
-                        _selectedTrip = null;
-                      }),
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => setState(() {
+                    _step = 0;
+                    _selectedTrip = null;
+                  }),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _selectedTrip!.name,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        widget.location.placeName ?? 'Location',
+                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+              ],
+            ),
+          ),
+
+          // Scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              controller: scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Activity title
+                  TextField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      labelText: 'Activity Title',
+                      hintText: widget.location.placeName ?? 'e.g., Visit the beach',
+                      prefixIcon: const Icon(Icons.edit_outlined),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      filled: true,
+                      fillColor: Colors.grey[50],
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    textCapitalization: TextCapitalization.words,
+                    onChanged: (value) => setState(() => _activityTitle = value),
+                    enabled: !_isAdding,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Day selection
+                  Text('Select Day', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700])),
+                  const SizedBox(height: 8),
+
+                  if (validDays.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
                         children: [
-                          Text(
-                            _selectedTrip!.name,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            widget.location.placeName ?? 'Location',
-                            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                          Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'No upcoming days available for this trip',
+                              style: TextStyle(color: Colors.orange[700], fontSize: 13),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(false),
-                    ),
-                  ],
-                ),
+                    )
+                  else
+                    SizedBox(
+                      height: 70,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: validDays.length,
+                        itemBuilder: (context, index) {
+                          final dayNumber = validDays[index];
+                          final isSelected = _selectedDay == dayNumber;
+                          final dayDate = _getDateForDay(dayNumber);
+                          final isToday = !_isDayPast(dayNumber) && dayDate != null &&
+                              DateTime.now().year == dayDate.year &&
+                              DateTime.now().month == dayDate.month &&
+                              DateTime.now().day == dayDate.day;
 
-                const SizedBox(height: 16),
-
-                // Activity title
-                TextField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Activity Title',
-                    hintText: widget.location.placeName ?? 'e.g., Visit the beach',
-                    prefixIcon: const Icon(Icons.edit_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                  ),
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (value) => setState(() => _activityTitle = value),
-                  enabled: !_isAdding,
-                ),
-              ],
-            ),
-          ),
-
-          // Day selection
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Select Day', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700])),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 70,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: tripDays,
-                    itemBuilder: (context, index) {
-                      final dayNumber = index + 1;
-                      final isSelected = _selectedDay == dayNumber;
-                      final dayDate = _getDateForDay(dayNumber);
-
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: GestureDetector(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            setState(() => _selectedDay = dayNumber);
-                          },
-                          child: Container(
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: isSelected ? Colors.teal : Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isSelected ? Colors.teal : Colors.grey[300]!,
-                                width: isSelected ? 2 : 1,
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: GestureDetector(
+                              onTap: () {
+                                HapticFeedback.selectionClick();
+                                setState(() => _selectedDay = dayNumber);
+                              },
+                              child: Container(
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.teal : Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: isSelected ? Colors.teal : (isToday ? Colors.teal.withValues(alpha: 0.5) : Colors.grey[300]!),
+                                    width: isSelected ? 2 : 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      isToday ? 'Today' : 'Day',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: isToday ? FontWeight.w600 : FontWeight.normal,
+                                        color: isSelected ? Colors.white70 : (isToday ? Colors.teal : Colors.grey[600]),
+                                      ),
+                                    ),
+                                    Text(
+                                      '$dayNumber',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected ? Colors.white : Colors.black87,
+                                      ),
+                                    ),
+                                    if (dayDate != null)
+                                      Text(
+                                        DateFormat('MMM d').format(dayDate),
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          color: isSelected ? Colors.white70 : Colors.grey[500],
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Day',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: isSelected ? Colors.white70 : Colors.grey[600],
-                                  ),
-                                ),
-                                Text(
-                                  '$dayNumber',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: isSelected ? Colors.white : Colors.black87,
-                                  ),
-                                ),
-                                if (dayDate != null)
-                                  Text(
-                                    DateFormat('MMM d').format(dayDate),
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      color: isSelected ? Colors.white70 : Colors.grey[500],
-                                    ),
-                                  ),
-                              ],
+                          );
+                        },
+                      ),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  // Time selection
+                  Text('Time (Optional)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700])),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: _selectedTime ?? const TimeOfDay(hour: 10, minute: 0),
+                      );
+                      if (time != null) {
+                        setState(() => _selectedTime = time);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.access_time, color: Colors.grey[600]),
+                          const SizedBox(width: 12),
+                          Text(
+                            _selectedTime != null
+                                ? _selectedTime!.format(context)
+                                : 'Tap to set time',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: _selectedTime != null ? Colors.black87 : Colors.grey[500],
                             ),
                           ),
-                        ),
-                      );
-                    },
+                          const Spacer(),
+                          if (_selectedTime != null)
+                            IconButton(
+                              icon: const Icon(Icons.clear, size: 20),
+                              onPressed: () => setState(() => _selectedTime = null),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
 
-          const SizedBox(height: 16),
-
-          // Time selection
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Time (Optional)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700])),
-                const SizedBox(height: 8),
-                InkWell(
-                  onTap: () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: _selectedTime ?? const TimeOfDay(hour: 10, minute: 0),
-                    );
-                    if (time != null) {
-                      setState(() => _selectedTime = time);
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.access_time, color: Colors.grey[600]),
-                        const SizedBox(width: 12),
-                        Text(
-                          _selectedTime != null
-                              ? _selectedTime!.format(context)
-                              : 'Tap to set time',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: _selectedTime != null ? Colors.black87 : Colors.grey[500],
-                          ),
-                        ),
-                        const Spacer(),
-                        if (_selectedTime != null)
-                          IconButton(
-                            icon: const Icon(Icons.clear, size: 20),
-                            onPressed: () => setState(() => _selectedTime = null),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const Spacer(),
-
-          // Add button
+          // Add button (fixed at bottom)
           Padding(
             padding: const EdgeInsets.all(AppTheme.spacingMd),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _isAdding ? null : _addToTrip,
+                onPressed: (_isAdding || validDays.isEmpty) ? null : _addToTrip,
                 icon: _isAdding
                     ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.add_location_alt),
@@ -659,8 +681,18 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
 
   List<TripWithMembers> _sortTrips(List<TripWithMembers> trips) {
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
-    return [...trips]..sort((a, b) {
+    // Filter out past trips (trips that have already ended)
+    final activeTrips = trips.where((t) {
+      final trip = t.trip;
+      // Keep trips without end date, or trips that haven't ended yet
+      if (trip.endDate == null) return true;
+      final tripEndDate = DateTime(trip.endDate!.year, trip.endDate!.month, trip.endDate!.day);
+      return !tripEndDate.isBefore(today); // Keep if end date is today or future
+    }).toList();
+
+    return activeTrips..sort((a, b) {
         final tripA = a.trip;
         final tripB = b.trip;
 
@@ -681,5 +713,48 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
 
         return 0;
       });
+  }
+
+  /// Get the first valid day (today or day 1 if trip hasn't started)
+  int _getFirstValidDay() {
+    if (_selectedTrip?.startDate == null) return 1;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tripStart = DateTime(_selectedTrip!.startDate!.year, _selectedTrip!.startDate!.month, _selectedTrip!.startDate!.day);
+
+    if (today.isBefore(tripStart)) {
+      // Trip hasn't started yet, day 1 is first valid
+      return 1;
+    } else {
+      // Trip has started, today is the first valid day
+      return today.difference(tripStart).inDays + 1;
+    }
+  }
+
+  /// Get valid days (today and future days only)
+  List<int> _getValidDays() {
+    final totalDays = _getTripDays(_selectedTrip!);
+    final firstValid = _getFirstValidDay();
+
+    // Return days from firstValid to totalDays
+    return List.generate(
+      totalDays - firstValid + 1,
+      (index) => firstValid + index,
+    );
+  }
+
+  /// Check if a day is in the past
+  bool _isDayPast(int dayNumber) {
+    if (_selectedTrip?.startDate == null) return false;
+
+    final dayDate = _getDateForDay(dayNumber);
+    if (dayDate == null) return false;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final day = DateTime(dayDate.year, dayDate.month, dayDate.day);
+
+    return day.isBefore(today);
   }
 }
