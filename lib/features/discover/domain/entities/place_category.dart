@@ -63,7 +63,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return Icons.pets;
       case PlaceCategory.religious:
-        return Icons.temple_hindu;
+        return Icons.church; // Universal worship icon
       case PlaceCategory.nature:
         return Icons.forest;
       case PlaceCategory.urban:
@@ -153,7 +153,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return 'wildlife sanctuary national park';
       case PlaceCategory.religious:
-        return 'temple church mosque';
+        return 'temple church mosque masjid cathedral gurudwara shrine dargah synagogue';
       case PlaceCategory.nature:
         return 'waterfall lake garden nature';
       case PlaceCategory.urban:
@@ -183,7 +183,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return 'Safari parks & nature reserves';
       case PlaceCategory.religious:
-        return 'Temples, churches & spiritual places';
+        return 'Temples, churches, mosques & all places of worship';
       case PlaceCategory.nature:
         return 'Parks, waterfalls & natural beauty';
       case PlaceCategory.urban:
