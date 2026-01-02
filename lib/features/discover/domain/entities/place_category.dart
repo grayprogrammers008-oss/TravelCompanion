@@ -123,7 +123,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return 'zoo';
       case PlaceCategory.religious:
-        return 'place_of_worship';
+        return null; // Use keyword search for better global coverage
       case PlaceCategory.nature:
         return 'park';
       case PlaceCategory.urban:
@@ -153,7 +153,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return 'wildlife sanctuary national park';
       case PlaceCategory.religious:
-        return 'temple church mosque masjid cathedral gurudwara shrine dargah synagogue';
+        return 'famous temple hindu temple church mosque masjid cathedral gurudwara shrine dargah synagogue mandir kovil';
       case PlaceCategory.nature:
         return 'waterfall lake garden nature';
       case PlaceCategory.urban:
