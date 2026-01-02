@@ -567,8 +567,55 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
 
   /// Get all favorite places with full data (for planning assistant)
   Future<List<DiscoverPlace>> getFavoritePlaces() async {
-    if (!_cacheInitialized) return [];
-    return await _localDataSource.getFavoritePlaces();
+    final Set<String> addedIds = {};
+    final List<DiscoverPlace> result = [];
+
+    // 1. Get stored favorite places from cache (new favorites with full data)
+    if (_cacheInitialized) {
+      final storedPlaces = await _localDataSource.getFavoritePlaces();
+      for (final place in storedPlaces) {
+        if (!addedIds.contains(place.placeId)) {
+          result.add(place);
+          addedIds.add(place.placeId);
+        }
+      }
+    }
+
+    // 2. Add favorites from current loaded places (for backward compatibility)
+    for (final place in state.places) {
+      if (state.favoriteIds.contains(place.placeId) && !addedIds.contains(place.placeId)) {
+        result.add(place);
+        addedIds.add(place.placeId);
+        // Also save for future use
+        if (_cacheInitialized) {
+          _localDataSource.saveFavoritePlace(place);
+        }
+      }
+    }
+
+    // 3. Try to load from all cached categories if still missing favorites
+    if (_cacheInitialized && result.length < state.favoriteIds.length) {
+      for (final category in PlaceCategory.values) {
+        final cachedPlaces = await _localDataSource.getPlaces(
+          category: category,
+          latitude: state.userLatitude ?? 0,
+          longitude: state.userLongitude ?? 0,
+        );
+        if (cachedPlaces != null) {
+          for (final place in cachedPlaces) {
+            if (state.favoriteIds.contains(place.placeId) && !addedIds.contains(place.placeId)) {
+              result.add(place);
+              addedIds.add(place.placeId);
+              // Save for future use
+              _localDataSource.saveFavoritePlace(place);
+            }
+          }
+        }
+      }
+    }
+
+    debugPrint('❤️ [Discover] getFavoritePlaces: ${result.length} places (${state.favoriteIds.length} favorite IDs)');
+    return result;
   }
 
   /// Toggle show favorites only filter
