@@ -228,9 +228,6 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
                 _buildTripSelectionStep(context, tripsAsync, scrollController)
               else
                 _buildDayTimeStep(context, scrollController),
-
-              // Safe area at bottom
-              SizedBox(height: MediaQuery.of(context).padding.bottom),
             ],
           );
         },
@@ -645,9 +642,14 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
             ),
           ),
 
-          // Add button (fixed at bottom)
+          // Add button (fixed at bottom) with safe area
           Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            padding: EdgeInsets.only(
+              left: AppTheme.spacingMd,
+              right: AppTheme.spacingMd,
+              top: AppTheme.spacingMd,
+              bottom: AppTheme.spacingMd + MediaQuery.of(context).padding.bottom,
+            ),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
