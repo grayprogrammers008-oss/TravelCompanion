@@ -552,12 +552,23 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
     if (_cacheInitialized) {
       if (wasAdded) {
         _localDataSource.addFavorite(placeId);
+        // Also save place data for the planning assistant
+        if (place != null) {
+          _localDataSource.saveFavoritePlace(place);
+        }
       } else {
         _localDataSource.removeFavorite(placeId);
+        _localDataSource.removeFavoritePlace(placeId);
       }
     }
 
     return wasAdded;
+  }
+
+  /// Get all favorite places with full data (for planning assistant)
+  Future<List<DiscoverPlace>> getFavoritePlaces() async {
+    if (!_cacheInitialized) return [];
+    return await _localDataSource.getFavoritePlaces();
   }
 
   /// Toggle show favorites only filter

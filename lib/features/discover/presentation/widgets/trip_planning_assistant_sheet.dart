@@ -40,6 +40,31 @@ class _TripPlanningAssistantSheetState
   GeneratedTripPlan? _generatedPlan;
   bool _isGenerating = false;
   bool _isAddingToTrip = false;
+  List<DiscoverPlace>? _favoritePlaces;
+  bool _isLoadingFavorites = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoritePlaces();
+  }
+
+  Future<void> _loadFavoritePlaces() async {
+    setState(() => _isLoadingFavorites = true);
+    try {
+      final places = await ref.read(discoverStateProvider.notifier).getFavoritePlaces();
+      if (mounted) {
+        setState(() {
+          _favoritePlaces = places;
+          _isLoadingFavorites = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingFavorites = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,13 +218,18 @@ class _TripPlanningAssistantSheetState
     BuildContext context,
     ScrollController scrollController,
   ) {
-    final discoverState = ref.watch(discoverStateProvider);
-    final favoriteIds = discoverState.favoriteIds;
+    // Show loading while fetching favorite places
+    if (_isLoadingFavorites) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
-    // Get favorite places from the current places list
-    final favoritePlaces = discoverState.places
-        .where((p) => favoriteIds.contains(p.placeId))
-        .toList();
+    // Use stored favorite places instead of filtering current places
+    final favoritePlaces = _favoritePlaces ?? [];
 
     if (favoritePlaces.isEmpty) {
       return Center(

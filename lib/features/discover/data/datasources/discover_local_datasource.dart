@@ -268,6 +268,80 @@ class DiscoverLocalDataSource {
     }
   }
 
+  static const String _favoritePlacesKey = 'favorite_places_data';
+
+  /// Save a favorite place with full data
+  Future<void> saveFavoritePlace(DiscoverPlace place) async {
+    try {
+      debugPrint('❤️ [DiscoverLocal] Saving favorite place: ${place.name}');
+
+      // Get existing favorite places
+      final existingData = _favorites.get(_favoritePlacesKey);
+      final Map<String, dynamic> placesMap = existingData != null
+          ? Map<String, dynamic>.from(existingData)
+          : {};
+
+      // Add/update the place
+      final model = DiscoverPlaceModel.fromEntity(place);
+      placesMap[place.placeId] = model.toJson();
+
+      await _favorites.put(_favoritePlacesKey, placesMap);
+      debugPrint('✅ [DiscoverLocal] Favorite place saved');
+    } catch (e) {
+      debugPrint('❌ [DiscoverLocal] saveFavoritePlace FAILED: $e');
+    }
+  }
+
+  /// Remove a favorite place data
+  Future<void> removeFavoritePlace(String placeId) async {
+    try {
+      debugPrint('💔 [DiscoverLocal] Removing favorite place data: $placeId');
+
+      final existingData = _favorites.get(_favoritePlacesKey);
+      if (existingData == null) return;
+
+      final placesMap = Map<String, dynamic>.from(existingData);
+      placesMap.remove(placeId);
+
+      await _favorites.put(_favoritePlacesKey, placesMap);
+      debugPrint('✅ [DiscoverLocal] Favorite place data removed');
+    } catch (e) {
+      debugPrint('❌ [DiscoverLocal] removeFavoritePlace FAILED: $e');
+    }
+  }
+
+  /// Get all favorite places with full data
+  Future<List<DiscoverPlace>> getFavoritePlaces() async {
+    try {
+      debugPrint('🔵 [DiscoverLocal] getFavoritePlaces');
+
+      final existingData = _favorites.get(_favoritePlacesKey);
+      if (existingData == null) {
+        debugPrint('   ⚠️ No favorite places data found');
+        return [];
+      }
+
+      final placesMap = Map<String, dynamic>.from(existingData);
+      final places = <DiscoverPlace>[];
+
+      for (final entry in placesMap.entries) {
+        try {
+          final placeJson = Map<String, dynamic>.from(entry.value);
+          final model = DiscoverPlaceModel.fromJson(placeJson);
+          places.add(model.toEntity());
+        } catch (e) {
+          debugPrint('   ⚠️ Error parsing place ${entry.key}: $e');
+        }
+      }
+
+      debugPrint('   ✅ Retrieved ${places.length} favorite places');
+      return places;
+    } catch (e) {
+      debugPrint('❌ [DiscoverLocal] getFavoritePlaces FAILED: $e');
+      return [];
+    }
+  }
+
   // ============================================================================
   // PHOTO URL CACHING
   // ============================================================================
