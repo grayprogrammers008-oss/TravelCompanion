@@ -292,15 +292,8 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                       ),
                     ],
                   ),
-                  if (_currentItinerary.summary != null) ...[
-                    const SizedBox(height: AppTheme.spacingMd),
-                    Text(
-                      _currentItinerary.summary!,
-                      style: context.bodyStyle.copyWith(
-                        color: context.textColor.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ],
+                  // Summary removed to maximize space for itinerary content
+                  // Users can see the full itinerary in the tabs below
                 ],
               ),
             ),
