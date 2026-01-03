@@ -890,16 +890,59 @@ IMPORTANT: Return ONLY the JSON object, no explanation, no markdown.
         ? 'Group Size: ${request.groupSize} people'
         : '';
 
+    // Build comprehensive context from enhanced request data
+    final companionsStr = request.companions != null && request.companions!.isNotEmpty
+        ? 'Travelers: ${request.companions!.map((c) {
+            final parts = [c.name];
+            if (c.relation != null) parts.add(c.relation!);
+            if (c.age != null) parts.add('${c.age} years');
+            return parts.join(' - ');
+          }).join(', ')}'
+        : '';
+
+    final transportStr = request.primaryTransport != null
+        ? 'Transport to Destination: ${_transportModeToString(request.primaryTransport!)}'
+        : '';
+
+    final localTransportStr = request.localTransport != null
+        ? 'Local Transport: ${_transportModeToString(request.localTransport!)}'
+        : '';
+
+    final weatherStr = request.weatherContext != null && request.weatherContext!.isNotEmpty
+        ? 'Weather Context: ${request.weatherContext}'
+        : '';
+
+    final eventsStr = request.localEvents != null && request.localEvents!.isNotEmpty
+        ? 'Local Events/Festivals: ${request.localEvents}'
+        : '';
+
+    final timingStr = request.preferredTiming != null
+        ? _buildTimingContext(request.preferredTiming!)
+        : '';
+
+    final datesStr = request.startDate != null && request.endDate != null
+        ? 'Trip Dates: ${_formatDate(request.startDate!)} to ${_formatDate(request.endDate!)}'
+        : '';
+
     return '''
 You are an expert travel planner specializing in Indian destinations. Generate a detailed, PRACTICAL day-by-day itinerary with SPECIFIC restaurant recommendations.
 
 TRIP DETAILS:
 - Destination: ${request.destination}, India
 - Duration: ${request.durationDays} days
+${datesStr.isNotEmpty ? '- $datesStr' : ''}
 - $budgetStr
 ${interestsStr.isNotEmpty ? '- $interestsStr' : ''}
 ${styleStr.isNotEmpty ? '- $styleStr' : ''}
 ${groupStr.isNotEmpty ? '- $groupStr' : ''}
+${companionsStr.isNotEmpty ? '- $companionsStr' : ''}
+
+TRAVEL CONTEXT:
+${transportStr.isNotEmpty ? '- $transportStr' : ''}
+${localTransportStr.isNotEmpty ? '- $localTransportStr' : ''}
+${weatherStr.isNotEmpty ? '- $weatherStr' : ''}
+${eventsStr.isNotEmpty ? '- $eventsStr' : ''}
+${timingStr.isNotEmpty ? '$timingStr' : ''}
 
 CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 
@@ -945,6 +988,14 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Entry fees: ₹50-500 local, ₹500-1500 premium attractions
 - Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
 - Transport: ₹500-1500/day local travel
+
+**6b. BUDGET-BASED TRANSPORT DECISIONS:**
+Based on the budget and local transport preference:
+- **Budget Travel (Under ₹5000/day):** Use local buses, shared autos, metro when available
+- **Moderate Travel (₹5000-15000/day):** Mix of Uber/Ola for convenience and local transport
+- **Luxury Travel (₹15000+/day):** Private cabs, Uber Premier, hired cars
+- **Realistic Transport Times:** Include actual travel time (e.g., "20-min Uber ride", "45-min metro + walk")
+- **Cost-Conscious Tips:** "Take local bus (₹20) instead of Uber (₹200) to save money" OR "Uber recommended for comfort (₹150)"
 
 **7. SMART PACKING LIST:**
 - ONLY items needed for THIS trip (destination climate + activities)
@@ -1401,6 +1452,316 @@ CRITICAL: Follow this EXACT schema - field names must match EXACTLY as shown. Th
 IMPORTANT: For packing_list items, you MUST use "title" as the field name for the item name, NOT "item". This is critical for parsing.
 
 Generate the complete trip plan now:
+''';
+  }
+
+  /// Helper: Convert TransportMode enum to human-readable string
+  String _transportModeToString(TransportMode mode) {
+    switch (mode) {
+      case TransportMode.flight:
+        return 'Flight';
+      case TransportMode.train:
+        return 'Train';
+      case TransportMode.bus:
+        return 'Bus';
+      case TransportMode.car:
+        return 'Private Car';
+      case TransportMode.bike:
+        return 'Bike/Scooter';
+      case TransportMode.auto:
+        return 'Auto-rickshaw';
+      case TransportMode.uber:
+        return 'Uber/Ola (Ride-sharing)';
+      case TransportMode.metro:
+        return 'Metro/Subway';
+      case TransportMode.walk:
+        return 'Walking';
+      case TransportMode.mix:
+        return 'Mixed (multiple modes)';
+    }
+  }
+
+  /// Helper: Build timing context string from DailyTiming
+  String _buildTimingContext(DailyTiming timing) {
+    final parts = <String>[];
+    if (timing.wakeUpTime != null) {
+      parts.add('Wake up: ${timing.wakeUpTime}');
+    }
+    if (timing.sleepTime != null) {
+      parts.add('Sleep: ${timing.sleepTime}');
+    }
+    if (timing.breakfastTime != null) {
+      parts.add('Breakfast: ${timing.breakfastTime}');
+    }
+    if (timing.lunchTime != null) {
+      parts.add('Lunch: ${timing.lunchTime}');
+    }
+    if (timing.dinnerTime != null) {
+      parts.add('Dinner: ${timing.dinnerTime}');
+    }
+
+    if (parts.isEmpty) return '';
+
+    return 'Daily Schedule: ${parts.join(', ')}';
+  }
+
+  /// Helper: Format date as readable string
+  String _formatDate(DateTime date) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  /// Refine an existing itinerary based on user's refinement request
+  /// This method understands that we're MODIFYING an existing itinerary, not creating a new one
+  Future<AiGeneratedItinerary> refineItinerary({
+    required AiGeneratedItinerary currentItinerary,
+    required String refinementRequest,
+  }) async {
+    debugPrint('🔄 GroqService.refineItinerary() called');
+    debugPrint('📝 Refinement request: $refinementRequest');
+    debugPrint('📍 Current destination: ${currentItinerary.destination}');
+
+    final prompt = _buildItineraryRefinementPrompt(
+      currentItinerary: currentItinerary,
+      refinementRequest: refinementRequest,
+    );
+    debugPrint('📝 Refinement prompt built (${prompt.length} chars)');
+
+    // Retry logic with exponential backoff
+    const maxRetries = 3;
+    int retryCount = 0;
+    int delaySeconds = 2;
+
+    while (retryCount <= maxRetries) {
+      debugPrint('🌐 Making POST request to Groq API for itinerary refinement (attempt ${retryCount + 1}/${maxRetries + 1})...');
+
+      final requestBody = {
+        'model': _model,
+        'messages': [
+          {
+            'role': 'system',
+            'content': '''You are an expert travel planner helping to MODIFY an existing itinerary.
+Your job is to REFINE the itinerary based on the user's request while keeping everything else the same.
+
+IMPORTANT RULES:
+1. You are UPDATING an existing itinerary, NOT creating a new one
+2. Only change what the user specifically asks for
+3. Keep the same destination, dates, and duration unless explicitly asked to change
+4. Keep activities that weren't mentioned - only modify/add/remove what was requested
+5. Maintain the same JSON structure exactly
+6. You MUST respond with valid JSON only - no markdown, no code blocks, no explanations''',
+          },
+          {
+            'role': 'user',
+            'content': prompt,
+          },
+        ],
+        'temperature': 0.5, // Lower temperature for more consistent refinements
+        'max_tokens': 8192,
+      };
+
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_apiKey',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      debugPrint('📥 Refinement response status code: ${response.statusCode}');
+
+      // Handle rate limiting (429) - DON'T retry to save quota
+      if (response.statusCode == 429) {
+        debugPrint('❌ Groq rate limited (429). NOT retrying to save quota.');
+        throw Exception('Groq rate limited: 429. Please wait a moment.');
+      }
+
+      // Handle server errors with retry (5xx are transient)
+      if (response.statusCode >= 500) {
+        retryCount++;
+        if (retryCount > maxRetries) {
+          throw Exception('Groq server error during refinement: ${response.statusCode}');
+        }
+        await Future.delayed(Duration(seconds: delaySeconds));
+        delaySeconds *= 2;
+        continue;
+      }
+
+      if (response.statusCode != 200) {
+        debugPrint('❌ Groq API Error during refinement: ${response.statusCode}');
+        debugPrint('Response body: ${response.body}');
+        String errorDetail = '';
+        try {
+          final errorJson = jsonDecode(response.body) as Map<String, dynamic>;
+          final error = errorJson['error'] as Map<String, dynamic>?;
+          errorDetail = error?['message'] as String? ?? '';
+        } catch (_) {}
+        throw Exception('Groq API refinement error: ${response.statusCode}${errorDetail.isNotEmpty ? ' - $errorDetail' : ''}');
+      }
+
+      debugPrint('✅ Groq API refinement returned 200 OK');
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      final choices = jsonResponse['choices'] as List?;
+
+      if (choices == null || choices.isEmpty) {
+        throw Exception('No refinement response from Groq AI');
+      }
+
+      final message = choices[0]['message'] as Map<String, dynamic>?;
+      final content = message?['content'] as String?;
+
+      if (content == null || content.isEmpty) {
+        throw Exception('Empty refinement response from Groq AI');
+      }
+
+      debugPrint('📄 Refined itinerary text length: ${content.length} chars');
+
+      try {
+        final cleanContent = _cleanJsonResponse(content);
+        final itineraryJson = jsonDecode(cleanContent) as Map<String, dynamic>;
+        final itinerary = AiGeneratedItinerary.fromJson({
+          ...itineraryJson,
+          'destination': currentItinerary.destination,
+          'duration_days': currentItinerary.durationDays,
+          'budget': currentItinerary.budget,
+          'currency': currentItinerary.currency,
+          'interests': currentItinerary.interests,
+          'generated_at': DateTime.now().toIso8601String(),
+        });
+        debugPrint('✅ Successfully parsed refined itinerary');
+        debugPrint('   - Days: ${itinerary.days.length}');
+        return itinerary;
+      } catch (e) {
+        debugPrint('❌ Failed to parse refined itinerary response: $content');
+        debugPrint('Error: $e');
+        throw Exception('Failed to parse refined itinerary response');
+      }
+    }
+
+    throw Exception('Failed to refine itinerary after multiple attempts');
+  }
+
+  /// Build prompt for refining an existing itinerary
+  String _buildItineraryRefinementPrompt({
+    required AiGeneratedItinerary currentItinerary,
+    required String refinementRequest,
+  }) {
+    // Build the current itinerary as text
+    final itineraryText = currentItinerary.days.map((d) => '''
+Day ${d.dayNumber}: ${d.title ?? 'Day ${d.dayNumber}'}
+${d.activities.map((a) => '  • ${a.startTime ?? ''} - ${a.title}${a.description != null ? ' (${a.description})' : ''}').join('\n')}
+''').join('\n');
+
+    // Build packing list
+    final packingText = currentItinerary.packingList.map((p) => '• ${p.item}').join('\n');
+
+    return '''
+CURRENT ITINERARY (This is what you need to MODIFY):
+
+**TRIP DETAILS:**
+- Destination: ${currentItinerary.destination}
+- Duration: ${currentItinerary.durationDays} days
+- Budget: ${currentItinerary.budget != null ? '₹${currentItinerary.budget!.toStringAsFixed(0)}' : 'Flexible'}
+- Summary: ${currentItinerary.summary ?? 'N/A'}
+
+**CURRENT DAILY ITINERARY:**
+$itineraryText
+
+**CURRENT PACKING LIST:**
+$packingText
+
+---
+
+**USER'S REFINEMENT REQUEST:** "$refinementRequest"
+
+---
+
+**YOUR TASK:**
+1. UNDERSTAND what the user wants to change (could be in any language - English, Hindi, Tamil, etc.)
+2. MODIFY the itinerary accordingly:
+
+   *For ITINERARY changes:*
+   - If they want to ADD an activity: Add it to the appropriate day(s) in the "days" array
+   - If they want to REMOVE an activity: Remove it from the itinerary
+   - If they want to CHANGE an activity: Replace/modify that activity
+   - If they want MORE of something: Add more similar activities
+   - If they want LESS of something: Remove some of those activities
+   - If they want different timing: Adjust start_time and end_time
+
+   *For PACKING LIST changes:*
+   - If they mention packing items, clothes, gear, equipment: Modify the "packing_list" array
+   - "Add hiking shoes" → Add to packing_list
+   - "Remove formal clothes" → Remove matching items from packing_list
+
+   *For TRANSPORT/BUDGET changes:*
+   - "Use cheaper transport" → Change Uber to bus in activities
+   - "More luxury" → Upgrade transport and restaurants
+   - "Budget-friendly meals" → Replace expensive restaurants with affordable options
+
+3. KEEP everything else the same (destination, duration, unmentioned activities/items)
+4. Ensure the modified itinerary is still logical and well-structured
+
+**EXAMPLES OF REFINEMENT REQUESTS:**
+
+*Itinerary Changes:*
+- "Add a cooking class" → Add a cooking class activity to an appropriate day
+- "Remove the museum visit" → Find and remove museum activities
+- "I want more temple visits" → Add more temple activities
+- "Add beach time on day 2" → Add beach activities specifically to day 2
+- "Change dinner to vegetarian restaurant" → Update restaurant recommendations
+- "Start days earlier, I wake up at 6 AM" → Adjust all start times to begin around 6-7 AM
+
+*Packing List Changes:*
+- "Add sunscreen" → Add sunscreen to packing_list
+- "I need warm clothes" → Add jacket, sweater to packing_list
+- "Remove beach stuff" → Remove swimwear, beach items from packing_list
+
+*Budget/Transport Changes:*
+- "Make it more budget-friendly" → Replace Uber with bus, expensive restaurants with affordable ones
+- "I want to use local buses" → Change transport activities to use buses instead of cabs
+
+**OUTPUT FORMAT:**
+Return the COMPLETE updated itinerary in the exact same JSON format:
+{
+  "summary": "string (1-2 sentences describing the updated itinerary)",
+  "days": [
+    {
+      "day_number": number,
+      "title": "string",
+      "description": "string",
+      "activities": [
+        {
+          "title": "string",
+          "description": "string",
+          "location": "string",
+          "start_time": "HH:MM",
+          "end_time": "HH:MM",
+          "duration_minutes": number,
+          "category": "sightseeing|food|transport|activity|accommodation",
+          "estimated_cost": number,
+          "tip": "string"
+        }
+      ]
+    }
+  ],
+  "packing_list": [
+    {
+      "item": "string",
+      "category": "string",
+      "is_essential": boolean
+    }
+  ],
+  "tips": [
+    "string"
+  ]
+}
+
+IMPORTANT: Return ONLY the JSON object, no explanation, no markdown.
 ''';
   }
 }

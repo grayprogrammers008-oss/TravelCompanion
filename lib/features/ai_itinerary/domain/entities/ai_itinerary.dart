@@ -280,6 +280,16 @@ class AiItineraryRequest {
   final bool includeTransport;
   final String? voicePrompt; // Additional context from voice input
 
+  // Enhanced context for comprehensive itinerary generation
+  final List<TripCompanion>? companions; // Who's traveling (family, friends, couple, solo)
+  final TransportMode? primaryTransport; // How they're traveling to destination
+  final TransportMode? localTransport; // How they'll move around locally
+  final String? weatherContext; // Weather information for the trip dates
+  final String? localEvents; // Festivals, events happening during the trip
+  final DailyTiming? preferredTiming; // When to wake up, sleep, etc.
+  final DateTime? startDate; // Actual trip start date for weather/events
+  final DateTime? endDate; // Actual trip end date
+
   const AiItineraryRequest({
     required this.destination,
     required this.durationDays,
@@ -292,6 +302,14 @@ class AiItineraryRequest {
     this.includeAccommodation = true,
     this.includeTransport = true,
     this.voicePrompt,
+    this.companions,
+    this.primaryTransport,
+    this.localTransport,
+    this.weatherContext,
+    this.localEvents,
+    this.preferredTiming,
+    this.startDate,
+    this.endDate,
   });
 
   Map<String, dynamic> toJson() {
@@ -307,6 +325,94 @@ class AiItineraryRequest {
       'include_accommodation': includeAccommodation,
       'include_transport': includeTransport,
       if (voicePrompt != null) 'voice_prompt': voicePrompt,
+      if (companions != null) 'companions': companions!.map((c) => c.toJson()).toList(),
+      if (primaryTransport != null) 'primary_transport': primaryTransport!.name,
+      if (localTransport != null) 'local_transport': localTransport!.name,
+      if (weatherContext != null) 'weather_context': weatherContext,
+      if (localEvents != null) 'local_events': localEvents,
+      if (preferredTiming != null) 'preferred_timing': preferredTiming!.toJson(),
+      if (startDate != null) 'start_date': startDate!.toIso8601String(),
+      if (endDate != null) 'end_date': endDate!.toIso8601String(),
     };
+  }
+}
+
+/// Trip companion information (who's traveling)
+class TripCompanion {
+  final String name;
+  final String? relation; // family, friend, partner, colleague
+  final int? age;
+
+  const TripCompanion({
+    required this.name,
+    this.relation,
+    this.age,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      if (relation != null) 'relation': relation,
+      if (age != null) 'age': age,
+    };
+  }
+
+  factory TripCompanion.fromJson(Map<String, dynamic> json) {
+    return TripCompanion(
+      name: json['name'] as String,
+      relation: json['relation'] as String?,
+      age: json['age'] as int?,
+    );
+  }
+}
+
+/// Transport modes
+enum TransportMode {
+  flight,
+  train,
+  bus,
+  car,
+  bike,
+  auto, // Auto-rickshaw
+  uber, // Ride-sharing
+  metro,
+  walk,
+  mix, // Multiple modes
+}
+
+/// Daily timing preferences
+class DailyTiming {
+  final String? wakeUpTime; // e.g., "06:00"
+  final String? sleepTime; // e.g., "22:00"
+  final String? breakfastTime; // e.g., "08:00"
+  final String? lunchTime; // e.g., "13:00"
+  final String? dinnerTime; // e.g., "20:00"
+
+  const DailyTiming({
+    this.wakeUpTime,
+    this.sleepTime,
+    this.breakfastTime,
+    this.lunchTime,
+    this.dinnerTime,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (wakeUpTime != null) 'wake_up_time': wakeUpTime,
+      if (sleepTime != null) 'sleep_time': sleepTime,
+      if (breakfastTime != null) 'breakfast_time': breakfastTime,
+      if (lunchTime != null) 'lunch_time': lunchTime,
+      if (dinnerTime != null) 'dinner_time': dinnerTime,
+    };
+  }
+
+  factory DailyTiming.fromJson(Map<String, dynamic> json) {
+    return DailyTiming(
+      wakeUpTime: json['wake_up_time'] as String?,
+      sleepTime: json['sleep_time'] as String?,
+      breakfastTime: json['breakfast_time'] as String?,
+      lunchTime: json['lunch_time'] as String?,
+      dinnerTime: json['dinner_time'] as String?,
+    );
   }
 }
