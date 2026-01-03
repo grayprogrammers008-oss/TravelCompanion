@@ -1248,7 +1248,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             const SizedBox(height: 2),
             // Value
             Text(
-              '₹${_formatAmount(totalExpenses)}',
+              '${_getCurrencySymbol(trip.trip.currency)}${_formatAmount(totalExpenses)}',
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
