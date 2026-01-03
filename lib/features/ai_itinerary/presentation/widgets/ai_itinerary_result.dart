@@ -46,6 +46,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   final TextEditingController _refinementController = TextEditingController();
   bool _isRefining = false;
   bool _isRefinementExpanded = false; // Collapsed by default to save space
+  bool _isSummaryExpanded = false; // Summary collapsed by default
 
   @override
   void initState() {
@@ -292,8 +293,35 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                       ),
                     ],
                   ),
-                  // Summary removed to maximize space for itinerary content
-                  // Users can see the full itinerary in the tabs below
+                  // Expandable summary - shows 2 lines by default
+                  if (_currentItinerary.summary != null) ...[
+                    const SizedBox(height: AppTheme.spacingSm),
+                    GestureDetector(
+                      onTap: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _currentItinerary.summary!,
+                              style: context.bodyStyle.copyWith(
+                                color: context.textColor.withValues(alpha: 0.7),
+                                fontSize: 13,
+                              ),
+                              maxLines: _isSummaryExpanded ? null : 2,
+                              overflow: _isSummaryExpanded ? null : TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            _isSummaryExpanded ? Icons.expand_less : Icons.expand_more,
+                            size: 18,
+                            color: context.textColor.withValues(alpha: 0.5),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
