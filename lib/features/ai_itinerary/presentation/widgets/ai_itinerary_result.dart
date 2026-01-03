@@ -45,6 +45,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   static const int _maxRefinements = 3;
   final TextEditingController _refinementController = TextEditingController();
   bool _isRefining = false;
+  bool _isRefinementExpanded = false; // Collapsed by default to save space
 
   @override
   void initState() {
@@ -339,125 +340,179 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
               ),
             ),
 
-            // Refinement Section (3 revisions like Trip Wizard)
+            // Collapsible Refinement Section (3 revisions like Trip Wizard)
             if (_refinementCount < _maxRefinements)
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
                   border: Border(
                     top: BorderSide(color: Colors.blue.shade200),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.auto_fix_high, color: themeData.primaryColor, size: 20),
-                        const SizedBox(width: AppTheme.spacingSm),
-                        Text(
-                          'Refine Itinerary',
-                          style: context.titleStyle.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: themeData.primaryColor,
-                          ),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppTheme.spacingSm,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: themeData.primaryColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '${_maxRefinements - _refinementCount} left',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Text(
-                      'Not happy with something? Ask me to change it!',
-                      style: context.bodyStyle.copyWith(
-                        color: Colors.grey.shade700,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _refinementController,
-                            decoration: InputDecoration(
-                              hintText: 'e.g., "Add a cooking class" or "Make it more widget.budget-friendly"',
-                              hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade500),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                borderSide: BorderSide(color: Colors.grey.shade300),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                borderSide: BorderSide(color: Colors.grey.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                borderSide: BorderSide(color: themeData.primaryColor, width: 2),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: AppTheme.spacingMd,
-                                vertical: AppTheme.spacingSm,
-                              ),
-                            ),
-                            maxLines: 2,
-                            textInputAction: TextInputAction.done,
-                            onSubmitted: (_) => _refineItinerary(_refinementController.text),
-                          ),
-                        ),
-                        const SizedBox(width: AppTheme.spacingSm),
-                        ElevatedButton(
-                          onPressed: _isRefining
-                              ? null
-                              : () => _refineItinerary(_refinementController.text),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: themeData.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppTheme.spacingMd,
-                              vertical: AppTheme.spacingMd,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                            ),
-                          ),
-                          child: _isRefining
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                child: _isRefinementExpanded
+                    // Expanded: Show full input area
+                    ? Padding(
+                        padding: const EdgeInsets.all(AppTheme.spacingMd),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.auto_fix_high, color: themeData.primaryColor, size: 20),
+                                const SizedBox(width: AppTheme.spacingSm),
+                                Text(
+                                  'Refine Itinerary',
+                                  style: context.titleStyle.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: themeData.primaryColor,
                                   ),
-                                )
-                              : const Icon(Icons.send, size: 20),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingSm,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: themeData.primaryColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '${_maxRefinements - _refinementCount} left',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: AppTheme.spacingSm),
+                                // Collapse button
+                                GestureDetector(
+                                  onTap: () => setState(() => _isRefinementExpanded = false),
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: themeData.primaryColor,
+                                    size: 24,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppTheme.spacingSm),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _refinementController,
+                                    autofocus: true,
+                                    decoration: InputDecoration(
+                                      hintText: 'e.g., "Add a cooking class" or "More budget-friendly"',
+                                      hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        borderSide: BorderSide(color: Colors.grey.shade300),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        borderSide: BorderSide(color: Colors.grey.shade300),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        borderSide: BorderSide(color: themeData.primaryColor, width: 2),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: AppTheme.spacingMd,
+                                        vertical: AppTheme.spacingSm,
+                                      ),
+                                    ),
+                                    maxLines: 1,
+                                    textInputAction: TextInputAction.send,
+                                    onSubmitted: (_) => _refineItinerary(_refinementController.text),
+                                  ),
+                                ),
+                                const SizedBox(width: AppTheme.spacingSm),
+                                ElevatedButton(
+                                  onPressed: _isRefining
+                                      ? null
+                                      : () => _refineItinerary(_refinementController.text),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: themeData.primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacingMd,
+                                      vertical: AppTheme.spacingMd,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    ),
+                                  ),
+                                  child: _isRefining
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                          ),
+                                        )
+                                      : const Icon(Icons.send, size: 20),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      )
+                    // Collapsed: Show compact button bar
+                    : InkWell(
+                        onTap: () => setState(() => _isRefinementExpanded = true),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingMd,
+                            vertical: AppTheme.spacingSm,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.auto_fix_high, color: themeData.primaryColor, size: 18),
+                              const SizedBox(width: AppTheme.spacingSm),
+                              Text(
+                                'Tap to refine itinerary',
+                                style: context.bodyStyle.copyWith(
+                                  color: themeData.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacingSm),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: themeData.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${_maxRefinements - _refinementCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacingSm),
+                              Icon(Icons.keyboard_arrow_up, color: themeData.primaryColor, size: 20),
+                            ],
+                          ),
+                        ),
+                      ),
               ),
           ],
         ),
