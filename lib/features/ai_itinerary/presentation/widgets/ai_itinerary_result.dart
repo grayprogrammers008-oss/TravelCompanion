@@ -856,6 +856,11 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
       if (kDebugMode) {
         debugPrint('📋 Packing list count: ${_currentItinerary.packingList.length}');
         debugPrint('📋 Current user ID: $currentUserId');
+        // Print each packing item for debugging
+        for (int i = 0; i < _currentItinerary.packingList.length; i++) {
+          final item = _currentItinerary.packingList[i];
+          debugPrint('📋 Item $i: "${item.item}" (category: ${item.category}, essential: ${item.isEssential})');
+        }
       }
 
       if (_currentItinerary.packingList.isNotEmpty && currentUserId != null) {

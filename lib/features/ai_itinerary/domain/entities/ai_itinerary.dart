@@ -250,10 +250,13 @@ class AiPackingItem {
   });
 
   factory AiPackingItem.fromJson(Map<String, dynamic> json) {
+    // Handle both 'item' and 'title' field names for compatibility
+    // Some AI responses use 'title' instead of 'item'
+    final itemName = json['item'] as String? ?? json['title'] as String? ?? 'Unknown item';
     return AiPackingItem(
-      item: json['item'] as String,
+      item: itemName,
       category: json['category'] as String?,
-      isEssential: json['is_essential'] as bool? ?? false,
+      isEssential: json['is_essential'] as bool? ?? json['isEssential'] as bool? ?? false,
     );
   }
 
