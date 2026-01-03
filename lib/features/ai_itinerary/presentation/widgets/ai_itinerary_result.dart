@@ -58,13 +58,13 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
     super.dispose();
   }
 
-  /// Refine the current itinerary based on user's request
+  /// Refine the current _currentItinerary based on user's request
   Future<void> _refineItinerary(String refinementRequest) async {
     if (_refinementCount >= _maxRefinements) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Maximum refinements reached. Please apply the itinerary or start over.'),
+            content: Text('Maximum refinements reached. Please apply the _currentItinerary or start over.'),
             backgroundColor: Colors.orange,
           ),
         );
@@ -85,10 +85,10 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
       _isRefining = true;
     });
 
-    debugPrint('🔄 Refining itinerary with: $refinementRequest');
+    debugPrint('🔄 Refining _currentItinerary with: $refinementRequest');
 
     try {
-      // Call the AI service to refine the itinerary
+      // Call the AI service to refine the _currentItinerary
       final aiService = ref.read(multiProviderAiServiceProvider);
       final refinedItinerary = await aiService.refineItinerary(
         currentItinerary: _currentItinerary,
@@ -121,7 +121,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to refine itinerary: ${e.toString()}'),
+            content: Text('Failed to refine _currentItinerary: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -157,7 +157,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
             onSelected: (value) async {
               switch (value) {
                 case 'whatsapp':
-                  final success = await itinerary.shareToWhatsAppItinerary();
+                  final success = await _currentItinerary.shareToWhatsAppItinerary();
                   if (!success && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -167,7 +167,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                   }
                   break;
                 case 'whatsapp_compact':
-                  final success = await itinerary.shareToWhatsAppItinerary(compact: true);
+                  final success = await _currentItinerary.shareToWhatsAppItinerary(compact: true);
                   if (!success && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -180,10 +180,10 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                   _showPhoneNumberDialog(context);
                   break;
                 case 'share':
-                  await itinerary.shareGeneralItinerary();
+                  await _currentItinerary.shareGeneralItinerary();
                   break;
                 case 'copy':
-                  final text = ShareService.formatAiItinerary(itinerary);
+                  final text = ShareService.formatAiItinerary(_currentItinerary);
                   await ShareService.copyToClipboard(text, context);
                   break;
               }
@@ -274,14 +274,14 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              itinerary.destination,
+                              _currentItinerary.destination,
                               style: context.titleStyle.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             Text(
-                              '${itinerary.durationDays} days${itinerary.budget != null ? ' • ₹${itinerary.budget!.toStringAsFixed(0)}' : ''}',
+                              '${_currentItinerary.durationDays} days${_currentItinerary.budget != null ? ' • ₹${_currentItinerary.budget!.toStringAsFixed(0)}' : ''}',
                               style: context.bodyStyle.copyWith(
                                 color: context.textColor.withValues(alpha: 0.6),
                               ),
@@ -291,10 +291,10 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                       ),
                     ],
                   ),
-                  if (itinerary.summary != null) ...[
+                  if (_currentItinerary.summary != null) ...[
                     const SizedBox(height: AppTheme.spacingMd),
                     Text(
-                      itinerary.summary!,
+                      _currentItinerary.summary!,
                       style: context.bodyStyle.copyWith(
                         color: context.textColor.withValues(alpha: 0.8),
                       ),
@@ -314,15 +314,15 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                 tabs: [
                   Tab(
                     icon: const Icon(Icons.route, size: 20),
-                    text: 'Itinerary (${itinerary.days.length})',
+                    text: 'Itinerary (${_currentItinerary.days.length})',
                   ),
                   Tab(
                     icon: const Icon(Icons.checklist, size: 20),
-                    text: 'Packing (${itinerary.packingList.length})',
+                    text: 'Packing (${_currentItinerary.packingList.length})',
                   ),
                   Tab(
                     icon: const Icon(Icons.lightbulb_outline, size: 20),
-                    text: 'Tips (${itinerary.tips.length})',
+                    text: 'Tips (${_currentItinerary.tips.length})',
                   ),
                 ],
               ),
@@ -401,7 +401,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                           child: TextField(
                             controller: _refinementController,
                             decoration: InputDecoration(
-                              hintText: 'e.g., "Add a cooking class" or "Make it more budget-friendly"',
+                              hintText: 'e.g., "Add a cooking class" or "Make it more widget.budget-friendly"',
                               hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade500),
                               filled: true,
                               fillColor: Colors.white,
@@ -496,9 +496,9 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
               ),
             ),
             const SizedBox(width: AppTheme.spacingSm),
-            // If we have a tripId, show "Apply to Trip" as primary action
+            // If we have a widget.tripId, show "Apply to Trip" as primary action
             // Otherwise show "Create Trip" as primary action
-            if (tripId != null) ...[
+            if (widget.tripId != null) ...[
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _applyToExistingTrip(context, ref),
@@ -544,7 +544,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
           ],
         ),
         content: const Text(
-          'Are you sure you want to discard this AI-generated itinerary? This action cannot be undone.',
+          'Are you sure you want to discard this AI-generated _currentItinerary? This action cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -554,8 +554,8 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
           FilledButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              // Clear the itinerary and navigate back to home
-              onBack();
+              // Clear the _currentItinerary and navigate back to home
+              widget.onBack();
               if (context.mounted) {
                 context.go('/home');
               }
@@ -628,7 +628,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
             onPressed: () async {
               if (formKey.currentState!.validate()) {
                 Navigator.of(dialogContext).pop();
-                final text = ShareService.formatAiItinerary(itinerary);
+                final text = ShareService.formatAiItinerary(_currentItinerary);
                 final success = await ShareService.shareToWhatsApp(
                   text,
                   phoneNumber: phoneController.text,
@@ -657,18 +657,18 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   void _createTripFromItinerary(BuildContext context) {
     // Build query parameters
     final queryParams = <String, String>{
-      'destination': itinerary.destination,
-      'durationDays': itinerary.durationDays.toString(),
+      'destination': _currentItinerary.destination,
+      'durationDays': _currentItinerary.durationDays.toString(),
     };
 
-    if (startDate != null) {
-      queryParams['startDate'] = startDate!.toIso8601String();
+    if (widget.startDate != null) {
+      queryParams['startDate'] = widget.startDate!.toIso8601String();
     }
-    if (endDate != null) {
-      queryParams['endDate'] = endDate!.toIso8601String();
+    if (widget.endDate != null) {
+      queryParams['endDate'] = widget.endDate!.toIso8601String();
     }
-    if (budget != null) {
-      queryParams['budget'] = budget.toString();
+    if (widget.budget != null) {
+      queryParams['budget'] = widget.budget.toString();
     }
 
     // Navigate to create trip page with query parameters
@@ -676,9 +676,9 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
     context.push(uri.toString());
   }
 
-  /// Apply itinerary to an existing trip
+  /// Apply _currentItinerary to an existing trip
   Future<void> _applyToExistingTrip(BuildContext context, WidgetRef ref) async {
-    if (tripId == null) return;
+    if (widget.tripId == null) return;
 
     // Show loading dialog
     showDialog(
@@ -693,7 +693,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16),
-                Text('Applying itinerary to trip...'),
+                Text('Applying _currentItinerary to trip...'),
               ],
             ),
           ),
@@ -710,16 +710,16 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
       int checklistsCount = 0;
       int checklistItemsCount = 0;
 
-      // Create itinerary items for each activity
-      for (final day in itinerary.days) {
+      // Create _currentItinerary items for each activity
+      for (final day in _currentItinerary.days) {
         int orderIndex = 0;
         for (final activity in day.activities) {
           // Parse start time if available
           DateTime? activityStartTime;
           DateTime? activityEndTime;
 
-          if (startDate != null) {
-            final dayDate = startDate!.add(Duration(days: day.dayNumber - 1));
+          if (widget.startDate != null) {
+            final dayDate = widget.startDate!.add(Duration(days: day.dayNumber - 1));
 
             if (activity.startTime != null) {
               activityStartTime = _parseTimeToDateTime(activity.startTime!, dayDate);
@@ -738,7 +738,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
           }
 
           await itineraryController.createItem(
-            tripId: tripId!,
+            tripId: widget.tripId!,
             title: activity.title,
             description: fullDescription,
             location: activity.location,
@@ -755,14 +755,14 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
 
       // Create checklists from packing list (grouped by category)
       if (kDebugMode) {
-        debugPrint('📋 Packing list count: ${itinerary.packingList.length}');
+        debugPrint('📋 Packing list count: ${_currentItinerary.packingList.length}');
         debugPrint('📋 Current user ID: $currentUserId');
       }
 
-      if (itinerary.packingList.isNotEmpty && currentUserId != null) {
+      if (_currentItinerary.packingList.isNotEmpty && currentUserId != null) {
         // Group packing items by category
         final categories = <String, List<AiPackingItem>>{};
-        for (final item in itinerary.packingList) {
+        for (final item in _currentItinerary.packingList) {
           final category = item.category ?? 'Other';
           categories.putIfAbsent(category, () => []).add(item);
         }
@@ -783,7 +783,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
 
           // Create the checklist
           final checklist = await checklistController.createChecklist(
-            tripId: tripId!,
+            tripId: widget.tripId!,
             name: 'Packing: $categoryName',
             createdBy: currentUserId,
           );
@@ -826,12 +826,12 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
         }
       } else {
         if (kDebugMode) {
-          debugPrint('⚠️ Skipping checklist creation: packingList empty=${itinerary.packingList.isEmpty}, userId null=${currentUserId == null}');
+          debugPrint('⚠️ Skipping checklist creation: packingList empty=${_currentItinerary.packingList.isEmpty}, userId null=${currentUserId == null}');
         }
       }
 
       // Clear the success message from controller to prevent repeated SnackBars
-      // on the itinerary list page (which listens for successMessage changes)
+      // on the _currentItinerary list page (which listens for successMessage changes)
       itineraryController.clearSuccessMessage();
 
       // Close loading dialog
@@ -855,8 +855,8 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
           ),
         );
 
-        // Navigate to the trip's itinerary page
-        context.go('/trips/$tripId/itinerary');
+        // Navigate to the trip's _currentItinerary page
+        context.go('/trips/$widget.tripId/_currentItinerary');
       }
     } catch (e) {
       // Close loading dialog
@@ -868,7 +868,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to apply itinerary: ${e.toString()}'),
+            content: Text('Failed to apply _currentItinerary: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -919,9 +919,9 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   Widget _buildItineraryTab(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
-      itemCount: itinerary.days.length,
+      itemCount: _currentItinerary.days.length,
       itemBuilder: (context, index) {
-        final day = itinerary.days[index];
+        final day = _currentItinerary.days[index];
         return _buildDayCard(context, day);
       },
     );
@@ -1156,7 +1156,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   }
 
   Widget _buildPackingTab(BuildContext context) {
-    if (itinerary.packingList.isEmpty) {
+    if (_currentItinerary.packingList.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1180,7 +1180,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
 
     // Group by category
     final categories = <String, List<AiPackingItem>>{};
-    for (final item in itinerary.packingList) {
+    for (final item in _currentItinerary.packingList) {
       final category = item.category ?? 'Other';
       categories.putIfAbsent(category, () => []).add(item);
     }
@@ -1284,7 +1284,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   }
 
   Widget _buildTipsTab(BuildContext context) {
-    if (itinerary.tips.isEmpty) {
+    if (_currentItinerary.tips.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1308,7 +1308,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
 
     return ListView.builder(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
-      itemCount: itinerary.tips.length,
+      itemCount: _currentItinerary.tips.length,
       itemBuilder: (context, index) {
         return Container(
           margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -1337,7 +1337,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
               const SizedBox(width: AppTheme.spacingMd),
               Expanded(
                 child: Text(
-                  itinerary.tips[index],
+                  _currentItinerary.tips[index],
                   style: context.bodyStyle.copyWith(
                     height: 1.5,
                   ),
