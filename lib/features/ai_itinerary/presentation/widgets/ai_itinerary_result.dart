@@ -14,8 +14,9 @@ import '../../../../core/network/supabase_client.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../../../checklists/presentation/providers/checklist_providers.dart';
 import '../../domain/entities/ai_itinerary.dart';
+import '../providers/ai_itinerary_providers.dart';
 
-class AiItineraryResultPage extends ConsumerWidget {
+class AiItineraryResultPage extends ConsumerStatefulWidget {
   final AiGeneratedItinerary itinerary;
   final String? tripId;
   final DateTime? startDate;
@@ -34,7 +35,102 @@ class AiItineraryResultPage extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AiItineraryResultPage> createState() => _AiItineraryResultPageState();
+}
+
+class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
+  // Refinement state
+  late AiGeneratedItinerary _currentItinerary;
+  int _refinementCount = 0;
+  static const int _maxRefinements = 3;
+  final TextEditingController _refinementController = TextEditingController();
+  bool _isRefining = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentItinerary = widget.itinerary;
+  }
+
+  @override
+  void dispose() {
+    _refinementController.dispose();
+    super.dispose();
+  }
+
+  /// Refine the current itinerary based on user's request
+  Future<void> _refineItinerary(String refinementRequest) async {
+    if (_refinementCount >= _maxRefinements) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Maximum refinements reached. Please apply the itinerary or start over.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (refinementRequest.trim().isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter what you\'d like to change')),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isRefining = true;
+    });
+
+    debugPrint('🔄 Refining itinerary with: $refinementRequest');
+
+    try {
+      // Call the AI service to refine the itinerary
+      final aiService = ref.read(multiProviderAiServiceProvider);
+      final refinedItinerary = await aiService.refineItinerary(
+        currentItinerary: _currentItinerary,
+        refinementRequest: refinementRequest,
+      );
+
+      if (mounted) {
+        setState(() {
+          _currentItinerary = refinedItinerary;
+          _refinementCount++;
+          _isRefining = false;
+          _refinementController.clear();
+        });
+
+        final remaining = _maxRefinements - _refinementCount;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Itinerary updated! ${remaining > 0 ? '$remaining refinement${remaining > 1 ? 's' : ''} remaining' : 'No refinements left'}.',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Refinement error: $e');
+      if (mounted) {
+        setState(() {
+          _isRefining = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to refine itinerary: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
     return Scaffold(
@@ -242,6 +338,127 @@ class AiItineraryResultPage extends ConsumerWidget {
                 ],
               ),
             ),
+
+            // Refinement Section (3 revisions like Trip Wizard)
+            if (_refinementCount < _maxRefinements)
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  border: Border(
+                    top: BorderSide(color: Colors.blue.shade200),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.auto_fix_high, color: themeData.primaryColor, size: 20),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Text(
+                          'Refine Itinerary',
+                          style: context.titleStyle.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: themeData.primaryColor,
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingSm,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: themeData.primaryColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${_maxRefinements - _refinementCount} left',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    Text(
+                      'Not happy with something? Ask me to change it!',
+                      style: context.bodyStyle.copyWith(
+                        color: Colors.grey.shade700,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _refinementController,
+                            decoration: InputDecoration(
+                              hintText: 'e.g., "Add a cooking class" or "Make it more budget-friendly"',
+                              hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                borderSide: BorderSide(color: themeData.primaryColor, width: 2),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingMd,
+                                vertical: AppTheme.spacingSm,
+                              ),
+                            ),
+                            maxLines: 2,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) => _refineItinerary(_refinementController.text),
+                          ),
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        ElevatedButton(
+                          onPressed: _isRefining
+                              ? null
+                              : () => _refineItinerary(_refinementController.text),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: themeData.primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppTheme.spacingMd,
+                              vertical: AppTheme.spacingMd,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            ),
+                          ),
+                          child: _isRefining
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  ),
+                                )
+                              : const Icon(Icons.send, size: 20),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
