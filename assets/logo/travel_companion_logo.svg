@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Primary gradient - Ocean to Sky -->
+    <linearGradient id="primaryGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0EA5E9"/>
+      <stop offset="50%" style="stop-color:#06B6D4"/>
+      <stop offset="100%" style="stop-color:#14B8A6"/>
+    </linearGradient>
+
+    <!-- Warm accent gradient - Sunset -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F97316"/>
+      <stop offset="100%" style="stop-color:#FBBF24"/>
+    </linearGradient>
+
+    <!-- Subtle shadow -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0EA5E9" flood-opacity="0.25"/>
+    </filter>
+
+    <!-- Globe grid pattern -->
+    <pattern id="globeGrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M0 20 Q20 15 40 20" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
+      <path d="M20 0 Q15 20 20 40" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
+    </pattern>
+  </defs>
+
+  <!-- Background circle - The World -->
+  <circle cx="256" cy="256" r="220" fill="url(#primaryGradient)" filter="url(#softShadow)"/>
+
+  <!-- Globe texture overlay -->
+  <circle cx="256" cy="256" r="220" fill="url(#globeGrid)" opacity="0.5"/>
+
+  <!-- Stylized globe meridian lines -->
+  <g stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none">
+    <!-- Horizontal latitude lines -->
+    <ellipse cx="256" cy="256" rx="220" ry="80"/>
+    <ellipse cx="256" cy="256" rx="220" ry="160"/>
+
+    <!-- Vertical longitude lines -->
+    <ellipse cx="256" cy="256" rx="80" ry="220"/>
+    <ellipse cx="256" cy="256" rx="160" ry="220"/>
+  </g>
+
+  <!-- Abstract airplane/compass needle - The Journey -->
+  <g transform="translate(256, 256)">
+    <!-- Main compass/plane shape pointing northeast - direction of adventure -->
+    <path
+      d="M-30 60 L0 -100 L30 60 L0 30 Z"
+      fill="white"
+      opacity="0.95"
+      transform="rotate(-45)"
+    />
+
+    <!-- Accent wing detail -->
+    <path
+      d="M-80 20 L0 -20 L80 20 L0 0 Z"
+      fill="url(#accentGradient)"
+      opacity="0.9"
+      transform="rotate(-45)"
+    />
+  </g>
+
+  <!-- Location pin - The Destination -->
+  <g transform="translate(340, 140)">
+    <path
+      d="M0 0 C-25 0 -45 20 -45 45 C-45 75 0 110 0 110 C0 110 45 75 45 45 C45 20 25 0 0 0 Z"
+      fill="url(#accentGradient)"
+      filter="url(#softShadow)"
+    />
+    <circle cx="0" cy="42" r="18" fill="white"/>
+  </g>
+
+  <!-- Two connected figures/paths - The Companions -->
+  <g transform="translate(130, 320)" opacity="0.9">
+    <!-- Path/route line connecting companions -->
+    <path
+      d="M0 0 Q60 -40 120 0"
+      stroke="white"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-dasharray="8 6"
+      fill="none"
+    />
+
+    <!-- Companion dot 1 -->
+    <circle cx="0" cy="0" r="12" fill="white"/>
+
+    <!-- Companion dot 2 -->
+    <circle cx="120" cy="0" r="12" fill="white"/>
+  </g>
+
+  <!-- Subtle highlight reflection -->
+  <ellipse
+    cx="180" cy="140"
+    rx="80" ry="40"
+    fill="white"
+    opacity="0.1"
+    transform="rotate(-30, 180, 140)"
+  />
+</svg>
