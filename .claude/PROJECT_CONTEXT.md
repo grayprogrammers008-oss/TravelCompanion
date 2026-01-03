@@ -56,11 +56,19 @@
 - **Type:** Personal checking account (can be used for sole proprietor business)
 - **Bank:** Chase / Bank of America / Wells Fargo
 - **Cost:** FREE
+- **Currency:** USD (all transactions in US Dollars)
+- **Revenue:** Receives USD from Apple/Google (auto-converted from INR)
 - **Usage:** Wife pays ALL business expenses from this account
 
 **Business Account:**
 - **Required?** NO (not initially)
 - **When?** Only if revenue exceeds $500/month
+
+**Indian Bank Account:**
+- **Required for Business?** NO - Not needed!
+- **Reason:** Apple/Google auto-convert INR → USD
+- **Optional:** Wife can open NRI account for personal use (family support)
+- **Critical:** Keep Indian account 100% separate from business if opened
 
 ---
 
@@ -113,9 +121,44 @@
 
 ---
 
+## 🌍 India Revenue & Currency
+
+**Target Market:** India (customers pay in INR - Indian Rupees)
+**App Pricing:** ₹99/month or ₹999/year (~$12 USD/year)
+
+### How It Works (AUTOMATIC!)
+
+**Customer Flow:**
+1. Indian customer pays ₹999 INR
+2. Apple/Google takes 30% commission
+3. Apple/Google converts INR → USD automatically
+4. Wife receives $8.42 USD in US bank account
+5. Wife reports $8.42 on Schedule C (taxes)
+
+**Key Points:**
+- ✅ US bank account receives USD (not INR)
+- ✅ Apple/Google handle all currency conversion
+- ✅ No Indian bank account needed for business
+- ✅ No Indian tax filing required
+- ✅ Simple USD-only accounting
+- ✅ USCIS compliant (clean US business)
+
+**Year 1 Projection (1,000 users):**
+- India Revenue: ₹9,99,000 INR → ~$8,400 USD (after commission)
+- Expenses: ~$5,000-6,000
+- Net Profit: ~$2,400-3,400 USD
+
+**Indian Bank Account:**
+- ❌ NOT required for business
+- ⚠️ Optional for personal use only (family support via Wise/Remitly)
+- Keep 100% separate from business if opened
+
+---
+
 ## 📊 Project Status
 
 **Current Stage:** Pre-launch development
+- **Target Market:** India
 - **Users:** 0 (app not yet published)
 - **Revenue:** $0
 - **App Store:** Not yet submitted
