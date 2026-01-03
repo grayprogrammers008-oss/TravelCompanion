@@ -748,7 +748,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16),
-                Text('Applying _currentItinerary to trip...'),
+                Text('Applying itinerary to trip...'),
               ],
             ),
           ),
@@ -765,7 +765,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
       int checklistsCount = 0;
       int checklistItemsCount = 0;
 
-      // Create _currentItinerary items for each activity
+      // Create itinerary items for each activity
       for (final day in _currentItinerary.days) {
         int orderIndex = 0;
         for (final activity in day.activities) {
@@ -910,8 +910,8 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
           ),
         );
 
-        // Navigate to the trip's _currentItinerary page
-        context.go('/trips/$widget.tripId/_currentItinerary');
+        // Navigate to the trip's itinerary page
+        context.go('/trips/${widget.tripId}/itinerary');
       }
     } catch (e) {
       // Close loading dialog
@@ -923,7 +923,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to apply _currentItinerary: ${e.toString()}'),
+            content: Text('Failed to apply itinerary: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
