@@ -48,6 +48,23 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
   bool _isRefinementExpanded = false; // Collapsed by default to save space
   bool _isSummaryExpanded = false; // Summary collapsed by default
 
+  /// Get currency symbol for display
+  String _getCurrencySymbol(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD': return '\$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'JPY': return '¥';
+      case 'INR': return '₹';
+      case 'AUD': return 'A\$';
+      case 'CAD': return 'C\$';
+      case 'SGD': return 'S\$';
+      case 'AED': return 'AED ';
+      case 'THB': return '฿';
+      default: return currency;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -250,9 +267,12 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
         length: 3,
         child: Column(
           children: [
-            // Header Card
+            // Header Card - Compact design
             Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd,
+                vertical: AppTheme.spacingSm,
+              ),
               color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +280,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(AppTheme.spacingSm),
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: themeData.primaryColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
@@ -268,9 +288,10 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                         child: Icon(
                           Icons.location_on,
                           color: themeData.primaryColor,
+                          size: 20,
                         ),
                       ),
-                      const SizedBox(width: AppTheme.spacingMd),
+                      const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,14 +299,17 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                             Text(
                               _currentItinerary.destination,
                               style: context.titleStyle.copyWith(
-                                fontSize: 20,
+                                fontSize: 17,
                                 fontWeight: FontWeight.w700,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              '${_currentItinerary.durationDays} days${_currentItinerary.budget != null ? ' • ₹${_currentItinerary.budget!.toStringAsFixed(0)}' : ''}',
+                              '${_currentItinerary.durationDays} days${_currentItinerary.budget != null ? ' • ${_getCurrencySymbol(_currentItinerary.currency)}${_currentItinerary.budget!.toStringAsFixed(0)}' : ''}',
                               style: context.bodyStyle.copyWith(
                                 color: context.textColor.withValues(alpha: 0.6),
+                                fontSize: 13,
                               ),
                             ),
                           ],
@@ -293,9 +317,9 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                       ),
                     ],
                   ),
-                  // Expandable summary - shows 2 lines by default
+                  // Expandable summary - collapsed by default, shows 1 line when collapsed
                   if (_currentItinerary.summary != null) ...[
-                    const SizedBox(height: AppTheme.spacingSm),
+                    const SizedBox(height: 6),
                     GestureDetector(
                       onTap: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
                       child: Row(
@@ -305,18 +329,17 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                             child: Text(
                               _currentItinerary.summary!,
                               style: context.bodyStyle.copyWith(
-                                color: context.textColor.withValues(alpha: 0.7),
-                                fontSize: 13,
+                                color: context.textColor.withValues(alpha: 0.6),
+                                fontSize: 12,
                               ),
-                              maxLines: _isSummaryExpanded ? null : 2,
+                              maxLines: _isSummaryExpanded ? null : 1,
                               overflow: _isSummaryExpanded ? null : TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 4),
                           Icon(
                             _isSummaryExpanded ? Icons.expand_less : Icons.expand_more,
-                            size: 18,
-                            color: context.textColor.withValues(alpha: 0.5),
+                            size: 16,
+                            color: context.textColor.withValues(alpha: 0.4),
                           ),
                         ],
                       ),
@@ -1185,7 +1208,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
                     borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                   ),
                   child: Text(
-                    '₹${activity.estimatedCost!.toStringAsFixed(0)}',
+                    '${_getCurrencySymbol(_currentItinerary.currency)}${activity.estimatedCost!.toStringAsFixed(0)}',
                     style: context.bodyStyle.copyWith(
                       fontSize: 11,
                       color: Colors.green.shade700,

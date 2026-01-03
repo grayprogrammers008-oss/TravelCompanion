@@ -409,6 +409,101 @@ void main() {
       });
     });
 
+    group('toCurrency', () {
+      test('should format USD with dollar symbol', () {
+        final result = 1500.0.toCurrency('USD');
+        expect(result, contains('\$'));
+        expect(result, contains('1,500'));
+      });
+
+      test('should format EUR with euro symbol', () {
+        final result = 1500.0.toCurrency('EUR');
+        expect(result, contains('€'));
+      });
+
+      test('should format GBP with pound symbol', () {
+        final result = 1500.0.toCurrency('GBP');
+        expect(result, contains('£'));
+      });
+
+      test('should format JPY with yen symbol', () {
+        final result = 1500.0.toCurrency('JPY');
+        expect(result, contains('¥'));
+      });
+
+      test('should format CNY with yuan symbol', () {
+        final result = 1500.0.toCurrency('CNY');
+        expect(result, contains('¥'));
+      });
+
+      test('should format INR with rupee symbol', () {
+        final result = 1500.0.toCurrency('INR');
+        expect(result, contains('₹'));
+        expect(result, contains('1,500'));
+      });
+
+      test('should format AUD with A dollar symbol', () {
+        final result = 1500.0.toCurrency('AUD');
+        expect(result, contains('A\$'));
+      });
+
+      test('should format CAD with C dollar symbol', () {
+        final result = 1500.0.toCurrency('CAD');
+        expect(result, contains('C\$'));
+      });
+
+      test('should format SGD with S dollar symbol', () {
+        final result = 1500.0.toCurrency('SGD');
+        expect(result, contains('\$'));
+      });
+
+      test('should format AED correctly', () {
+        final result = 1500.0.toCurrency('AED');
+        // AED uses Arabic dirham symbol (د.إ) in locale format
+        expect(result.contains('AED') || result.contains('د.إ'), isTrue);
+      });
+
+      test('should format THB with baht symbol', () {
+        final result = 1500.0.toCurrency('THB');
+        expect(result.contains('฿') || result.contains('THB'), isTrue);
+      });
+
+      test('should handle lowercase currency codes', () {
+        final result = 1500.0.toCurrency('usd');
+        expect(result, contains('\$'));
+      });
+
+      test('should handle zero amount', () {
+        final result = 0.0.toCurrency('USD');
+        expect(result, contains('\$'));
+        expect(result, contains('0.00'));
+      });
+
+      test('should handle decimal amounts', () {
+        final result = 1500.50.toCurrency('USD');
+        expect(result, contains('.50'));
+      });
+
+      test('should default to INR for unknown currency', () {
+        final result = 1500.0.toCurrency('XYZ');
+        expect(result, contains('₹'));
+      });
+
+      test('should handle large amounts with proper formatting', () {
+        final resultUSD = 1000000.0.toCurrency('USD');
+        expect(resultUSD, contains('1,000,000'));
+
+        final resultINR = 1000000.0.toCurrency('INR');
+        expect(resultINR, contains('10,00,000'));
+      });
+
+      test('should format negative amounts', () {
+        final result = (-1500.0).toCurrency('USD');
+        expect(result, contains('\$'));
+        expect(result, contains('1,500'));
+      });
+    });
+
     group('toFormattedAmount', () {
       test('should format amount without symbol', () {
         final result = 1500.0.toFormattedAmount();
