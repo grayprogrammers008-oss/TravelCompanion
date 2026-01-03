@@ -182,11 +182,16 @@ class _AiItineraryGeneratorPageState
 
     // Fetch trip data if tripId is provided to get comprehensive context
     List<TripCompanion>? companions;
+    String tripCurrency = 'INR'; // Default to INR
     if (widget.tripId != null) {
       debugPrint('🔍 Fetching trip data for tripId: ${widget.tripId}');
       try {
         final tripData = await ref.read(tripProvider(widget.tripId!).future);
         final members = tripData.members;
+
+        // Get trip currency
+        tripCurrency = tripData.trip.currency;
+        debugPrint('💱 Trip currency: $tripCurrency');
 
         // Convert trip members to companions
         if (members.isNotEmpty) {
@@ -211,6 +216,7 @@ class _AiItineraryGeneratorPageState
       budget: _budgetController.text.isNotEmpty
           ? double.tryParse(_budgetController.text)
           : null,
+      currency: tripCurrency,
       interests: _selectedInterests.toList(),
       travelStyle: _travelStyle.toLowerCase(),
       groupSize: _groupSize,

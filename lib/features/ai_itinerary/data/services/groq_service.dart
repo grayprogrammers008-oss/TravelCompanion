@@ -204,8 +204,9 @@ class GroqService {
     List<String> interests = const [],
     int? groupSize,
   }) {
+    final currencySymbol = _getCurrencySymbol(currency);
     final budgetStr = budget != null
-        ? 'Budget: ₹${budget.toStringAsFixed(0)} $currency'
+        ? 'Budget: $currencySymbol${budget.toStringAsFixed(0)} $currency'
         : 'Budget: Flexible';
 
     final interestsStr = interests.isNotEmpty
@@ -262,10 +263,9 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Adjust outdoor activity timing based on climate
 - Include rain contingency plans for monsoon destinations
 
-**6. PRACTICAL COST ESTIMATES (2024-2025 PRICES IN INR):**
-- Entry fees: ₹50-500 for local sites, ₹500-1500 for premium attractions
-- Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
-- Transport: ₹500-1500/day for local travel
+**6. PRACTICAL COST ESTIMATES (2024-2025 prices in $currency):**
+- Provide all cost estimates in $currency ($currencySymbol)
+- Give realistic price ranges for the destination
 - Be realistic - don't underestimate costs
 
 **7. COMPLETE PACKING LIST (INCLUDE ALL NECESSARY ITEMS):**
@@ -872,10 +872,28 @@ IMPORTANT: Return ONLY the JSON object, no explanation, no markdown.
     throw Exception('Failed to generate itinerary after multiple attempts');
   }
 
+  /// Get currency symbol for a currency code
+  String _getCurrencySymbol(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD': return '\$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'JPY': return '¥';
+      case 'INR': return '₹';
+      case 'AUD': return 'A\$';
+      case 'CAD': return 'C\$';
+      case 'SGD': return 'S\$';
+      case 'AED': return 'AED ';
+      case 'THB': return '฿';
+      default: return '$currency ';
+    }
+  }
+
   /// Build prompt for itinerary generation (matches Gemini format)
   String _buildItineraryPrompt(AiItineraryRequest request) {
+    final currencySymbol = _getCurrencySymbol(request.currency);
     final budgetStr = request.budget != null
-        ? 'Budget: ₹${request.budget!.toStringAsFixed(0)} ${request.currency}'
+        ? 'Budget: $currencySymbol${request.budget!.toStringAsFixed(0)} ${request.currency}'
         : 'Budget: Flexible';
 
     final interestsStr = request.interests.isNotEmpty
@@ -984,18 +1002,16 @@ CRITICAL PLANNING REQUIREMENTS (FOLLOW STRICTLY):
 - Adjust outdoor activity timing based on climate
 - Include rain contingency plans if monsoon season
 
-**6. PRACTICAL COST ESTIMATES (2024-2025 INR):**
-- Entry fees: ₹50-500 local, ₹500-1500 premium attractions
-- Meals: ₹200-400 budget, ₹500-1000 mid-range, ₹1500+ fine dining
-- Transport: ₹500-1500/day local travel
+**6. PRACTICAL COST ESTIMATES (2024-2025 prices in ${request.currency}):**
+- Provide all cost estimates in ${request.currency} ($currencySymbol)
+- Give realistic price ranges for the destination
+- Entry fees, meals, transport costs should all use $currencySymbol symbol
 
 **6b. BUDGET-BASED TRANSPORT DECISIONS:**
 Based on the budget and local transport preference:
-- **Budget Travel (Under ₹5000/day):** Use local buses, shared autos, metro when available
-- **Moderate Travel (₹5000-15000/day):** Mix of Uber/Ola for convenience and local transport
-- **Luxury Travel (₹15000+/day):** Private cabs, Uber Premier, hired cars
+- Recommend appropriate transport based on budget level
 - **Realistic Transport Times:** Include actual travel time (e.g., "20-min Uber ride", "45-min metro + walk")
-- **Cost-Conscious Tips:** "Take local bus (₹20) instead of Uber (₹200) to save money" OR "Uber recommended for comfort (₹150)"
+- **Cost-Conscious Tips:** Include cost comparisons in $currencySymbol
 
 **7. SMART PACKING LIST:**
 - ONLY items needed for THIS trip (destination climate + activities)
@@ -1660,13 +1676,16 @@ ${d.activities.map((a) => '  • ${a.startTime ?? ''} - ${a.title}${a.descriptio
     // Build packing list
     final packingText = currentItinerary.packingList.map((p) => '• ${p.item}').join('\n');
 
+    // Get currency symbol
+    final currencySymbol = _getCurrencySymbol(currentItinerary.currency);
+
     return '''
 CURRENT ITINERARY (This is what you need to MODIFY):
 
 **TRIP DETAILS:**
 - Destination: ${currentItinerary.destination}
 - Duration: ${currentItinerary.durationDays} days
-- Budget: ${currentItinerary.budget != null ? '₹${currentItinerary.budget!.toStringAsFixed(0)}' : 'Flexible'}
+- Budget: ${currentItinerary.budget != null ? '$currencySymbol${currentItinerary.budget!.toStringAsFixed(0)} ${currentItinerary.currency}' : 'Flexible'}
 - Summary: ${currentItinerary.summary ?? 'N/A'}
 
 **CURRENT DAILY ITINERARY:**
