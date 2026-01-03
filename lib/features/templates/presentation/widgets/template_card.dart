@@ -8,6 +8,24 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/destination_image.dart';
 import '../../domain/entities/trip_template.dart';
 
+/// Get appropriate currency icon based on currency code
+IconData _getCurrencyIcon(String currency) {
+  switch (currency.toUpperCase()) {
+    case 'USD':
+      return Icons.attach_money;
+    case 'EUR':
+      return Icons.euro;
+    case 'GBP':
+      return Icons.currency_pound;
+    case 'JPY':
+    case 'CNY':
+      return Icons.currency_yen;
+    case 'INR':
+    default:
+      return Icons.currency_rupee;
+  }
+}
+
 class TemplateCard extends StatelessWidget {
   final TripTemplate template;
   final VoidCallback onTap;
@@ -225,7 +243,7 @@ class TemplateCard extends StatelessWidget {
                         if (template.budgetMin != null || template.budgetMax != null)
                           _buildInfoChip(
                             context,
-                            icon: Icons.currency_rupee,
+                            icon: _getCurrencyIcon(template.currency),
                             label: template.budgetDisplay,
                           ),
 

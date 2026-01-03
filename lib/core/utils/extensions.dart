@@ -108,12 +108,19 @@ extension DateTimeExtensions on DateTime {
 
 /// Double extensions for currency
 extension DoubleExtensions on double {
-  /// Format as currency (INR)
+  /// Format as currency (INR) - kept for backward compatibility
+  @Deprecated('Use toCurrency(currencyCode) instead for dynamic currency support')
   String toINR() {
+    return toCurrency('INR');
+  }
+
+  /// Format as currency with dynamic currency code
+  String toCurrency(String currencyCode) {
+    final currencyInfo = _getCurrencyInfo(currencyCode);
     final formatter = NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹',
-      decimalDigits: 2,
+      locale: currencyInfo.locale,
+      symbol: currencyInfo.symbol,
+      decimalDigits: currencyInfo.decimalDigits,
     );
     return formatter.format(this);
   }
@@ -127,6 +134,52 @@ extension DoubleExtensions on double {
     );
     return formatter.format(this).trim();
   }
+
+  /// Get currency info for formatting
+  static _CurrencyInfo _getCurrencyInfo(String currencyCode) {
+    switch (currencyCode.toUpperCase()) {
+      case 'USD':
+        return _CurrencyInfo(symbol: '\$', locale: 'en_US', decimalDigits: 2);
+      case 'EUR':
+        return _CurrencyInfo(symbol: '€', locale: 'de_DE', decimalDigits: 2);
+      case 'GBP':
+        return _CurrencyInfo(symbol: '£', locale: 'en_GB', decimalDigits: 2);
+      case 'JPY':
+        return _CurrencyInfo(symbol: '¥', locale: 'ja_JP', decimalDigits: 0);
+      case 'CNY':
+        return _CurrencyInfo(symbol: '¥', locale: 'zh_CN', decimalDigits: 2);
+      case 'AUD':
+        return _CurrencyInfo(symbol: 'A\$', locale: 'en_AU', decimalDigits: 2);
+      case 'CAD':
+        return _CurrencyInfo(symbol: 'C\$', locale: 'en_CA', decimalDigits: 2);
+      case 'CHF':
+        return _CurrencyInfo(symbol: 'CHF', locale: 'de_CH', decimalDigits: 2);
+      case 'SGD':
+        return _CurrencyInfo(symbol: 'S\$', locale: 'en_SG', decimalDigits: 2);
+      case 'AED':
+        return _CurrencyInfo(symbol: 'د.إ', locale: 'ar_AE', decimalDigits: 2);
+      case 'THB':
+        return _CurrencyInfo(symbol: '฿', locale: 'th_TH', decimalDigits: 2);
+      case 'MYR':
+        return _CurrencyInfo(symbol: 'RM', locale: 'ms_MY', decimalDigits: 2);
+      case 'INR':
+      default:
+        return _CurrencyInfo(symbol: '₹', locale: 'en_IN', decimalDigits: 2);
+    }
+  }
+}
+
+/// Helper class for currency formatting info
+class _CurrencyInfo {
+  final String symbol;
+  final String locale;
+  final int decimalDigits;
+
+  const _CurrencyInfo({
+    required this.symbol,
+    required this.locale,
+    required this.decimalDigits,
+  });
 }
 
 /// List extensions

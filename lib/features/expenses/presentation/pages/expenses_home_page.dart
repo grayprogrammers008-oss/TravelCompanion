@@ -38,6 +38,24 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
   ExpenseFilter _selectedFilter = ExpenseFilter.all;
   ExpenseCategory _selectedCategory = ExpenseCategory.all;
 
+  /// Get appropriate currency icon based on currency code
+  IconData _getCurrencyIcon(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD':
+        return Icons.attach_money;
+      case 'EUR':
+        return Icons.euro;
+      case 'GBP':
+        return Icons.currency_pound;
+      case 'JPY':
+      case 'CNY':
+        return Icons.currency_yen;
+      case 'INR':
+      default:
+        return Icons.currency_rupee;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
@@ -90,7 +108,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.account_balance_wallet, color: Colors.white),
-            onPressed: () => _showBalancesSheet(context, ref),
+            onPressed: () => _showBalancesSheet(context, ref, _getPrimaryCurrency(ref)),
             tooltip: 'View Balances',
           ),
           PopupMenuButton<ExpenseFilter>(
@@ -472,7 +490,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
 
                                   // Amount
                                   Text(
-                                    expense.amount.toINR(),
+                                    expense.amount.toCurrency(expense.currency),
                                     style: context.titleLarge.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: context.primaryColor,
@@ -634,6 +652,9 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
     int personalCount = 0;
     int tripCount = 0;
 
+    // Track currencies to find the most common one
+    final currencyCounts = <String, int>{};
+
     for (final e in allExpenses) {
       if (e.expense.tripId == null) {
         personalTotal += e.expense.amount;
@@ -642,9 +663,20 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         tripTotal += e.expense.amount;
         tripCount++;
       }
+      currencyCounts[e.expense.currency] = (currencyCounts[e.expense.currency] ?? 0) + 1;
     }
 
     final total = personalTotal + tripTotal;
+
+    // Use the most common currency, default to INR
+    String primaryCurrency = 'INR';
+    int maxCount = 0;
+    currencyCounts.forEach((currency, count) {
+      if (count > maxCount) {
+        maxCount = count;
+        primaryCurrency = currency;
+      }
+    });
     final personalPercent = total > 0 ? (personalTotal / total * 100) : 0.0;
     final tripPercent = total > 0 ? (tripTotal / total * 100) : 0.0;
 
@@ -689,7 +721,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  total.toINR(),
+                  total.toCurrency(primaryCurrency),
                   style: context.headlineMedium.copyWith(
                     color: context.surfaceColor,
                     fontWeight: FontWeight.bold,
@@ -764,6 +796,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                         count: personalCount,
                         percentage: personalPercent,
                         color: Colors.orange,
+                        currency: primaryCurrency,
                       ),
                     ),
                     // Divider
@@ -777,6 +810,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                         count: tripCount,
                         percentage: tripPercent,
                         color: context.primaryColor,
+                        currency: primaryCurrency,
                       ),
                     ),
                   ],
@@ -796,6 +830,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
     required int count,
     required double percentage,
     required Color color,
+    required String currency,
   }) {
     return Column(
       children: [
@@ -823,7 +858,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
         ),
         const SizedBox(height: 6),
         Text(
-          amount.toINR(),
+          amount.toCurrency(currency),
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -1301,7 +1336,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                     Text('Total Amount', style: context.bodyMedium),
                     const SizedBox(height: 4),
                     Text(
-                      expense.amount.toINR(),
+                      expense.amount.toCurrency(expense.currency),
                       style: context.headlineMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.primaryColor,
@@ -1352,7 +1387,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            split.amount.toINR(),
+                            split.amount.toCurrency(expense.currency),
                             style: context.titleMedium,
                           ),
                           // Settlement status badge
@@ -1544,10 +1579,10 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                 // Amount
                 TextField(
                   controller: amountController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Amount',
-                    prefixIcon: Icon(Icons.currency_rupee),
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(_getCurrencyIcon(expense.currency)),
+                    border: const OutlineInputBorder(),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -1723,7 +1758,31 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
     );
   }
 
-  void _showBalancesSheet(BuildContext context, WidgetRef ref) {
+  /// Get the most common currency from user expenses
+  String _getPrimaryCurrency(WidgetRef ref) {
+    final expensesAsync = ref.read(userExpensesProvider);
+    return expensesAsync.maybeWhen(
+      data: (expenses) {
+        if (expenses.isEmpty) return 'INR';
+        final currencyCounts = <String, int>{};
+        for (final e in expenses) {
+          currencyCounts[e.expense.currency] = (currencyCounts[e.expense.currency] ?? 0) + 1;
+        }
+        String primaryCurrency = 'INR';
+        int maxCount = 0;
+        currencyCounts.forEach((currency, count) {
+          if (count > maxCount) {
+            maxCount = count;
+            primaryCurrency = currency;
+          }
+        });
+        return primaryCurrency;
+      },
+      orElse: () => 'INR',
+    );
+  }
+
+  void _showBalancesSheet(BuildContext context, WidgetRef ref, String currency) {
     final balancesAsync = ref.watch(userBalancesProvider);
 
     showModalBottomSheet(
@@ -1811,7 +1870,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                       children: [
                                         Text('Paid', style: context.bodySmall),
                                         Text(
-                                          balance.totalPaid.toINR(),
+                                          balance.totalPaid.toCurrency(currency),
                                           style: context.titleSmall,
                                         ),
                                       ],
@@ -1822,7 +1881,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                       children: [
                                         Text('Owes', style: context.bodySmall),
                                         Text(
-                                          balance.totalOwed.toINR(),
+                                          balance.totalOwed.toCurrency(currency),
                                           style: context.titleSmall,
                                         ),
                                       ],
@@ -1836,7 +1895,7 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                           style: context.bodySmall,
                                         ),
                                         Text(
-                                          balance.balance.abs().toINR(),
+                                          balance.balance.abs().toCurrency(currency),
                                           style: context.titleMedium.copyWith(
                                             color: isZero
                                                 ? context.textColor.withValues(
@@ -1856,8 +1915,8 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                                   const SizedBox(height: 8),
                                   Text(
                                     isPositive
-                                        ? 'Gets back ${balance.balance.toINR()}'
-                                        : 'Owes ${balance.balance.abs().toINR()}',
+                                        ? 'Gets back ${balance.balance.toCurrency(currency)}'
+                                        : 'Owes ${balance.balance.abs().toCurrency(currency)}',
                                     style: context.bodySmall.copyWith(
                                       color: isPositive
                                           ? context.successColor

@@ -8,6 +8,7 @@ import '../../../../shared/models/expense_model.dart';
 class WhoOwesWhomCard extends StatelessWidget {
   final List<BalanceSummary> balances;
   final String? currentUserId;
+  final String currency;
   final VoidCallback? onSettlePressed;
   final Function(String recipientName, double amount)? onPayPressed;
 
@@ -15,6 +16,7 @@ class WhoOwesWhomCard extends StatelessWidget {
     super.key,
     required this.balances,
     this.currentUserId,
+    this.currency = 'INR',
     this.onSettlePressed,
     this.onPayPressed,
   });
@@ -102,6 +104,7 @@ class WhoOwesWhomCard extends StatelessWidget {
                   debt: debt,
                   isCurrentUserDebtor: isCurrentUserDebtor,
                   isCurrentUserCreditor: isCurrentUserCreditor,
+                  currency: currency,
                   onPayPressed: isCurrentUserDebtor && onPayPressed != null
                       ? () => onPayPressed!(debt.toUserName, debt.amount)
                       : null,
@@ -285,7 +288,7 @@ class WhoOwesWhomCard extends StatelessWidget {
                       ),
                       if (!isZero)
                         Text(
-                          balance.balance.abs().toINR(),
+                          balance.balance.abs().toCurrency(currency),
                           style: context.titleMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: isPositive ? context.successColor : context.errorColor,
@@ -381,12 +384,14 @@ class _DebtRow extends StatelessWidget {
   final _DebtInfo debt;
   final bool isCurrentUserDebtor;
   final bool isCurrentUserCreditor;
+  final String currency;
   final VoidCallback? onPayPressed;
 
   const _DebtRow({
     required this.debt,
     this.isCurrentUserDebtor = false,
     this.isCurrentUserCreditor = false,
+    this.currency = 'INR',
     this.onPayPressed,
   });
 
@@ -462,7 +467,7 @@ class _DebtRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'owes ${debt.amount.toINR()}',
+                    'owes ${debt.amount.toCurrency(currency)}',
                     style: context.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
                       color: context.primaryColor,

@@ -35,6 +35,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
   bool _isLoading = false;
   List<String> _selectedMemberIds = [];
   String? _paidByUserId; // Who paid for this expense
+  String _currency = 'INR'; // Trip currency for display
 
   final List<String> _categories = [
     'Food',
@@ -46,11 +47,48 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _fetchTripCurrency();
+  }
+
+  @override
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchTripCurrency() async {
+    if (widget.tripId == null) return;
+    try {
+      final tripData = await ref.read(tripProvider(widget.tripId!).future);
+      if (mounted) {
+        setState(() {
+          _currency = tripData.trip.currency;
+        });
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch trip currency: $e');
+    }
+  }
+
+  IconData _getCurrencyIcon(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD':
+        return Icons.attach_money;
+      case 'EUR':
+        return Icons.euro;
+      case 'GBP':
+        return Icons.currency_pound;
+      case 'JPY':
+      case 'CNY':
+        return Icons.currency_yen;
+      case 'INR':
+      default:
+        return Icons.currency_rupee;
+    }
   }
 
 
@@ -483,7 +521,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                       controller: _amountController,
                       labelText: 'Amount *',
                       hintText: '0.00',
-                      prefixIcon: Icons.currency_rupee,
+                      prefixIcon: _getCurrencyIcon(_currency),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),

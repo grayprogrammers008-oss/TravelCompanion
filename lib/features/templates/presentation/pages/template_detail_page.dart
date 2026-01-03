@@ -13,6 +13,24 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../domain/entities/trip_template.dart';
 import '../providers/template_providers.dart';
 
+/// Get appropriate currency icon based on currency code
+IconData _getCurrencyIcon(String currency) {
+  switch (currency.toUpperCase()) {
+    case 'USD':
+      return Icons.attach_money;
+    case 'EUR':
+      return Icons.euro;
+    case 'GBP':
+      return Icons.currency_pound;
+    case 'JPY':
+    case 'CNY':
+      return Icons.currency_yen;
+    case 'INR':
+    default:
+      return Icons.currency_rupee;
+  }
+}
+
 class TemplateDetailPage extends ConsumerStatefulWidget {
   final String templateId;
 
@@ -281,7 +299,7 @@ class _TemplateDetailPageState extends ConsumerState<TemplateDetailPage>
               Expanded(
                 child: _buildStatCard(
                   context,
-                  icon: Icons.currency_rupee,
+                  icon: _getCurrencyIcon(template.currency),
                   label: 'Budget',
                   value: template.budgetDisplay,
                   color: Colors.green,

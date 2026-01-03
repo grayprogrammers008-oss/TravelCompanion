@@ -8,6 +8,7 @@ import '../../../../core/utils/extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../shared/models/expense_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
 import '../widgets/payment_options_sheet.dart';
 
@@ -24,6 +25,12 @@ class SettlementSummaryPage extends ConsumerStatefulWidget {
 
 class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
   bool _isCreatingSettlement = false;
+
+  /// Get the trip currency
+  String get _currency {
+    final tripAsync = ref.read(tripProvider(widget.tripId));
+    return tripAsync.value?.trip.currency ?? 'INR';
+  }
 
   /// Handle payment flow: show UPI dialog, launch payment, create settlement on confirmation
   Future<void> _handlePayment(
@@ -88,7 +95,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
               children: [
                 const Icon(Icons.check_circle, color: Colors.white),
                 const SizedBox(width: 8),
-                Text('Settlement of ${amount.toINR()} recorded!'),
+                Text('Settlement of ${amount.toCurrency(_currency)} recorded!'),
               ],
             ),
             backgroundColor: context.successColor,
@@ -120,6 +127,8 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
     final balancesAsync = ref.watch(tripBalancesProvider(widget.tripId));
     final settlementsAsync = ref.watch(tripSettlementsProvider(widget.tripId));
     final currentUserId = ref.watch(authStateProvider).value;
+    final tripAsync = ref.watch(tripProvider(widget.tripId));
+    final currency = tripAsync.value?.trip.currency ?? 'INR';
 
     return Scaffold(
       appBar: AppBar(
@@ -142,6 +151,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
           balances,
           settlementsAsync,
           currentUserId,
+          currency,
         ),
         loading: () => const Center(
           child: AppLoadingIndicator(message: 'Loading balances...'),
@@ -171,6 +181,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
     List<BalanceSummary> balances,
     AsyncValue<List<SettlementModel>> settlementsAsync,
     String? currentUserId,
+    String currency,
   ) {
     // Calculate simplified debts
     final debts = _calculateSimplifiedDebts(balances);
@@ -190,14 +201,14 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
           if (!isAllSettled) ...[
             _buildSectionHeader(context, 'Who Owes Whom', Icons.swap_horiz_rounded),
             const SizedBox(height: 12),
-            ...debts.map((debt) => _buildDebtCard(context, debt, currentUserId)),
+            ...debts.map((debt) => _buildDebtCard(context, debt, currentUserId, currency)),
             const SizedBox(height: 24),
           ],
 
           // Individual Balances section
           _buildSectionHeader(context, 'Individual Balances', Icons.account_balance_wallet),
           const SizedBox(height: 12),
-          ...balances.map((balance) => _buildBalanceCard(context, balance, currentUserId)),
+          ...balances.map((balance) => _buildBalanceCard(context, balance, currentUserId, currency)),
 
           const SizedBox(height: 24),
 
@@ -210,7 +221,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                 children: [
                   _buildSectionHeader(context, 'Past Settlements', Icons.history),
                   const SizedBox(height: 12),
-                  ...settlements.map((s) => _buildSettlementCard(context, s)),
+                  ...settlements.map((s) => _buildSettlementCard(context, s, currency)),
                 ],
               );
             },
@@ -338,7 +349,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
     );
   }
 
-  Widget _buildDebtCard(BuildContext context, _DebtInfo debt, String? currentUserId) {
+  Widget _buildDebtCard(BuildContext context, _DebtInfo debt, String? currentUserId, String currency) {
     final isCurrentUserDebtor = debt.fromUserId == currentUserId;
     final isCurrentUserCreditor = debt.toUserId == currentUserId;
 
@@ -429,7 +440,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        debt.amount.toINR(),
+                        debt.amount.toCurrency(currency),
                         style: context.titleSmall.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -500,7 +511,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                         ),
                       )
                     : const Icon(Icons.payment),
-                label: Text(_isCreatingSettlement ? 'Processing...' : 'Pay ${debt.amount.toINR()}'),
+                label: Text(_isCreatingSettlement ? 'Processing...' : 'Pay ${debt.amount.toCurrency(currency)}'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.successColor,
                   foregroundColor: Colors.white,
@@ -522,7 +533,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                   amount: debt.amount,
                 ),
                 icon: const Icon(Icons.notifications_active),
-                label: Text('Request ${debt.amount.toINR()} from ${debt.fromUserName}'),
+                label: Text('Request ${debt.amount.toCurrency(currency)} from ${debt.fromUserName}'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.primaryColor,
                   side: BorderSide(color: context.primaryColor),
@@ -536,7 +547,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
     );
   }
 
-  Widget _buildBalanceCard(BuildContext context, BalanceSummary balance, String? currentUserId) {
+  Widget _buildBalanceCard(BuildContext context, BalanceSummary balance, String? currentUserId, String currency) {
     final isPositive = balance.balance > 0;
     final isZero = balance.balance.abs() < 0.01;
     final isCurrentUser = balance.userId == currentUserId;
@@ -588,7 +599,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                 Row(
                   children: [
                     Text(
-                      'Paid: ${balance.totalPaid.toINR()}',
+                      'Paid: ${balance.totalPaid.toCurrency(currency)}',
                       style: context.bodySmall.copyWith(
                         color: context.textColor.withValues(alpha: 0.6),
                       ),
@@ -600,7 +611,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Share: ${balance.totalOwed.toINR()}',
+                      'Share: ${balance.totalOwed.toCurrency(currency)}',
                       style: context.bodySmall.copyWith(
                         color: context.textColor.withValues(alpha: 0.6),
                       ),
@@ -630,7 +641,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                 )
               else
                 Text(
-                  '${isPositive ? '+' : '-'}${balance.balance.abs().toINR()}',
+                  '${isPositive ? '+' : '-'}${balance.balance.abs().toCurrency(currency)}',
                   style: context.titleMedium.copyWith(
                     color: isPositive ? context.successColor : context.errorColor,
                     fontWeight: FontWeight.bold,
@@ -650,7 +661,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
     );
   }
 
-  Widget _buildSettlementCard(BuildContext context, SettlementModel settlement) {
+  Widget _buildSettlementCard(BuildContext context, SettlementModel settlement, String currency) {
     final isPending = settlement.status == 'pending';
 
     return Container(
@@ -692,7 +703,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                settlement.amount.toINR(),
+                settlement.amount.toCurrency(currency),
                 style: context.titleSmall.copyWith(fontWeight: FontWeight.bold),
               ),
               Container(
@@ -957,7 +968,7 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
   String _buildReminderMessage(String debtorName, double amount) {
     return '''Hi $debtorName! 👋
 
-This is a friendly reminder about the pending payment of ${amount.toINR()} for our trip expenses.
+This is a friendly reminder about the pending payment of ${amount.toCurrency(_currency)} for our trip expenses.
 
 Please settle up when you get a chance. You can pay via UPI or any other convenient method.
 

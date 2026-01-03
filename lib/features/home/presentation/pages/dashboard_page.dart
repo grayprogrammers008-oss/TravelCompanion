@@ -1082,6 +1082,22 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         (sum, e) => sum + e.expense.amount,
                       );
 
+                      // Get primary currency from personal expenses
+                      String personalCurrency = 'INR';
+                      if (personalExpenses.isNotEmpty) {
+                        final currencyCounts = <String, int>{};
+                        for (final e in personalExpenses) {
+                          currencyCounts[e.expense.currency] = (currencyCounts[e.expense.currency] ?? 0) + 1;
+                        }
+                        int maxCount = 0;
+                        currencyCounts.forEach((currency, count) {
+                          if (count > maxCount) {
+                            maxCount = count;
+                            personalCurrency = currency;
+                          }
+                        });
+                      }
+
                       return Container(
                         padding: const EdgeInsets.all(AppTheme.spacingMd),
                         decoration: BoxDecoration(
@@ -1150,7 +1166,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                         ),
                                       ),
                                       Text(
-                                        personalTotal.toINR(),
+                                        personalTotal.toCurrency(personalCurrency),
                                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                               fontWeight: FontWeight.w700,
                                               color: Colors.orange.shade700,
@@ -1219,6 +1235,22 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         (sum, e) => sum + e.expense.amount,
                       );
 
+                      // Get primary currency from all expenses
+                      String allExpensesCurrency = 'INR';
+                      if (allExpenses.isNotEmpty) {
+                        final currencyCounts = <String, int>{};
+                        for (final e in allExpenses) {
+                          currencyCounts[e.expense.currency] = (currencyCounts[e.expense.currency] ?? 0) + 1;
+                        }
+                        int maxCount = 0;
+                        currencyCounts.forEach((currency, count) {
+                          if (count > maxCount) {
+                            maxCount = count;
+                            allExpensesCurrency = currency;
+                          }
+                        });
+                      }
+
                       final balances = _calculateBalancesFromExpenses(allExpenses);
 
                       return Column(
@@ -1258,7 +1290,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                                         ),
                                       ),
                                       Text(
-                                        totalAcrossAllTrips.toINR(),
+                                        totalAcrossAllTrips.toCurrency(allExpensesCurrency),
                                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.w700,
                                           color: AppTheme.neutral900,

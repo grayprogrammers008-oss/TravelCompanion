@@ -47,6 +47,39 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
   ParsedBillData? _parsedData;
   bool _isScanning = false;
   bool _isSubmitting = false;
+  String _currency = 'INR';
+
+  IconData _getCurrencyIcon(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD':
+        return Icons.attach_money;
+      case 'EUR':
+        return Icons.euro;
+      case 'GBP':
+        return Icons.currency_pound;
+      case 'JPY':
+      case 'CNY':
+        return Icons.currency_yen;
+      case 'INR':
+      default:
+        return Icons.currency_rupee;
+    }
+  }
+
+  Future<void> _fetchTripCurrency() async {
+    final tripId = _selectedTripId ?? widget.tripId;
+    if (tripId == null) return;
+    try {
+      final tripData = await ref.read(tripProvider(tripId).future);
+      if (mounted) {
+        setState(() {
+          _currency = tripData.trip.currency;
+        });
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch trip currency: $e');
+    }
+  }
 
   final List<String> _categories = [
     'Food',
@@ -61,6 +94,7 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
   void initState() {
     super.initState();
     _selectedTripId = widget.tripId;
+    _fetchTripCurrency();
   }
 
   @override
@@ -287,7 +321,7 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
                         controller: _amountController,
                         labelText: 'Amount *',
                         hintText: '0.00',
-                        prefixIcon: Icons.currency_rupee,
+                        prefixIcon: _getCurrencyIcon(_currency),
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),

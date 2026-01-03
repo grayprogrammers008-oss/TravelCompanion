@@ -63,7 +63,8 @@ class ExpenseListPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.account_balance_wallet),
             onPressed: () {
-              _showBalancesSheet(context, balancesAsync);
+              final currency = tripAsync.value?.trip.currency ?? 'INR';
+              _showBalancesSheet(context, balancesAsync, currency);
             },
             tooltip: 'View Balances',
           ),
@@ -362,6 +363,7 @@ class ExpenseListPage extends ConsumerWidget {
             data: (balances) => WhoOwesWhomCard(
               balances: balances,
               currentUserId: currentUserId,
+              currency: tripAsync.value?.trip.currency ?? 'INR',
               onSettlePressed: () {
                 // Navigate to settlement summary page
                 context.push('/trips/$tripId/expenses/settle');
@@ -415,11 +417,27 @@ class ExpenseListPage extends ConsumerWidget {
                   style: context.titleMedium.copyWith(color: context.surfaceColor),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  total.toINR(),
-                  style: context.headlineMedium.copyWith(
-                    color: context.surfaceColor,
-                    fontWeight: FontWeight.bold,
+                tripAsync.when(
+                  data: (tripData) => Text(
+                    total.toCurrency(tripData.trip.currency),
+                    style: context.headlineMedium.copyWith(
+                      color: context.surfaceColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  loading: () => Text(
+                    total.toCurrency('INR'),
+                    style: context.headlineMedium.copyWith(
+                      color: context.surfaceColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  error: (_, __) => Text(
+                    total.toCurrency('INR'),
+                    style: context.headlineMedium.copyWith(
+                      color: context.surfaceColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -516,7 +534,7 @@ class ExpenseListPage extends ConsumerWidget {
 
                             // Amount
                             Text(
-                              expense.amount.toINR(),
+                              expense.amount.toCurrency(expense.currency),
                               style: context.titleLarge.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: context.primaryColor,
@@ -663,7 +681,7 @@ class ExpenseListPage extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      expense.amount.toINR(),
+                      expense.amount.toCurrency(expense.currency),
                       style: context.headlineMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.primaryColor,
@@ -710,7 +728,7 @@ class ExpenseListPage extends ConsumerWidget {
                       ),
                       title: Text(split.userName ?? 'Member ${split.userId}'),
                       trailing: Text(
-                        split.amount.toINR(),
+                        split.amount.toCurrency(expense.currency),
                         style: context.titleMedium,
                       ),
                       subtitle: split.isSettled
@@ -812,6 +830,7 @@ class ExpenseListPage extends ConsumerWidget {
   void _showBalancesSheet(
     BuildContext context,
     AsyncValue<List<BalanceSummary>> balancesAsync,
+    String currency,
   ) {
     showModalBottomSheet(
       context: context,
@@ -903,7 +922,7 @@ class ExpenseListPage extends ConsumerWidget {
                                           style: context.bodySmall,
                                         ),
                                         Text(
-                                          balance.totalPaid.toINR(),
+                                          balance.totalPaid.toCurrency(currency),
                                           style: context.titleSmall,
                                         ),
                                       ],
@@ -917,7 +936,7 @@ class ExpenseListPage extends ConsumerWidget {
                                           style: context.bodySmall,
                                         ),
                                         Text(
-                                          balance.totalOwed.toINR(),
+                                          balance.totalOwed.toCurrency(currency),
                                           style: context.titleSmall,
                                         ),
                                       ],
@@ -931,7 +950,7 @@ class ExpenseListPage extends ConsumerWidget {
                                           style: context.bodySmall,
                                         ),
                                         Text(
-                                          balance.balance.abs().toINR(),
+                                          balance.balance.abs().toCurrency(currency),
                                           style: context.titleMedium.copyWith(
                                             color: isZero
                                                 ? context.textColor.withValues(alpha: 0.5)
@@ -949,8 +968,8 @@ class ExpenseListPage extends ConsumerWidget {
                                   const SizedBox(height: 8),
                                   Text(
                                     isPositive
-                                        ? 'Gets back ${balance.balance.toINR()}'
-                                        : 'Owes ${balance.balance.abs().toINR()}',
+                                        ? 'Gets back ${balance.balance.toCurrency(currency)}'
+                                        : 'Owes ${balance.balance.abs().toCurrency(currency)}',
                                     style: context.bodySmall.copyWith(
                                       color: isPositive
                                           ? context.successColor
