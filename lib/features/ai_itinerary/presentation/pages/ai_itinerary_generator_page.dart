@@ -12,6 +12,7 @@ import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../templates/presentation/providers/template_providers.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../domain/entities/ai_itinerary.dart';
 import '../providers/ai_itinerary_providers.dart';
 import '../widgets/ai_itinerary_result.dart';
@@ -179,6 +180,31 @@ class _AiItineraryGeneratorPageState
       debugPrint('🎤 Voice prompt: ${widget.voicePrompt}');
     }
 
+    // Fetch trip data if tripId is provided to get comprehensive context
+    List<TripCompanion>? companions;
+    if (widget.tripId != null) {
+      debugPrint('🔍 Fetching trip data for tripId: ${widget.tripId}');
+      try {
+        final tripData = await ref.read(tripProvider(widget.tripId!).future);
+        final members = tripData.members;
+
+        // Convert trip members to companions
+        if (members.isNotEmpty) {
+          companions = members.map((member) {
+            return TripCompanion(
+              name: member.fullName ?? 'Traveler',
+              relation: null, // We don't store relation in trip_members yet
+              age: null, // We don't store age in trip_members yet
+            );
+          }).toList();
+          debugPrint('👥 Found ${companions!.length} trip members as companions');
+        }
+      } catch (e) {
+        debugPrint('⚠️ Failed to fetch trip data: $e');
+        // Continue without companions - not critical
+      }
+    }
+
     final request = AiItineraryRequest(
       destination: _destinationController.text.trim(),
       durationDays: _durationDays,
@@ -189,6 +215,11 @@ class _AiItineraryGeneratorPageState
       travelStyle: _travelStyle.toLowerCase(),
       groupSize: _groupSize,
       voicePrompt: widget.voicePrompt,
+      companions: companions,
+      startDate: _startDate,
+      endDate: _endDate,
+      // TODO: Add UI to collect transport mode and daily timing preferences
+      // For now, these will be null and AI will use sensible defaults
     );
 
     debugPrint('📤 Calling generateItinerary...');
