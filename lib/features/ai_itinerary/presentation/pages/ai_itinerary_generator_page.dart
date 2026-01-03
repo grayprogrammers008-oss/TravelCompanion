@@ -64,6 +64,9 @@ class _AiItineraryGeneratorPageState
   int _groupSize = 2;
   final Set<String> _selectedInterests = {};
 
+  // Currency from trip (fetched in initState)
+  String _tripCurrency = 'INR';
+
   final _dateFormat = DateFormat('MMM d, yyyy');
 
   @override
@@ -71,6 +74,54 @@ class _AiItineraryGeneratorPageState
     super.initState();
     // Apply pre-fill data from trip
     _applyPrefillData();
+    // Fetch trip currency if tripId is provided
+    _fetchTripCurrency();
+  }
+
+  /// Fetch currency from trip data
+  Future<void> _fetchTripCurrency() async {
+    if (widget.tripId == null) return;
+
+    try {
+      final tripData = await ref.read(tripProvider(widget.tripId!).future);
+      if (mounted) {
+        setState(() {
+          _tripCurrency = tripData.trip.currency;
+        });
+        debugPrint('💱 Fetched trip currency: $_tripCurrency');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Failed to fetch trip currency: $e');
+    }
+  }
+
+  /// Get currency symbol for display
+  String _getCurrencySymbol(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD': return '\$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'JPY': return '¥';
+      case 'INR': return '₹';
+      case 'AUD': return 'A\$';
+      case 'CAD': return 'C\$';
+      case 'SGD': return 'S\$';
+      case 'AED': return 'AED';
+      case 'THB': return '฿';
+      default: return currency;
+    }
+  }
+
+  /// Get currency icon for display
+  IconData _getCurrencyIcon(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD': return Icons.attach_money;
+      case 'EUR': return Icons.euro;
+      case 'GBP': return Icons.currency_pound;
+      case 'JPY': return Icons.currency_yen;
+      case 'INR': return Icons.currency_rupee;
+      default: return Icons.payments;
+    }
   }
 
   /// Apply pre-fill data from trip when launched from itinerary page
@@ -182,16 +233,14 @@ class _AiItineraryGeneratorPageState
 
     // Fetch trip data if tripId is provided to get comprehensive context
     List<TripCompanion>? companions;
-    String tripCurrency = 'INR'; // Default to INR
+    // Use the currency we fetched earlier (defaults to INR if not fetched)
+    debugPrint('💱 Using trip currency: $_tripCurrency');
+
     if (widget.tripId != null) {
       debugPrint('🔍 Fetching trip data for tripId: ${widget.tripId}');
       try {
         final tripData = await ref.read(tripProvider(widget.tripId!).future);
         final members = tripData.members;
-
-        // Get trip currency
-        tripCurrency = tripData.trip.currency;
-        debugPrint('💱 Trip currency: $tripCurrency');
 
         // Convert trip members to companions
         if (members.isNotEmpty) {
@@ -216,7 +265,7 @@ class _AiItineraryGeneratorPageState
       budget: _budgetController.text.isNotEmpty
           ? double.tryParse(_budgetController.text)
           : null,
-      currency: tripCurrency,
+      currency: _tripCurrency,
       interests: _selectedInterests.toList(),
       travelStyle: _travelStyle.toLowerCase(),
       groupSize: _groupSize,
@@ -708,8 +757,9 @@ class _AiItineraryGeneratorPageState
                         controller: _budgetController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          hintText: 'e.g., 30000',
-                          prefixIcon: const Icon(Icons.currency_rupee),
+                          hintText: _tripCurrency == 'USD' ? 'e.g., 500' : 'e.g., 30000',
+                          prefixIcon: Icon(_getCurrencyIcon(_tripCurrency)),
+                          prefixText: '${_getCurrencySymbol(_tripCurrency)} ',
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
