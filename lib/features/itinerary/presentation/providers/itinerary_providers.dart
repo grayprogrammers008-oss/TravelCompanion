@@ -122,6 +122,7 @@ class ItineraryController extends Notifier<ItineraryState> {
   }
 
   /// Create a new itinerary item
+  /// Set [showSuccessMessage] to false when doing bulk operations (e.g., AI import)
   Future<ItineraryItemModel> createItem({
     required String tripId,
     required String title,
@@ -134,6 +135,7 @@ class ItineraryController extends Notifier<ItineraryState> {
     DateTime? endTime,
     int? dayNumber,
     int? orderIndex,
+    bool showSuccessMessage = true,
   }) async {
     state = state.copyWith(isLoading: true, error: null, successMessage: null);
     try {
@@ -153,7 +155,7 @@ class ItineraryController extends Notifier<ItineraryState> {
       state = state.copyWith(
         isLoading: false,
         currentItem: item,
-        successMessage: 'Activity added successfully',
+        successMessage: showSuccessMessage ? 'Activity added successfully' : null,
       );
 
       // Invalidate the itinerary providers to refresh the list

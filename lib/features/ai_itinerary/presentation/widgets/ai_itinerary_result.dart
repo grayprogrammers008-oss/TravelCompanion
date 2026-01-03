@@ -845,6 +845,7 @@ class _AiItineraryResultPageState extends ConsumerState<AiItineraryResultPage> {
             endTime: activityEndTime,
             dayNumber: day.dayNumber,
             orderIndex: orderIndex,
+            showSuccessMessage: false, // Suppress individual messages during bulk import
           );
 
           activitiesCount++;
