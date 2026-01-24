@@ -133,7 +133,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.honeymoon:
         return 'lodging'; // Hotels, resorts for romantic stays
       case PlaceCategory.pilgrimage:
-        return 'hindu_temple';
+        return null; // Use keyword search for better global coverage
       case PlaceCategory.seniorFriendly:
         return 'park';
     }
@@ -163,7 +163,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.honeymoon:
         return 'resort spa luxury hotel romantic';
       case PlaceCategory.pilgrimage:
-        return 'temple mandir gurudwara pilgrimage spiritual';
+        return 'pilgrimage temple mandir church mosque cathedral gurudwara dargah shrine monastery basilica synagogue kovil spiritual sacred holy';
       case PlaceCategory.seniorFriendly:
         return 'garden park peaceful scenic viewpoint accessible';
     }
