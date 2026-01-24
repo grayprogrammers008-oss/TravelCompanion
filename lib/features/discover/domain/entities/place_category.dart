@@ -119,9 +119,9 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.heritage:
         return null; // Use keyword search for better coverage of all heritage sites
       case PlaceCategory.adventure:
-        return 'tourist_attraction';
+        return null; // Use keyword search for comprehensive adventure activity coverage
       case PlaceCategory.wildlife:
-        return 'zoo';
+        return null; // Use keyword search to include all wildlife areas, not just zoos
       case PlaceCategory.religious:
         return null; // Use keyword search for better global coverage
       case PlaceCategory.nature:
@@ -149,9 +149,9 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.heritage:
         return 'heritage monument historical fort palace castle museum archaeological ruins landmark memorial statue colonial ancient UNESCO historical site';
       case PlaceCategory.adventure:
-        return 'adventure trekking sports';
+        return 'adventure trekking hiking rafting paragliding zip line rock climbing bungee jumping skydiving kayaking scuba diving snorkeling safari jeep tour mountain biking camping adventure sports activity center';
       case PlaceCategory.wildlife:
-        return 'wildlife sanctuary national park';
+        return 'wildlife sanctuary national park safari zoo nature reserve tiger reserve bird sanctuary elephant reserve biosphere jungle forest conservation area animal viewing wildlife park game reserve';
       case PlaceCategory.religious:
         return 'temple church mosque cathedral gurudwara shrine dargah synagogue monastery basilica mandir kovil masjid pagoda';
       case PlaceCategory.nature:
