@@ -117,7 +117,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.hillStation:
         return null; // Use keyword instead
       case PlaceCategory.heritage:
-        return 'museum';
+        return null; // Use keyword search for better coverage of all heritage sites
       case PlaceCategory.adventure:
         return 'tourist_attraction';
       case PlaceCategory.wildlife:
@@ -147,7 +147,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.hillStation:
         return 'hill station mountain viewpoint';
       case PlaceCategory.heritage:
-        return 'heritage monument historical';
+        return 'heritage monument historical fort palace castle museum archaeological ruins landmark memorial statue colonial ancient UNESCO historical site';
       case PlaceCategory.adventure:
         return 'adventure trekking sports';
       case PlaceCategory.wildlife:
