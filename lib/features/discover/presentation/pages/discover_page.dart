@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,7 +10,9 @@ import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/popular_destination.dart';
 import '../providers/discover_providers.dart';
+import '../widgets/mini_map_preview.dart';
 import '../widgets/place_card.dart';
+import '../widgets/smart_suggestions_section.dart';
 import '../widgets/place_detail_sheet.dart';
 import '../widgets/popular_destinations_section.dart';
 import '../widgets/recommendations_section.dart';
@@ -40,25 +41,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
   void _onCategorySelected(PlaceCategory category) {
     ref.read(discoverStateProvider.notifier).changeCategory(category);
-  }
-
-  void _showDestinationSearch() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _DestinationSearchSheet(
-        onDestinationSelected: (lat, lng, name) {
-          // Set the searched location and load places
-          ref.read(discoverStateProvider.notifier).setLocation(
-            latitude: lat,
-            longitude: lng,
-            locationName: name,
-          );
-          Navigator.pop(context);
-        },
-      ),
-    );
   }
 
   void _onPlaceTapped(DiscoverPlace place) {
@@ -114,130 +96,65 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   Widget build(BuildContext context) {
     final discoverState = ref.watch(discoverStateProvider);
     final filteredPlaces = discoverState.filteredPlaces;
+    final hasLocation = discoverState.hasLocation;
 
     return Scaffold(
       floatingActionButton: _buildFloatingActionButton(discoverState),
       body: CustomScrollView(
         slivers: [
-          // App Bar with proper header layout
+          // App Bar Header
           SliverAppBar(
-            expandedHeight: 140,
-            floating: false,
-            pinned: true,
+            floating: true,
+            pinned: false,
             backgroundColor: context.primaryColor,
             elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: false,
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.travel_explore,
+            title: Row(
+              children: [
+                Icon(
+                  Icons.explore,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Discover',
+                  style: TextStyle(
                     color: Colors.white,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Discover',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      context.primaryColor,
-                      context.primaryColor.withValues(alpha: 0.7),
-                    ],
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
                 ),
-              ),
+              ],
             ),
             actions: [
-              // Search destination
-              IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
-                tooltip: 'Search destination',
-                onPressed: () => _showDestinationSearch(),
-              ),
-              // View mode toggle
-              IconButton(
-                icon: Icon(
-                  discoverState.viewMode == DiscoverViewMode.grid
-                      ? Icons.map_outlined
-                      : Icons.grid_view,
-                  color: Colors.white,
-                ),
-                tooltip: discoverState.viewMode == DiscoverViewMode.grid
-                    ? 'Map View'
-                    : 'Grid View',
-                onPressed: () {
-                  ref.read(discoverStateProvider.notifier).toggleViewMode();
-                },
-              ),
-              // Favorites filter
-              IconButton(
-                icon: Icon(
-                  discoverState.showFavoritesOnly
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: discoverState.showFavoritesOnly
-                      ? Colors.red[300]
-                      : Colors.white,
-                ),
-                tooltip: 'Favorites',
-                onPressed: () {
-                  ref.read(discoverStateProvider.notifier).toggleShowFavoritesOnly();
-                },
-              ),
               // Refresh button
               IconButton(
                 icon: const Icon(Icons.refresh, color: Colors.white),
-                tooltip: 'Refresh places',
+                tooltip: 'Refresh',
                 onPressed: () {
-                  HapticFeedback.mediumImpact();
                   ref.read(discoverStateProvider.notifier).refresh();
                 },
               ),
-              const SizedBox(width: 4),
+              // Map toggle button
+              if (hasLocation && filteredPlaces.isNotEmpty)
+                IconButton(
+                  icon: Icon(
+                    discoverState.viewMode == DiscoverViewMode.grid
+                        ? Icons.map_outlined
+                        : Icons.grid_view,
+                    color: Colors.white,
+                  ),
+                  tooltip: discoverState.viewMode == DiscoverViewMode.grid
+                      ? 'Map View'
+                      : 'Grid View',
+                  onPressed: () {
+                    ref.read(discoverStateProvider.notifier).toggleViewMode();
+                  },
+                ),
             ],
           ),
 
-          // Country/Location Selector (always visible)
-          SliverToBoxAdapter(
-            child: _buildCountrySelector(discoverState),
-          ),
-
-          // Popular Destinations Section
-          SliverToBoxAdapter(
-            child: PopularDestinationsSection(
-              onDestinationTapped: _onDestinationTapped,
-              onExploreNearby: _onExploreNearby,
-            ),
-          ),
-
-          // AI-Powered Recommendations Section
-          SliverToBoxAdapter(
-            child: RecommendationsSection(
-              onPlaceTapped: _onPlaceTapped,
-              onQuickAdd: _showQuickAddToTrip,
-            ),
-          ),
-
-          // Category Selection Section
-          SliverToBoxAdapter(
-            child: _buildCategorySection(discoverState, filteredPlaces.length),
-          ),
-
-          // Content
+          // LOADING STATES (shown regardless of location)
           if (discoverState.isGettingLocation)
             const SliverFillRemaining(
               child: Center(
@@ -268,43 +185,127 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 ),
               ),
             )
-          else if (filteredPlaces.isEmpty && discoverState.hasLocation)
-            SliverFillRemaining(
-              child: _buildEmptyState(discoverState),
-            )
+
+          // NO LOCATION: Show inspirational content first
+          else if (!hasLocation) ...[
+            // Location controls (search & enable location)
+            SliverToBoxAdapter(
+              child: _buildLocationPrompt(discoverState),
+            ),
+
+            // AI-Powered Recommendations (always visible)
+            SliverToBoxAdapter(
+              child: RecommendationsSection(
+                onPlaceTapped: _onPlaceTapped,
+                onQuickAdd: _showQuickAddToTrip,
+              ),
+            ),
+
+            // Popular Destinations (PROMINENT)
+            SliverToBoxAdapter(
+              child: PopularDestinationsSection(
+                onDestinationTapped: _onDestinationTapped,
+                onExploreNearby: _onExploreNearby,
+              ),
+            ),
+
+            // Categories (for future use when they enable location)
+            SliverToBoxAdapter(
+              child: _buildCategorySection(discoverState, filteredPlaces.length),
+            ),
+          ]
+
+          // HAS LOCATION: Show nearby content first
           else if (discoverState.viewMode == DiscoverViewMode.map)
             SliverFillRemaining(
               child: _buildMapView(filteredPlaces, discoverState),
             )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final place = filteredPlaces[index];
-                    return PlaceCard(
-                      place: place,
-                      userLatitude: discoverState.userLatitude,
-                      userLongitude: discoverState.userLongitude,
-                      isFavorite: discoverState.isFavorite(place.placeId),
-                      onTap: () => _onPlaceTapped(place),
-                      onFavoriteToggle: () {
-                        ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId, place: place);
-                      },
-                      onQuickAdd: () => _showQuickAddToTrip(place),
-                    );
-                  },
-                  childCount: filteredPlaces.length,
-                ),
+          else ...[
+            // Location indicator with controls
+            SliverToBoxAdapter(
+              child: _buildLocationIndicator(discoverState),
+            ),
+
+            // AI-Powered Recommendations (always visible)
+            SliverToBoxAdapter(
+              child: RecommendationsSection(
+                onPlaceTapped: _onPlaceTapped,
+                onQuickAdd: _showQuickAddToTrip,
               ),
             ),
+
+            // Category Selection Section (IMMEDIATE ACTION)
+            SliverToBoxAdapter(
+              child: _buildCategorySection(discoverState, filteredPlaces.length),
+            ),
+
+            // NEARBY PLACES - PRIMARY CONTENT
+            if (filteredPlaces.isEmpty)
+              SliverFillRemaining(
+                child: _buildEmptyState(discoverState),
+              )
+            else ...[
+              // Mini Map Preview (collapsible)
+              SliverToBoxAdapter(
+                child: MiniMapPreview(
+                  places: filteredPlaces,
+                  userLatitude: discoverState.userLatitude,
+                  userLongitude: discoverState.userLongitude,
+                  radiusKm: discoverState.selectedDistance.kilometers.toDouble(),
+                  category: discoverState.selectedCategory,
+                  onPlaceTapped: _onPlaceTapped,
+                  onExpandTapped: () {
+                    ref.read(discoverStateProvider.notifier).toggleViewMode();
+                  },
+                ),
+              ),
+
+              // Places Grid
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.75,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final place = filteredPlaces[index];
+                      return PlaceCard(
+                        place: place,
+                        userLatitude: discoverState.userLatitude,
+                        userLongitude: discoverState.userLongitude,
+                        isFavorite: discoverState.isFavorite(place.placeId),
+                        onTap: () => _onPlaceTapped(place),
+                        onFavoriteToggle: () {
+                          ref.read(discoverStateProvider.notifier).toggleFavorite(place.placeId, place: place);
+                        },
+                        onQuickAdd: () => _showQuickAddToTrip(place),
+                      );
+                    },
+                    childCount: filteredPlaces.length,
+                  ),
+                ),
+              ),
+
+              // Smart Suggestions (context-aware)
+              if (discoverState.places.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: SmartSuggestionsSection(
+                    onPlaceTapped: _onPlaceTapped,
+                    onQuickAdd: _showQuickAddToTrip,
+                    onCategoryTapped: _onCategorySelected,
+                  ),
+                ),
+
+              // Popular Destinations (SECONDARY - Explore More)
+              SliverToBoxAdapter(
+                child: _buildExploreMoreSection(discoverState),
+              ),
+            ],
+          ],
         ],
       ),
     );
@@ -418,6 +419,308 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLocationPrompt(DiscoverState discoverState) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            context.primaryColor.withValues(alpha: 0.1),
+            context.primaryColor.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: context.primaryColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: context.primaryColor.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.explore,
+                    color: context.primaryColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Discover Places',
+                        style: context.titleSmall.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Find attractions near you or search any location',
+                        style: context.bodySmall.copyWith(
+                          color: context.textColor.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => ref.read(discoverStateProvider.notifier).getUserLocation(),
+                    icon: const Icon(Icons.my_location, size: 18),
+                    label: const Text('Use My Location'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: context.primaryColor,
+                      side: BorderSide(color: context.primaryColor),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showDestinationSearch(),
+                    icon: const Icon(Icons.search, size: 18),
+                    label: const Text('Search'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationIndicator(DiscoverState discoverState) {
+    final locationName = discoverState.locationName ?? 'Current Location';
+    final distance = discoverState.selectedDistance;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: context.primaryColor.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Location and Search Row
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                // Location pill (tappable)
+                Expanded(
+                  child: InkWell(
+                    onTap: () => _showDestinationSearch(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: context.primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 18,
+                            color: context.primaryColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              locationName,
+                              style: context.bodyMedium.copyWith(
+                                color: context.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            Icons.edit_location_outlined,
+                            size: 16,
+                            color: context.primaryColor.withValues(alpha: 0.7),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Search button
+                IconButton.filled(
+                  onPressed: () => _showDestinationSearch(),
+                  icon: const Icon(Icons.search, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: context.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  tooltip: 'Search destination',
+                ),
+              ],
+            ),
+          ),
+
+          // Distance selector
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.near_me,
+                  size: 16,
+                  color: context.textColor.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Within:',
+                  style: context.bodySmall.copyWith(
+                    color: context.textColor.withValues(alpha: 0.6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: DiscoverDistance.values.map((dist) {
+                        final isSelected = dist == distance;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: ChoiceChip(
+                            label: Text(dist.displayName),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              if (selected) {
+                                ref.read(discoverStateProvider.notifier).changeDistance(dist);
+                              }
+                            },
+                            selectedColor: context.primaryColor.withValues(alpha: 0.2),
+                            checkmarkColor: context.primaryColor,
+                            labelStyle: TextStyle(
+                              fontSize: 12,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              color: isSelected ? context.primaryColor : context.textColor.withValues(alpha: 0.7),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDestinationSearch() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _DestinationSearchSheet(
+        onDestinationSelected: (lat, lng, name) {
+          ref.read(discoverStateProvider.notifier).setLocation(
+            latitude: lat,
+            longitude: lng,
+            locationName: name,
+          );
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  Widget _buildExploreMoreSection(DiscoverState discoverState) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.travel_explore,
+                    size: 20,
+                    color: context.primaryColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Explore More Destinations',
+                    style: context.titleMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Discover popular places around the world',
+            style: context.bodySmall.copyWith(
+              color: context.textColor.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Popular Destinations
+          PopularDestinationsSection(
+            onDestinationTapped: _onDestinationTapped,
+            onExploreNearby: _onExploreNearby,
+          ),
+        ],
       ),
     );
   }
@@ -828,257 +1131,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     );
   }
 
-  /// Country/Location selector with dropdown
-  Widget _buildCountrySelector(DiscoverState discoverState) {
-    final countries = DiscoverStateNotifier.getAvailableCountries();
-    final selectedCountry = discoverState.selectedCountry;
-    final selectedInfo = selectedCountry != null ? _getCountryInfo(selectedCountry) : null;
-    final isCurrentLocation = selectedCountry == null;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: Row(
-        children: [
-          // Location icon
-          Icon(
-            discoverState.isGettingLocation
-                ? Icons.location_searching
-                : (selectedCountry != null ? Icons.public : Icons.my_location),
-            size: 20,
-            color: selectedCountry != null
-                ? selectedInfo!.color
-                : context.primaryColor,
-          ),
-          const SizedBox(width: 8),
-          // Country/Location Dropdown
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: selectedCountry != null
-                      ? selectedInfo!.color.withValues(alpha: 0.5)
-                      : context.primaryColor.withValues(alpha: 0.3),
-                  width: 1.5,
-                ),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String?>(
-                  value: selectedCountry,
-                  isExpanded: true,
-                  menuMaxHeight: 300, // Limit dropdown height to prevent overflow
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: selectedCountry != null
-                        ? selectedInfo!.color
-                        : context.primaryColor,
-                  ),
-                  hint: Row(
-                    children: [
-                      const Text('📍 ', style: TextStyle(fontSize: 16)),
-                      Expanded(
-                        child: Text(
-                          discoverState.isGettingLocation
-                              ? 'Getting location...'
-                              : (discoverState.locationName ?? 'Current Location'),
-                          style: context.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: context.primaryColor,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  selectedItemBuilder: (context) {
-                    // Get the actual location name from state
-                    final locationText = discoverState.isGettingLocation
-                        ? 'Getting location...'
-                        : (discoverState.locationName ?? 'Current Location');
-                    return [
-                      // Current Location option - shows actual detected location
-                      Row(
-                        children: [
-                          const Text('📍 ', style: TextStyle(fontSize: 16)),
-                          Expanded(
-                            child: Text(
-                              locationText,
-                              style: this.context.bodyMedium.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: this.context.primaryColor,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Country options
-                      ...countries.map((country) {
-                        final info = _getCountryInfo(country);
-                        return Row(
-                          children: [
-                            Text('${info.flag} ', style: const TextStyle(fontSize: 16)),
-                            Expanded(
-                              child: Text(
-                                country,
-                                style: this.context.bodyMedium.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: info.color,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                    ];
-                  },
-                  items: [
-                    // Current Location option (value = null)
-                    DropdownMenuItem<String?>(
-                      value: null,
-                      child: Row(
-                        children: [
-                          const Text('📍 ', style: TextStyle(fontSize: 18)),
-                          const SizedBox(width: 8),
-                          Icon(Icons.my_location, size: 18, color: context.primaryColor),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Current Location',
-                            style: context.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: context.primaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Country options
-                    ...countries.map((country) {
-                      final info = _getCountryInfo(country);
-                      return DropdownMenuItem<String?>(
-                        value: country,
-                        child: Row(
-                          children: [
-                            Text(info.flag, style: const TextStyle(fontSize: 18)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                country,
-                                style: context.bodyMedium.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ],
-                  onChanged: (value) {
-                    HapticFeedback.selectionClick();
-                    if (value == null) {
-                      ref.read(discoverStateProvider.notifier).clearCountry();
-                    } else {
-                      ref.read(discoverStateProvider.notifier).setCountry(value);
-                    }
-                  },
-                ),
-              ),
-            ),
-          ),
-          // Distance selector - only show when using current location
-          if (isCurrentLocation) ...[
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: context.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: context.primaryColor.withValues(alpha: 0.3),
-                ),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<DiscoverDistance>(
-                  value: discoverState.selectedDistance,
-                  isDense: true,
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 16,
-                    color: context.primaryColor,
-                  ),
-                  style: context.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.primaryColor,
-                    fontSize: 11,
-                  ),
-                  items: DiscoverDistance.values.map((distance) {
-                    return DropdownMenuItem<DiscoverDistance>(
-                      value: distance,
-                      child: Text(
-                        '${distance.kilometers} km',
-                        style: context.bodySmall.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      HapticFeedback.selectionClick();
-                      ref.read(discoverStateProvider.notifier).changeDistance(value);
-                    }
-                  },
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  /// Get country info (flag and color) for display
-  _CountryDisplayInfo _getCountryInfo(String country) {
-    const countryData = <String, _CountryDisplayInfo>{
-      'Australia': _CountryDisplayInfo('🇦🇺', Color(0xFF00BCD4)),
-      'Brazil': _CountryDisplayInfo('🇧🇷', Color(0xFF4CAF50)),
-      'Cambodia': _CountryDisplayInfo('🇰🇭', Color(0xFFE91E63)),
-      'Canada': _CountryDisplayInfo('🇨🇦', Color(0xFFF44336)),
-      'Egypt': _CountryDisplayInfo('🇪🇬', Color(0xFFFF9800)),
-      'France': _CountryDisplayInfo('🇫🇷', Color(0xFF2196F3)),
-      'Germany': _CountryDisplayInfo('🇩🇪', Color(0xFF212121)),
-      'Greece': _CountryDisplayInfo('🇬🇷', Color(0xFF2196F3)),
-      'India': _CountryDisplayInfo('🇮🇳', Color(0xFFFF9933)),
-      'Indonesia': _CountryDisplayInfo('🇮🇩', Color(0xFFF44336)),
-      'Italy': _CountryDisplayInfo('🇮🇹', Color(0xFF4CAF50)),
-      'Japan': _CountryDisplayInfo('🇯🇵', Color(0xFFE91E63)),
-      'Malaysia': _CountryDisplayInfo('🇲🇾', Color(0xFFFFEB3B)),
-      'Maldives': _CountryDisplayInfo('🇲🇻', Color(0xFF00BCD4)),
-      'Mexico': _CountryDisplayInfo('🇲🇽', Color(0xFF4CAF50)),
-      'Myanmar': _CountryDisplayInfo('🇲🇲', Color(0xFFFFEB3B)),
-      'Nepal': _CountryDisplayInfo('🇳🇵', Color(0xFFF44336)),
-      'New Zealand': _CountryDisplayInfo('🇳🇿', Color(0xFF212121)),
-      'Philippines': _CountryDisplayInfo('🇵🇭', Color(0xFF2196F3)),
-      'Singapore': _CountryDisplayInfo('🇸🇬', Color(0xFFF44336)),
-      'South Africa': _CountryDisplayInfo('🇿🇦', Color(0xFF4CAF50)),
-      'Spain': _CountryDisplayInfo('🇪🇸', Color(0xFFF44336)),
-      'Sri Lanka': _CountryDisplayInfo('🇱🇰', Color(0xFFFF9800)),
-      'Switzerland': _CountryDisplayInfo('🇨🇭', Color(0xFFF44336)),
-      'Thailand': _CountryDisplayInfo('🇹🇭', Color(0xFF2196F3)),
-      'Turkey': _CountryDisplayInfo('🇹🇷', Color(0xFFF44336)),
-      'UAE': _CountryDisplayInfo('🇦🇪', Color(0xFF4CAF50)),
-      'UK': _CountryDisplayInfo('🇬🇧', Color(0xFF3F51B5)),
-      'USA': _CountryDisplayInfo('🇺🇸', Color(0xFF2196F3)),
-      'Vietnam': _CountryDisplayInfo('🇻🇳', Color(0xFFF44336)),
-    };
-    return countryData[country] ?? const _CountryDisplayInfo('🌍', Color(0xFF607D8B));
-  }
-
   Widget _buildEmptyState(DiscoverState discoverState) {
     final isShowingFavorites = discoverState.showFavoritesOnly;
 
@@ -1362,14 +1414,6 @@ class _DestinationDetailSheet extends StatelessWidget {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
-}
-
-/// Helper class to store country display info (flag and color)
-class _CountryDisplayInfo {
-  final String flag;
-  final Color color;
-
-  const _CountryDisplayInfo(this.flag, this.color);
 }
 
 /// Bottom sheet for searching destinations

@@ -685,22 +685,16 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // Filter out past trips (trips that have already ended)
-    final activeTrips = trips.where((t) {
-      final trip = t.trip;
-      // Keep trips without end date, or trips that haven't ended yet
-      if (trip.endDate == null) return true;
-      final tripEndDate = DateTime(trip.endDate!.year, trip.endDate!.month, trip.endDate!.day);
-      return !tripEndDate.isBefore(today); // Keep if end date is today or future
-    }).toList();
-
-    return activeTrips..sort((a, b) {
+    // Sort trips by relevance: Last Selected → Ongoing → Upcoming → Past
+    return trips.toList()..sort((a, b) {
         final tripA = a.trip;
         final tripB = b.trip;
 
+        // 1. Last selected trip comes first
         if (tripA.id == _selectedTripId) return -1;
         if (tripB.id == _selectedTripId) return 1;
 
+        // 2. Ongoing trips come next
         final aOngoing = tripA.startDate != null && tripA.endDate != null &&
             tripA.startDate!.isBefore(now) && tripA.endDate!.isAfter(now);
         final bOngoing = tripB.startDate != null && tripB.endDate != null &&
@@ -709,7 +703,15 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
         if (aOngoing && !bOngoing) return -1;
         if (bOngoing && !aOngoing) return 1;
 
+        // 3. Upcoming trips before past trips
         if (tripA.startDate != null && tripB.startDate != null) {
+          final aIsFuture = tripA.startDate!.isAfter(today);
+          final bIsFuture = tripB.startDate!.isAfter(today);
+
+          if (aIsFuture && !bIsFuture) return -1;
+          if (bIsFuture && !aIsFuture) return 1;
+
+          // Within same category (both future or both past), sort by date
           return tripA.startDate!.compareTo(tripB.startDate!);
         }
 
@@ -717,33 +719,53 @@ class _AddLocationToTripSheetState extends ConsumerState<AddLocationToTripSheet>
       });
   }
 
-  /// Get the first valid day (today or day 1 if trip hasn't started)
+  /// Get the first valid day based on trip status
   int _getFirstValidDay() {
     if (_selectedTrip?.startDate == null) return 1;
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tripStart = DateTime(_selectedTrip!.startDate!.year, _selectedTrip!.startDate!.month, _selectedTrip!.startDate!.day);
+    final tripEnd = _selectedTrip!.endDate != null
+        ? DateTime(_selectedTrip!.endDate!.year, _selectedTrip!.endDate!.month, _selectedTrip!.endDate!.day)
+        : null;
 
-    if (today.isBefore(tripStart)) {
-      // Trip hasn't started yet, day 1 is first valid
+    // Past trip: Allow all days
+    if (tripEnd != null && tripEnd.isBefore(today)) {
       return 1;
-    } else {
-      // Trip has started, today is the first valid day
-      return today.difference(tripStart).inDays + 1;
     }
+
+    // Future trip: Start from day 1
+    if (today.isBefore(tripStart)) {
+      return 1;
+    }
+
+    // Ongoing trip: Start from today's day number
+    final currentDay = today.difference(tripStart).inDays + 1;
+    final totalDays = _getTripDays(_selectedTrip!);
+
+    // Ensure we don't go beyond trip duration
+    return currentDay > totalDays ? totalDays : currentDay;
   }
 
-  /// Get valid days (today and future days only)
+  /// Get valid days for the selected trip
   List<int> _getValidDays() {
     final totalDays = _getTripDays(_selectedTrip!);
     final firstValid = _getFirstValidDay();
 
-    // Return days from firstValid to totalDays
-    return List.generate(
-      totalDays - firstValid + 1,
-      (index) => firstValid + index,
-    );
+    // For past trips or when firstValid is 1, show all days
+    if (firstValid == 1) {
+      return List.generate(totalDays, (index) => index + 1);
+    }
+
+    // For ongoing trips, show from current day to end
+    final remainingDays = totalDays - firstValid + 1;
+    if (remainingDays <= 0) {
+      // Trip has ended, show all days
+      return List.generate(totalDays, (index) => index + 1);
+    }
+
+    return List.generate(remainingDays, (index) => firstValid + index);
   }
 
   /// Check if a day is in the past
