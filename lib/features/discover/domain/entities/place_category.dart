@@ -153,7 +153,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return 'wildlife sanctuary national park';
       case PlaceCategory.religious:
-        return 'famous temple hindu temple church mosque masjid cathedral gurudwara shrine dargah synagogue mandir kovil';
+        return 'temple church mosque cathedral gurudwara shrine dargah synagogue monastery basilica mandir kovil masjid pagoda';
       case PlaceCategory.nature:
         return 'waterfall lake garden nature';
       case PlaceCategory.urban:
