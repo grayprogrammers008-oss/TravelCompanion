@@ -163,7 +163,7 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.honeymoon:
         return 'resort spa luxury hotel romantic';
       case PlaceCategory.pilgrimage:
-        return 'pilgrimage temple mandir church mosque cathedral gurudwara dargah shrine monastery basilica synagogue kovil spiritual sacred holy';
+        return 'hindu temple mandir kovil shrine temple pilgrimage spiritual sacred holy place worship church mosque cathedral gurudwara dargah monastery synagogue';
       case PlaceCategory.seniorFriendly:
         return 'garden park peaceful scenic viewpoint accessible';
     }
