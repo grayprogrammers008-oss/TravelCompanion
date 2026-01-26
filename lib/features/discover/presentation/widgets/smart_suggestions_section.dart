@@ -53,6 +53,52 @@ class _SmartSuggestionsSectionState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Main "For You" Header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple.shade400,
+                      Colors.blue.shade400,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'For You',
+                      style: context.titleMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Smart suggestions just for you',
+                      style: context.bodySmall.copyWith(
+                        color: context.textColor.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
         // Time-based suggestion banner
         _TimeSuggestionBanner(
           suggestion: timeSuggestion,
@@ -90,10 +136,10 @@ class _SmartSuggestionsSectionState
         // Personalized suggestions (if user has favorites)
         if (personalized.isNotEmpty)
           _SuggestionRow(
-            title: 'For You',
-            icon: Icons.auto_awesome,
-            iconColor: Colors.purple,
-            subtitle: 'Based on your favorites',
+            title: 'Similar to Your Favorites',
+            icon: Icons.favorite,
+            iconColor: Colors.pink,
+            subtitle: 'Places you might love',
             places: personalized,
             onPlaceTapped: widget.onPlaceTapped,
             onQuickAdd: widget.onQuickAdd,

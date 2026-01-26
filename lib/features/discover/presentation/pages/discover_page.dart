@@ -15,7 +15,6 @@ import '../widgets/place_card.dart';
 import '../widgets/smart_suggestions_section.dart';
 import '../widgets/place_detail_sheet.dart';
 import '../widgets/popular_destinations_section.dart';
-import '../widgets/recommendations_section.dart';
 import '../widgets/trip_planning_assistant_sheet.dart';
 
 /// Discover Page - Browse tourist places by category
@@ -193,14 +192,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               child: _buildLocationPrompt(discoverState),
             ),
 
-            // AI-Powered Recommendations (always visible)
-            SliverToBoxAdapter(
-              child: RecommendationsSection(
-                onPlaceTapped: _onPlaceTapped,
-                onQuickAdd: _showQuickAddToTrip,
-              ),
-            ),
-
             // Popular Destinations (PROMINENT)
             SliverToBoxAdapter(
               child: PopularDestinationsSection(
@@ -224,14 +215,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             // Location indicator with controls
             SliverToBoxAdapter(
               child: _buildLocationIndicator(discoverState),
-            ),
-
-            // AI-Powered Recommendations (always visible)
-            SliverToBoxAdapter(
-              child: RecommendationsSection(
-                onPlaceTapped: _onPlaceTapped,
-                onQuickAdd: _showQuickAddToTrip,
-              ),
             ),
 
             // Category Selection Section (IMMEDIATE ACTION)
