@@ -282,7 +282,8 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   }
 
   /// Load places for a specific category (offline-first)
-  Future<void> loadPlaces(PlaceCategory category) async {
+  /// Set [skipCache] to true to force fresh API data (useful when distance changes)
+  Future<void> loadPlaces(PlaceCategory category, {bool skipCache = false}) async {
     if (!state.hasLocation) {
       state = state.copyWith(error: 'Location not available');
       return;
@@ -318,8 +319,9 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       debugPrint('🔍 [Discover] Loading ${category.displayName}...');
 
       // Step 1: Try to load from cache first (instant response)
+      // Skip cache if explicitly requested (e.g., when distance changes)
       List<DiscoverPlace>? cachedPlaces;
-      if (_cacheInitialized) {
+      if (_cacheInitialized && !skipCache) {
         cachedPlaces = await _localDataSource.getPlaces(
           category: category,
           latitude: lat,
@@ -335,6 +337,8 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
             error: null,
           );
         }
+      } else if (skipCache) {
+        debugPrint('⏭️ [Discover] Skipping cache, fetching fresh data from API...');
       }
 
       // Step 2: Check connectivity and fetch from API if available
@@ -626,10 +630,20 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   /// Change the selected distance and reload places
   Future<void> changeDistance(DiscoverDistance distance) async {
     if (distance == state.selectedDistance) return;
-    state = state.copyWith(selectedDistance: distance);
+
+    // Clear current places and show loading immediately when distance changes
+    state = state.copyWith(
+      selectedDistance: distance,
+      isLoading: true,
+      places: [], // Clear old places to avoid showing stale data
+      error: null,
+    );
+
     debugPrint('📏 [Discover] Distance changed to: ${distance.displayName}');
+
     if (state.hasLocation) {
-      await loadPlaces(state.selectedCategory);
+      // Skip cache to force fresh API data with new distance
+      await loadPlaces(state.selectedCategory, skipCache: true);
     }
   }
 
