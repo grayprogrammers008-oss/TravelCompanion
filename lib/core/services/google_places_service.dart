@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -536,73 +535,31 @@ class GooglePlacesService {
 
       debugPrint('📊 [PlacesAPI] Total places fetched: ${allPlaces.length} across $pageCount page(s)');
 
-      // If using distance ranking and radius was specified, filter by distance
-      // (since rankby=distance doesn't support radius parameter)
-      var filteredPlaces = allPlaces;
-      if (rankBy == 'distance' && radius != null) {
-        filteredPlaces = allPlaces.where((place) {
-          if (place.latitude == null || place.longitude == null) return true;
-          final distance = _calculateDistance(
-            latitude,
-            longitude,
-            place.latitude!,
-            place.longitude!,
-          );
-          return distance <= radius; // Filter by radius in meters
-        }).toList();
-        debugPrint('📍 [PlacesAPI] Filtered to ${filteredPlaces.length} places within ${radius}m radius');
-      }
+      // Sort by rating (highest first), then by number of reviews
+      // This ensures best quality results appear first
+      allPlaces.sort((a, b) {
+        // Places with ratings come first
+        if (a.rating == null && b.rating == null) return 0;
+        if (a.rating == null) return 1;
+        if (b.rating == null) return -1;
 
-      // Sort based on ranking type
-      if (rankBy == 'distance') {
-        // Already sorted by distance from API, no need to re-sort
-        debugPrint('📏 [PlacesAPI] Results already sorted by distance');
-      } else {
-        // Sort by rating (highest first), then by number of reviews
-        filteredPlaces.sort((a, b) {
-          // Places with ratings come first
-          if (a.rating == null && b.rating == null) return 0;
-          if (a.rating == null) return 1;
-          if (b.rating == null) return -1;
+        // Compare by rating
+        final ratingCompare = b.rating!.compareTo(a.rating!);
+        if (ratingCompare != 0) return ratingCompare;
 
-          // Compare by rating
-          final ratingCompare = b.rating!.compareTo(a.rating!);
-          if (ratingCompare != 0) return ratingCompare;
+        // If ratings are equal, compare by number of reviews
+        final aReviews = a.userRatingsTotal ?? 0;
+        final bReviews = b.userRatingsTotal ?? 0;
+        return bReviews.compareTo(aReviews);
+      });
 
-          // If ratings are equal, compare by number of reviews
-          final aReviews = a.userRatingsTotal ?? 0;
-          final bReviews = b.userRatingsTotal ?? 0;
-          return bReviews.compareTo(aReviews);
-        });
-      }
-
-      return filteredPlaces.take(maxResults).toList();
+      return allPlaces.take(maxResults).toList();
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Google Places Nearby error: $e');
       }
       return allPlaces; // Return what we got before the error
     }
-  }
-
-  /// Calculate distance between two coordinates in meters using Haversine formula
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const double earthRadius = 6371000; // Earth's radius in meters
-    final dLat = _degreesToRadians(lat2 - lat1);
-    final dLon = _degreesToRadians(lon2 - lon1);
-
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(_degreesToRadians(lat1)) *
-            math.cos(_degreesToRadians(lat2)) *
-            math.sin(dLon / 2) *
-            math.sin(dLon / 2);
-
-    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
-    return earthRadius * c;
-  }
-
-  double _degreesToRadians(double degrees) {
-    return degrees * math.pi / 180;
   }
 
   /// Clear all caches

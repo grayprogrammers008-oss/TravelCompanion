@@ -140,32 +140,33 @@ extension PlaceCategoryExtension on PlaceCategory {
   }
 
   /// Google Places API keyword for nearby search
+  /// Keep keywords short (2-5 words) for better API results
   String get googlePlaceKeyword {
     switch (this) {
       case PlaceCategory.beach:
         return 'beach';
       case PlaceCategory.hillStation:
-        return 'hill station mountain viewpoint';
+        return 'hill station mountain';
       case PlaceCategory.heritage:
-        return 'heritage monument historical fort palace castle museum archaeological ruins landmark memorial statue colonial ancient UNESCO historical site';
+        return 'heritage monument historical';
       case PlaceCategory.adventure:
-        return 'adventure trekking hiking rafting paragliding zip line rock climbing bungee jumping skydiving kayaking scuba diving snorkeling safari jeep tour mountain biking camping adventure sports activity center';
+        return 'adventure sports trekking';
       case PlaceCategory.wildlife:
-        return 'wildlife sanctuary national park safari zoo nature reserve tiger reserve bird sanctuary elephant reserve biosphere jungle forest conservation area animal viewing wildlife park game reserve';
+        return 'wildlife sanctuary zoo';
       case PlaceCategory.religious:
-        return 'hindu temple mandir kovil temple shrine place of worship church mosque masjid cathedral gurudwara dargah pagoda monastery basilica synagogue';
+        return 'temple church mosque';
       case PlaceCategory.nature:
-        return 'waterfall lake garden nature';
+        return 'waterfall lake garden';
       case PlaceCategory.urban:
         return 'shopping mall entertainment';
       case PlaceCategory.familyKids:
-        return 'amusement park water park kids play area zoo aquarium';
+        return 'amusement park zoo';
       case PlaceCategory.honeymoon:
-        return 'resort spa luxury hotel romantic';
+        return 'resort spa romantic';
       case PlaceCategory.pilgrimage:
-        return 'hindu temple mandir kovil shrine temple pilgrimage spiritual sacred holy place worship church mosque cathedral gurudwara dargah monastery synagogue';
+        return 'temple pilgrimage shrine';
       case PlaceCategory.seniorFriendly:
-        return 'garden park peaceful scenic viewpoint accessible';
+        return 'garden park peaceful';
     }
   }
 

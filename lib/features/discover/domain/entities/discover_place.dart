@@ -178,7 +178,7 @@ enum DiscoverDistance {
 
 /// State class for managing discover places
 class DiscoverState {
-  final PlaceCategory selectedCategory;
+  final PlaceCategory? selectedCategory; // null = "Popular Nearby" (all categories)
   final List<DiscoverPlace> places;
   final bool isLoading;
   final String? error;
@@ -197,7 +197,7 @@ class DiscoverState {
   final bool isPermissionDeniedForever; // True if location permission permanently denied
 
   const DiscoverState({
-    this.selectedCategory = PlaceCategory.beach,
+    this.selectedCategory, // Default to null (Popular Nearby - all categories)
     this.places = const [],
     this.isLoading = false,
     this.error,

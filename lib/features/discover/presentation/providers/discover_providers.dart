@@ -283,9 +283,16 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
 
   /// Load places for a specific category (offline-first)
   /// Set [skipCache] to true to force fresh API data (useful when distance changes)
-  Future<void> loadPlaces(PlaceCategory category, {bool skipCache = false}) async {
+  /// Pass null for category to load "Popular Nearby" (all categories combined)
+  Future<void> loadPlaces(PlaceCategory? category, {bool skipCache = false}) async {
     if (!state.hasLocation) {
       state = state.copyWith(error: 'Location not available');
+      return;
+    }
+
+    // If category is null, load "Popular Nearby" from all categories
+    if (category == null) {
+      await _loadPopularNearby(skipCache: skipCache);
       return;
     }
 
@@ -355,18 +362,15 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
           debugPrint('🌍 [Discover] Enhanced keyword with country: "$keyword"');
         }
 
-        // Use distance-based ranking for religious/pilgrimage to get ALL nearby places
-        // Otherwise use prominence-based ranking (popular places first)
-        final useDistanceRanking = category == PlaceCategory.religious ||
-                                    category == PlaceCategory.pilgrimage;
-
+        // Use prominence-based ranking for all categories to ensure we get results
+        // within the specified radius. Fetch up to 60 results (3 pages) for better coverage.
         final nearbyPlaces = await _placesService.searchNearby(
           latitude: lat,
           longitude: lng,
           radius: state.selectedDistance.radiusInMeters,
           type: category.googlePlaceType,
           keyword: keyword,
-          rankBy: useDistanceRanking ? 'distance' : 'prominence',
+          rankBy: 'prominence', // Always use prominence to respect radius parameter
           maxResults: 60, // Fetch up to 60 results (3 pages)
         );
 
@@ -420,6 +424,110 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
           error: 'Failed to load places: $e',
         );
       }
+    }
+  }
+
+  /// Load "Popular Nearby" - combines multiple categories for diverse results
+  Future<void> _loadPopularNearby({bool skipCache = false}) async {
+    if (!state.hasLocation) {
+      state = state.copyWith(error: 'Location not available');
+      return;
+    }
+
+    final lat = state.userLatitude!;
+    final lng = state.userLongitude!;
+
+    state = state.copyWith(
+      isLoading: true,
+      selectedCategory: null, // null = Popular Nearby
+      error: null,
+    );
+
+    try {
+      debugPrint('🔍 [Discover] Loading Popular Nearby (all categories)...');
+
+      // Check connectivity
+      final hasInternet = await _hasConnectivity();
+
+      if (!hasInternet) {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'No internet connection. Please check your network and try again.',
+        );
+        return;
+      }
+
+      // Fetch from top categories for diverse results
+      // Focus on universally available categories: heritage, nature, religious, urban, adventure
+      final categoriesToFetch = [
+        PlaceCategory.heritage,
+        PlaceCategory.nature,
+        PlaceCategory.religious,
+        PlaceCategory.urban,
+        PlaceCategory.adventure,
+      ];
+
+      final allPlaces = <DiscoverPlace>[];
+
+      debugPrint('📏 [Discover] Using distance: ${state.selectedDistance.displayName} (${state.selectedDistance.radiusInMeters}m)');
+
+      // Fetch from each category (limit 15 per category to get 60-75 total)
+      for (final category in categoriesToFetch) {
+        try {
+          String keyword = category.googlePlaceKeyword;
+          if (state.selectedCountry != null) {
+            keyword = '${category.googlePlaceKeyword} ${state.selectedCountry}';
+          }
+
+          final nearbyPlaces = await _placesService.searchNearby(
+            latitude: lat,
+            longitude: lng,
+            radius: state.selectedDistance.radiusInMeters,
+            type: category.googlePlaceType,
+            keyword: keyword,
+            rankBy: 'prominence',
+            maxResults: 15, // Limit per category
+          );
+
+          final discoverPlaces = nearbyPlaces
+              .map((place) => DiscoverPlace.fromNearbyPlace(place, category))
+              .toList();
+
+          allPlaces.addAll(discoverPlaces);
+          debugPrint('✅ [Discover] ${category.displayName}: ${discoverPlaces.length} places');
+        } catch (e) {
+          debugPrint('⚠️ [Discover] Error fetching ${category.displayName}: $e');
+          // Continue with other categories
+        }
+      }
+
+      debugPrint('📊 [Discover] Total Popular Nearby: ${allPlaces.length} places from ${categoriesToFetch.length} categories');
+
+      // Sort by rating (highest first)
+      allPlaces.sort((a, b) {
+        if (a.rating == null && b.rating == null) return 0;
+        if (a.rating == null) return 1;
+        if (b.rating == null) return -1;
+        return b.rating!.compareTo(a.rating!);
+      });
+
+      // Take top 60 results
+      final topPlaces = allPlaces.take(60).toList();
+
+      state = state.copyWith(
+        places: topPlaces,
+        isLoading: false,
+        isFromCache: false,
+        error: null,
+      );
+
+      debugPrint('✅ [Discover] Showing ${topPlaces.length} top-rated places nearby');
+    } catch (e) {
+      debugPrint('❌ [Discover] Error loading Popular Nearby: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to load places: $e',
+      );
     }
   }
 
@@ -918,7 +1026,13 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   };
 
   /// Get coordinates for country based on category (uses popular tourist destination)
-  Map<String, double>? _getCoordinatesForCountryAndCategory(String country, PlaceCategory category) {
+  /// If category is null, returns default country coordinates
+  Map<String, double>? _getCoordinatesForCountryAndCategory(String country, PlaceCategory? category) {
+    // If no category specified (Popular Nearby), use default country coordinates
+    if (category == null) {
+      return _countryCoordinates[country];
+    }
+
     // First, try to get category-specific destination
     final categoryDestinations = _popularDestinations[country];
     if (categoryDestinations != null && categoryDestinations.containsKey(category)) {
@@ -965,7 +1079,10 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   }
 
   /// Get the name of the popular destination for a country and category
-  String? _getPopularDestinationName(String country, PlaceCategory category) {
+  /// Returns null if category is null (Popular Nearby mode)
+  String? _getPopularDestinationName(String country, PlaceCategory? category) {
+    if (category == null) return null; // Popular Nearby has no specific destination
+
     final categoryDestinations = _popularDestinations[country];
     if (categoryDestinations != null && categoryDestinations.containsKey(category)) {
       return categoryDestinations[category]!['name'] as String?;

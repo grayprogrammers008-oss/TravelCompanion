@@ -295,6 +295,8 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   }
 
   Widget _buildCategorySection(DiscoverState discoverState, int placesCount) {
+    final selectedCategory = discoverState.selectedCategory;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Column(
@@ -315,13 +317,13 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: discoverState.selectedCategory.color.withValues(alpha: 0.15),
+                    color: (selectedCategory?.color ?? context.primaryColor).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '$placesCount found',
                     style: context.bodySmall.copyWith(
-                      color: discoverState.selectedCategory.color,
+                      color: selectedCategory?.color ?? context.primaryColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -329,7 +331,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             ],
           ),
           const SizedBox(height: 12),
-          // Category grid - 4 columns
+          // Category grid - 4 columns, first item is "Popular Nearby"
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -339,10 +341,17 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               crossAxisSpacing: 8,
               childAspectRatio: 0.9,
             ),
-            itemCount: PlaceCategory.values.length,
+            itemCount: PlaceCategory.values.length + 1, // +1 for "Popular Nearby"
             itemBuilder: (context, index) {
-              final category = PlaceCategory.values[index];
-              final isSelected = category == discoverState.selectedCategory;
+              // First item is "Popular Nearby" (null category)
+              if (index == 0) {
+                final isSelected = selectedCategory == null;
+                return _buildPopularNearbyItem(isSelected);
+              }
+
+              // Rest are regular categories
+              final category = PlaceCategory.values[index - 1];
+              final isSelected = category == selectedCategory;
               return _buildCategoryItem(category, isSelected);
             },
           ),
@@ -393,6 +402,63 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected
                       ? category.color
+                      : context.textColor.withValues(alpha: 0.7),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPopularNearbyItem(bool isSelected) {
+    final popularColor = context.primaryColor;
+
+    return InkWell(
+      onTap: () => ref.read(discoverStateProvider.notifier).loadPlaces(null),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected
+              ? popularColor.withValues(alpha: 0.2)
+              : context.cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? popularColor
+                : context.textColor.withValues(alpha: 0.1),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: popularColor.withValues(alpha: isSelected ? 0.3 : 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.stars_rounded,
+                size: 18,
+                color: isSelected ? popularColor : popularColor.withValues(alpha: 0.8),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Flexible(
+              child: Text(
+                'Popular',
+                style: context.bodySmall.copyWith(
+                  fontSize: 9,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected
+                      ? popularColor
                       : context.textColor.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
@@ -789,7 +855,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${sortedPlaces.length} ${discoverState.selectedCategory.displayName.toLowerCase()} sorted by distance',
+                      '${sortedPlaces.length} ${discoverState.selectedCategory?.displayName.toLowerCase() ?? 'places'} sorted by distance',
                       style: context.bodySmall.copyWith(
                         color: Colors.white.withValues(alpha: 0.8),
                       ),
@@ -857,7 +923,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: discoverState.selectedCategory.color,
+                  color: discoverState.selectedCategory?.color ?? context.primaryColor,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -1021,7 +1087,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     if (discoverState.userLatitude == null || discoverState.userLongitude == null) return;
 
     // URL encode the keyword for safe URL usage
-    final keyword = Uri.encodeComponent(discoverState.selectedCategory.googlePlaceKeyword);
+    final keyword = Uri.encodeComponent(
+      discoverState.selectedCategory?.googlePlaceKeyword ?? 'tourist attractions'
+    );
     final url = Uri.parse(
       'https://www.google.com/maps/search/$keyword/@${discoverState.userLatitude},${discoverState.userLongitude},14z',
     );
@@ -1092,16 +1160,24 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
   Widget _buildEmptyState(DiscoverState discoverState) {
     final isShowingFavorites = discoverState.showFavoritesOnly;
+    final selectedCategory = discoverState.selectedCategory;
 
     String message;
     IconData icon;
+    Color iconColor;
 
     if (isShowingFavorites) {
       message = 'No favorite places yet. Tap the heart icon on places to add them to your favorites.';
       icon = Icons.favorite_border;
+      iconColor = Colors.red.withValues(alpha: 0.5);
+    } else if (selectedCategory == null) {
+      message = 'No popular places found nearby. Try searching a different location or adjusting the distance.';
+      icon = Icons.stars_rounded;
+      iconColor = context.primaryColor.withValues(alpha: 0.5);
     } else {
-      message = 'No ${discoverState.selectedCategory.displayName.toLowerCase()} found nearby. Try a different category or increase the distance.';
-      icon = discoverState.selectedCategory.icon;
+      message = 'No ${selectedCategory.displayName.toLowerCase()} found nearby. Try a different category or increase the distance.';
+      icon = selectedCategory.icon;
+      iconColor = selectedCategory.color.withValues(alpha: 0.5);
     }
 
     return Center(
@@ -1113,7 +1189,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             Icon(
               icon,
               size: 64,
-              color: discoverState.selectedCategory.color.withValues(alpha: 0.5),
+              color: iconColor,
             ),
             const SizedBox(height: 16),
             Text(
