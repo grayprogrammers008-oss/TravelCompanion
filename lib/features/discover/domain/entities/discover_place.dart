@@ -153,12 +153,14 @@ class DiscoverPlace {
 enum DiscoverViewMode { grid, map }
 
 /// Distance filter options for discover
+/// NOTE: Google Places API has a maximum radius of 50,000 meters (50km)
+/// Using larger values will result in limited or no results
 enum DiscoverDistance {
-  nearby(50, 'Nearby (50 km)'),
-  near100(100, '100 km'),
-  near200(200, '200 km'),
-  near300(300, '300 km'),
-  near500(500, '500 km');
+  veryNear(5, 'Very Near (5 km)'),
+  nearby(10, 'Nearby (10 km)'),
+  near20(20, '20 km'),
+  near30(30, '30 km'),
+  far(50, 'Far (50 km)'); // Google API maximum
 
   final int kilometers;
   final String displayName;
@@ -166,7 +168,12 @@ enum DiscoverDistance {
   const DiscoverDistance(this.kilometers, this.displayName);
 
   /// Get radius in meters for API calls
-  int get radiusInMeters => kilometers * 1000;
+  /// Maximum value is capped at 50,000 (Google Places API limit)
+  int get radiusInMeters {
+    final meters = kilometers * 1000;
+    // Ensure we don't exceed Google's 50km limit
+    return meters > 50000 ? 50000 : meters;
+  }
 }
 
 /// State class for managing discover places
