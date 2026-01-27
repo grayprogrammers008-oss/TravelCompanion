@@ -355,12 +355,19 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
           debugPrint('🌍 [Discover] Enhanced keyword with country: "$keyword"');
         }
 
+        // Use distance-based ranking for religious/pilgrimage to get ALL nearby places
+        // Otherwise use prominence-based ranking (popular places first)
+        final useDistanceRanking = category == PlaceCategory.religious ||
+                                    category == PlaceCategory.pilgrimage;
+
         final nearbyPlaces = await _placesService.searchNearby(
           latitude: lat,
           longitude: lng,
           radius: state.selectedDistance.radiusInMeters,
           type: category.googlePlaceType,
           keyword: keyword,
+          rankBy: useDistanceRanking ? 'distance' : 'prominence',
+          maxResults: 60, // Fetch up to 60 results (3 pages)
         );
 
         final discoverPlaces = nearbyPlaces

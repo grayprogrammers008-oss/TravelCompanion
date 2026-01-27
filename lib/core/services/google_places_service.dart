@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -428,10 +429,12 @@ class GooglePlacesService {
     );
   }
 
-  /// Search for nearby places
+  /// Search for nearby places with pagination support
   ///
   /// [rankBy] - 'prominence' (default, by popularity) or 'distance'
+  /// [maxResults] - Maximum number of results to return (default 60, max 60)
   /// Note: When using rankBy=distance, you must specify a type or keyword
+  /// Note: Each page of results counts as one API call
   Future<List<NearbyPlace>> searchNearby({
     required double latitude,
     required double longitude,
@@ -439,6 +442,7 @@ class GooglePlacesService {
     String? type,
     String? keyword,
     String rankBy = 'prominence',
+    int maxResults = 60, // Fetch up to 3 pages (20 results per page)
   }) async {
     // Initialize usage tracking
     await _ensureInitialized();
@@ -449,84 +453,156 @@ class GooglePlacesService {
       return [];
     }
 
+    final allPlaces = <NearbyPlace>[];
+    String? nextPageToken;
+    int pageCount = 0;
+    final maxPages = (maxResults / 20).ceil().clamp(1, 3); // Max 3 pages (60 results)
+
     try {
-      final params = <String, String>{
-        'location': '$latitude,$longitude',
-        'key': apiKey,
-      };
+      do {
+        final params = <String, String>{
+          'location': '$latitude,$longitude',
+          'key': apiKey,
+        };
 
-      // rankby=distance requires type or keyword, and cannot use radius
-      if (rankBy == 'distance' && (type != null || keyword != null)) {
-        params['rankby'] = 'distance';
-      } else if (radius != null) {
-        params['radius'] = radius.toString();
-      } else {
-        // Default radius if not using rankby=distance
-        params['radius'] = '15000'; // 15km default
-      }
-
-      if (type != null) params['type'] = type;
-      if (keyword != null) params['keyword'] = keyword;
-
-      final uri = Uri.parse('$_baseUrl/nearbysearch/json').replace(
-        queryParameters: params,
-      );
-
-      debugPrint('🔍 [PlacesAPI] Nearby search: ${uri.toString().substring(0, 100)}...');
-
-      final response = await _client.get(uri);
-
-      // Count this request
-      await _incrementCounter(
-        _prefNearbyCount,
-        () => _nearbyCount,
-        (v) => _nearbyCount = v,
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final status = data['status'] as String;
-
-        debugPrint('✅ [PlacesAPI] Nearby status: $status, count: ${(data['results'] as List?)?.length ?? 0}');
-        debugPrint('✅ [PlacesAPI] Nearby: $_nearbyCount/$_dailyNearbyLimit used today');
-
-        if (status == 'OK' || status == 'ZERO_RESULTS') {
-          final places = (data['results'] as List? ?? [])
-              .map((p) => NearbyPlace.fromJson(p as Map<String, dynamic>))
-              .toList();
-
-          // Sort by rating (highest first), then by number of reviews
-          places.sort((a, b) {
-            // Places with ratings come first
-            if (a.rating == null && b.rating == null) return 0;
-            if (a.rating == null) return 1;
-            if (b.rating == null) return -1;
-
-            // Compare by rating
-            final ratingCompare = b.rating!.compareTo(a.rating!);
-            if (ratingCompare != 0) return ratingCompare;
-
-            // If ratings are equal, compare by number of reviews
-            final aReviews = a.userRatingsTotal ?? 0;
-            final bReviews = b.userRatingsTotal ?? 0;
-            return bReviews.compareTo(aReviews);
-          });
-
-          return places;
+        // rankby=distance requires type or keyword, and cannot use radius
+        // Note: Google API will return all places when using rankby=distance,
+        // so we need to filter by distance ourselves later
+        if (rankBy == 'distance' && (type != null || keyword != null)) {
+          params['rankby'] = 'distance';
+          // Don't set radius when using distance ranking
+        } else if (radius != null) {
+          params['radius'] = radius.toString();
         } else {
-          debugPrint('⚠️ [PlacesAPI] Nearby search status: $status');
-          if (data['error_message'] != null) {
-            debugPrint('⚠️ [PlacesAPI] Error: ${data['error_message']}');
-          }
+          // Default radius if not using rankby=distance
+          params['radius'] = '15000'; // 15km default
         }
+
+        if (type != null) params['type'] = type;
+        if (keyword != null) params['keyword'] = keyword;
+        if (nextPageToken != null) params['pagetoken'] = nextPageToken;
+
+        final uri = Uri.parse('$_baseUrl/nearbysearch/json').replace(
+          queryParameters: params,
+        );
+
+        debugPrint('🔍 [PlacesAPI] Nearby search (page ${pageCount + 1}): ${uri.toString().substring(0, 100)}...');
+
+        final response = await _client.get(uri);
+
+        // Count this request
+        await _incrementCounter(
+          _prefNearbyCount,
+          () => _nearbyCount,
+          (v) => _nearbyCount = v,
+        );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final status = data['status'] as String;
+
+          debugPrint('✅ [PlacesAPI] Nearby status: $status, count: ${(data['results'] as List?)?.length ?? 0}');
+          debugPrint('✅ [PlacesAPI] Nearby: $_nearbyCount/$_dailyNearbyLimit used today');
+
+          if (status == 'OK' || status == 'ZERO_RESULTS') {
+            final places = (data['results'] as List? ?? [])
+                .map((p) => NearbyPlace.fromJson(p as Map<String, dynamic>))
+                .toList();
+
+            allPlaces.addAll(places);
+            pageCount++;
+
+            // Get next page token if available
+            nextPageToken = data['next_page_token'] as String?;
+
+            // Google requires a short delay before using next_page_token
+            if (nextPageToken != null && pageCount < maxPages && canMakeNearbyRequest) {
+              debugPrint('⏳ [PlacesAPI] Waiting 2s before fetching next page...');
+              await Future.delayed(const Duration(seconds: 2));
+            } else {
+              nextPageToken = null; // Stop pagination
+            }
+          } else {
+            debugPrint('⚠️ [PlacesAPI] Nearby search status: $status');
+            if (data['error_message'] != null) {
+              debugPrint('⚠️ [PlacesAPI] Error: ${data['error_message']}');
+            }
+            nextPageToken = null; // Stop on error
+          }
+        } else {
+          nextPageToken = null; // Stop on HTTP error
+        }
+      } while (nextPageToken != null && pageCount < maxPages && canMakeNearbyRequest);
+
+      debugPrint('📊 [PlacesAPI] Total places fetched: ${allPlaces.length} across $pageCount page(s)');
+
+      // If using distance ranking and radius was specified, filter by distance
+      // (since rankby=distance doesn't support radius parameter)
+      var filteredPlaces = allPlaces;
+      if (rankBy == 'distance' && radius != null) {
+        filteredPlaces = allPlaces.where((place) {
+          if (place.latitude == null || place.longitude == null) return true;
+          final distance = _calculateDistance(
+            latitude,
+            longitude,
+            place.latitude!,
+            place.longitude!,
+          );
+          return distance <= radius; // Filter by radius in meters
+        }).toList();
+        debugPrint('📍 [PlacesAPI] Filtered to ${filteredPlaces.length} places within ${radius}m radius');
       }
-      return [];
+
+      // Sort based on ranking type
+      if (rankBy == 'distance') {
+        // Already sorted by distance from API, no need to re-sort
+        debugPrint('📏 [PlacesAPI] Results already sorted by distance');
+      } else {
+        // Sort by rating (highest first), then by number of reviews
+        filteredPlaces.sort((a, b) {
+          // Places with ratings come first
+          if (a.rating == null && b.rating == null) return 0;
+          if (a.rating == null) return 1;
+          if (b.rating == null) return -1;
+
+          // Compare by rating
+          final ratingCompare = b.rating!.compareTo(a.rating!);
+          if (ratingCompare != 0) return ratingCompare;
+
+          // If ratings are equal, compare by number of reviews
+          final aReviews = a.userRatingsTotal ?? 0;
+          final bReviews = b.userRatingsTotal ?? 0;
+          return bReviews.compareTo(aReviews);
+        });
+      }
+
+      return filteredPlaces.take(maxResults).toList();
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Google Places Nearby error: $e');
       }
-      return [];
+      return allPlaces; // Return what we got before the error
     }
+  }
+
+  /// Calculate distance between two coordinates in meters using Haversine formula
+  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    const double earthRadius = 6371000; // Earth's radius in meters
+    final dLat = _degreesToRadians(lat2 - lat1);
+    final dLon = _degreesToRadians(lon2 - lon1);
+
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degreesToRadians(lat1)) *
+            math.cos(_degreesToRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return earthRadius * c;
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * math.pi / 180;
   }
 
   /// Clear all caches
