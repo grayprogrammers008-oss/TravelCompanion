@@ -284,8 +284,15 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   /// Load places for a specific category (offline-first)
   /// Set [skipCache] to true to force fresh API data (useful when distance changes)
   Future<void> loadPlaces(PlaceCategory category, {bool skipCache = false}) async {
+    debugPrint('🚀 [Discover] ===== LOAD PLACES START =====');
+    debugPrint('📂 [Discover] Category: ${category.displayName}');
+    debugPrint('⏭️ [Discover] skipCache: $skipCache');
+    debugPrint('📏 [Discover] Current distance: ${state.selectedDistance.displayName} (${state.selectedDistance.radiusInMeters}m)');
+    debugPrint('📊 [Discover] Current places count: ${state.places.length}');
+
     if (!state.hasLocation) {
       state = state.copyWith(error: 'Location not available');
+      debugPrint('❌ [Discover] No location available');
       return;
     }
 
@@ -314,6 +321,8 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       locationName: locationName,
       error: null,
     );
+
+    debugPrint('✅ [Discover] State updated with isLoading=true');
 
     try {
       debugPrint('🔍 [Discover] Loading ${category.displayName}...');
@@ -386,6 +395,7 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
           isFromCache: false,
           error: null,
         );
+        debugPrint('✅ [Discover] State updated with ${discoverPlaces.length} fresh places from API');
       } else if (cachedPlaces == null || cachedPlaces.isEmpty) {
         // No internet and no cache - show error
         debugPrint('📴 [Discover] No internet and no cached data');
@@ -414,6 +424,9 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
         );
       }
     }
+
+    debugPrint('🏁 [Discover] ===== LOAD PLACES END =====');
+    debugPrint('📊 [Discover] Final state - places: ${state.places.length}, isLoading: ${state.isLoading}');
   }
 
   /// Change the selected category and load places
@@ -631,6 +644,12 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
   Future<void> changeDistance(DiscoverDistance distance) async {
     if (distance == state.selectedDistance) return;
 
+    debugPrint('🔄 [Discover] ===== DISTANCE CHANGE START =====');
+    debugPrint('📏 [Discover] Old distance: ${state.selectedDistance.displayName} (${state.selectedDistance.radiusInMeters}m)');
+    debugPrint('📏 [Discover] New distance: ${distance.displayName} (${distance.radiusInMeters}m)');
+    debugPrint('📊 [Discover] Current places count: ${state.places.length}');
+    debugPrint('📊 [Discover] Current loading state: ${state.isLoading}');
+
     // Clear current places and show loading immediately when distance changes
     state = state.copyWith(
       selectedDistance: distance,
@@ -639,12 +658,23 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       error: null,
     );
 
-    debugPrint('📏 [Discover] Distance changed to: ${distance.displayName}');
+    debugPrint('✅ [Discover] State updated after distance change');
+    debugPrint('📊 [Discover] New places count: ${state.places.length} (should be 0)');
+    debugPrint('📊 [Discover] New loading state: ${state.isLoading} (should be true)');
+    debugPrint('📊 [Discover] New selectedDistance: ${state.selectedDistance.displayName}');
 
     if (state.hasLocation) {
+      debugPrint('📍 [Discover] Has location, calling loadPlaces with skipCache=true');
       // Skip cache to force fresh API data with new distance
       await loadPlaces(state.selectedCategory, skipCache: true);
+      debugPrint('✅ [Discover] loadPlaces completed');
+      debugPrint('📊 [Discover] Final places count: ${state.places.length}');
+      debugPrint('📊 [Discover] Final loading state: ${state.isLoading}');
+    } else {
+      debugPrint('⚠️ [Discover] No location available, skipping loadPlaces');
     }
+
+    debugPrint('🔄 [Discover] ===== DISTANCE CHANGE END =====');
   }
 
   /// Default country coordinates (fallback)
