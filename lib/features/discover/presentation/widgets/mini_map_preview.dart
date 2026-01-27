@@ -10,7 +10,7 @@ class MiniMapPreview extends StatefulWidget {
   final double? userLatitude;
   final double? userLongitude;
   final double radiusKm;
-  final PlaceCategory category;
+  final PlaceCategory? category; // Nullable for "Popular Nearby" mode
   final Function(DiscoverPlace)? onPlaceTapped;
   final VoidCallback? onExpandTapped;
 
@@ -20,7 +20,7 @@ class MiniMapPreview extends StatefulWidget {
     this.userLatitude,
     this.userLongitude,
     this.radiusKm = 10,
-    required this.category,
+    this.category, // Optional - null for "Popular Nearby"
     this.onPlaceTapped,
     this.onExpandTapped,
   });
@@ -89,7 +89,7 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
                 Icon(
                   Icons.map_outlined,
                   size: 16,
-                  color: widget.category.color,
+                  color: widget.category?.color ?? context.primaryColor,
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -104,7 +104,7 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: widget.category.color.withValues(alpha: 0.1),
+                    color: (widget.category?.color ?? context.primaryColor).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -112,7 +112,7 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
                     style: context.bodySmall.copyWith(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: widget.category.color,
+                      color: widget.category?.color ?? context.primaryColor,
                     ),
                   ),
                 ),
@@ -146,7 +146,7 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
                       userLatitude: widget.userLatitude!,
                       userLongitude: widget.userLongitude!,
                       radiusKm: widget.radiusKm,
-                      categoryColor: widget.category.color,
+                      categoryColor: widget.category?.color ?? context.primaryColor,
                       pulseValue: _pulseAnimation.value,
                       selectedIndex: _selectedPlaceIndex,
                       isDarkMode: Theme.of(context).brightness == Brightness.dark,
@@ -198,11 +198,13 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
 
   Widget _buildSelectedPlaceInfo(BuildContext context, _PlaceCluster cluster) {
     final place = cluster.places.first;
+    final color = widget.category?.color ?? context.primaryColor;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: widget.category.color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -211,7 +213,7 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: widget.category.color,
+              color: color,
               shape: BoxShape.circle,
             ),
           ),
@@ -252,7 +254,7 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
                 'View',
                 style: TextStyle(
                   fontSize: 12,
-                  color: widget.category.color,
+                  color: color,
                 ),
               ),
             ),
@@ -262,6 +264,9 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
   }
 
   Widget _buildLegend(BuildContext context) {
+    final categoryColor = widget.category?.color ?? context.primaryColor;
+    final categoryName = widget.category?.displayName ?? 'Popular Places';
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
       child: Row(
@@ -290,13 +295,13 @@ class _MiniMapPreviewState extends State<MiniMapPreview>
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: widget.category.color,
+              color: categoryColor,
               shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: 4),
           Text(
-            widget.category.displayName,
+            categoryName,
             style: context.bodySmall.copyWith(
               fontSize: 9,
               color: context.textColor.withValues(alpha: 0.5),
