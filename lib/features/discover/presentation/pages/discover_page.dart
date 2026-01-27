@@ -507,136 +507,112 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: context.primaryColor.withValues(alpha: 0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         children: [
-          // Location and Search Row
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                // Location pill (tappable)
-                Expanded(
-                  child: InkWell(
-                    onTap: () => _showDestinationSearch(),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: context.primaryColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
+          // Unified Search Bar
+          Material(
+            color: context.cardColor,
+            borderRadius: BorderRadius.circular(16),
+            elevation: 2,
+            shadowColor: Colors.black.withValues(alpha: 0.1),
+            child: InkWell(
+              onTap: () => _showDestinationSearch(),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: context.primaryColor.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    // Search icon
+                    Icon(
+                      Icons.search,
+                      size: 22,
+                      color: context.primaryColor,
+                    ),
+                    const SizedBox(width: 12),
+                    // Location name and hint
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 18,
-                            color: context.primaryColor,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              locationName,
-                              style: context.bodyMedium.copyWith(
-                                color: context.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          Text(
+                            locationName,
+                            style: context.bodyLarge.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: context.textColor,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          Icon(
-                            Icons.edit_location_outlined,
-                            size: 16,
-                            color: context.primaryColor.withValues(alpha: 0.7),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Tap to search destinations',
+                            style: context.bodySmall.copyWith(
+                              color: context.textColor.withValues(alpha: 0.5),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    // Dropdown chevron
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: 24,
+                      color: context.textColor.withValues(alpha: 0.4),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                // Search button
-                IconButton.filled(
-                  onPressed: () => _showDestinationSearch(),
-                  icon: const Icon(Icons.search, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: context.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(8),
-                  ),
-                  tooltip: 'Search destination',
-                ),
-              ],
+              ),
             ),
           ),
 
-          // Distance selector
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          const SizedBox(height: 12),
+
+          // Distance selector chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
-              children: [
-                Icon(
-                  Icons.near_me,
-                  size: 16,
-                  color: context.textColor.withValues(alpha: 0.6),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Within:',
-                  style: context.bodySmall.copyWith(
-                    color: context.textColor.withValues(alpha: 0.6),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: DiscoverDistance.values.map((dist) {
-                        final isSelected = dist == distance;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: ChoiceChip(
-                            label: Text(dist.displayName),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) {
-                                ref.read(discoverStateProvider.notifier).changeDistance(dist);
-                              }
-                            },
-                            selectedColor: context.primaryColor.withValues(alpha: 0.2),
-                            checkmarkColor: context.primaryColor,
-                            labelStyle: TextStyle(
-                              fontSize: 12,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                              color: isSelected ? context.primaryColor : context.textColor.withValues(alpha: 0.7),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        );
-                      }).toList(),
+              children: DiscoverDistance.values.map((dist) {
+                final isSelected = dist == distance;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChip(
+                    label: Text(dist.displayName),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        ref.read(discoverStateProvider.notifier).changeDistance(dist);
+                      }
+                    },
+                    selectedColor: context.primaryColor.withValues(alpha: 0.15),
+                    checkmarkColor: context.primaryColor,
+                    labelStyle: TextStyle(
+                      color: isSelected
+                          ? context.primaryColor
+                          : context.textColor.withValues(alpha: 0.7),
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontSize: 13,
                     ),
+                    side: BorderSide(
+                      color: isSelected
+                          ? context.primaryColor
+                          : context.textColor.withValues(alpha: 0.2),
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    visualDensity: VisualDensity.compact,
                   ),
-                ),
-              ],
+                );
+              }).toList(),
             ),
           ),
         ],
