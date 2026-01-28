@@ -221,12 +221,12 @@ class _SmartSuggestionsSectionState
         return [
           PlaceCategory.hillStation,
           PlaceCategory.beach,
-          PlaceCategory.honeymoon,
+          PlaceCategory.nature,
         ];
       case TimeOfDay.night:
         return [
           PlaceCategory.urban,
-          PlaceCategory.honeymoon,
+          PlaceCategory.religious,
           PlaceCategory.seniorFriendly,
         ];
     }

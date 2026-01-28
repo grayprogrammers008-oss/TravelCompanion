@@ -12,7 +12,6 @@ enum PlaceCategory {
   nature,
   urban,
   familyKids,      // Family-friendly places for kids
-  honeymoon,       // Romantic destinations for couples
   pilgrimage,      // Temple/spiritual places for senior citizens
   seniorFriendly,  // Accessible, calm places for elderly
 }
@@ -40,8 +39,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return 'Urban';
       case PlaceCategory.familyKids:
         return 'Family & Kids';
-      case PlaceCategory.honeymoon:
-        return 'Honeymoon';
       case PlaceCategory.pilgrimage:
         return 'Pilgrimage';
       case PlaceCategory.seniorFriendly:
@@ -70,8 +67,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return Icons.location_city;
       case PlaceCategory.familyKids:
         return Icons.family_restroom;
-      case PlaceCategory.honeymoon:
-        return Icons.favorite;
       case PlaceCategory.pilgrimage:
         return Icons.temple_buddhist;
       case PlaceCategory.seniorFriendly:
@@ -100,8 +95,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return const Color(0xFF607D8B); // Blue Grey
       case PlaceCategory.familyKids:
         return const Color(0xFF9C27B0); // Purple
-      case PlaceCategory.honeymoon:
-        return const Color(0xFFE91E63); // Pink
       case PlaceCategory.pilgrimage:
         return const Color(0xFFFF5722); // Deep Orange (saffron-ish)
       case PlaceCategory.seniorFriendly:
@@ -130,8 +123,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return 'point_of_interest';
       case PlaceCategory.familyKids:
         return 'amusement_park';
-      case PlaceCategory.honeymoon:
-        return 'lodging'; // Hotels, resorts for romantic stays
       case PlaceCategory.pilgrimage:
         return null; // Use keyword search for better global coverage
       case PlaceCategory.seniorFriendly:
@@ -161,8 +152,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return 'shopping mall entertainment';
       case PlaceCategory.familyKids:
         return 'amusement park zoo';
-      case PlaceCategory.honeymoon:
-        return 'resort spa romantic';
       case PlaceCategory.pilgrimage:
         return 'temple pilgrimage shrine';
       case PlaceCategory.seniorFriendly:
@@ -191,8 +180,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return 'City attractions & entertainment';
       case PlaceCategory.familyKids:
         return 'Theme parks, zoos & kid-friendly attractions';
-      case PlaceCategory.honeymoon:
-        return 'Romantic getaways & couple retreats';
       case PlaceCategory.pilgrimage:
         return 'Sacred temples & spiritual journeys';
       case PlaceCategory.seniorFriendly:
@@ -221,8 +208,6 @@ extension PlaceCategoryExtension on PlaceCategory {
         return 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400';
       case PlaceCategory.familyKids:
         return 'https://images.unsplash.com/photo-1536768139911-e290a59011e4?w=400';
-      case PlaceCategory.honeymoon:
-        return 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=400';
       case PlaceCategory.pilgrimage:
         return 'https://images.unsplash.com/photo-1544006659-f0b21884ce1d?w=400';
       case PlaceCategory.seniorFriendly:

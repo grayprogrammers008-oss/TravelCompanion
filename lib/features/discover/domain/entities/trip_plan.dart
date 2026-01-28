@@ -374,8 +374,6 @@ class TripPlanEngine {
         return const Duration(hours: 2);
       case PlaceCategory.familyKids:
         return const Duration(hours: 3);
-      case PlaceCategory.honeymoon:
-        return const Duration(hours: 2);
       case PlaceCategory.pilgrimage:
         return const Duration(hours: 2);
       case PlaceCategory.seniorFriendly:
@@ -422,9 +420,6 @@ class TripPlanEngine {
         break;
       case PlaceCategory.familyKids:
         notes.add('Fun activities for the whole family');
-        break;
-      case PlaceCategory.honeymoon:
-        notes.add('Romantic setting for couples');
         break;
       case PlaceCategory.pilgrimage:
         notes.add('Dress modestly and follow temple customs');

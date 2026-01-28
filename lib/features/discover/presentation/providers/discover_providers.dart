@@ -809,7 +809,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 27.1767, 'lng': 88.2626, 'name': 'Darjeeling'},
       PlaceCategory.urban: {'lat': 28.6139, 'lng': 77.2090, 'name': 'Delhi'},
       PlaceCategory.familyKids: {'lat': 12.9716, 'lng': 77.5946, 'name': 'Bangalore'}, // Wonderla, parks
-      PlaceCategory.honeymoon: {'lat': 9.4981, 'lng': 76.2673, 'name': 'Kerala'}, // Backwaters
       PlaceCategory.pilgrimage: {'lat': 27.1751, 'lng': 78.0421, 'name': 'Mathura-Vrindavan'},
       PlaceCategory.seniorFriendly: {'lat': 15.4909, 'lng': 73.8278, 'name': 'Goa'}, // Peaceful beaches
     },
@@ -823,7 +822,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 9.1382, 'lng': 99.3267, 'name': 'Koh Samui'},
       PlaceCategory.urban: {'lat': 13.7525, 'lng': 100.4936, 'name': 'Bangkok'},
       PlaceCategory.familyKids: {'lat': 13.7525, 'lng': 100.4936, 'name': 'Bangkok'}, // Safari World, Siam Park
-      PlaceCategory.honeymoon: {'lat': 9.4561, 'lng': 100.0454, 'name': 'Koh Samui'}, // Romantic resorts
       PlaceCategory.pilgrimage: {'lat': 18.7883, 'lng': 98.9853, 'name': 'Chiang Mai'}, // Buddhist temples
       PlaceCategory.seniorFriendly: {'lat': 12.9236, 'lng': 100.8825, 'name': 'Pattaya'}, // Easy access beaches
     },
@@ -837,7 +835,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': -8.3493, 'lng': 115.5089, 'name': 'Ubud'},
       PlaceCategory.urban: {'lat': -6.2088, 'lng': 106.8456, 'name': 'Jakarta'},
       PlaceCategory.familyKids: {'lat': -6.2088, 'lng': 106.8456, 'name': 'Jakarta'}, // Ancol, Taman Mini
-      PlaceCategory.honeymoon: {'lat': -8.5069, 'lng': 115.2625, 'name': 'Bali'}, // Ubud villas
       PlaceCategory.pilgrimage: {'lat': -7.6079, 'lng': 110.2038, 'name': 'Borobudur'}, // Buddhist temple
       PlaceCategory.seniorFriendly: {'lat': -8.3493, 'lng': 115.5089, 'name': 'Ubud'}, // Peaceful gardens
     },
@@ -851,7 +848,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 36.5613, 'lng': 136.3629, 'name': 'Kanazawa'},
       PlaceCategory.urban: {'lat': 35.6762, 'lng': 139.6503, 'name': 'Tokyo'},
       PlaceCategory.familyKids: {'lat': 35.6762, 'lng': 139.6503, 'name': 'Tokyo'}, // Disneyland, Sanrio
-      PlaceCategory.honeymoon: {'lat': 35.0116, 'lng': 135.7681, 'name': 'Kyoto'}, // Ryokans
       PlaceCategory.pilgrimage: {'lat': 34.6851, 'lng': 135.8048, 'name': 'Nara'}, // Temples, shrines
       PlaceCategory.seniorFriendly: {'lat': 35.0116, 'lng': 135.7681, 'name': 'Kyoto'}, // Gardens, temples
     },
@@ -865,7 +861,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 6.4414, 'lng': 99.7329, 'name': 'Langkawi'},
       PlaceCategory.urban: {'lat': 3.1390, 'lng': 101.6869, 'name': 'Kuala Lumpur'},
       PlaceCategory.familyKids: {'lat': 3.1390, 'lng': 101.6869, 'name': 'Kuala Lumpur'}, // KLCC, Legoland
-      PlaceCategory.honeymoon: {'lat': 6.4414, 'lng': 99.7329, 'name': 'Langkawi'}, // Island resorts
       PlaceCategory.pilgrimage: {'lat': 3.0738, 'lng': 101.5183, 'name': 'Batu Caves'}, // Hindu temple
       PlaceCategory.seniorFriendly: {'lat': 4.4913, 'lng': 101.3895, 'name': 'Cameron Highlands'}, // Tea plantations
     },
@@ -879,7 +874,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 15.8794, 'lng': 108.3350, 'name': 'Hoi An'},
       PlaceCategory.urban: {'lat': 10.8231, 'lng': 106.6297, 'name': 'Ho Chi Minh'},
       PlaceCategory.familyKids: {'lat': 10.8231, 'lng': 106.6297, 'name': 'Ho Chi Minh'}, // Dam Sen, Suoi Tien
-      PlaceCategory.honeymoon: {'lat': 11.9404, 'lng': 108.4583, 'name': 'Da Lat'}, // French colonial romance
       PlaceCategory.pilgrimage: {'lat': 21.0285, 'lng': 105.8542, 'name': 'Hanoi'}, // Pagodas
       PlaceCategory.seniorFriendly: {'lat': 15.8794, 'lng': 108.3350, 'name': 'Hoi An'}, // Old town walks
     },
@@ -893,7 +887,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 6.9271, 'lng': 80.4818, 'name': 'Horton Plains'},
       PlaceCategory.urban: {'lat': 6.9271, 'lng': 79.8612, 'name': 'Colombo'},
       PlaceCategory.familyKids: {'lat': 6.9271, 'lng': 79.8612, 'name': 'Colombo'}, // Dehiwala Zoo
-      PlaceCategory.honeymoon: {'lat': 5.9549, 'lng': 80.4549, 'name': 'Bentota'}, // Beach resorts
       PlaceCategory.pilgrimage: {'lat': 7.2947, 'lng': 80.6365, 'name': 'Kandy'}, // Temple of Tooth
       PlaceCategory.seniorFriendly: {'lat': 6.9497, 'lng': 80.7891, 'name': 'Nuwara Eliya'}, // Tea country
     },
@@ -907,7 +900,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 25.7617, 'lng': 55.9882, 'name': 'Fujairah'},
       PlaceCategory.urban: {'lat': 25.2048, 'lng': 55.2708, 'name': 'Dubai'},
       PlaceCategory.familyKids: {'lat': 25.2048, 'lng': 55.2708, 'name': 'Dubai'}, // IMG Worlds, Legoland
-      PlaceCategory.honeymoon: {'lat': 25.2048, 'lng': 55.2708, 'name': 'Dubai'}, // Luxury resorts
       PlaceCategory.pilgrimage: {'lat': 24.4128, 'lng': 54.4745, 'name': 'Sheikh Zayed Mosque'},
       PlaceCategory.seniorFriendly: {'lat': 24.4539, 'lng': 54.3773, 'name': 'Abu Dhabi'}, // Corniche walks
     },
@@ -921,7 +913,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 39.6243, 'lng': 19.9217, 'name': 'Corfu'},
       PlaceCategory.urban: {'lat': 37.9838, 'lng': 23.7275, 'name': 'Athens'},
       PlaceCategory.familyKids: {'lat': 37.9838, 'lng': 23.7275, 'name': 'Athens'}, // Attica Zoo, Allou Fun Park
-      PlaceCategory.honeymoon: {'lat': 36.4618, 'lng': 25.3773, 'name': 'Santorini'}, // Romantic sunsets
       PlaceCategory.pilgrimage: {'lat': 39.7178, 'lng': 21.6304, 'name': 'Meteora'}, // Orthodox monasteries
       PlaceCategory.seniorFriendly: {'lat': 39.6243, 'lng': 19.9217, 'name': 'Corfu'}, // Peaceful island
     },
@@ -935,7 +926,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 43.7696, 'lng': 11.2558, 'name': 'Tuscany'},
       PlaceCategory.urban: {'lat': 45.4642, 'lng': 9.1900, 'name': 'Milan'},
       PlaceCategory.familyKids: {'lat': 41.9028, 'lng': 12.4964, 'name': 'Rome'}, // Rainbow MagicLand, Bioparco
-      PlaceCategory.honeymoon: {'lat': 45.4408, 'lng': 12.3155, 'name': 'Venice'}, // Romantic canals
       PlaceCategory.pilgrimage: {'lat': 41.9029, 'lng': 12.4534, 'name': 'Vatican'}, // St. Peter's Basilica
       PlaceCategory.seniorFriendly: {'lat': 43.7696, 'lng': 11.2558, 'name': 'Tuscany'}, // Scenic countryside
     },
@@ -949,7 +939,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 39.4699, 'lng': -0.3763, 'name': 'Valencia'},
       PlaceCategory.urban: {'lat': 40.4168, 'lng': -3.7038, 'name': 'Madrid'},
       PlaceCategory.familyKids: {'lat': 41.3851, 'lng': 2.1734, 'name': 'Barcelona'}, // PortAventura, Tibidabo
-      PlaceCategory.honeymoon: {'lat': 28.2916, 'lng': -16.6291, 'name': 'Tenerife'}, // Canary Islands
       PlaceCategory.pilgrimage: {'lat': 42.8805, 'lng': -8.5459, 'name': 'Santiago de Compostela'}, // Cathedral
       PlaceCategory.seniorFriendly: {'lat': 37.3886, 'lng': -5.9823, 'name': 'Seville'}, // Parks and plazas
     },
@@ -963,7 +952,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 47.3220, 'lng': -0.8910, 'name': 'Loire Valley'},
       PlaceCategory.urban: {'lat': 48.8566, 'lng': 2.3522, 'name': 'Paris'},
       PlaceCategory.familyKids: {'lat': 48.8674, 'lng': 2.7836, 'name': 'Disneyland Paris'}, // Theme parks
-      PlaceCategory.honeymoon: {'lat': 48.8566, 'lng': 2.3522, 'name': 'Paris'}, // City of Love
       PlaceCategory.pilgrimage: {'lat': 43.0930, 'lng': -0.0482, 'name': 'Lourdes'}, // Sacred pilgrimage site
       PlaceCategory.seniorFriendly: {'lat': 47.3220, 'lng': -0.8910, 'name': 'Loire Valley'}, // Châteaux tours
     },
@@ -977,7 +965,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': -16.5085, 'lng': 145.4683, 'name': 'Great Barrier Reef'},
       PlaceCategory.urban: {'lat': -37.8136, 'lng': 144.9631, 'name': 'Melbourne'},
       PlaceCategory.familyKids: {'lat': -28.0023, 'lng': 153.4145, 'name': 'Gold Coast'}, // Theme parks, Sea World
-      PlaceCategory.honeymoon: {'lat': -20.2588, 'lng': 148.8785, 'name': 'Whitsundays'}, // Romantic islands
       PlaceCategory.pilgrimage: {'lat': -25.2744, 'lng': 130.9756, 'name': 'Uluru'}, // Sacred Aboriginal site
       PlaceCategory.seniorFriendly: {'lat': -37.8136, 'lng': 144.9631, 'name': 'Melbourne'}, // Gardens, culture
     },
@@ -991,7 +978,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 37.8651, 'lng': -119.5383, 'name': 'Yosemite'},
       PlaceCategory.urban: {'lat': 40.7128, 'lng': -74.0060, 'name': 'New York'},
       PlaceCategory.familyKids: {'lat': 28.3772, 'lng': -81.5707, 'name': 'Orlando'}, // Disney World, Universal
-      PlaceCategory.honeymoon: {'lat': 21.3069, 'lng': -157.8583, 'name': 'Hawaii'}, // Romantic beaches
       PlaceCategory.pilgrimage: {'lat': 40.7580, 'lng': -73.9855, 'name': 'New York'}, // St. Patrick's Cathedral
       PlaceCategory.seniorFriendly: {'lat': 32.7157, 'lng': -117.1611, 'name': 'San Diego'}, // Mild weather, parks
     },
@@ -1005,7 +991,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 3.2028, 'lng': 73.2207, 'name': 'Ari Atoll'},
       PlaceCategory.urban: {'lat': 4.1755, 'lng': 73.5093, 'name': 'Male'},
       PlaceCategory.familyKids: {'lat': 4.1755, 'lng': 73.5093, 'name': 'Male Atoll'}, // Resort kids clubs
-      PlaceCategory.honeymoon: {'lat': 3.2028, 'lng': 73.2207, 'name': 'Ari Atoll'}, // Overwater villas
       PlaceCategory.pilgrimage: {'lat': 4.1755, 'lng': 73.5093, 'name': 'Male'}, // Islamic Heritage Centre
       PlaceCategory.seniorFriendly: {'lat': 5.4570, 'lng': 73.0707, 'name': 'Baa Atoll'}, // Relaxing resorts
     },
@@ -1019,7 +1004,6 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
       PlaceCategory.nature: {'lat': 9.6536, 'lng': 123.8573, 'name': 'Bohol'},
       PlaceCategory.urban: {'lat': 14.5995, 'lng': 120.9842, 'name': 'Manila'},
       PlaceCategory.familyKids: {'lat': 14.5995, 'lng': 120.9842, 'name': 'Manila'}, // Ocean Park, Enchanted Kingdom
-      PlaceCategory.honeymoon: {'lat': 9.8349, 'lng': 118.7384, 'name': 'Palawan'}, // El Nido, romantic beaches
       PlaceCategory.pilgrimage: {'lat': 10.3157, 'lng': 123.8854, 'name': 'Cebu'}, // Basilica del Santo Niño
       PlaceCategory.seniorFriendly: {'lat': 16.4023, 'lng': 120.5960, 'name': 'Baguio'}, // Cool climate, gardens
     },

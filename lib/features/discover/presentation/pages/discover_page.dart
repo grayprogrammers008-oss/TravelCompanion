@@ -126,6 +126,21 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               ],
             ),
             actions: [
+              // Favorites filter button
+              IconButton(
+                icon: Icon(
+                  discoverState.showFavoritesOnly
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: Colors.white,
+                ),
+                tooltip: discoverState.showFavoritesOnly
+                    ? 'Show All Places'
+                    : 'Show Favorites Only',
+                onPressed: () {
+                  ref.read(discoverStateProvider.notifier).toggleShowFavoritesOnly();
+                },
+              ),
               // Refresh button
               IconButton(
                 icon: const Icon(Icons.refresh, color: Colors.white),
