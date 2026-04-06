@@ -1,6 +1,6 @@
 # Quick GitHub Issues Checklist
 
-**Repository**: https://github.com/vinothvsbe/TravelCompanion/issues
+**Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 
 Copy this checklist to track which issues have been created.
 
@@ -101,7 +101,7 @@ Copy this checklist to track which issues have been created.
 
 ## 🚀 How to Create Issues
 
-1. Go to: https://github.com/vinothvsbe/TravelCompanion/issues
+1. Go to: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 2. Click "New Issue"
 3. Copy title from GITHUB_ISSUES.md
 4. Copy description from GITHUB_ISSUES.md
@@ -183,7 +183,7 @@ gh label create "firebase" --color ff6f00 --description "Firebase integration"
 ```
 
 **Note**: If `gh` is not installed, create labels manually through GitHub web interface:
-1. Go to: https://github.com/vinothvsbe/TravelCompanion/labels
+1. Go to: https://github.com/grayprogrammers008-oss/TravelCompanion/labels
 2. Click "New label"
 3. Enter name, description, and color from above
 

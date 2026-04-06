@@ -2,7 +2,7 @@
 
 **Date**: 2025-10-14
 **Team**: Vinoth & Nithya
-**Repository**: https://github.com/vinothvsbe/TravelCompanion
+**Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion
 
 ---
 
@@ -55,7 +55,7 @@ The script will create:
 - ✅ All 23 issues with full descriptions
 - ✅ Proper assignments and priorities
 
-**View issues at**: https://github.com/vinothvsbe/TravelCompanion/issues
+**View issues at**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 
 ---
 
@@ -243,7 +243,7 @@ The script will create:
 
 **Morning**:
 1. Pull latest changes: `git pull origin main`
-2. Check assigned issues: https://github.com/vinothvsbe/TravelCompanion/issues/assigned/@me
+2. Check assigned issues: https://github.com/grayprogrammers008-oss/TravelCompanion/issues/assigned/@me
 3. Create feature branch: `git checkout -b feature/issue-X-description`
 
 **During Work**:
@@ -359,17 +359,17 @@ Closes #X
 ## 🔗 Important Links
 
 ### GitHub
-- **Repository**: https://github.com/vinothvsbe/TravelCompanion
-- **Issues**: https://github.com/vinothvsbe/TravelCompanion/issues
-- **Projects**: https://github.com/vinothvsbe/TravelCompanion/projects
-- **Pull Requests**: https://github.com/vinothvsbe/TravelCompanion/pulls
+- **Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion
+- **Issues**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
+- **Projects**: https://github.com/grayprogrammers008-oss/TravelCompanion/projects
+- **Pull Requests**: https://github.com/grayprogrammers008-oss/TravelCompanion/pulls
 
 ### Vinoth's Issues
-- **All**: https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Avinothvsbe
+- **All**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Avinothvsbe
 - **High Priority**: Add `label:priority-high` to above URL
 
 ### Nithya's Issues
-- **All**: https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Anithya
+- **All**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Anithya
 - **High Priority**: Add `label:priority-high` to above URL
 
 _(Replace `nithya` with Nithya's actual GitHub username)_
@@ -447,13 +447,13 @@ _(Replace `nithya` with Nithya's actual GitHub username)_
 ### For Vinoth:
 1. **Authenticate**: Run `gh auth login`
 2. **Create Issues**: Run `./create_github_issues.sh`
-3. **Verify**: Check https://github.com/vinothvsbe/TravelCompanion/issues
+3. **Verify**: Check https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 4. **Start Issue #1**: Create branch `feature/issue-1-edit-trip`
 5. **Daily Updates**: Comment progress on issue
 
 ### For Nithya:
 1. **Get GitHub Access**: Make sure you have collaborator access to the repo
-2. **Clone Repo**: `git clone https://github.com/vinothvsbe/TravelCompanion.git`
+2. **Clone Repo**: `git clone https://github.com/grayprogrammers008-oss/TravelCompanion.git`
 3. **Check Issues**: View assigned issues at GitHub
 4. **Start Issue #2**: Create branch `feature/issue-2-real-images`
 5. **Setup Unsplash**: Create account and get API key
@@ -512,7 +512,7 @@ gh auth login
 ./create_github_issues.sh
 
 # 3. View issues
-open https://github.com/vinothvsbe/TravelCompanion/issues
+open https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 
 # 4. Start coding!
 git checkout -b feature/issue-X-description

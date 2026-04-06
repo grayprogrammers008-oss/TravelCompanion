@@ -2,7 +2,7 @@
 
 ## ✅ Successfully Committed to GitHub!
 
-**Repository:** https://github.com/vinothvsbe/TravelCompanion.git  
+**Repository:** https://github.com/grayprogrammers008-oss/TravelCompanion.git  
 **Branch:** main  
 **Commits:** 3 total commits  
 **Files:** 233 files, 32,210+ lines of code  
@@ -87,11 +87,11 @@ test/
 ## 🔗 GitHub Repository
 
 Visit your repository:
-**https://github.com/vinothvsbe/TravelCompanion**
+**https://github.com/grayprogrammers008-oss/TravelCompanion**
 
 ### Clone Command
 ```bash
-git clone https://github.com/vinothvsbe/TravelCompanion.git
+git clone https://github.com/grayprogrammers008-oss/TravelCompanion.git
 cd TravelCompanion
 flutter pub get
 flutter run
@@ -189,7 +189,7 @@ Your Travel Crew app is now:
 ✅ Production-ready code
 ✅ Comprehensive test coverage
 
-**Repository URL:** https://github.com/vinothvsbe/TravelCompanion.git
+**Repository URL:** https://github.com/grayprogrammers008-oss/TravelCompanion.git
 
 ---
 

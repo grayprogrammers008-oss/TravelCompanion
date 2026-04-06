@@ -322,9 +322,9 @@ Repeat for Nithya's view.
 ## 🔗 Important Links
 
 **Project Board**: https://github.com/users/vinothvsbe/projects/2
-**All Issues**: https://github.com/vinothvsbe/TravelCompanion/issues
-**Repository**: https://github.com/vinothvsbe/TravelCompanion
-**Pull Requests**: https://github.com/vinothvsbe/TravelCompanion/pulls
+**All Issues**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
+**Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion
+**Pull Requests**: https://github.com/grayprogrammers008-oss/TravelCompanion/pulls
 
 ---
 
@@ -365,7 +365,7 @@ Repeat for Nithya's view.
 
 **Important**: Before Nithya can work on her issues:
 
-1. Go to: https://github.com/vinothvsbe/TravelCompanion/settings/access
+1. Go to: https://github.com/grayprogrammers008-oss/TravelCompanion/settings/access
 2. Click "Add people"
 3. Enter Nithya's GitHub username
 4. Select role: "Write" (can push to repo)

@@ -1,7 +1,7 @@
 # ✅ Messaging Module Successfully Added to GitHub Project!
 
 **Date**: October 21, 2025
-**Issue**: [#27 - Feature: Messaging Module with Offline P2P (Bluetooth + WiFi)](https://github.com/vinothvsbe/TravelCompanion/issues/27)
+**Issue**: [#27 - Feature: Messaging Module with Offline P2P (Bluetooth + WiFi)](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/27)
 **Project**: [Travel Crew MVP - 8 Week Sprint](https://github.com/users/vinothvsbe/projects/2)
 
 ---
@@ -13,7 +13,7 @@
 - **Status**: Open
 - **Assigned**: To you (@vinothvsbe)
 - **Label**: enhancement
-- **URL**: https://github.com/vinothvsbe/TravelCompanion/issues/27
+- **URL**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues/27
 
 ### ✅ Added to GitHub Project
 - **Project**: Travel Crew MVP - 8 Week Sprint
@@ -92,7 +92,7 @@ The issue covers **9 sub-tasks** organized into 2 phases:
 ## 🚀 Next Steps
 
 ### 1. Review the Issue
-Visit: https://github.com/vinothvsbe/TravelCompanion/issues/27
+Visit: https://github.com/grayprogrammers008-oss/TravelCompanion/issues/27
 
 The issue contains:
 - Complete implementation checklist
@@ -180,7 +180,7 @@ Your messaging module includes features that **most travel apps don't have**:
 - **Issue #27**: Now visible in project
 
 ### Repository
-- **URL**: https://github.com/vinothvsbe/TravelCompanion
+- **URL**: https://github.com/grayprogrammers008-oss/TravelCompanion
 - **Branch**: main
 - **Latest Commit**: All messaging documentation added
 
@@ -215,7 +215,7 @@ All documentation files are in:
 
 Everything is prepared and ready for you to begin implementing the messaging module whenever you're ready!
 
-**View the issue**: https://github.com/vinothvsbe/TravelCompanion/issues/27
+**View the issue**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues/27
 
 **View your project**: https://github.com/users/vinothvsbe/projects/2
 

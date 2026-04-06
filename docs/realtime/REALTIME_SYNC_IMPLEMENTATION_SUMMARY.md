@@ -1,7 +1,7 @@
 # 🔄 Real-time Synchronization - Implementation Summary
 
 **Status**: ✅ Partially Complete (Trips Module Done)
-**Issue**: [#8 - Add Real-time Synchronization Across Devices](https://github.com/vinothvsbe/TravelCompanion/issues/8)
+**Issue**: [#8 - Add Real-time Synchronization Across Devices](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/8)
 **Date**: October 21, 2025
 **Developer**: Claude (assisting Vinoth)
 
@@ -404,7 +404,7 @@ class DebugPanel extends ConsumerWidget {
 
 ### Documentation
 - **Full Guide**: [docs/implementation/REALTIME_SYNC_GUIDE.md](docs/implementation/REALTIME_SYNC_GUIDE.md)
-- **Issue Tracker**: [GitHub Issue #8](https://github.com/vinothvsbe/TravelCompanion/issues/8)
+- **Issue Tracker**: [GitHub Issue #8](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/8)
 - **Supabase Docs**: https://supabase.com/docs/guides/realtime
 
 ---

@@ -1,7 +1,7 @@
 # Issue #2 Complete: Real Destination Images ✅
 
 **Status**: ✅ Complete and Ready for Review
-**Pull Request**: https://github.com/vinothvsbe/TravelCompanion/pull/24
+**Pull Request**: https://github.com/grayprogrammers008-oss/TravelCompanion/pull/24
 **Completed**: 2025-10-15
 
 ---
@@ -245,8 +245,8 @@ flutter analyze
 
 ## 🔗 Important Links
 
-- **Pull Request**: https://github.com/vinothvsbe/TravelCompanion/pull/24
-- **Issue**: https://github.com/vinothvsbe/TravelCompanion/issues/2
+- **Pull Request**: https://github.com/grayprogrammers008-oss/TravelCompanion/pull/24
+- **Issue**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues/2
 - **Unsplash API**: https://unsplash.com/developers
 - **Setup Guide**: `UNSPLASH_SETUP.md`
 

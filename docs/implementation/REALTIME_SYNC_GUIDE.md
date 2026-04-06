@@ -1,7 +1,7 @@
 # 🔄 Real-time Synchronization Guide
 
 **Status**: ✅ Implemented
-**Issue**: [#8 - Add Real-time Synchronization Across Devices](https://github.com/vinothvsbe/TravelCompanion/issues/8)
+**Issue**: [#8 - Add Real-time Synchronization Across Devices](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/8)
 **Date**: October 21, 2025
 
 ---
@@ -488,7 +488,7 @@ controller.onCancel = () {
 
 ### Documentation
 - [CLAUDE.md](../../CLAUDE.md) - Overall project progress
-- [Issue #8](https://github.com/vinothvsbe/TravelCompanion/issues/8) - Original issue
+- [Issue #8](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/8) - Original issue
 
 ---
 

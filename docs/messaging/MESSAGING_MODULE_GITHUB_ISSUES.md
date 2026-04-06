@@ -9,7 +9,7 @@
 ## How to Create These Issues
 
 ### Option 1: Manual Creation (Recommended)
-1. Go to: https://github.com/vinothvsbe/TravelCompanion/issues
+1. Go to: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 2. Click "New Issue"
 3. Copy the title and body from each issue below
 4. Add the specified labels

@@ -5,7 +5,7 @@
 
 set -e
 
-REPO="vinothvsbe/TravelCompanion"
+REPO="grayprogrammers008-oss/TravelCompanion"
 
 echo "🚀 Creating GitHub Issues for Travel Crew"
 echo "Repository: $REPO"

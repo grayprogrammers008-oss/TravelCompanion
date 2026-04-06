@@ -262,6 +262,6 @@ All changes are fully documented in:
 ---
 
 **Last Updated**: 2025-10-24
-**Repository**: https://github.com/vinothvsbe/TravelCompanion.git
+**Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion.git
 **Branch**: main
 **Commit**: 9ecf0c8

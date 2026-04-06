@@ -160,7 +160,7 @@ Remote: Up to date with local
 ```
 
 ### Remote Repository
-**URL**: https://github.com/vinothvsbe/TravelCompanion
+**URL**: https://github.com/grayprogrammers008-oss/TravelCompanion
 **Branch**: main
 **Latest Commit**: 7437209
 
@@ -207,7 +207,7 @@ Remote: Up to date with local
 ### Recommended Actions
 
 1. **Verify Push on GitHub**
-   - Visit: https://github.com/vinothvsbe/TravelCompanion
+   - Visit: https://github.com/grayprogrammers008-oss/TravelCompanion
    - Check latest commit appears
    - Review changes on GitHub
 

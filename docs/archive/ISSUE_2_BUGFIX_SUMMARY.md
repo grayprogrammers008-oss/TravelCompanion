@@ -110,7 +110,7 @@ git push origin feature/issue-2-real-destination-images
 
 ### ✅ Pull Request Updated
 PR #24 now includes the bug fix:
-https://github.com/vinothvsbe/TravelCompanion/pull/24
+https://github.com/grayprogrammers008-oss/TravelCompanion/pull/24
 
 ---
 

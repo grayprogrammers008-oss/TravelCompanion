@@ -1,7 +1,7 @@
 # ✅ GitHub Issues Successfully Created!
 
 **Date**: 2025-10-14
-**Repository**: https://github.com/vinothvsbe/TravelCompanion
+**Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion
 **Total Issues Created**: 23
 **Total Labels Created**: 43
 
@@ -11,7 +11,7 @@
 
 All 23 GitHub issues have been created successfully with detailed task lists, acceptance criteria, and proper assignments!
 
-**View all issues**: https://github.com/vinothvsbe/TravelCompanion/issues
+**View all issues**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 
 ---
 
@@ -21,12 +21,12 @@ All 23 GitHub issues have been created successfully with detailed task lists, ac
 
 | # | Title | Assignee | Labels |
 |---|-------|----------|--------|
-| [#1](https://github.com/vinothvsbe/TravelCompanion/issues/1) | Implement Full Edit Trip Functionality | Vinoth | `enhancement`, `priority-high`, `trip-management` |
-| [#2](https://github.com/vinothvsbe/TravelCompanion/issues/2) | Replace Gradient Placeholders with Real Travel Destination Images | Nithya | `enhancement`, `priority-high`, `ui-ux`, `images` |
-| [#3](https://github.com/vinothvsbe/TravelCompanion/issues/3) | Design and Implement Trip Detail Page with Tabs | Vinoth | `enhancement`, `priority-high`, `trip-management`, `ui-ux` |
-| [#4](https://github.com/vinothvsbe/TravelCompanion/issues/4) | Build Trip Invite Generation and Acceptance Flow | Nithya | `enhancement`, `priority-high`, `trip-management`, `invites` |
-| [#5](https://github.com/vinothvsbe/TravelCompanion/issues/5) | Implement Itinerary Builder with Day-wise Organization | Vinoth | `enhancement`, `priority-high`, `itinerary`, `feature` |
-| [#6](https://github.com/vinothvsbe/TravelCompanion/issues/6) | Implement Collaborative Checklists for Packing and Tasks | Nithya | `enhancement`, `priority-high`, `checklists`, `feature` |
+| [#1](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/1) | Implement Full Edit Trip Functionality | Vinoth | `enhancement`, `priority-high`, `trip-management` |
+| [#2](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/2) | Replace Gradient Placeholders with Real Travel Destination Images | Nithya | `enhancement`, `priority-high`, `ui-ux`, `images` |
+| [#3](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/3) | Design and Implement Trip Detail Page with Tabs | Vinoth | `enhancement`, `priority-high`, `trip-management`, `ui-ux` |
+| [#4](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/4) | Build Trip Invite Generation and Acceptance Flow | Nithya | `enhancement`, `priority-high`, `trip-management`, `invites` |
+| [#5](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/5) | Implement Itinerary Builder with Day-wise Organization | Vinoth | `enhancement`, `priority-high`, `itinerary`, `feature` |
+| [#6](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/6) | Implement Collaborative Checklists for Packing and Tasks | Nithya | `enhancement`, `priority-high`, `checklists`, `feature` |
 
 ---
 
@@ -34,13 +34,13 @@ All 23 GitHub issues have been created successfully with detailed task lists, ac
 
 | # | Title | Assignee | Labels |
 |---|-------|----------|--------|
-| [#7](https://github.com/vinothvsbe/TravelCompanion/issues/7) | Add UPI Payment Integration for Settlements | Vinoth | `enhancement`, `priority-medium`, `payments`, `expenses` |
-| [#8](https://github.com/vinothvsbe/TravelCompanion/issues/8) | Add Real-time Synchronization Across Devices | Nithya | `enhancement`, `priority-medium`, `realtime`, `sync` |
-| [#9](https://github.com/vinothvsbe/TravelCompanion/issues/9) | Implement AI-Powered Travel Recommendations | Vinoth | `enhancement`, `priority-medium`, `ai`, `claude`, `autopilot` |
-| [#10](https://github.com/vinothvsbe/TravelCompanion/issues/10) | Implement Firebase Push Notifications for Trip Updates | Nithya | `enhancement`, `priority-medium`, `notifications`, `firebase` |
-| [#18](https://github.com/vinothvsbe/TravelCompanion/issues/18) | UI Bug Hunt and Fixes | Both | `bug`, `priority-medium`, `ui-ux` |
-| [#19](https://github.com/vinothvsbe/TravelCompanion/issues/19) | Enhance User Feedback and Input Validation | Nithya | `enhancement`, `priority-medium`, `validation`, `ui-ux` |
-| [#22](https://github.com/vinothvsbe/TravelCompanion/issues/22) | Set Up GitHub Actions for CI/CD | Vinoth | `enhancement`, `priority-medium`, `devops` |
+| [#7](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/7) | Add UPI Payment Integration for Settlements | Vinoth | `enhancement`, `priority-medium`, `payments`, `expenses` |
+| [#8](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/8) | Add Real-time Synchronization Across Devices | Nithya | `enhancement`, `priority-medium`, `realtime`, `sync` |
+| [#9](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/9) | Implement AI-Powered Travel Recommendations | Vinoth | `enhancement`, `priority-medium`, `ai`, `claude`, `autopilot` |
+| [#10](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/10) | Implement Firebase Push Notifications for Trip Updates | Nithya | `enhancement`, `priority-medium`, `notifications`, `firebase` |
+| [#18](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/18) | UI Bug Hunt and Fixes | Both | `bug`, `priority-medium`, `ui-ux` |
+| [#19](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/19) | Enhance User Feedback and Input Validation | Nithya | `enhancement`, `priority-medium`, `validation`, `ui-ux` |
+| [#22](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/22) | Set Up GitHub Actions for CI/CD | Vinoth | `enhancement`, `priority-medium`, `devops` |
 
 ---
 
@@ -48,16 +48,16 @@ All 23 GitHub issues have been created successfully with detailed task lists, ac
 
 | # | Title | Assignee | Labels |
 |---|-------|----------|--------|
-| [#11](https://github.com/vinothvsbe/TravelCompanion/issues/11) | Add Deep Link Support for Trip Invites and Sharing | Vinoth | `enhancement`, `priority-low`, `deep-linking` |
-| [#12](https://github.com/vinothvsbe/TravelCompanion/issues/12) | Implement Dark Theme for Better UX | Nithya | `enhancement`, `priority-low`, `ui-ux`, `dark-mode` |
-| [#13](https://github.com/vinothvsbe/TravelCompanion/issues/13) | Implement Unit, Widget, and Integration Tests | Both | `enhancement`, `priority-low`, `testing`, `quality` |
-| [#14](https://github.com/vinothvsbe/TravelCompanion/issues/14) | Optimize App Performance and Reduce Bundle Size | Nithya | `enhancement`, `priority-low`, `performance`, `optimization` |
-| [#15](https://github.com/vinothvsbe/TravelCompanion/issues/15) | Implement User Settings and Profile Management | Vinoth | `enhancement`, `priority-low`, `profile`, `settings` |
-| [#16](https://github.com/vinothvsbe/TravelCompanion/issues/16) | Enhance UX with Premium Animations | Nithya | `enhancement`, `priority-low`, `ui-ux`, `animations` |
-| [#17](https://github.com/vinothvsbe/TravelCompanion/issues/17) | Create Welcome Screens for First-time Users | Vinoth | `enhancement`, `priority-low`, `ui-ux`, `onboarding` |
-| [#20](https://github.com/vinothvsbe/TravelCompanion/issues/20) | Write User Guide and Help Documentation | Vinoth | `documentation`, `priority-low` |
-| [#21](https://github.com/vinothvsbe/TravelCompanion/issues/21) | Document Supabase Schema and API | Nithya | `documentation`, `priority-low`, `backend` |
-| [#23](https://github.com/vinothvsbe/TravelCompanion/issues/23) | Prepare App Store and Play Store Listings | Nithya | `priority-low`, `deployment`, `marketing` |
+| [#11](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/11) | Add Deep Link Support for Trip Invites and Sharing | Vinoth | `enhancement`, `priority-low`, `deep-linking` |
+| [#12](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/12) | Implement Dark Theme for Better UX | Nithya | `enhancement`, `priority-low`, `ui-ux`, `dark-mode` |
+| [#13](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/13) | Implement Unit, Widget, and Integration Tests | Both | `enhancement`, `priority-low`, `testing`, `quality` |
+| [#14](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/14) | Optimize App Performance and Reduce Bundle Size | Nithya | `enhancement`, `priority-low`, `performance`, `optimization` |
+| [#15](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/15) | Implement User Settings and Profile Management | Vinoth | `enhancement`, `priority-low`, `profile`, `settings` |
+| [#16](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/16) | Enhance UX with Premium Animations | Nithya | `enhancement`, `priority-low`, `ui-ux`, `animations` |
+| [#17](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/17) | Create Welcome Screens for First-time Users | Vinoth | `enhancement`, `priority-low`, `ui-ux`, `onboarding` |
+| [#20](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/20) | Write User Guide and Help Documentation | Vinoth | `documentation`, `priority-low` |
+| [#21](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/21) | Document Supabase Schema and API | Nithya | `documentation`, `priority-low`, `backend` |
+| [#23](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/23) | Prepare App Store and Play Store Listings | Nithya | `priority-low`, `deployment`, `marketing` |
 
 ---
 
@@ -134,7 +134,7 @@ All 23 GitHub issues have been created successfully with detailed task lists, ac
 6. **Issue #22**: CI/CD Pipeline
 
 #### View your issues:
-https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Avinothvsbe
+https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Avinothvsbe
 
 ---
 
@@ -162,7 +162,7 @@ https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assi
 6. **Issue #19**: Error Messages & Validation
 
 #### View Nithya's issues:
-https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen
+https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen
 
 _(Note: Actual assignment to Nithya's GitHub account needs to be done manually by adding her username in each issue's assignees)_
 
@@ -308,12 +308,12 @@ Or add "Closes #X" in the Pull Request description.
 ## 🔗 Important Links
 
 ### GitHub
-- **All Issues**: https://github.com/vinothvsbe/TravelCompanion/issues
-- **High Priority**: https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-high
-- **Medium Priority**: https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-medium
-- **Low Priority**: https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-low
-- **Pull Requests**: https://github.com/vinothvsbe/TravelCompanion/pulls
-- **Projects**: https://github.com/vinothvsbe/TravelCompanion/projects
+- **All Issues**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
+- **High Priority**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-high
+- **Medium Priority**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-medium
+- **Low Priority**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-low
+- **Pull Requests**: https://github.com/grayprogrammers008-oss/TravelCompanion/pulls
+- **Projects**: https://github.com/grayprogrammers008-oss/TravelCompanion/projects
 
 ### External Services Needed
 - **Unsplash API** (Issue #2): https://unsplash.com/developers

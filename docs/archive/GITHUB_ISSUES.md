@@ -1,6 +1,6 @@
 # Travel Crew - GitHub Issues for Collaboration
 
-**Repository**: https://github.com/vinothvsbe/TravelCompanion
+**Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion
 **Team Members**: Vinoth, Nithya
 **Status**: Ready for Issue Creation
 **Date**: 2025-10-14
@@ -9,7 +9,7 @@
 
 ## 🎯 How to Create These Issues
 
-1. Go to https://github.com/vinothvsbe/TravelCompanion/issues
+1. Go to https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 2. Click "New Issue"
 3. Copy the title and description from each issue below
 4. Add labels: `enhancement`, `priority-high`, `priority-medium`, or `priority-low`

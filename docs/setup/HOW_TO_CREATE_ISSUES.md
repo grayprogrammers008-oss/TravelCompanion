@@ -97,11 +97,11 @@ Open the file: `GITHUB_ISSUES.md` to see all 23 issues with full descriptions.
 ## After Creating Issues
 
 ### View All Issues
-Visit: https://github.com/vinothvsbe/TravelCompanion/issues
+Visit: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 
 ### Create a Project Board (Optional but Recommended)
 
-1. Go to: https://github.com/vinothvsbe/TravelCompanion/projects
+1. Go to: https://github.com/grayprogrammers008-oss/TravelCompanion/projects
 2. Click **"New project"**
 3. Select **"Board"** template
 4. Name it: **"Travel Crew MVP"**
@@ -115,20 +115,20 @@ Visit: https://github.com/vinothvsbe/TravelCompanion/issues
 ### Filter Issues by Assignee
 
 **Vinoth's Issues**:
-https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Avinothvsbe
+https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Avinothvsbe
 
 **Nithya's Issues**:
-https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Anithya
+https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+assignee%3Anithya
 
 (Replace `nithya` with Nithya's actual GitHub username)
 
 ### Filter by Priority
 
 **High Priority**:
-https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-high
+https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-high
 
 **Medium Priority**:
-https://github.com/vinothvsbe/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-medium
+https://github.com/grayprogrammers008-oss/TravelCompanion/issues?q=is%3Aissue+is%3Aopen+label%3Apriority-medium
 
 ---
 
@@ -212,6 +212,6 @@ gh auth login
 ./create_github_issues.sh
 ```
 
-Then check: https://github.com/vinothvsbe/TravelCompanion/issues
+Then check: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 
 Happy coding! 🚀

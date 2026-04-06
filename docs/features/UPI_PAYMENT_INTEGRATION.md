@@ -1,7 +1,7 @@
 # UPI Payment Integration - Implementation Summary
 
 **Date:** October 25, 2025
-**Issue:** [GitHub Issue #7](https://github.com/vinothvsbe/TravelCompanion/issues/7)
+**Issue:** [GitHub Issue #7](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/7)
 **Status:** ✅ Phase 1 Complete - Core Infrastructure Implemented
 **Priority:** Medium
 
