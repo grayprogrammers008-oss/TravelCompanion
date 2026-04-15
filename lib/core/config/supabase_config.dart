@@ -10,13 +10,13 @@ import 'package:flutter/foundation.dart';
 class SupabaseConfig {
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
-    defaultValue: 'https://ckgaoxajvonazdwpsmai.supabase.co',
+    defaultValue: 'https://uaqscrewwupellvtqlfx.supabase.co',
   );
 
   static const String supabaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
     defaultValue:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrZ2FveGFqdm9uYXpkd3BzbWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk4NTE0OTIsImV4cCI6MjA3NTQyNzQ5Mn0.poUiysXLCNjZHHTCEOM3CgKgnna32phQXT_Ob6fx7Hg',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcXNjcmV3d3VwZWxsdnRxbGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMjgxNDcsImV4cCI6MjA4OTkwNDE0N30.VsUSMq0_QG81SzjI203qCfpUjyk20ED46CwCXV8mPvg',
   );
 
   /// Claude API Configuration for Autopilot

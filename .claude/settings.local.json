@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git -C \"d:\\Nithya\\Travel Companion\\TravelCompanion\" commit -m \"$(cat <<''EOF''\nfix: Load favorite status in trip detail page\n\n- Update getTripById to fetch and set isFavorite status\n- Invalidate tripProvider when favorite is toggled\n- Now trip detail page shows correct favorite icon state\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(flutter analyze:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git remote set-url:*)"
     ],
     "deny": [],
     "ask": []
