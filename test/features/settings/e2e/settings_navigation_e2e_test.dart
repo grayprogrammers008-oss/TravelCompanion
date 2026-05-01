@@ -31,7 +31,7 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
             authStateProvider.overrideWith((ref) => Stream.value(testUser.id)),
-            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
+            userTripsProvider.overrideWith((ref) => Future.value(<TripWithMembers>[])),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
@@ -134,7 +134,7 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
             authStateProvider.overrideWith((ref) => Stream.value(testUser.id)),
-            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
+            userTripsProvider.overrideWith((ref) => Future.value(<TripWithMembers>[])),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
@@ -295,7 +295,7 @@ void main() {
           overrides: [
             currentUserProvider.overrideWith((ref) async => testUser),
             authStateProvider.overrideWith((ref) => Stream.value(testUser.id)),
-            userTripsProvider.overrideWith((ref) => Stream.value(<TripWithMembers>[])),
+            userTripsProvider.overrideWith((ref) => Future.value(<TripWithMembers>[])),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
