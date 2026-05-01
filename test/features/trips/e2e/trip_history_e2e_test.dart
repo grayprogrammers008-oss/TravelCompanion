@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:travel_crew/core/theme/app_theme_data.dart';
+import 'package:travel_crew/core/theme/theme_access.dart';
+import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 import 'package:travel_crew/features/trips/presentation/pages/trip_history_page.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/trips/domain/usecases/get_trip_history_usecase.dart';
@@ -12,6 +18,22 @@ import 'package:travel_crew/core/animations/animated_widgets.dart';
 import 'trip_history_e2e_test.mocks.dart';
 
 @GenerateMocks([GetTripHistoryUseCase])
+
+/// Pumps enough frames to fire FadeInAnimation Dart timers and complete animations.
+/// The default 800×600 test window is too short — Paris card (index=1) sits below
+/// ListView.builder's cacheExtent and is never built, so its timer is never registered.
+/// Expanding the viewport forces the list to build all cards.
+Future<void> _pumpHistoryLoaded(WidgetTester tester) async {
+  // Expand viewport so ListView.builder renders all trip cards within the visible area.
+  tester.view.physicalSize = const Size(800, 3000);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  await tester.pump(); // Relayout with new size; FadeInAnimation.initState() fires for all cards
+  await tester.pump(const Duration(milliseconds: 500)); // Fire Dart timers + complete 300ms animations
+  await tester.pump(); // Process remaining callbacks
+}
+
 void main() {
   late MockGetTripHistoryUseCase mockUseCase;
 
@@ -118,12 +140,12 @@ void main() {
         tripHistoryProvider.overrideWith(
           (ref) => mockUseCase.watchHistory(),
         ),
-        tripHistoryStatisticsProvider.overrideWith(
-          (ref) => mockUseCase.getStatistics(),
-        ),
       ],
-      child: const MaterialApp(
-        home: TripHistoryPage(),
+      child: AppThemeProvider(
+        themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+        child: const MaterialApp(
+          home: TripHistoryPage(),
+        ),
       ),
     );
   }
@@ -148,7 +170,7 @@ void main() {
     testWidgets('should display list of completed trips', (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await _pumpHistoryLoaded(tester);
 
       // Assert - Trip cards
       expect(find.text('Paris Adventure'), findsOneWidget);
@@ -160,18 +182,18 @@ void main() {
     testWidgets('should display trip ratings', (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await _pumpHistoryLoaded(tester);
 
       // Assert - Rating badges
       expect(find.text('4.5'), findsOneWidget);
       expect(find.text('5.0'), findsOneWidget);
-      expect(find.byIcon(Icons.star), findsNWidgets(4)); // 2 in badges + 2 in header
+      expect(find.byIcon(Icons.star), findsNWidgets(3)); // 2 in badges + 1 in header
     });
 
     testWidgets('should display member count for each trip', (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await _pumpHistoryLoaded(tester);
 
       // Assert
       expect(find.text('2 members'), findsOneWidget); // Paris trip
@@ -181,7 +203,7 @@ void main() {
     testWidgets('should display completion dates', (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await _pumpHistoryLoaded(tester);
 
       // Assert - Completion dates
       expect(find.textContaining('Completed:'), findsNWidgets(2));
@@ -209,23 +231,61 @@ void main() {
     });
 
     testWidgets('should display loading state', (tester) async {
-      // Arrange
-      when(mockUseCase.watchHistory())
-          .thenAnswer((_) => Stream.value(<TripWithMembers>[]));
+      // Use a StreamController that never emits so the provider stays in loading state.
+      // Cannot use createTestWidget() here because it overrides the watchHistory mock.
+      final controller = StreamController<List<TripWithMembers>>();
+      addTearDown(() async {
+        if (!controller.isClosed) await controller.close();
+      });
+      when(mockUseCase.watchHistory()).thenAnswer((_) => controller.stream);
 
-      await tester.pumpWidget(createTestWidget());
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            getTripHistoryUseCaseProvider.overrideWithValue(mockUseCase),
+            tripHistoryProvider.overrideWith(
+              (ref) => mockUseCase.watchHistory(),
+            ),
+          ],
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(home: TripHistoryPage()),
+          ),
+        ),
+      );
+      await tester.pump();
 
-      // Assert - Loading indicator should appear briefly
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(AppLoadingIndicator), findsOneWidget);
+
+      // Dispose the page (and its AnimationControllers) before the test framework
+      // checks for pending timers — AppLoadingIndicator runs continuous animations
+      // that would otherwise keep the test runner waiting indefinitely.
+      await tester.pumpWidget(const SizedBox.shrink());
     });
 
     testWidgets('should display error state when loading fails',
         (tester) async {
-      // Arrange
+      // Set mock before building widget. Cannot use createTestWidget() because
+      // it calls when(mockUseCase.watchHistory()) internally, overriding this mock.
       when(mockUseCase.watchHistory())
           .thenAnswer((_) => Stream.error(Exception('Network error')));
+      when(mockUseCase.getStatistics())
+          .thenAnswer((_) async => TripHistoryStatistics.empty());
 
-      await tester.pumpWidget(createTestWidget());
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            getTripHistoryUseCaseProvider.overrideWithValue(mockUseCase),
+            tripHistoryProvider.overrideWith(
+              (ref) => mockUseCase.watchHistory(),
+            ),
+          ],
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: const MaterialApp(home: TripHistoryPage()),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Assert
@@ -235,17 +295,76 @@ void main() {
 
     testWidgets('should navigate to trip detail when card is tapped',
         (tester) async {
-      // Arrange
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      // Production code calls context.push() (GoRouter), so wrap in MaterialApp.router.
+      final completedTrip = TripWithMembers(
+        trip: TripModel(
+          id: '1',
+          name: 'Paris Adventure',
+          destination: 'Paris, France',
+          createdBy: 'user1',
+          createdAt: DateTime(2024, 1, 1),
+          updatedAt: DateTime(2024, 1, 1),
+          startDate: DateTime(2024, 5, 1),
+          endDate: DateTime(2024, 5, 10),
+          isCompleted: true,
+          completedAt: DateTime(2024, 5, 15),
+          rating: 4.5,
+        ),
+        members: const [],
+      );
 
-      // Act - Tap on the first trip card
+      when(mockUseCase.watchHistory())
+          .thenAnswer((_) => Stream.value([completedTrip]));
+      when(mockUseCase.getStatistics()).thenAnswer((_) async =>
+          TripHistoryStatistics(
+            totalCompletedTrips: 1,
+            averageRating: 4.5,
+            totalRatedTrips: 1,
+            earliestCompletionDate: completedTrip.trip.completedAt,
+            latestCompletionDate: completedTrip.trip.completedAt,
+          ));
+
+      var navigatedTo = '';
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const TripHistoryPage()),
+          GoRoute(
+            path: '/trips/:id',
+            builder: (_, state) {
+              navigatedTo = state.uri.toString();
+              return const Scaffold(body: Text('Trip Detail'));
+            },
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            getTripHistoryUseCaseProvider.overrideWithValue(mockUseCase),
+            tripHistoryProvider.overrideWith(
+              (ref) => mockUseCase.watchHistory(),
+            ),
+          ],
+          child: AppThemeProvider(
+            themeData: AppThemeData.getThemeData(AppThemeType.ocean),
+            child: MaterialApp.router(routerConfig: router),
+          ),
+        ),
+      );
+      await _pumpHistoryLoaded(tester);
+
+      // Act - Tap on the trip card
       await tester.tap(find.text('Paris Adventure'));
-      await tester.pumpAndSettle();
+      // Manual pumps to avoid pumpAndSettle hang on looping animations
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump();
 
-      // Note: Navigation testing requires router setup
-      // This test verifies the tap gesture is recognized
-      expect(find.text('Paris Adventure'), findsOneWidget);
+      // Assert - Navigation occurred
+      expect(navigatedTo, contains('/trips/1'));
     });
 
     testWidgets('should display correct statistics', (tester) async {
@@ -288,7 +407,7 @@ void main() {
     testWidgets('should display date range for trips', (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await _pumpHistoryLoaded(tester);
 
       // Assert
       expect(find.textContaining('May 01, 2024 - May 10, 2024'), findsOneWidget);
@@ -299,7 +418,7 @@ void main() {
         (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await _pumpHistoryLoaded(tester);
 
       // Assert - Find all trip cards
       final tripCards = find.byType(AnimatedScaleButton);
@@ -350,9 +469,14 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert - Check for semantic labels
+      // AppBar title text carries isHeader and namesRoute flags from the framework.
       expect(
         tester.getSemantics(find.text('Trip History')),
-        matchesSemantics(label: 'Trip History'),
+        matchesSemantics(
+          label: 'Trip History',
+          isHeader: true,
+          namesRoute: true,
+        ),
       );
     });
 
