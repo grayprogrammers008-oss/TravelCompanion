@@ -290,20 +290,23 @@ void main() {
         final url2 = 'https://example.com/profile_2.jpg';
 
         // Mock sequential uploads
-        var callCount = 0;
+        var uploadCount = 0;
         when(mockStorageFileApi.uploadBinary(
           any,
           mockBytes,
           fileOptions: anyNamed('fileOptions'),
         )).thenAnswer((_) async {
-          callCount++;
+          uploadCount++;
           await Future.delayed(const Duration(milliseconds: 50));
-          return 'uploaded_$callCount';
+          return 'uploaded_$uploadCount';
         });
 
+        // Track getPublicUrl calls independently from uploads
+        var publicUrlCount = 0;
         when(mockStorageFileApi.getPublicUrl(any))
             .thenAnswer((invocation) {
-          return callCount == 1 ? url1 : url2;
+          publicUrlCount++;
+          return publicUrlCount == 1 ? url1 : url2;
         });
 
         // Act - Upload two photos concurrently
@@ -486,4 +489,11 @@ class MockXFile extends Mock implements XFile {
 
   @override
   String get name => 'image.jpg';
+
+  @override
+  Future<Uint8List> readAsBytes() => super.noSuchMethod(
+        Invocation.method(#readAsBytes, []),
+        returnValue: Future<Uint8List>.value(Uint8List(0)),
+        returnValueForMissingStub: Future<Uint8List>.value(Uint8List(0)),
+      ) as Future<Uint8List>;
 }

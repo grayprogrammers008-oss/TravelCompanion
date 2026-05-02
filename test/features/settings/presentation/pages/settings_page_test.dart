@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,16 +16,17 @@ void main() {
     });
 
     testWidgets('should display loading state initially', (WidgetTester tester) async {
+      // Use a Completer so the future never resolves and no Timer is pending.
+      final pendingCompleter = Completer<UserEntity?>();
+      addTearDown(() {
+        if (!pendingCompleter.isCompleted) pendingCompleter.complete(null);
+      });
+
       // Arrange
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            currentUserProvider.overrideWith(
-              (ref) => Future.delayed(
-                const Duration(seconds: 10),
-                () => null,
-              ),
-            ),
+            currentUserProvider.overrideWith((ref) => pendingCompleter.future),
           ],
           child: AppThemeProvider(
             themeData: AppThemeData.getThemeData(AppThemeType.ocean),
@@ -36,6 +39,10 @@ void main() {
 
       // Assert - should show loading state
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      // Dispose the widget tree before the test ends to avoid pending-frame
+      // assertions from the indeterminate CircularProgressIndicator animation.
+      await tester.pumpWidget(const SizedBox.shrink());
     });
 
     testWidgets('should display user profile information when loaded', (WidgetTester tester) async {
@@ -147,7 +154,15 @@ void main() {
 
       // Assert
       expect(find.text('Edit Profile'), findsOneWidget);
-      expect(find.widgetWithIcon(ElevatedButton, Icons.edit), findsOneWidget);
+      // ElevatedButton.icon returns a private subclass (_ElevatedButtonWithIcon)
+      // in current Flutter, so use bySubtype to match the public ElevatedButton.
+      expect(
+        find.ancestor(
+          of: find.byIcon(Icons.edit),
+          matching: find.bySubtype<ElevatedButton>(),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('should show snackbar when Edit Profile is tapped', (WidgetTester tester) async {
@@ -494,6 +509,13 @@ void main() {
       );
 
       await tester.pumpAndSettle();
+
+      // Scroll the Theme tile into view (it's below the default 600px viewport)
+      await tester.dragUntilVisible(
+        find.text('Theme'),
+        find.byType(SingleChildScrollView),
+        const Offset(0, -100),
+      );
 
       // Act
       await tester.tap(find.text('Theme'));

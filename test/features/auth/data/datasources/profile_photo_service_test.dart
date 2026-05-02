@@ -427,4 +427,11 @@ class MockXFile extends Mock implements XFile {
 
   @override
   String get name => 'image.jpg';
+
+  @override
+  Future<Uint8List> readAsBytes() => super.noSuchMethod(
+        Invocation.method(#readAsBytes, []),
+        returnValue: Future<Uint8List>.value(Uint8List(0)),
+        returnValueForMissingStub: Future<Uint8List>.value(Uint8List(0)),
+      ) as Future<Uint8List>;
 }

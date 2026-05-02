@@ -44,6 +44,7 @@ void main() {
           home: OnboardingScreen(page: testPage),
         ),
       );
+      await tester.pumpAndSettle();
 
       // Assert
       final container = tester.widget<Container>(
@@ -74,6 +75,7 @@ void main() {
           home: OnboardingScreen(page: testPage),
         ),
       );
+      await tester.pumpAndSettle();
 
       // Assert
       final iconWidget = tester.widget<Icon>(find.byIcon(Icons.star));
@@ -206,6 +208,7 @@ void main() {
           home: OnboardingScreen(page: testPage),
         ),
       );
+      await tester.pumpAndSettle();
 
       // Assert
       expect(find.byType(SafeArea), findsOneWidget);
@@ -226,22 +229,21 @@ void main() {
           home: OnboardingScreen(page: testPage),
         ),
       );
+      await tester.pumpAndSettle();
 
-      // Assert - Find the main padding widget
-      final paddingWidget = tester.widget<Padding>(
-        find.descendant(
-          of: find.byType(SafeArea),
-          matching: find.byType(Padding),
-        ).first,
+      // Assert - Find the main padding widget. SafeArea internally adds a
+      // Padding widget for safe insets (EdgeInsets.zero in tests), so we
+      // search for the Padding widget that matches our expected EdgeInsets.
+      const expectedPadding = EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingXl,
+        vertical: AppTheme.spacing2xl,
       );
 
-      expect(
-        paddingWidget.padding,
-        const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingXl,
-          vertical: AppTheme.spacing2xl,
-        ),
+      final paddingFinder = find.byWidgetPredicate(
+        (widget) => widget is Padding && widget.padding == expectedPadding,
       );
+
+      expect(paddingFinder, findsOneWidget);
     });
 
     testWidgets('should render with real onboarding pages', (tester) async {
@@ -311,11 +313,12 @@ void main() {
           home: OnboardingScreen(page: testPage),
         ),
       );
+      await tester.pumpAndSettle();
 
       // Assert
       final column = tester.widget<Column>(
         find.descendant(
-          of: find.byType(Padding),
+          of: find.byType(SingleChildScrollView),
           matching: find.byType(Column),
         ).first,
       );

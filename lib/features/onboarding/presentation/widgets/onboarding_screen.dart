@@ -106,11 +106,13 @@ class OnboardingScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: context.spacingSm),
-                            Text(
-                              feature,
-                              style: context.bodyMedium.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                  ),
+                            Flexible(
+                              child: Text(
+                                feature,
+                                style: context.bodyMedium.copyWith(
+                                      color: Colors.white.withValues(alpha: 0.9),
+                                    ),
+                              ),
                             ),
                           ],
                         ),

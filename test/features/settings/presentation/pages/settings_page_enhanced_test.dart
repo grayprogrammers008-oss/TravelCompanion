@@ -257,8 +257,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // Scroll the Language tile into view (it's below the default viewport)
+      await tester.dragUntilVisible(
+        find.text('Language'),
+        find.byType(SingleChildScrollView).first,
+        const Offset(0, -100),
+      );
+
       // Find and tap Language tile
-      await tester.tap(find.text('Language'), warnIfMissed: false);
+      await tester.tap(find.text('Language'));
       await tester.pumpAndSettle();
 
       // Assert - dialog should be shown
@@ -285,14 +292,22 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // Scroll the Currency tile into view (it's below the default viewport)
+      await tester.dragUntilVisible(
+        find.text('Currency'),
+        find.byType(SingleChildScrollView).first,
+        const Offset(0, -100),
+      );
+
       // Find and tap Currency tile
-      await tester.tap(find.text('Currency'), warnIfMissed: false);
+      await tester.tap(find.text('Currency'));
       await tester.pumpAndSettle();
 
       // Assert - dialog should be shown
+      // Currency entries are formatted as 'CODE - Name' (e.g. 'EUR - Euro')
       expect(find.text('Select Currency'), findsOneWidget);
-      expect(find.text('EUR'), findsOneWidget);
-      expect(find.text('GBP'), findsOneWidget);
+      expect(find.text('EUR - Euro'), findsOneWidget);
+      expect(find.text('GBP - British Pound'), findsOneWidget);
     });
 
     testWidgets('should show logout confirmation dialog when logout tapped', (WidgetTester tester) async {
@@ -313,14 +328,23 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // Scroll the Logout button into view (it's at the bottom of the page)
+      await tester.dragUntilVisible(
+        find.text('Logout'),
+        find.byType(SingleChildScrollView).first,
+        const Offset(0, -100),
+      );
+
       // Find and tap Logout button
-      await tester.tap(find.text('Logout'), warnIfMissed: false);
+      await tester.tap(find.text('Logout'));
       await tester.pumpAndSettle();
 
       // Assert - confirmation dialog should be shown
-      expect(find.text('Logout?'), findsOneWidget);
+      // The dialog title is 'Logout' (matching the source code)
       expect(find.text('Are you sure you want to logout?'), findsOneWidget);
       expect(find.text('Cancel'), findsOneWidget);
+      // Two 'Logout' instances exist now: tile and dialog button
+      expect(find.text('Logout'), findsAtLeastNWidgets(2));
     });
 
     testWidgets('should persist notification preference changes', (WidgetTester tester) async {
