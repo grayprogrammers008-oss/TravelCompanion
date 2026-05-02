@@ -6,7 +6,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../data/services/gemini_service.dart';
 import '../../data/services/groq_service.dart';
 import '../../data/services/multi_provider_ai_service.dart';
@@ -108,7 +108,7 @@ class AiItineraryController extends Notifier<AiItineraryState> {
   Future<AiGeneratedItinerary?> generateItinerary(AiItineraryRequest request) async {
     debugPrint('🔷 AiItineraryController.generateItinerary() called');
 
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     debugPrint('👤 User ID: $userId');
 
     if (userId == null) {

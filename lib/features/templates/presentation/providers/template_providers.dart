@@ -4,7 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../data/datasources/template_remote_datasource.dart';
 import '../../domain/entities/trip_template.dart';
 import '../../domain/entities/ai_usage.dart';
@@ -14,7 +14,7 @@ import '../../domain/entities/ai_usage.dart';
 // =====================================================
 
 final templateDataSourceProvider = Provider<TemplateRemoteDataSource>((ref) {
-  return TemplateRemoteDataSource(Supabase.instance.client);
+  return TemplateRemoteDataSource(ref.watch(supabaseClientProvider));
 });
 
 // =====================================================
@@ -78,7 +78,7 @@ final templatesByCategoryProvider = FutureProvider.family<List<TripTemplate>, Te
 
 /// Current user's AI usage
 final aiUsageProvider = FutureProvider<UserAiUsage?>((ref) async {
-  final userId = Supabase.instance.client.auth.currentUser?.id;
+  final userId = ref.watch(supabaseClientProvider).auth.currentUser?.id;
   if (userId == null) return null;
 
   final dataSource = ref.watch(templateDataSourceProvider);
@@ -87,7 +87,7 @@ final aiUsageProvider = FutureProvider<UserAiUsage?>((ref) async {
 
 /// Check if current user can generate AI itinerary
 final canGenerateAiProvider = FutureProvider<bool>((ref) async {
-  final userId = Supabase.instance.client.auth.currentUser?.id;
+  final userId = ref.watch(supabaseClientProvider).auth.currentUser?.id;
   if (userId == null) return false;
 
   final dataSource = ref.watch(templateDataSourceProvider);
@@ -96,7 +96,7 @@ final canGenerateAiProvider = FutureProvider<bool>((ref) async {
 
 /// Remaining AI generations for current user
 final remainingGenerationsProvider = FutureProvider<int>((ref) async {
-  final userId = Supabase.instance.client.auth.currentUser?.id;
+  final userId = ref.watch(supabaseClientProvider).auth.currentUser?.id;
   if (userId == null) return 0;
 
   final dataSource = ref.watch(templateDataSourceProvider);
@@ -142,7 +142,7 @@ class TemplateController extends Notifier<TemplateControllerState> {
     required String templateId,
     required String tripId,
   }) async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     if (userId == null) {
       debugPrint('❌ Template: Cannot apply - user not authenticated');
       return false;
@@ -178,7 +178,7 @@ class TemplateController extends Notifier<TemplateControllerState> {
 
   /// Increment AI usage after generation
   Future<UserAiUsage?> incrementAiUsage() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     if (userId == null) return null;
 
     try {
@@ -207,7 +207,7 @@ class TemplateController extends Notifier<TemplateControllerState> {
     bool wasSuccessful = true,
     String? errorMessage,
   }) async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     if (userId == null) return;
 
     try {
