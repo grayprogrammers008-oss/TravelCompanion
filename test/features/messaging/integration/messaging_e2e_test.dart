@@ -438,9 +438,19 @@ void main() {
         id: 'queue-001',
         tripId: tripId,
         senderId: senderId,
+        // MessageModel.fromJson requires the full message payload — include
+        // every non-nullable field so the retry path can rebuild the model.
         messageData: {
+          'id': 'msg-offline-1',
+          'trip_id': tripId,
+          'sender_id': senderId,
           'message': 'Offline message 1',
           'message_type': 'text',
+          'reactions': <Map<String, dynamic>>[],
+          'read_by': [senderId],
+          'is_deleted': false,
+          'created_at': baseDate.toIso8601String(),
+          'updated_at': baseDate.toIso8601String(),
         },
         transmissionMethod: 'internet',
         syncStatus: 'pending',
@@ -472,7 +482,9 @@ void main() {
 
       await repository.syncPendingMessages();
 
-      verify(mockLocalDataSource.getPendingMessages()).called(1);
+      // syncPendingMessages calls getPendingMessages once, then retryMessage
+      // which also calls getPendingMessages → 2 calls total
+      verify(mockLocalDataSource.getPendingMessages()).called(2);
       verify(mockRemoteDataSource.sendMessage(any)).called(1);
       verify(mockLocalDataSource.removeFromQueue('queue-001')).called(1);
     });

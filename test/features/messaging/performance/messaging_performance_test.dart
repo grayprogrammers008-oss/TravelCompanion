@@ -132,15 +132,15 @@ void main() {
           .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       when(mockLocalDataSource.addReaction(
-        messageId: any,
-        userId: any,
-        emoji: any,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       )).thenAnswer((_) async => {});
 
       when(mockRemoteDataSource.addReaction(
-        messageId: any,
-        userId: any,
-        emoji: any,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       )).thenAnswer((_) async => {});
 
       const reactionCount = 50;
@@ -159,12 +159,24 @@ void main() {
       expect(stopwatch.elapsedMilliseconds, lessThan(5000)); // Should be < 5 seconds
 
       print('📊 Performance: Added $reactionCount reactions in ${stopwatch.elapsedMilliseconds}ms');
-      verify(mockLocalDataSource.addReaction(messageId: any, userId: any, emoji: any))
-          .called(reactionCount);
+      verify(mockLocalDataSource.addReaction(
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
+      )).called(reactionCount);
     });
   });
 
   group('Performance - Message Deduplication', () {
+    setUp(() {
+      // Deduplication service is a process-wide singleton; ensure isolation.
+      MessageDeduplicationService().clearCache();
+    });
+
+    tearDown(() {
+      MessageDeduplicationService().clearCache();
+    });
+
     test('✅ Positive: Deduplication performance with large datasets', () async {
       final deduplicationService = MessageDeduplicationService();
       await deduplicationService.initialize();
@@ -345,9 +357,9 @@ void main() {
       when(mockConnectivity.checkConnectivity())
           .thenAnswer((_) async => [ConnectivityResult.wifi]);
       when(mockLocalDataSource.getTripMessages(
-        tripId: any,
-        limit: any,
-        offset: any,
+        tripId: anyNamed('tripId'),
+        limit: anyNamed('limit'),
+        offset: anyNamed('offset'),
       )).thenAnswer((_) async => messages);
 
       const concurrentReads = 20;
@@ -395,9 +407,9 @@ void main() {
         (_) async => testMessages.first,
       );
       when(mockLocalDataSource.getTripMessages(
-        tripId: any,
-        limit: any,
-        offset: any,
+        tripId: anyNamed('tripId'),
+        limit: anyNamed('limit'),
+        offset: anyNamed('offset'),
       )).thenAnswer((_) async => testMessages);
 
       final stopwatch = Stopwatch()..start();
@@ -638,10 +650,14 @@ void main() {
       when(mockConnectivity.checkConnectivity())
           .thenAnswer((_) async => [ConnectivityResult.wifi]);
 
-      when(mockLocalDataSource.markMessageAsRead(messageId: any, userId: any))
-          .thenAnswer((_) async => {});
-      when(mockRemoteDataSource.markMessageAsRead(messageId: any, userId: any))
-          .thenAnswer((_) async => {});
+      when(mockLocalDataSource.markMessageAsRead(
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+      )).thenAnswer((_) async => {});
+      when(mockRemoteDataSource.markMessageAsRead(
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+      )).thenAnswer((_) async => {});
 
       const stateChanges = 200;
 

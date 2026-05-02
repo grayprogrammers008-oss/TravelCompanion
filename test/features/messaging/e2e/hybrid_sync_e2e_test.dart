@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
 import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:travel_crew/features/messaging/data/services/message_deduplication_service.dart';
+import 'package:travel_crew/features/messaging/data/services/conflict_resolution_engine.dart';
 import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
 
 /// End-to-End tests for Hybrid Sync Strategy
@@ -8,14 +10,41 @@ import 'package:travel_crew/features/messaging/domain/entities/message_entity.da
 void main() {
   group('Hybrid Sync E2E Tests', () {
     late SyncCoordinator coordinator;
+    late PrioritySyncQueue syncQueue;
+    late MessageDeduplicationService dedup;
+    late ConflictResolutionEngine conflictEngine;
 
     setUp(() async {
       coordinator = SyncCoordinator();
+      syncQueue = PrioritySyncQueue();
+      dedup = MessageDeduplicationService();
+      conflictEngine = ConflictResolutionEngine();
+
       await coordinator.initialize();
+      await dedup.initialize();
+      conflictEngine.initialize();
+
+      // These services are process-wide singletons. Clear caches/queues and
+      // reset all statistics so each test starts from a clean slate.
+      // Pause the queue so test cases don't trigger retry timer delays
+      // (which would otherwise make pumpAndSettle hang for ~15s per task).
+      syncQueue.pause();
+      syncQueue.clearAll();
+      syncQueue.resetStatistics();
+      dedup.clearCache();
+      conflictEngine.resetStatistics();
+      coordinator.resetStatistics();
     });
 
     tearDown(() {
-      coordinator.dispose();
+      // Don't dispose singletons - subsequent tests need them. Just clean up
+      // any state they accumulated.
+      syncQueue.clearAll();
+      syncQueue.resetStatistics();
+      syncQueue.resume();
+      dedup.clearCache();
+      conflictEngine.resetStatistics();
+      coordinator.resetStatistics();
     });
 
     group('Complete Sync Workflow', () {
@@ -694,8 +723,12 @@ void main() {
           source: 'server',
         );
 
-        // Wait for events to propagate
-        await tester.pumpAndSettle();
+        // Allow event stream microtasks to drain. Avoid pumpAndSettle here:
+        // the deduplication service holds a periodic cleanup Timer that
+        // pumpAndSettle would wait on indefinitely.
+        await tester.pump();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
 
         await subscription.cancel();
 

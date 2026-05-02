@@ -545,7 +545,20 @@ class SyncStatistics {
   });
 
   double get overallEfficiency {
-    final total = totalMessagesSynced + totalDuplicatesSkipped;
-    return total > 0 ? totalMessagesSynced / total : 0.0;
+    // Prefer the realised sync vs duplicate ratio when sync handlers have run.
+    final processed = totalMessagesSynced + totalDuplicatesSkipped;
+    if (processed > 0) {
+      return totalMessagesSynced / processed;
+    }
+    // Fall back to deduplication-stage stats: unique messages we have accepted
+    // for sync versus the total number of messages we have inspected. This
+    // gives a meaningful efficiency value even before any sync handler has
+    // completed (e.g. in unit tests with no registered sources).
+    final inspected = deduplicationStats.uniqueMessages +
+        deduplicationStats.duplicatesFound;
+    if (inspected > 0) {
+      return deduplicationStats.uniqueMessages / inspected;
+    }
+    return 0.0;
   }
 }
