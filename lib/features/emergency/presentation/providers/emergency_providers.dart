@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/models/emergency_contact_model.dart';
 import '../../../../shared/models/emergency_alert_model.dart';
@@ -185,16 +186,43 @@ class EmergencyController extends Notifier<EmergencyState> {
   late final AddEmergencyContactUseCase _addContactUseCase;
   late final StartLocationSharingUseCase _startLocationSharingUseCase;
 
+  StreamSubscription<dynamic>? _locationUpdateSubscription;
+
   @override
   EmergencyState build() {
-    // Initialize dependencies from ref
     _repository = ref.read(emergencyRepositoryProvider);
     _triggerAlertUseCase = ref.read(triggerEmergencyAlertUseCaseProvider);
     _addContactUseCase = ref.read(addEmergencyContactUseCaseProvider);
     _startLocationSharingUseCase =
         ref.read(startLocationSharingUseCaseProvider);
 
+    ref.onDispose(() {
+      _locationUpdateSubscription?.cancel();
+    });
+
     return EmergencyState();
+  }
+
+  void _startLiveLocationUpdates(String sessionId) {
+    _locationUpdateSubscription?.cancel();
+    final locationService = ref.read(locationServiceProvider);
+    _locationUpdateSubscription = locationService
+        .watchLocation(distanceFilter: 10)
+        .listen((position) async {
+      try {
+        await _repository.updateSharedLocation(
+          sessionId: sessionId,
+          latitude: position.latitude,
+          longitude: position.longitude,
+          accuracy: position.accuracy,
+          altitude: position.altitude,
+          speed: position.speed,
+          heading: position.heading,
+        );
+      } catch (_) {
+        // Silently skip individual update failures
+      }
+    });
   }
 
   /// Trigger an emergency SOS alert
@@ -376,6 +404,7 @@ class EmergencyController extends Notifier<EmergencyState> {
         duration: duration,
         message: message,
       );
+      _startLiveLocationUpdates(locationShare.id);
       state = state.copyWith(
         isLoading: false,
         activeLocationShare: locationShare,
@@ -391,6 +420,8 @@ class EmergencyController extends Notifier<EmergencyState> {
   Future<void> stopLocationSharing(String sessionId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      _locationUpdateSubscription?.cancel();
+      _locationUpdateSubscription = null;
       await _repository.stopLocationSharing(sessionId);
       state = state.copyWith(
         isLoading: false,

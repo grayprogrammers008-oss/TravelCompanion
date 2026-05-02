@@ -340,6 +340,11 @@ void main() {
           lastUpdatedAt: DateTime(2024, 1, 1),
           sharedWithContactIds: ['contact1', 'contact2'],
         );
+        when(mockLocationService.getCurrentCoordinates())
+            .thenAnswer((_) async => {
+                  'latitude': 0.0,
+                  'longitude': 0.0,
+                });
         when(mockRemoteDataSource.startLocationSharing(
           contactIds: anyNamed('contactIds'),
           tripId: anyNamed('tripId'),

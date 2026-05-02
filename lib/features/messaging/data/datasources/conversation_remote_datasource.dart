@@ -495,59 +495,59 @@ class ConversationRemoteDataSource {
   }
 
   /// Subscribe to messages for a conversation
-  /// Enriches messages with sender profile data for real-time display
+  /// Uses Postgres Changes for reliable real-time updates (no Realtime publication needed)
   Stream<List<MessageModel>> subscribeToConversationMessages(
     String conversationId,
   ) {
-    // Cache for sender profiles to avoid repeated lookups
-    final senderCache = <String, Map<String, dynamic>>{};
+    final controller = StreamController<List<MessageModel>>.broadcast();
 
-    return _client
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .eq('conversation_id', conversationId)
-        .order('created_at', ascending: false)
-        .asyncMap((data) async {
-          final messages = data.where((m) => m['is_deleted'] != true).toList();
+    Future<void> fetchMessages() async {
+      try {
+        final messages = await getConversationMessages(
+          conversationId: conversationId,
+        );
+        if (!controller.isClosed) {
+          controller.add(messages);
+        }
+      } catch (e) {
+        debugPrint('Error fetching conversation messages: $e');
+      }
+    }
 
-          // Get unique sender IDs that need profile data
-          final senderIds = messages
-              .map((m) => m['sender_id'] as String)
-              .toSet()
-              .where((id) => !senderCache.containsKey(id))
-              .toList();
+    // Initial fetch
+    fetchMessages();
 
-          // Fetch missing sender profiles
-          if (senderIds.isNotEmpty) {
-            try {
-              final profiles = await _client
-                  .from('profiles')
-                  .select('id, full_name, avatar_url')
-                  .inFilter('id', senderIds);
+    // Subscribe to Postgres Changes for real-time updates
+    final channelName = 'conv_messages_$conversationId';
+    final channel = _client.channel(channelName);
 
-              for (final profile in profiles as List<dynamic>) {
-                final id = profile['id'] as String;
-                senderCache[id] = {
-                  'full_name': profile['full_name'],
-                  'avatar_url': profile['avatar_url'],
-                };
-              }
-            } catch (e) {
-              debugPrint('Error fetching sender profiles: $e');
-            }
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'messages',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'conversation_id',
+            value: conversationId,
+          ),
+          callback: (payload) {
+            debugPrint('🔔 conv_messages: change detected, refetching...');
+            fetchMessages();
+          },
+        )
+        .subscribe((status, [error]) {
+          debugPrint('🔔 conv_messages_$conversationId: $status ${error ?? ''}');
+          if (status == RealtimeSubscribeStatus.subscribed) {
+            fetchMessages();
           }
-
-          // Enrich messages with sender data
-          return messages.map((m) {
-            final senderId = m['sender_id'] as String;
-            final senderInfo = senderCache[senderId];
-            return MessageModel.fromJson({
-              ...m,
-              'sender_name': senderInfo?['full_name'],
-              'sender_avatar_url': senderInfo?['avatar_url'],
-            });
-          }).toList();
         });
+
+    controller.onCancel = () {
+      _client.removeChannel(channel);
+    };
+
+    return controller.stream;
   }
 
   /// Subscribe to all messages in a trip to detect new activity

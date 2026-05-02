@@ -560,10 +560,12 @@ class MeshMessage {
       'attachmentUrl': attachmentUrl,
       'hops': hops,
       'timestamp': timestamp.toIso8601String(),
+      'ttlSeconds': ttl.inSeconds,
     };
   }
 
   factory MeshMessage.fromJson(Map<String, dynamic> json) {
+    final ttlSeconds = json['ttlSeconds'] as int?;
     return MeshMessage(
       id: json['id'] as String,
       tripId: json['tripId'] as String,
@@ -577,7 +579,9 @@ class MeshMessage {
       attachmentUrl: json['attachmentUrl'] as String?,
       hops: (json['hops'] as List<dynamic>).cast<String>(),
       timestamp: DateTime.parse(json['timestamp'] as String),
-      ttl: MeshCoordinator.messageTtl,
+      ttl: ttlSeconds != null
+          ? Duration(seconds: ttlSeconds)
+          : MeshCoordinator.messageTtl,
     );
   }
 }

@@ -38,12 +38,12 @@ void main() {
     test('should send text message successfully', () async {
       // Arrange
       when(mockRepository.sendMessage(
-        tripId: testTripId,
-        senderId: testSenderId,
-        message: testMessage,
-        messageType: MessageType.text,
-        replyToId: null,
-        attachmentUrl: null,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
+        replyToId: anyNamed('replyToId'),
+        attachmentUrl: anyNamed('attachmentUrl'),
       )).thenAnswer((_) async => testMessageEntity);
 
       // Act
@@ -82,10 +82,10 @@ void main() {
       expect(result.error, 'Trip ID cannot be empty');
       expect(result.data, isNull);
       verifyNever(mockRepository.sendMessage(
-        tripId: any,
-        senderId: any,
-        message: any,
-        messageType: any,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
       ));
     });
 
@@ -142,12 +142,12 @@ void main() {
       final replyMessage = testMessageEntity.copyWith(replyToId: replyToId);
 
       when(mockRepository.sendMessage(
-        tripId: testTripId,
-        senderId: testSenderId,
-        message: testMessage,
-        messageType: MessageType.text,
-        replyToId: replyToId,
-        attachmentUrl: null,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
+        replyToId: anyNamed('replyToId'),
+        attachmentUrl: anyNamed('attachmentUrl'),
       )).thenAnswer((_) async => replyMessage);
 
       // Act
@@ -184,12 +184,12 @@ void main() {
       );
 
       when(mockRepository.sendMessage(
-        tripId: testTripId,
-        senderId: testSenderId,
-        message: testMessage,
-        messageType: MessageType.image,
-        replyToId: null,
-        attachmentUrl: testImageUrl,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
+        replyToId: anyNamed('replyToId'),
+        attachmentUrl: anyNamed('attachmentUrl'),
       )).thenAnswer((_) async => imageMessage);
 
       // Act
@@ -249,12 +249,12 @@ void main() {
       );
 
       when(mockRepository.sendMessage(
-        tripId: testTripId,
-        senderId: testSenderId,
-        message: testMessage,
-        messageType: MessageType.location,
-        replyToId: null,
-        attachmentUrl: testLocationData,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
+        replyToId: anyNamed('replyToId'),
+        attachmentUrl: anyNamed('attachmentUrl'),
       )).thenAnswer((_) async => locationMessage);
 
       // Act
@@ -291,12 +291,12 @@ void main() {
     test('should handle repository exceptions', () async {
       // Arrange
       when(mockRepository.sendMessage(
-        tripId: testTripId,
-        senderId: testSenderId,
-        message: testMessage,
-        messageType: MessageType.text,
-        replyToId: null,
-        attachmentUrl: null,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
+        replyToId: anyNamed('replyToId'),
+        attachmentUrl: anyNamed('attachmentUrl'),
       )).thenThrow(Exception('Network error'));
 
       // Act
@@ -316,10 +316,10 @@ void main() {
     test('should handle unknown errors gracefully', () async {
       // Arrange
       when(mockRepository.sendMessage(
-        tripId: any,
-        senderId: any,
-        message: any,
-        messageType: any,
+        tripId: anyNamed('tripId'),
+        senderId: anyNamed('senderId'),
+        message: anyNamed('message'),
+        messageType: anyNamed('messageType'),
       )).thenThrow('Unexpected error');
 
       // Act

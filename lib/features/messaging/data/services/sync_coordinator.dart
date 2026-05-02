@@ -30,10 +30,10 @@ class SyncCoordinator {
   int _totalDuplicatesSkipped = 0;
   int _totalConflictsResolved = 0;
 
-  // Streams
-  final StreamController<SyncEvent> _eventController =
+  // Streams (recreated on init if previously disposed, to support hot reload/tests)
+  StreamController<SyncEvent> _eventController =
       StreamController<SyncEvent>.broadcast();
-  final StreamController<SyncProgress> _progressController =
+  StreamController<SyncProgress> _progressController =
       StreamController<SyncProgress>.broadcast();
 
   Stream<SyncEvent> get eventStream => _eventController.stream;
@@ -45,6 +45,14 @@ class SyncCoordinator {
   /// Initialize the sync coordinator
   Future<void> initialize() async {
     if (_isInitialized) return;
+
+    // Recreate stream controllers if they were closed (e.g. by dispose() in tests)
+    if (_eventController.isClosed) {
+      _eventController = StreamController<SyncEvent>.broadcast();
+    }
+    if (_progressController.isClosed) {
+      _progressController = StreamController<SyncProgress>.broadcast();
+    }
 
     // Initialize services
     await _deduplicationService.initialize();
@@ -180,11 +188,13 @@ class SyncCoordinator {
 
     _totalConflictsResolved++;
 
-    _eventController.add(SyncEvent.conflictResolved(
-      messageId: remoteMessage.id,
-      method: resolution.resolutionMethod,
-      winner: resolution.winner,
-    ));
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncEvent.conflictResolved(
+        messageId: remoteMessage.id,
+        method: resolution.resolutionMethod,
+        winner: resolution.winner,
+      ));
+    }
 
     return resolution.resolvedMessage;
   }
@@ -194,7 +204,9 @@ class SyncCoordinator {
     if (_isSyncing) return;
 
     _isSyncing = true;
-    _eventController.add(SyncEvent.syncStarted());
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncEvent.syncStarted());
+    }
 
     // Trigger sync from all sources
     for (final source in _syncSources.values) {
@@ -225,7 +237,9 @@ class SyncCoordinator {
     );
 
     await _syncQueue.enqueue(task);
-    _eventController.add(SyncEvent.tripSyncQueued(tripId));
+    if (!_eventController.isClosed) {
+      _eventController.add(SyncEvent.tripSyncQueued(tripId));
+    }
   }
 
   /// Clear sync data for a trip
@@ -273,7 +287,9 @@ class SyncCoordinator {
           final success = await syncSource.syncHandler!(message);
           if (success) {
             _totalMessagesSynced++;
-            _eventController.add(SyncEvent.messageSynced(message.id));
+            if (!_eventController.isClosed) {
+              _eventController.add(SyncEvent.messageSynced(message.id));
+            }
           }
           return success;
         }
@@ -321,7 +337,7 @@ class SyncCoordinator {
   void _handleQueueEvent(SyncQueueEvent event) {
     switch (event.type) {
       case SyncQueueEventType.taskCompleted:
-        if (event.task != null) {
+        if (event.task != null && !_progressController.isClosed) {
           _progressController.add(SyncProgress(
             currentTask: event.task!.id,
             queueSize: _syncQueue.queueSize,
@@ -330,7 +346,7 @@ class SyncCoordinator {
         }
         break;
       case SyncQueueEventType.taskFailed:
-        if (event.task != null) {
+        if (event.task != null && !_eventController.isClosed) {
           _eventController.add(SyncEvent.syncFailed(
             taskId: event.task!.id,
             error: 'Task failed after retries',
@@ -347,9 +363,15 @@ class SyncCoordinator {
     stopAutoSync();
     _deduplicationService.dispose();
     _syncQueue.dispose();
-    _eventController.close();
-    _progressController.close();
+    if (!_eventController.isClosed) {
+      _eventController.close();
+    }
+    if (!_progressController.isClosed) {
+      _progressController.close();
+    }
     _syncSources.clear();
+    _isInitialized = false;
+    _isSyncing = false;
   }
 }
 

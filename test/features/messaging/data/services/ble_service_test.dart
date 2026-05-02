@@ -164,28 +164,28 @@ void main() {
 
   group('BLEService UUIDs', () {
     test('should have correct service UUID', () {
-      expect(BLEService.SERVICE_UUID, '6e400001-b5a3-f393-e0a9-e50e24dcca9e');
+      expect(BLEService.serviceUuid, '6e400001-b5a3-f393-e0a9-e50e24dcca9e');
     });
 
     test('should have correct TX characteristic UUID', () {
       expect(
-        BLEService.TX_CHARACTERISTIC_UUID,
+        BLEService.txCharacteristicUuid,
         '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
       );
     });
 
     test('should have correct RX characteristic UUID', () {
       expect(
-        BLEService.RX_CHARACTERISTIC_UUID,
+        BLEService.rxCharacteristicUuid,
         '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
       );
     });
 
     test('UUIDs should be unique', () {
       final uuids = {
-        BLEService.SERVICE_UUID,
-        BLEService.TX_CHARACTERISTIC_UUID,
-        BLEService.RX_CHARACTERISTIC_UUID,
+        BLEService.serviceUuid,
+        BLEService.txCharacteristicUuid,
+        BLEService.rxCharacteristicUuid,
       };
 
       expect(uuids.length, 3);

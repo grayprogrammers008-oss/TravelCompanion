@@ -196,11 +196,11 @@ void main() {
 
   group('MeshCoordinator constants', () {
     test('should have correct MAX_HOPS', () {
-      expect(MeshCoordinator.MAX_HOPS, 5);
+      expect(MeshCoordinator.maxHops, 5);
     });
 
     test('should have correct MESSAGE_TTL', () {
-      expect(MeshCoordinator.MESSAGE_TTL, const Duration(minutes: 10));
+      expect(MeshCoordinator.messageTtl, const Duration(minutes: 10));
     });
   });
 

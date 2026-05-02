@@ -185,6 +185,37 @@ class MockConversationRepository implements ConversationRepository {
   }) async {
     return findOrCreateDMResult ?? Result.failure('Not configured');
   }
+
+  @override
+  Future<Result<void>> deleteMessage({
+    required String messageId,
+    required String senderId,
+  }) async {
+    return Result.success(null);
+  }
+
+  @override
+  Future<Result<void>> deleteMessages({
+    required List<String> messageIds,
+    required String senderId,
+  }) async {
+    return Result.success(null);
+  }
+
+  @override
+  Future<Result<ConversationEntity>> getDefaultGroup({
+    required String tripId,
+    required String userId,
+  }) async {
+    return Result.failure('Not configured');
+  }
+
+  @override
+  Future<Result<String?>> getDefaultGroupId({
+    required String tripId,
+  }) async {
+    return Result.success(null);
+  }
 }
 
 void main() {

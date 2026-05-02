@@ -23,12 +23,23 @@ void main() {
       await deduplicationService.initialize();
       conflictEngine.initialize();
       await coordinator.initialize();
+
+      // Reset all statistics and clear caches/queues to isolate tests
+      // (these services are process-wide singletons)
+      coordinator.resetStatistics();
+      syncQueue.clearAll();
+      syncQueue.resetStatistics();
+      deduplicationService.clearCache();
+      conflictEngine.resetStatistics();
     });
 
     tearDown(() {
-      deduplicationService.dispose();
-      syncQueue.dispose();
-      coordinator.dispose();
+      // Avoid disposing singletons here so subsequent tests can reuse them.
+      coordinator.resetStatistics();
+      syncQueue.clearAll();
+      syncQueue.resetStatistics();
+      deduplicationService.clearCache();
+      conflictEngine.resetStatistics();
     });
 
     group('Message Flow Integration', () {

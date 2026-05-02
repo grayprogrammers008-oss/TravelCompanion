@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/theme/theme_access.dart';
 import 'package:travel_crew/features/emergency/presentation/widgets/sos_button.dart';
@@ -405,92 +406,60 @@ class EmergencyPage extends ConsumerWidget {
   }
 
   Future<void> _shareLocation(BuildContext context, WidgetRef ref) async {
-    // Show confirmation dialog
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        title: const Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    // Show loading indicator while getting location
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
           children: [
-            Icon(Icons.location_on, color: AppTheme.info),
-            SizedBox(width: AppTheme.spacingMd),
-            Expanded(
-              child: Text('Share Live Location'),
+            SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             ),
+            SizedBox(width: 12),
+            Text('Getting your location...'),
           ],
         ),
-        content: const Text(
-          'Share your live location with emergency contacts?\n\n'
-          'This will:\n'
-          '• Share your current GPS location\n'
-          '• Update location in real-time\n'
-          '• Notify your emergency contacts',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppTheme.success,
-            ),
-            child: const Text('Share Location'),
-          ),
-        ],
+        duration: Duration(seconds: 10),
       ),
     );
 
-    if (confirmed == true && context.mounted) {
-      try {
-        // Get all emergency contacts
-        final contactsAsync = await ref.read(emergencyContactsProvider.future);
+    try {
+      final locationService = ref.read(locationServiceProvider);
+      final coordinates = await locationService.getCurrentCoordinates();
 
-        if (contactsAsync.isEmpty) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please add emergency contacts first'),
-                backgroundColor: AppTheme.warning,
-                duration: Duration(seconds: 3),
-              ),
-            );
-          }
-          return;
-        }
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-        // Start location sharing with all emergency contacts
-        final controller = ref.read(emergencyControllerProvider.notifier);
-        final contactIds = contactsAsync.map((c) => c.id).toList();
-        await controller.startLocationSharing(
-          contactIds: contactIds,
-          tripId: tripId,
-          message: 'Emergency location sharing activated',
+      if (coordinates == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not get location. Please enable location permission.'),
+            backgroundColor: AppTheme.error,
+            duration: Duration(seconds: 4),
+          ),
         );
+        return;
+      }
 
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Sharing location with ${contactsAsync.length} contacts'),
-              backgroundColor: AppTheme.success,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to share location: $e'),
-              backgroundColor: AppTheme.error,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        }
+      final lat = coordinates['latitude']!;
+      final lng = coordinates['longitude']!;
+      final mapsLink = 'https://maps.google.com/?q=$lat,$lng';
+      final message =
+          '🆘 Emergency! I need help. My current location:\n$mapsLink';
+
+      await Share.share(message, subject: 'Emergency Location');
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share location: $e'),
+            backgroundColor: AppTheme.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
     }
   }

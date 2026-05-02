@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -36,6 +38,7 @@ class _SOSButtonState extends ConsumerState<SOSButton>
   double _holdProgress = 0.0;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  Timer? _holdProgressTimer;
 
   static const Duration _holdDuration = Duration(seconds: 3);
   DateTime? _holdStartTime;
@@ -59,6 +62,13 @@ class _SOSButtonState extends ConsumerState<SOSButton>
 
   @override
   void dispose() {
+    // Stop the hold-progress recursive timer loop so it doesn't continue
+    // scheduling itself after the widget is unmounted (which would leave
+    // a pending timer and fail tests with the "pending Timer" error).
+    _isHolding = false;
+    _holdStartTime = null;
+    _holdProgressTimer?.cancel();
+    _holdProgressTimer = null;
     _pulseController.dispose();
     super.dispose();
   }
@@ -74,7 +84,7 @@ class _SOSButtonState extends ConsumerState<SOSButton>
   }
 
   void _updateHoldProgress() {
-    if (!_isHolding || _holdStartTime == null) return;
+    if (!mounted || !_isHolding || _holdStartTime == null) return;
 
     final elapsed = DateTime.now().difference(_holdStartTime!);
     final progress = elapsed.inMilliseconds / _holdDuration.inMilliseconds;
@@ -84,13 +94,24 @@ class _SOSButtonState extends ConsumerState<SOSButton>
     });
 
     if (progress >= 1.0) {
+      _holdProgressTimer?.cancel();
+      _holdProgressTimer = null;
       _triggerSOS();
     } else {
-      Future.delayed(const Duration(milliseconds: 50), _updateHoldProgress);
+      // Use a cancellable Timer (rather than Future.delayed) so dispose() can
+      // tear it down cleanly when the widget is unmounted mid-hold during
+      // tests. Otherwise the recursive scheduling leaves a pending Timer.
+      _holdProgressTimer?.cancel();
+      _holdProgressTimer = Timer(
+        const Duration(milliseconds: 50),
+        _updateHoldProgress,
+      );
     }
   }
 
   void _onPressEnd() {
+    _holdProgressTimer?.cancel();
+    _holdProgressTimer = null;
     setState(() {
       _isHolding = false;
       _holdStartTime = null;
@@ -158,11 +179,19 @@ class _SOSButtonState extends ConsumerState<SOSButton>
         );
       }
     } finally {
-      setState(() {
+      _holdProgressTimer?.cancel();
+      _holdProgressTimer = null;
+      if (mounted) {
+        setState(() {
+          _isHolding = false;
+          _holdStartTime = null;
+          _holdProgress = 0.0;
+        });
+      } else {
         _isHolding = false;
         _holdStartTime = null;
         _holdProgress = 0.0;
-      });
+      }
     }
   }
 

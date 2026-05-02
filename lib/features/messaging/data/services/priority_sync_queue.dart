@@ -36,11 +36,20 @@ class PrioritySyncQueue {
   int _totalTasksFailed = 0;
   int _totalTasksRetried = 0;
 
-  // Streams
-  final StreamController<SyncQueueEvent> _eventController =
+  // Streams (recreated lazily if previously disposed, to support hot reload/tests)
+  StreamController<SyncQueueEvent> _eventController =
       StreamController<SyncQueueEvent>.broadcast();
 
-  Stream<SyncQueueEvent> get eventStream => _eventController.stream;
+  void _ensureLive() {
+    if (_eventController.isClosed) {
+      _eventController = StreamController<SyncQueueEvent>.broadcast();
+    }
+  }
+
+  Stream<SyncQueueEvent> get eventStream {
+    _ensureLive();
+    return _eventController.stream;
+  }
 
   bool get isProcessing => _isProcessing;
   bool get isPaused => _isPaused;
@@ -60,6 +69,7 @@ class PrioritySyncQueue {
 
   /// Add a task to the sync queue
   Future<void> enqueue(SyncTask task) async {
+    _ensureLive();
     if (queueSize >= maxQueueSize) {
       debugPrint('Sync queue full, dropping task: ${task.id}');
       _eventController.add(SyncQueueEvent.taskDropped(task));
@@ -276,11 +286,16 @@ class PrioritySyncQueue {
 
   /// Dispose resources
   void dispose() {
-    _eventController.close();
+    if (!_eventController.isClosed) {
+      _eventController.close();
+    }
     _highPriorityQueue.clear();
     _mediumPriorityQueue.clear();
     _lowPriorityQueue.clear();
     _taskHandlers.clear();
+    _isProcessing = false;
+    _isPaused = false;
+    _currentTask = null;
   }
 }
 

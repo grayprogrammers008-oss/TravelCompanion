@@ -164,6 +164,9 @@ void main() {
 
     setUp(() {
       queue = PrioritySyncQueue();
+      // Pause to prevent automatic processing affecting queue size assertions
+      queue.pause();
+      queue.resetStatistics();
     });
 
     tearDown(() {
@@ -302,6 +305,7 @@ void main() {
     setUp(() {
       engine = ConflictResolutionEngine();
       engine.initialize();
+      engine.resetStatistics();
     });
 
     test('should initialize successfully', () {
@@ -515,6 +519,7 @@ void main() {
     setUp(() async {
       coordinator = SyncCoordinator();
       await coordinator.initialize();
+      coordinator.resetStatistics();
     });
 
     tearDown(() {

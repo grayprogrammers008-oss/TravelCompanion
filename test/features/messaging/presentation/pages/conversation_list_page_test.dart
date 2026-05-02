@@ -5,6 +5,9 @@ import 'package:travel_crew/features/messaging/domain/entities/conversation_enti
 import 'package:travel_crew/features/messaging/presentation/pages/conversation_list_page.dart';
 import 'package:travel_crew/features/messaging/presentation/providers/conversation_providers.dart';
 
+/// Local filter enum used for tests since the production page doesn't expose one.
+enum ConversationFilter { all, directMessages, groups }
+
 void main() {
   final now = DateTime.now();
 
@@ -61,12 +64,13 @@ void main() {
   Widget createTestWidget({
     required List<ConversationEntity> conversations,
   }) {
+    // The production page reads tripConversationsStreamProvider (a Stream).
     return ProviderScope(
       overrides: [
-        tripConversationsProvider(const TripConversationsParams(
+        tripConversationsStreamProvider(const TripConversationsParams(
           tripId: 'trip-1',
           userId: 'current-user',
-        )).overrideWith((ref) => Future.value(conversations)),
+        )).overrideWith((ref) => Stream.value(conversations)),
       ],
       child: const MaterialApp(
         home: ConversationListPage(
@@ -79,62 +83,70 @@ void main() {
   }
 
   group('ConversationListPage', () {
-    testWidgets('displays app bar with title', (tester) async {
+    testWidgets('displays Group Chats title in app bar', (tester) async {
       await tester.pumpWidget(createTestWidget(conversations: []));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
-      expect(find.text('Chats'), findsOneWidget);
+      expect(find.text('Group Chats'), findsOneWidget);
     });
 
     testWidgets('displays trip name in app bar', (tester) async {
       await tester.pumpWidget(createTestWidget(conversations: []));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
       expect(find.text('Beach Vacation'), findsOneWidget);
     });
 
-    testWidgets('displays filter chips', (tester) async {
+    testWidgets('displays empty-state message when no group chats exist',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(conversations: []));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
-      expect(find.text('All'), findsOneWidget);
-      expect(find.text('Direct'), findsOneWidget);
-      expect(find.text('Groups'), findsOneWidget);
+      expect(find.text('No Group Chats Yet'), findsOneWidget);
     });
 
-    testWidgets('displays FAB for creating new chat', (tester) async {
+    testWidgets('displays groups icon in empty state', (tester) async {
       await tester.pumpWidget(createTestWidget(conversations: []));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
-      expect(find.byType(FloatingActionButton), findsOneWidget);
+      expect(find.byIcon(Icons.groups_outlined), findsOneWidget);
     });
 
     testWidgets('displays search icon', (tester) async {
       await tester.pumpWidget(createTestWidget(conversations: []));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
       expect(find.byIcon(Icons.search), findsOneWidget);
     });
 
-    testWidgets('displays conversation name', (tester) async {
+    testWidgets('displays group conversation name when groups exist',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
         conversations: [testGroupConversation],
       ));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
       expect(find.text('Trip Planning'), findsOneWidget);
     });
 
-    testWidgets('displays conversation with expected structure', (tester) async {
+    testWidgets('hides direct-message conversations (groups only)',
+        (tester) async {
       await tester.pumpWidget(createTestWidget(
-        conversations: [testGroupConversation],
+        conversations: [testGroupConversation, testDMConversation],
       ));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
-      // Verify conversation card exists
+      // Group conversation visible
       expect(find.text('Trip Planning'), findsOneWidget);
-      // Verify last message sender name is shown
-      expect(find.textContaining('Jane'), findsAtLeastNWidgets(1));
+      // DM conversation hidden — page filters out DMs
+      expect(find.text('Direct Message'), findsNothing);
     });
   });
 

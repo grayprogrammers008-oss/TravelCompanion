@@ -262,8 +262,8 @@ void main() {
         userId: 'user-002',
       );
 
-      verify(mockLocalDataSource.markMessageAsRead(messageId: any, userId: any)).called(2);
-      verify(mockRemoteDataSource.markMessageAsRead(messageId: any, userId: any)).called(2);
+      verify(mockLocalDataSource.markMessageAsRead(messageId: anyNamed('messageId'), userId: anyNamed('userId'))).called(2);
+      verify(mockRemoteDataSource.markMessageAsRead(messageId: anyNamed('messageId'), userId: anyNamed('userId'))).called(2);
     });
   });
 
@@ -464,8 +464,8 @@ void main() {
           ));
 
       when(mockLocalDataSource.updateQueueStatus(
-        queueId: any,
-        status: any,
+        queueId: anyNamed('queueId'),
+        status: anyNamed('status'),
       )).thenAnswer((_) async => {});
 
       when(mockLocalDataSource.removeFromQueue(any)).thenAnswer((_) async => {});

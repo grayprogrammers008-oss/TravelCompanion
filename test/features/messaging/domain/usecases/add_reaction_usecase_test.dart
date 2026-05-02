@@ -24,9 +24,9 @@ void main() {
     test('should add reaction successfully', () async {
       // Arrange
       when(mockRepository.addReaction(
-        messageId: testMessageId,
-        userId: testUserId,
-        emoji: testEmoji,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       )).thenAnswer((_) async => {});
 
       // Act
@@ -57,9 +57,9 @@ void main() {
       expect(result.isSuccess, false);
       expect(result.error, 'Message ID cannot be empty');
       verifyNever(mockRepository.addReaction(
-        messageId: any,
-        userId: any,
-        emoji: any,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       ));
     });
 
@@ -75,9 +75,9 @@ void main() {
       expect(result.isSuccess, false);
       expect(result.error, 'User ID cannot be empty');
       verifyNever(mockRepository.addReaction(
-        messageId: any,
-        userId: any,
-        emoji: any,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       ));
     });
 
@@ -93,18 +93,18 @@ void main() {
       expect(result.isSuccess, false);
       expect(result.error, 'Emoji cannot be empty');
       verifyNever(mockRepository.addReaction(
-        messageId: any,
-        userId: any,
-        emoji: any,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       ));
     });
 
     test('should handle repository exceptions', () async {
       // Arrange
       when(mockRepository.addReaction(
-        messageId: testMessageId,
-        userId: testUserId,
-        emoji: testEmoji,
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       )).thenThrow(Exception('Network error'));
 
       // Act
@@ -124,12 +124,13 @@ void main() {
       // Arrange
       final emojis = ['❤️', '😂', '😮', '🎉', '🔥'];
 
+      when(mockRepository.addReaction(
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
+      )).thenAnswer((_) async => {});
+
       for (final emoji in emojis) {
-        when(mockRepository.addReaction(
-          messageId: testMessageId,
-          userId: testUserId,
-          emoji: emoji,
-        )).thenAnswer((_) async => {});
 
         // Act
         final result = await useCase.execute(
@@ -153,15 +154,9 @@ void main() {
     test('should allow same user to add different reactions', () async {
       // Arrange
       when(mockRepository.addReaction(
-        messageId: testMessageId,
-        userId: testUserId,
-        emoji: '👍',
-      )).thenAnswer((_) async => {});
-
-      when(mockRepository.addReaction(
-        messageId: testMessageId,
-        userId: testUserId,
-        emoji: '❤️',
+        messageId: anyNamed('messageId'),
+        userId: anyNamed('userId'),
+        emoji: anyNamed('emoji'),
       )).thenAnswer((_) async => {});
 
       // Act

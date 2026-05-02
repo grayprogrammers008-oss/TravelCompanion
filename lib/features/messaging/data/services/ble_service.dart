@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -253,14 +254,20 @@ class BLEService {
 
       debugPrint('🔗 [BLEService] Connecting to peer: ${peer.name}');
 
-      // Connect to device
-      await peer.device.connect(
+      // Connect to device. peer.device is non-null in real BLE flows;
+      // the field is only nullable for unit-test construction.
+      final device = peer.device;
+      if (device == null) {
+        debugPrint('❌ [BLEService] Peer has no underlying device');
+        return false;
+      }
+      await device.connect(
         timeout: const Duration(seconds: 15),
         autoConnect: false,
       );
 
       // Discover services
-      final services = await peer.device.discoverServices();
+      final services = await device.discoverServices();
 
       // Find our service
       final service = services.firstWhere(
@@ -279,7 +286,7 @@ class BLEService {
         _handleReceivedData(peerId, value);
       });
 
-      _connectedDevices[peerId] = peer.device;
+      _connectedDevices[peerId] = device;
       _notifyConnectionStateChanged(peerId, true);
 
       debugPrint('✅ [BLEService] Connected to peer: ${peer.name}');
@@ -416,7 +423,9 @@ class BLEService {
 class BLEPeer {
   final String id;
   final String name;
-  final BluetoothDevice device;
+  // Nullable so unit tests can construct a BLEPeer without a real
+  // BluetoothDevice (signal-strength / distance calcs don't use device).
+  final BluetoothDevice? device;
   final int rssi; // Signal strength
   final DateTime lastSeen;
 
@@ -439,10 +448,10 @@ class BLEPeer {
   /// Get estimated distance in meters (rough approximation)
   double get estimatedDistance {
     // Free space path loss formula (simplified)
-    // RSSI = -10n * log10(d) - A
+    // RSSI = -10n * log10(d) - A   →   d = 10 ^ ((A - RSSI) / (10n))
     // Where: n = 2 (path loss exponent), A = -50 (reference RSSI at 1m)
     final ratio = (-50 - rssi) / 20.0;
-    return 10.0 * ratio;
+    return math.pow(10.0, ratio).toDouble();
   }
 }
 

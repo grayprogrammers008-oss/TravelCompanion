@@ -141,7 +141,9 @@ class EmergencyRepositoryImpl implements EmergencyRepository {
     String? message,
   }) async {
     try {
-      // Get current location using location service
+      // Get current location using location service. Fallback to (0.0, 0.0)
+      // when permissions are denied or coordinates are unavailable so that
+      // location sharing can still be initiated with a placeholder position.
       final coordinates = await _locationService.getCurrentCoordinates();
       final double latitude = coordinates?['latitude'] ?? 0.0;
       final double longitude = coordinates?['longitude'] ?? 0.0;

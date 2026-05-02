@@ -165,6 +165,10 @@ class SyncNotifier extends Notifier<SyncState> {
   SyncState build() {
     _coordinator = ref.read(syncCoordinatorProvider);
     _listenToSyncEvents();
+    ref.onDispose(() {
+      _eventSubscription?.cancel();
+      _eventSubscription = null;
+    });
     return const SyncState();
   }
 
@@ -279,6 +283,7 @@ class SyncNotifier extends Notifier<SyncState> {
 
   void _listenToSyncEvents() {
     _eventSubscription = _coordinator.eventStream.listen((event) {
+      if (!ref.mounted) return;
       switch (event.type) {
         case SyncEventType.initialized:
           state = state.copyWith(

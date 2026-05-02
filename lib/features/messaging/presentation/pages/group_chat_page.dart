@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
+import '../../../../core/services/location_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
@@ -132,11 +134,107 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                   _pickDocument();
                 },
               ),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.green.shade100,
+                  child: const Icon(Icons.location_on, color: Colors.green),
+                ),
+                title: const Text('Share Location'),
+                subtitle: const Text('Share your current GPS location'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _shareCurrentLocation();
+                },
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _shareCurrentLocation() async {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            ),
+            SizedBox(width: 12),
+            Text('Getting your location...'),
+          ],
+        ),
+        duration: Duration(seconds: 10),
+      ),
+    );
+
+    try {
+      final coordinates = await LocationService().getCurrentCoordinates();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (coordinates == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not get location. Please enable location permission.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 4),
+          ),
+        );
+        return;
+      }
+
+      final lat = coordinates['latitude']!;
+      final lng = coordinates['longitude']!;
+      final mapsLink = 'https://maps.google.com/?q=$lat,$lng';
+      final chatMessage = '📍 Live Location\n$mapsLink';
+
+      // Send location message in the group chat
+      final repository = ref.read(conversationRepositoryProvider);
+      final result = await repository.sendConversationMessage(
+        conversationId: widget.conversationId,
+        tripId: widget.tripId,
+        senderId: _effectiveUserId,
+        message: chatMessage,
+        messageType: MessageType.location,
+      );
+
+      if (!result.isSuccess) {
+        throw Exception(result.error ?? 'Failed to send location message');
+      }
+
+      ref.invalidate(conversationMessagesStreamProvider(widget.conversationId));
+      ref.invalidate(tripConversationsProvider(TripConversationsParams(
+        tripId: widget.tripId,
+        userId: _effectiveUserId,
+      )));
+
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(0,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      }
+
+      // Also open native share sheet so user can send via WhatsApp, Telegram, etc.
+      await Share.share(
+        '📍 My live location:\n$mapsLink',
+        subject: 'Live Location',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share location: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   /// Pick image from gallery and send
@@ -209,6 +307,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         messageType: MessageType.image,
         attachmentUrl: imageUrl,
       );
+
+      // Invalidate messages stream to show image immediately
+      ref.invalidate(conversationMessagesStreamProvider(widget.conversationId));
 
       // Invalidate conversations list to refresh last message
       ref.invalidate(tripConversationsProvider(TripConversationsParams(
@@ -498,19 +599,25 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
     try {
       final repository = ref.read(conversationRepositoryProvider);
-      await repository.sendConversationMessage(
+      final result = await repository.sendConversationMessage(
         conversationId: widget.conversationId,
         tripId: widget.tripId,
         senderId: _effectiveUserId,
         message: text,
         messageType: MessageType.text,
       );
+      if (!result.isSuccess) {
+        throw Exception(result.error ?? 'Unknown error sending message');
+      }
 
       _messageController.clear();
 
       // Mark conversation as read after sending (updates last_read_at to now)
       // This ensures the sender's unread count goes to 0
       await _markAsRead();
+
+      // Refresh messages list immediately
+      ref.invalidate(conversationMessagesStreamProvider(widget.conversationId));
 
       // Invalidate conversations list to refresh last message and unread count
       ref.invalidate(tripConversationsProvider(TripConversationsParams(
@@ -937,7 +1044,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
             ),
           ),
 
-          const SizedBox(width: AppTheme.spacingSm),
+          // Location share button
+          IconButton(
+            icon: const Icon(Icons.location_on),
+            onPressed: _shareCurrentLocation,
+            color: Colors.green.shade600,
+            tooltip: 'Share Location',
+          ),
 
           // Send button
           Material(
@@ -1058,6 +1171,9 @@ class _MessageBubble extends StatelessWidget {
   bool get _isDocumentMessage =>
       message.messageType == MessageType.document && message.attachmentUrl != null;
 
+  bool get _isLocationMessage =>
+      message.messageType == MessageType.location;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -1104,6 +1220,8 @@ class _MessageBubble extends StatelessWidget {
                   _buildImageBubble(context)
                 else if (_isDocumentMessage)
                   _buildDocumentBubble(context)
+                else if (_isLocationMessage)
+                  _buildLocationBubble(context)
                 else
                   _buildTextBubble(context),
               ],
@@ -1316,6 +1434,75 @@ class _MessageBubble extends StatelessWidget {
         );
       }
     }
+  }
+
+  Widget _buildLocationBubble(BuildContext context) {
+    final text = message.message ?? '';
+    final urlMatch = RegExp(r'https://maps\.google\.com/\?q=[\d.,\-]+').firstMatch(text);
+    final mapsUrl = urlMatch?.group(0);
+
+    return GestureDetector(
+      onTap: mapsUrl != null
+          ? () async {
+              final uri = Uri.parse(mapsUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            }
+          : null,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 240),
+        decoration: BoxDecoration(
+          color: isMe ? Colors.green.shade600 : Colors.green.shade50,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(AppTheme.radiusMd),
+            topRight: const Radius.circular(AppTheme.radiusMd),
+            bottomLeft: Radius.circular(isMe ? AppTheme.radiusMd : AppTheme.radiusXs),
+            bottomRight: Radius.circular(isMe ? AppTheme.radiusXs : AppTheme.radiusMd),
+          ),
+        ),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.location_on,
+                    color: isMe ? Colors.white : Colors.green.shade700, size: 20),
+                const SizedBox(width: 6),
+                Text(
+                  'Live Location',
+                  style: TextStyle(
+                    color: isMe ? Colors.white : Colors.green.shade800,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            if (mapsUrl != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Tap to open in Maps',
+                style: TextStyle(
+                  color: isMe ? Colors.white70 : Colors.green.shade600,
+                  fontSize: 12,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ],
+            const SizedBox(height: 4),
+            Text(
+              _formatTime(message.createdAt),
+              style: TextStyle(
+                color: isMe ? Colors.white60 : Colors.grey.shade500,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildImageBubble(BuildContext context) {

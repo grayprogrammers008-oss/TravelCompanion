@@ -102,9 +102,9 @@ void main() {
       );
 
       verifyNever(mockRepository.createChecklist(
-        tripId: any,
-        name: any,
-        createdBy: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
+        createdBy: anyNamed('createdBy'),
       ));
     });
 
@@ -127,9 +127,9 @@ void main() {
       );
 
       verifyNever(mockRepository.createChecklist(
-        tripId: any,
-        name: any,
-        createdBy: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
+        createdBy: anyNamed('createdBy'),
       ));
     });
 
@@ -152,9 +152,9 @@ void main() {
       );
 
       verifyNever(mockRepository.createChecklist(
-        tripId: any,
-        name: any,
-        createdBy: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
+        createdBy: anyNamed('createdBy'),
       ));
     });
 
@@ -178,9 +178,9 @@ void main() {
       );
 
       verifyNever(mockRepository.createChecklist(
-        tripId: any,
-        name: any,
-        createdBy: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
+        createdBy: anyNamed('createdBy'),
       ));
     });
 
@@ -238,9 +238,9 @@ void main() {
       );
 
       verifyNever(mockRepository.createChecklist(
-        tripId: any,
-        name: any,
-        createdBy: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
+        createdBy: anyNamed('createdBy'),
       ));
     });
 

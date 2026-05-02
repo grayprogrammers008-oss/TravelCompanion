@@ -204,6 +204,63 @@ class MockConversationRemoteDataSource implements ConversationRemoteDataSource {
   ) {
     return Stream.value(getConversationResult!);
   }
+
+  @override
+  Future<void> deleteMessage({
+    required String messageId,
+    required String senderId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+  }
+
+  @override
+  Future<void> deleteMessages({
+    required List<String> messageIds,
+    required String senderId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+  }
+
+  @override
+  Future<String?> ensureUserInDefaultGroup({
+    required String tripId,
+    required String userId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return null;
+  }
+
+  @override
+  Future<ConversationModel> getDefaultGroup({
+    required String tripId,
+    required String userId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return getConversationResult!;
+  }
+
+  @override
+  Future<String?> getDefaultGroupId({
+    required String tripId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return null;
+  }
+
+  @override
+  Stream<void> subscribeToConversationMemberChanges(String tripId) {
+    return const Stream.empty();
+  }
+
+  @override
+  Stream<void> subscribeToTripActivityChanges(String tripId) {
+    return const Stream.empty();
+  }
+
+  @override
+  Stream<void> subscribeToTripMessages(String tripId) {
+    return const Stream.empty();
+  }
 }
 
 void main() {
