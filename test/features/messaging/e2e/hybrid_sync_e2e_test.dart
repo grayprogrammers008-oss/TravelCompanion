@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
 import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
@@ -723,14 +725,17 @@ void main() {
           source: 'server',
         );
 
-        // Allow event stream microtasks to drain. Avoid pumpAndSettle here:
-        // the deduplication service holds a periodic cleanup Timer that
-        // pumpAndSettle would wait on indefinitely.
-        await tester.pump();
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-        await tester.pump();
+        // Pause the queue immediately so any tasks the syncMessage calls
+        // enqueued during this test cannot trigger the 5-second
+        // Future.delayed retry chain (no SyncSource is registered, so every
+        // task fails and re-enqueues forever).
+        PrioritySyncQueue().pause();
 
-        await subscription.cancel();
+        // Pump once to drain event-stream microtasks. Then cancel the
+        // subscription synchronously (don't await — the broadcast stream's
+        // cancel future can hang under fakeAsync if other listeners exist).
+        await tester.pump();
+        unawaited(subscription.cancel());
 
         // Should have received multiple events
         expect(events.length, greaterThan(0));

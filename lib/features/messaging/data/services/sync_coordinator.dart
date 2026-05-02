@@ -179,7 +179,7 @@ class SyncCoordinator {
       return remoteMessage;
     }
 
-    // Resolve conflict
+    // Resolve conflict — picks winning message based on timestamp / source.
     final resolution = await _conflictEngine.resolveMessageConflict(
       localVersion: localMessage,
       remoteVersion: remoteMessage,
@@ -196,7 +196,30 @@ class SyncCoordinator {
       ));
     }
 
-    return resolution.resolvedMessage;
+    // Reactions and read receipts are additive: merge across both versions
+    // so we don't drop a user's reaction (or read mark) that only exists on
+    // the losing side of the message-content conflict.
+    final mergedReactions = await _conflictEngine.resolveReactionConflict(
+      localReactions: localMessage.reactions,
+      remoteReactions: remoteMessage.reactions,
+      source: source,
+    );
+    final mergedReadBy = await _conflictEngine.resolveReadStatusConflict(
+      localReadBy: localMessage.readBy,
+      remoteReadBy: remoteMessage.readBy,
+    );
+    final isDeleted = await _conflictEngine.resolveDeletionConflict(
+      localDeleted: localMessage.isDeleted,
+      remoteDeleted: remoteMessage.isDeleted,
+      localDeletedAt: null,
+      remoteDeletedAt: null,
+    );
+
+    return resolution.resolvedMessage.copyWith(
+      reactions: mergedReactions,
+      readBy: mergedReadBy,
+      isDeleted: isDeleted,
+    );
   }
 
   /// Start automatic sync from all sources
