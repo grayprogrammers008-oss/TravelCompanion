@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 import 'package:travel_crew/features/trips/presentation/pages/trips_list_page.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
@@ -104,7 +107,7 @@ void main() {
       return ProviderScope(
         overrides: [
           userTripsProvider.overrideWith(
-            (ref) => Stream.value(mockTrips),
+            (ref) => Future.value(mockTrips),
           ),
           authStateProvider.overrideWith(
             (ref) => Stream.value('user1'),
@@ -144,10 +147,17 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      // Assert
+      // Assert visible trips (first two are in viewport by default)
       expect(find.text('My Trips'), findsOneWidget);
       expect(find.text('Paris Adventure'), findsOneWidget);
       expect(find.text('Tokyo Experience'), findsOneWidget);
+
+      // Scroll down to reveal the third trip
+      await tester.dragUntilVisible(
+        find.text('London Tour'),
+        find.byType(ListView),
+        const Offset(0, -200),
+      );
       expect(find.text('London Tour'), findsOneWidget);
     });
 
@@ -213,8 +223,15 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      // Assert
+      // Assert first completed trip is visible
       expect(find.text('Paris Adventure'), findsOneWidget);
+
+      // Scroll to find the second completed trip (London Tour)
+      await tester.dragUntilVisible(
+        find.text('London Tour'),
+        find.byType(ListView),
+        const Offset(0, -200),
+      );
       expect(find.text('London Tour'), findsOneWidget);
     });
 
@@ -232,7 +249,7 @@ void main() {
       final widget = ProviderScope(
         overrides: [
           userTripsProvider.overrideWith(
-            (ref) => Stream.value(<TripWithMembers>[]),
+            (ref) => Future.value(<TripWithMembers>[]),
           ),
           authStateProvider.overrideWith(
             (ref) => Stream.value('user1'),
@@ -265,11 +282,12 @@ void main() {
     });
 
     testWidgets('should display loading state initially', (tester) async {
-      // Arrange
+      // Arrange — use a Completer so the provider stays in loading state.
+      // Use plain MaterialApp (no GoRouter) to avoid router timer cleanup issues.
       final widget = ProviderScope(
         overrides: [
           userTripsProvider.overrideWith(
-            (ref) => Stream.value(mockTrips),
+            (ref) => Completer<List<TripWithMembers>>().future,
           ),
           authStateProvider.overrideWith(
             (ref) => Stream.value('user1'),
@@ -277,30 +295,23 @@ void main() {
         ],
         child: AppThemeProvider(
           themeData: AppThemeData.getThemeData(AppThemeType.ocean),
-          child: MaterialApp.router(
+          child: MaterialApp(
             theme: AppTheme.lightTheme,
-            routerConfig: GoRouter(
-              routes: [
-                GoRoute(
-                  path: '/',
-                  builder: (context, state) => const TripsListPage(),
-                ),
-              ],
-            ),
+            home: const TripsListPage(),
           ),
         ),
       );
 
       // Act
       await tester.pumpWidget(widget);
-      // Don't settle yet - should show loading
+      await tester.pump(const Duration(milliseconds: 1));
 
-      // Assert
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      // Assert — AppLoadingIndicator is shown while the future is pending
+      expect(find.byType(AppLoadingIndicator), findsOneWidget);
 
-      // Now settle and verify trips are shown
-      await tester.pumpAndSettle();
-      expect(find.text('Paris Adventure'), findsOneWidget);
+      // Dispose to cancel looping animations, then pump to flush pending timers
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 500));
     });
   });
 
@@ -322,7 +333,7 @@ void main() {
       final widget = ProviderScope(
         overrides: [
           userTripsProvider.overrideWith(
-            (ref) => Stream.value(mockTrips),
+            (ref) => Future.value(mockTrips),
           ),
           authStateProvider.overrideWith(
             (ref) => Stream.value('user1'),

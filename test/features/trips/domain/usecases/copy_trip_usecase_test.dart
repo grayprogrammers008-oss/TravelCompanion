@@ -152,9 +152,13 @@ class MockTripRepository implements TripRepository {
   }
 
   @override
-  Future<void> joinTrip(String tripId) async {
-    throw UnimplementedError();
-  }
+  Future<void> joinTrip(String tripId) async => throw UnimplementedError();
+
+  @override
+  Future<bool> toggleFavorite(String tripId) async => throw UnimplementedError();
+
+  @override
+  Future<List<String>> getFavoriteTripIds() async => throw UnimplementedError();
 }
 
 void main() {

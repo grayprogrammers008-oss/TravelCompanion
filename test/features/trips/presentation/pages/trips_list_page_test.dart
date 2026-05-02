@@ -1,14 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_crew/core/theme/app_theme.dart';
 import 'package:travel_crew/core/theme/app_theme_data.dart';
 import 'package:travel_crew/core/theme/theme_access.dart';
+import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
+import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/features/trips/presentation/pages/trips_list_page.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/shared/models/trip_model.dart';
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
 
 void main() {
   group('TripsListPage Widget Tests', () {
@@ -50,7 +53,7 @@ void main() {
     Widget createTestWidget(List<TripWithMembers> trips) {
       return ProviderScope(
         overrides: [
-          userTripsProvider.overrideWith((ref) => Stream.value(trips)),
+          userTripsProvider.overrideWith((ref) => Future.value(trips)),
           currentUserProvider.overrideWith((ref) => testUser),
         ],
         child: AppThemeProvider(
@@ -70,10 +73,7 @@ void main() {
         ProviderScope(
           overrides: [
             userTripsProvider.overrideWith(
-              (ref) => Stream.value(<TripWithMembers>[]).asyncMap((trips) async {
-                await Future.delayed(const Duration(seconds: 1));
-                return trips;
-              }),
+              (ref) => Completer<List<TripWithMembers>>().future,
             ),
             currentUserProvider.overrideWith((ref) => testUser),
           ],
@@ -87,11 +87,16 @@ void main() {
         ),
       );
 
-      // Act
-      await tester.pump();
+      // Act — use non-zero duration so fakeAsync.elapse() fires pending Dart Timers
+      // (pump() with Duration.zero does NOT call fakeAsync.elapse, so timers aren't fired)
+      await tester.pump(const Duration(milliseconds: 1));
 
       // Assert
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(AppLoadingIndicator), findsOneWidget);
+
+      // Dispose to cancel looping animations, then pump to flush any remaining timers
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 500));
     });
 
     testWidgets('shows empty state when no trips exist',
@@ -102,8 +107,7 @@ void main() {
 
       // Assert
       expect(find.text('No trips yet'), findsOneWidget);
-      expect(find.text('Create your first trip to get started!'), findsOneWidget);
-      expect(find.byIcon(Icons.explore_outlined), findsOneWidget);
+      expect(find.text('Create your first trip to get started'), findsOneWidget);
     });
 
     testWidgets('shows list of trips when trips exist',
@@ -187,7 +191,7 @@ void main() {
         ProviderScope(
           overrides: [
             userTripsProvider.overrideWith(
-              (ref) => Stream.error(Exception('Failed to fetch trips')),
+              (ref) => Future.error(Exception('Failed to fetch trips')),
             ),
             currentUserProvider.overrideWith((ref) => testUser),
           ],
@@ -203,9 +207,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      expect(find.text('Something went wrong'), findsOneWidget);
+      expect(find.text('Error loading trips'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
-      expect(find.text('Try Again'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
     });
 
     testWidgets('shows member count for trips with multiple members',

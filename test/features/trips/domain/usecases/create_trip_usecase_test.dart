@@ -155,9 +155,14 @@ class MockTripRepository implements TripRepository {
     required DateTime newEndDate,
     bool copyItinerary = true,
     bool copyChecklists = true,
-  }) async {
-    throw UnimplementedError();
-  }
+  }) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<bool> toggleFavorite(String tripId) async => throw UnimplementedError();
+
+  @override
+  Future<List<String>> getFavoriteTripIds() async => throw UnimplementedError();
 }
 
 void main() {

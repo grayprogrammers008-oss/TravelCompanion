@@ -184,8 +184,8 @@ void main() {
         throwsException,
       );
       verifyNever(mockRepository.updateTrip(
-        tripId: any,
-        name: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
       ));
     });
 
@@ -196,8 +196,8 @@ void main() {
         throwsException,
       );
       verifyNever(mockRepository.updateTrip(
-        tripId: any,
-        name: any,
+        tripId: anyNamed('tripId'),
+        name: anyNamed('name'),
       ));
     });
 
@@ -216,15 +216,25 @@ void main() {
         throwsException,
       );
       verifyNever(mockRepository.updateTrip(
-        tripId: any,
-        startDate: any,
-        endDate: any,
+        tripId: anyNamed('tripId'),
+        startDate: anyNamed('startDate'),
+        endDate: anyNamed('endDate'),
       ));
     });
 
     test('Should allow updating with null description (clearing description)', () async {
-      // Arrange
-      final updatedTrip = testTrip.copyWith(description: null);
+      // Arrange — construct directly so description is actually null (copyWith cannot clear to null)
+      final updatedTrip = TripModel(
+        id: testTrip.id,
+        name: testTrip.name,
+        description: null,
+        destination: testTrip.destination,
+        startDate: testTrip.startDate,
+        endDate: testTrip.endDate,
+        createdBy: testTrip.createdBy,
+        createdAt: testTrip.createdAt,
+        updatedAt: testTrip.updatedAt,
+      );
       when(mockRepository.updateTrip(
         tripId: 'trip123',
         description: null,
@@ -245,8 +255,18 @@ void main() {
     });
 
     test('Should allow updating with null destination (clearing destination)', () async {
-      // Arrange
-      final updatedTrip = testTrip.copyWith(destination: null);
+      // Arrange — construct directly so destination is actually null (copyWith cannot clear to null)
+      final updatedTrip = TripModel(
+        id: testTrip.id,
+        name: testTrip.name,
+        description: testTrip.description,
+        destination: null,
+        startDate: testTrip.startDate,
+        endDate: testTrip.endDate,
+        createdBy: testTrip.createdBy,
+        createdAt: testTrip.createdAt,
+        updatedAt: testTrip.updatedAt,
+      );
       when(mockRepository.updateTrip(
         tripId: 'trip123',
         destination: null,

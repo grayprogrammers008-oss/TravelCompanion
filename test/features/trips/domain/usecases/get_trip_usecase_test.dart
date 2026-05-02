@@ -29,7 +29,7 @@ void main() {
     createdBy: 'user-123',
     createdAt: now,
     updatedAt: now,
-    budget: 5000.0,
+    cost: 5000.0,
     currency: 'USD',
   );
 

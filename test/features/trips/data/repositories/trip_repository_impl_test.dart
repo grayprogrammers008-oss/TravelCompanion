@@ -28,7 +28,7 @@ void main() {
     createdAt: now,
     startDate: now,
     endDate: now.add(const Duration(days: 7)),
-    budget: 5000.0,
+    cost: 5000.0,
     currency: 'USD',
   );
 
@@ -69,7 +69,7 @@ void main() {
             destination: 'Paris',
             startDate: now,
             endDate: now.add(const Duration(days: 7)),
-            budget: 5000.0,
+            cost: 5000.0,
             currency: 'USD',
           );
 
@@ -394,7 +394,7 @@ void main() {
 
         test('should update trip budget and currency', () async {
           // Arrange
-          final updatedTrip = testTrip.copyWith(budget: 10000.0, currency: 'EUR');
+          final updatedTrip = testTrip.copyWith(cost: 10000.0, currency: 'EUR');
           final updatedTripWithMembers = TripWithMembers(trip: updatedTrip, members: [testMember]);
           when(mockDataSource.updateTrip('trip-123', any)).thenAnswer((_) async {
             return;
@@ -406,12 +406,12 @@ void main() {
           // Act
           final result = await repository.updateTrip(
             tripId: 'trip-123',
-            budget: 10000.0,
+            cost: 10000.0,
             currency: 'EUR',
           );
 
           // Assert
-          expect(result.budget, 10000.0);
+          expect(result.cost, 10000.0);
           expect(result.currency, 'EUR');
         });
       });

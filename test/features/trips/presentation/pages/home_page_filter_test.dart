@@ -12,7 +12,7 @@ void main() {
       description: 'Relaxing beach trip',
       destination: 'Goa',
       createdBy: 'user1',
-      budget: 50000,
+      cost: 50000,
       currency: 'INR',
       createdAt: DateTime(2024, 11, 1),
     );
@@ -23,7 +23,7 @@ void main() {
       description: 'Adventure in mountains',
       destination: 'Himalayas',
       createdBy: 'user1',
-      budget: 30000,
+      cost: 30000,
       currency: 'INR',
       createdAt: DateTime(2024, 11, 15),
     );
@@ -34,7 +34,7 @@ void main() {
       description: 'Exploring the city',
       destination: 'Mumbai',
       createdBy: 'user1',
-      budget: 80000,
+      cost: 80000,
       currency: 'INR',
       createdAt: DateTime(2024, 11, 25),
     );
@@ -45,7 +45,7 @@ void main() {
       description: 'Low cost adventure',
       destination: 'Nearby',
       createdBy: 'user1',
-      budget: 10000,
+      cost: 10000,
       currency: 'INR',
       createdAt: DateTime(2024, 10, 20),
     );
@@ -56,7 +56,7 @@ void main() {
       description: 'Trip without budget',
       destination: 'Unknown',
       createdBy: 'user1',
-      budget: null,
+      cost: null,
       currency: 'INR',
       createdAt: DateTime(2024, 11, 10),
     );
@@ -82,7 +82,7 @@ void main() {
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
           // NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget) {
             return false;
           }
@@ -103,7 +103,7 @@ void main() {
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
           // NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget > maxBudget) {
             return false;
           }
@@ -125,7 +125,7 @@ void main() {
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
           // NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget || tripBudget > maxBudget) {
             return false;
           }
@@ -147,7 +147,7 @@ void main() {
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
           // NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget || tripBudget > maxBudget) {
             return false;
           }
@@ -164,7 +164,7 @@ void main() {
 
         final filtered = allTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget || tripBudget > maxBudget) {
             return false;
           }
@@ -272,7 +272,7 @@ void main() {
           final trip = tripWithMembers.trip;
 
           // Budget filter - NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget || tripBudget > maxBudget) {
             return false;
           }
@@ -312,7 +312,7 @@ void main() {
           final trip = tripWithMembers.trip;
 
           // Budget filter - NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget || tripBudget > maxBudget) {
             return false;
           }
@@ -393,7 +393,7 @@ void main() {
           }
 
           // Budget filter - NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget) {
             return false;
           }
@@ -458,7 +458,7 @@ void main() {
           id: '7',
           name: 'Free Trip',
           createdBy: 'user1',
-          budget: 0,
+          cost: 0,
           currency: 'INR',
         );
         final tripWithMembersZero = TripWithMembers(trip: tripZeroBudget, members: []);
@@ -469,7 +469,7 @@ void main() {
         final filtered = testTrips.where((tripWithMembers) {
           final trip = tripWithMembers.trip;
           // NEW LOGIC: Treat null budget as 0.0
-          final tripBudget = trip.budget ?? 0.0;
+          final tripBudget = trip.cost ?? 0.0;
           if (tripBudget < minBudget) {
             return false;
           }

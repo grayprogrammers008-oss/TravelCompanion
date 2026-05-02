@@ -327,4 +327,20 @@ class MockTripRepository extends _i1.Mock implements _i4.TripRepository {
             ),
           )
           as _i5.Future<String>);
+
+  @override
+  _i5.Future<bool> toggleFavorite(String? tripId) =>
+      (super.noSuchMethod(
+            Invocation.method(#toggleFavorite, [tripId]),
+            returnValue: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
+
+  @override
+  _i5.Future<List<String>> getFavoriteTripIds() =>
+      (super.noSuchMethod(
+            Invocation.method(#getFavoriteTripIds, []),
+            returnValue: _i5.Future<List<String>>.value(<String>[]),
+          )
+          as _i5.Future<List<String>>);
 }

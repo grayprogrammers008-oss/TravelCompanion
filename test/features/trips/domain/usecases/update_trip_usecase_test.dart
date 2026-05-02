@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
+import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
 import 'package:travel_crew/features/trips/domain/usecases/update_trip_usecase.dart';
 import 'package:travel_crew/shared/models/trip_model.dart';
 
@@ -39,6 +40,10 @@ class MockTripRepository implements TripRepository {
     String? coverImageUrl,
     bool? isCompleted,
     DateTime? completedAt,
+    double? rating,
+    double? cost,
+    String? currency,
+    bool? isPublic,
   }) async {
     _updateTripCalled = true;
     _lastCallParams = {
@@ -51,6 +56,10 @@ class MockTripRepository implements TripRepository {
       'coverImageUrl': coverImageUrl,
       'isCompleted': isCompleted,
       'completedAt': completedAt,
+      'rating': rating,
+      'cost': cost,
+      'currency': currency,
+      'isPublic': isPublic,
     };
 
     if (_exceptionToThrow != null) {
@@ -68,56 +77,70 @@ class MockTripRepository implements TripRepository {
     DateTime? startDate,
     DateTime? endDate,
     String? coverImageUrl,
-  }) async {
-    throw UnimplementedError();
-  }
+    double? cost,
+    String? currency,
+    bool isPublic = true,
+  }) async =>
+      throw UnimplementedError();
 
   @override
-  Future<void> deleteTrip(String tripId) async {
-    throw UnimplementedError();
-  }
+  Future<void> deleteTrip(String tripId) async => throw UnimplementedError();
 
   @override
-  Future<List<TripWithMembers>> getUserTrips() async {
-    throw UnimplementedError();
-  }
+  Future<List<TripWithMembers>> getUserTrips() async => throw UnimplementedError();
 
   @override
-  Future<TripWithMembers> getTripById(String tripId) async {
-    throw UnimplementedError();
-  }
+  Future<TripWithMembers> getTripById(String tripId) async => throw UnimplementedError();
 
   @override
-  Future<List<TripMemberModel>> getTripMembers(String tripId) async {
-    throw UnimplementedError();
-  }
+  Future<List<TripMemberModel>> getTripMembers(String tripId) async => throw UnimplementedError();
 
   @override
   Future<TripMemberModel> addMember({
     required String tripId,
     required String userId,
     String role = 'member',
-  }) async {
-    throw UnimplementedError();
-  }
+  }) async =>
+      throw UnimplementedError();
 
   @override
-  Future<void> removeMember({
-    required String tripId,
-    required String userId,
-  }) async {
-    throw UnimplementedError();
-  }
+  Future<void> removeMember({required String tripId, required String userId}) async =>
+      throw UnimplementedError();
 
   @override
-  Stream<TripWithMembers> watchTrip(String tripId) {
-    throw UnimplementedError();
-  }
+  Stream<TripWithMembers> watchTrip(String tripId) => throw UnimplementedError();
 
   @override
-  Stream<List<TripWithMembers>> watchUserTrips() {
-    throw UnimplementedError();
-  }
+  Stream<List<TripWithMembers>> watchUserTrips() => throw UnimplementedError();
+
+  @override
+  Future<UserTravelStats> getUserStats() async => throw UnimplementedError();
+
+  @override
+  Stream<UserTravelStats> watchUserStats() => throw UnimplementedError();
+
+  @override
+  Future<List<TripWithMembers>> getDiscoverableTrips() async => throw UnimplementedError();
+
+  @override
+  Future<void> joinTrip(String tripId) async => throw UnimplementedError();
+
+  @override
+  Future<String> copyTrip({
+    required String sourceTripId,
+    required String newName,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+    bool copyItinerary = true,
+    bool copyChecklists = true,
+  }) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<bool> toggleFavorite(String tripId) async => throw UnimplementedError();
+
+  @override
+  Future<List<String>> getFavoriteTripIds() async => throw UnimplementedError();
 }
 
 void main() {
