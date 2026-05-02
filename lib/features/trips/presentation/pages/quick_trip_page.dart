@@ -198,6 +198,8 @@ class _QuickTripPageState extends ConsumerState<QuickTripPage> {
           ),
         );
 
+        // Refresh home page trip list
+        ref.invalidate(userTripsProvider);
         // Navigate to the new trip
         context.go('/trips/${trip.id}');
       }

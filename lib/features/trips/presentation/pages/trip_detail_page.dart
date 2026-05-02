@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../../../core/services/location_service.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -43,6 +45,19 @@ class TripDetailPage extends ConsumerStatefulWidget {
 class _TripDetailPageState extends ConsumerState<TripDetailPage> {
   // Member management state (for bottom sheet)
   final TextEditingController _memberSearchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Force fresh member data shortly after page loads.
+    // Handles race condition where the trip detail opens immediately after joining
+    // and the stream's initial getTripById might not yet see the new member row.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        ref.invalidate(tripProvider(widget.tripId));
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -2290,21 +2305,54 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
     }
   }
 
-  void _shareLiveLocation(dynamic trip) {
-    ScaffoldMessenger.of(context).showSnackBar(
+  Future<void> _shareLiveLocation(dynamic trip) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
       const SnackBar(
         content: Row(
           children: [
-            Icon(Icons.location_on_rounded, color: Colors.white),
+            SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            ),
             SizedBox(width: 12),
-            Expanded(child: Text('Live location sharing started for 1 hour')),
+            Text('Getting your location...'),
           ],
         ),
-        backgroundColor: Color(0xFF4CAF50),
-        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 10),
       ),
     );
-    // TODO: Implement actual live location sharing
+
+    try {
+      final coordinates = await LocationService().getCurrentCoordinates();
+      messenger.hideCurrentSnackBar();
+
+      if (coordinates == null) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Could not get location. Please enable location permission.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 4),
+          ),
+        );
+        return;
+      }
+
+      final lat = coordinates['latitude']!;
+      final lng = coordinates['longitude']!;
+      final mapsLink = 'https://maps.google.com/?q=$lat,$lng';
+      await Share.share('📍 My live location:\n$mapsLink', subject: 'Live Location');
+    } catch (e) {
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Failed to share location: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   Future<void> _openNearbyHospitals() async {

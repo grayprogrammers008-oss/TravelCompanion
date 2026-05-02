@@ -563,10 +563,17 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
     final hasEnded = trip.endDate != null && trip.endDate!.isBefore(now);
 
     // Find organizer (creator)
-    final organizer = members.firstWhere(
-      (m) => m.userId == trip.createdBy,
-      orElse: () => members.isNotEmpty ? members.first : members.first,
-    );
+    final organizer = members.isNotEmpty
+        ? members.firstWhere(
+            (m) => m.userId == trip.createdBy,
+            orElse: () => members.first,
+          )
+        : TripMemberModel(
+            id: '',
+            tripId: trip.id,
+            userId: trip.createdBy,
+            role: 'admin',
+          );
 
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -778,7 +785,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
                                 ),
                               ),
                               Text(
-                                organizer.fullName ?? organizer.email ?? 'Unknown',
+                                organizer.fullName ?? organizer.email ?? 'Trip Creator',
                                 style: TextStyle(
                                   color: themeData.primaryColor,
                                   fontWeight: FontWeight.w600,
@@ -1002,9 +1009,14 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
       final useCase = ref.read(joinTripUseCaseProvider);
       await useCase(tripId);
 
-      // Refresh both discoverable and user trips
+      // Brief wait to ensure Supabase has committed the new member row
+      // before we invalidate providers and navigate to the trip detail
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      // Refresh all trip data
       ref.invalidate(discoverableTripsProvider);
       ref.invalidate(userTripsProvider);
+      ref.invalidate(tripProvider(tripId));
 
       if (context.mounted) {
         // Close loading dialog
@@ -1434,7 +1446,7 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
     );
   }
 
-  /// V2.0 Explore Empty State - Never feels empty, shows featured content
+  /// Empty state - no public trips available
   Widget _buildEmptyState(BuildContext context) {
     final themeData = ref.watch(theme_provider.currentThemeDataProvider);
 
@@ -1445,63 +1457,32 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
         children: [
           // Join by Code Card - Primary action
           _buildJoinByCodeCard(context, themeData),
-          const SizedBox(height: AppTheme.spacingLg),
-
-          // Featured Destinations Section
-          Text(
-            'Popular Destinations',
-            style: context.titleStyle.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            'Get inspired for your next adventure',
-            style: context.bodyStyle.copyWith(
-              color: context.textColor.withValues(alpha: 0.6),
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          _buildFeaturedDestinations(context),
-          const SizedBox(height: AppTheme.spacingLg),
-
-          // Trip Ideas Section
-          Text(
-            'Trip Ideas',
-            style: context.titleStyle.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          _buildTripIdeas(context, themeData),
           const SizedBox(height: AppTheme.spacingXl),
 
-          // Create Your Own CTA
+          // No public trips message
           Center(
             child: Column(
               children: [
+                Icon(
+                  Icons.explore_off_outlined,
+                  size: 64,
+                  color: context.textColor.withValues(alpha: 0.3),
+                ),
+                const SizedBox(height: AppTheme.spacingMd),
                 Text(
-                  'Don\'t see what you\'re looking for?',
-                  style: context.bodyStyle.copyWith(
-                    color: context.textColor.withValues(alpha: 0.6),
+                  'No Public Trips',
+                  style: context.titleStyle.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingSm),
-                ElevatedButton.icon(
-                  onPressed: () => context.push('/trips/ai-wizard'),
-                  icon: const Icon(Icons.auto_awesome),
-                  label: const Text('Create with AI'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: themeData.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingLg,
-                      vertical: AppTheme.spacingMd,
-                    ),
+                Text(
+                  'There are no public trips available right now.',
+                  style: context.bodyStyle.copyWith(
+                    color: context.textColor.withValues(alpha: 0.6),
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -1577,113 +1558,6 @@ class _BrowseTripsPageState extends ConsumerState<BrowseTripsPage>
           ],
         ),
       ),
-    );
-  }
-
-  /// Featured destinations grid
-  Widget _buildFeaturedDestinations(BuildContext context) {
-    final destinations = [
-      {'name': 'Goa', 'emoji': '🏖️', 'type': 'Beaches'},
-      {'name': 'Manali', 'emoji': '🏔️', 'type': 'Mountains'},
-      {'name': 'Kerala', 'emoji': '🌴', 'type': 'Backwaters'},
-      {'name': 'Jaipur', 'emoji': '🏰', 'type': 'Heritage'},
-      {'name': 'Ladakh', 'emoji': '🏍️', 'type': 'Adventure'},
-      {'name': 'Udaipur', 'emoji': '💕', 'type': 'Romance'},
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: AppTheme.spacingSm,
-        crossAxisSpacing: AppTheme.spacingSm,
-        childAspectRatio: 1.0,
-      ),
-      itemCount: destinations.length,
-      itemBuilder: (context, index) {
-        final dest = destinations[index];
-        return GestureDetector(
-          onTap: () {
-            // Navigate to AI wizard with pre-filled destination
-            context.push('/trips/ai-wizard');
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              boxShadow: AppTheme.shadowSm,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  dest['emoji'] as String,
-                  style: const TextStyle(fontSize: 28),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  dest['name'] as String,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-                Text(
-                  dest['type'] as String,
-                  style: TextStyle(
-                    color: AppTheme.neutral500,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// Trip ideas as tappable chips
-  Widget _buildTripIdeas(BuildContext context, dynamic themeData) {
-    final ideas = [
-      '🏖️ Weekend Beach Getaway',
-      '🏔️ Mountain Trek',
-      '👨‍👩‍👧‍👦 Family Vacation',
-      '💕 Romantic Escape',
-      '🎒 Solo Adventure',
-      '👯 Friends Trip',
-      '🏛️ Heritage Tour',
-      '🍜 Food Trail',
-    ];
-
-    return Wrap(
-      spacing: AppTheme.spacingSm,
-      runSpacing: AppTheme.spacingSm,
-      children: ideas.map((idea) {
-        return GestureDetector(
-          onTap: () => context.push('/trips/ai-wizard'),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingMd,
-              vertical: AppTheme.spacingSm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-              border: Border.all(color: AppTheme.neutral200),
-              boxShadow: AppTheme.shadowSm,
-            ),
-            child: Text(
-              idea,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 
@@ -2055,20 +1929,24 @@ class DiscoverableTripCard extends ConsumerWidget {
                     Row(
                       children: [
                         // Member Count
-                        _buildInfoChip(
-                          context,
-                          icon: Icons.people_outline,
-                          label: '$memberCount ${memberCount == 1 ? 'member' : 'members'}',
+                        Flexible(
+                          child: _buildInfoChip(
+                            context,
+                            icon: Icons.people_outline,
+                            label: '$memberCount ${memberCount == 1 ? 'member' : 'members'}',
+                          ),
                         ),
 
                         const SizedBox(width: AppTheme.spacingSm),
 
                         // Date
                         if (trip.startDate != null)
-                          _buildInfoChip(
-                            context,
-                            icon: Icons.calendar_today_outlined,
-                            label: trip.startDate!.toLocal().toShortDate(),
+                          Flexible(
+                            child: _buildInfoChip(
+                              context,
+                              icon: Icons.calendar_today_outlined,
+                              label: trip.startDate!.toLocal().toShortDate(),
+                            ),
                           ),
                       ],
                     ),
@@ -2106,11 +1984,15 @@ class DiscoverableTripCard extends ConsumerWidget {
                                   : null,
                             ),
                             const SizedBox(width: 6),
-                            Text(
-                              'by ${organizer.fullName ?? organizer.email ?? 'Unknown'}',
-                              style: TextStyle(
-                                color: AppTheme.neutral600,
-                                fontSize: 12,
+                            Flexible(
+                              child: Text(
+                                'by ${organizer.fullName ?? organizer.email ?? 'Unknown'}',
+                                style: TextStyle(
+                                  color: AppTheme.neutral600,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -2167,11 +2049,15 @@ class DiscoverableTripCard extends ConsumerWidget {
             color: context.textColor.withValues(alpha: 0.6),
           ),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: context.bodyStyle.copyWith(
-              fontSize: 12,
-              color: context.textColor.withValues(alpha: 0.7),
+          Flexible(
+            child: Text(
+              label,
+              style: context.bodyStyle.copyWith(
+                fontSize: 12,
+                color: context.textColor.withValues(alpha: 0.7),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

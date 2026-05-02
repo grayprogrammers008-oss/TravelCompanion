@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../../../core/services/location_service.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -577,9 +579,11 @@ class _HomePageState extends ConsumerState<HomePage>
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (modalContext) => StatefulBuilder(
-        builder: (builderContext, setModalState) => Container(
+        builder: (builderContext, setModalState) {
+          final keyboardHeight = MediaQuery.of(builderContext).viewInsets.bottom;
+          return Container(
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(modalContext).size.height * 0.7,
+            maxHeight: MediaQuery.of(modalContext).size.height * 0.7 - keyboardHeight,
           ),
           decoration: const BoxDecoration(
             color: Colors.white,
@@ -588,7 +592,8 @@ class _HomePageState extends ConsumerState<HomePage>
               topRight: Radius.circular(AppTheme.radiusXl),
             ),
           ),
-          child: Column(
+          child: SingleChildScrollView(
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Handle bar
@@ -751,7 +756,9 @@ class _HomePageState extends ConsumerState<HomePage>
               SizedBox(height: MediaQuery.of(modalContext).padding.bottom),
             ],
           ),
-        ),
+          ),
+        );
+        },
       ),
     );
   }
@@ -998,6 +1005,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
           // Content
           ...userTripsAsync.when(
+            skipLoadingOnReload: true,
             data: (trips) {
               final filteredTrips = _filterTrips(trips);
               final stats = _getTripStats(trips);
@@ -2176,20 +2184,26 @@ class _HomePageState extends ConsumerState<HomePage>
                   Row(
                     children: [
                       if (trip.startDate != null) ...[
-                        Text(
-                          dateFormat.format(trip.startDate!),
-                          style: TextStyle(
-                            color: AppTheme.neutral600,
-                            fontSize: 12,
+                        Flexible(
+                          child: Text(
+                            dateFormat.format(trip.startDate!),
+                            style: TextStyle(
+                              color: AppTheme.neutral600,
+                              fontSize: 12,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 8),
                       ],
-                      Text(
-                        '${tripWithMembers.members.length} travelers',
-                        style: TextStyle(
-                          color: AppTheme.neutral500,
-                          fontSize: 12,
+                      Flexible(
+                        child: Text(
+                          '${tripWithMembers.members.length} travelers',
+                          style: TextStyle(
+                            color: AppTheme.neutral500,
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -3695,20 +3709,59 @@ class _HomePageState extends ConsumerState<HomePage>
     context.push('/trips/${tripWithMembers.trip.id}');
   }
 
-  void _shareLiveLocation(BuildContext context) {
+  Future<void> _shareLiveLocation(BuildContext context) async {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Row(
           children: [
-            Icon(Icons.location_on_rounded, color: Colors.white),
+            SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            ),
             SizedBox(width: 12),
-            Expanded(child: Text('Live location sharing started for 1 hour')),
+            Text('Getting your location...'),
           ],
         ),
-        backgroundColor: Color(0xFF4CAF50),
-        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 10),
       ),
     );
+
+    try {
+      final coordinates = await LocationService().getCurrentCoordinates();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (coordinates == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not get location. Please enable location permission.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 4),
+          ),
+        );
+        return;
+      }
+
+      final lat = coordinates['latitude']!;
+      final lng = coordinates['longitude']!;
+      final mapsLink = 'https://maps.google.com/?q=$lat,$lng';
+      await Share.share(
+        '📍 My live location:\n$mapsLink',
+        subject: 'Live Location',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share location: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _openNearbyHospitals() async {

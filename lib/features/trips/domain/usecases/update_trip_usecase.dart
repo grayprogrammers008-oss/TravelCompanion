@@ -24,8 +24,10 @@ class UpdateTripUseCase {
       throw Exception('Trip ID is required');
     }
 
+    final trimmedName = name?.trim();
+
     // Validate trip name if provided
-    if (name != null && name.trim().isEmpty) {
+    if (trimmedName != null && trimmedName.isEmpty) {
       throw Exception('Trip name cannot be empty');
     }
 
@@ -43,7 +45,7 @@ class UpdateTripUseCase {
 
     return await _repository.updateTrip(
       tripId: tripId,
-      name: name,
+      name: trimmedName,
       description: description,
       destination: destination,
       startDate: startDate,

@@ -39,21 +39,22 @@ class MessageModel {
 
   /// Convert to JSON for database storage (excludes joined fields)
   Map<String, dynamic> toDatabaseJson() {
-    return {
+    final json = <String, dynamic>{
       'id': id,
       'trip_id': tripId,
       'sender_id': senderId,
       'message': message,
       'message_type': messageType,
-      'reply_to_id': replyToId,
-      'attachment_url': attachmentUrl,
-      'reactions': reactions,
-      'read_by': readBy,
       'is_deleted': isDeleted,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      // Exclude senderName and senderAvatarUrl - they're joined fields
     };
+    // Only include optional fields when non-null to avoid schema cache errors
+    if (replyToId != null) json['reply_to_id'] = replyToId;
+    if (attachmentUrl != null) json['attachment_url'] = attachmentUrl;
+    if (reactions.isNotEmpty) json['reactions'] = reactions;
+    if (readBy.isNotEmpty) json['read_by'] = readBy;
+    return json;
   }
 
   /// Convert to JSON (includes all fields for serialization)
@@ -86,10 +87,11 @@ class MessageModel {
       messageType: json['message_type'] as String,
       replyToId: json['reply_to_id'] as String?,
       attachmentUrl: json['attachment_url'] as String?,
-      reactions: (json['reactions'] as List<dynamic>?)
-              ?.map((e) => Map<String, dynamic>.from(e as Map))
-              .toList() ??
-          [],
+      reactions: json['reactions'] is List
+              ? (json['reactions'] as List<dynamic>)
+                  .map((e) => Map<String, dynamic>.from(e as Map))
+                  .toList()
+              : [],
       readBy: (json['read_by'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??

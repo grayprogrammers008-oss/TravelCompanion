@@ -91,32 +91,22 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingXl),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: AppTheme.neutral400,
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    'Search failed',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppTheme.neutral600,
-                        ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingXs),
-                  Text(
-                    'Please try again',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.neutral500,
-                        ),
-                  ),
-                ],
+          return SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingXl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline, size: 64, color: AppTheme.neutral400),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Text('Search failed',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.neutral600)),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    Text('Please try again',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.neutral500)),
+                  ],
+                ),
               ),
             ),
           );
@@ -125,32 +115,22 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
         final places = snapshot.data ?? [];
 
         if (places.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingXl),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: 64,
-                    color: AppTheme.neutral400,
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    'No places found',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppTheme.neutral600,
-                        ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingXs),
-                  Text(
-                    'Try a different search term',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.neutral500,
-                        ),
-                  ),
-                ],
+          return SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingXl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.search_off, size: 64, color: AppTheme.neutral400),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Text('No places found',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.neutral600)),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    Text('Try a different search term',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.neutral500)),
+                  ],
+                ),
               ),
             ),
           );
@@ -224,11 +204,12 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppTheme.spacingXl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.travel_explore,
@@ -267,6 +248,7 @@ class PlaceSearchDelegate extends SearchDelegate<Place?> {
               ],
             ),
           ],
+          ),
         ),
       ),
     );

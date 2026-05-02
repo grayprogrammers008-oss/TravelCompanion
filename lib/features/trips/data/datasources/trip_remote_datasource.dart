@@ -114,7 +114,9 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<TripModel> createTrip(TripModel trip) async {
     try {
-      // Create trip in Supabase
+      final userId = SupabaseClientWrapper.currentUserId;
+      if (userId == null) throw Exception('User not authenticated');
+
       final response = await _client
           .from('trips')
           .insert({
@@ -127,13 +129,16 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
             'cost': trip.cost,
             'currency': trip.currency,
             'is_public': trip.isPublic,
-            'created_by': SupabaseClientWrapper.currentUserId,
+            'created_by': userId,
           })
           .select()
           .single();
 
-      return TripModel.fromJson(response);
+      final createdTrip = TripModel.fromJson(response);
+      if (kDebugMode) debugPrint('✅ Trip created: ${createdTrip.id}');
+      return createdTrip;
     } catch (e) {
+      if (kDebugMode) debugPrint('❌ createTrip failed: $e');
       throw Exception('Failed to create trip: $e');
     }
   }
@@ -150,14 +155,14 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('🔍 Fetching trips for user: $userId');
       }
 
-      // First, get all trip IDs where the user is a member
-      final userTripsResponse = await _client
+      // Get trip IDs where user is a member
+      final memberRows = await _client
           .from('trip_members')
           .select('trip_id')
           .eq('user_id', userId);
 
-      final tripIds = (userTripsResponse as List)
-          .map((row) => row['trip_id'] as String)
+      final tripIds = (memberRows as List)
+          .map((row) => (row as Map<String, dynamic>)['trip_id'] as String)
           .toList();
 
       if (kDebugMode) {
@@ -176,7 +181,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('⭐ User has ${favoriteIds.length} favorite trips');
       }
 
-      // Then get all trips with ALL their members
+      // Fetch trips with all their members
       final response = await _client
           .from('trips')
           .select('''
@@ -330,13 +335,18 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<void> addMember(String tripId, String userId, {String role = 'member'}) async {
     try {
-      await _client
+      // Use .select() to confirm the INSERT is committed before returning
+      final result = await _client
           .from('trip_members')
           .insert({
             'trip_id': tripId,
             'user_id': userId,
             'role': role,
-          });
+          })
+          .select();
+      if (kDebugMode) {
+        debugPrint('✅ Member added to trip $tripId: ${result.length} row(s) inserted');
+      }
     } catch (e) {
       throw Exception('Failed to add member: $e');
     }
@@ -480,22 +490,23 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
           }
         });
 
-    // Initial load
-    getUserTrips().then((trips) {
-      if (!controller.isClosed) {
-        controller.add(trips);
-      }
-    }).catchError((error) {
-      if (!controller.isClosed) {
-        controller.addError(error);
-      }
-    });
-
-    // Cleanup on close
+    // Cleanup on cancel
     controller.onCancel = () {
       memberSubscription.cancel();
       tripUpdatesChannel.unsubscribe();
     };
+
+    // Initial load — delayed to next event loop so the async* subscriber
+    // is registered before the first value is emitted on the broadcast stream
+    Future.delayed(Duration.zero, () async {
+      if (controller.isClosed) return;
+      try {
+        final trips = await getUserTrips();
+        if (!controller.isClosed) controller.add(trips);
+      } catch (e) {
+        if (!controller.isClosed) controller.addError(e);
+      }
+    });
 
     return controller.stream;
   }
@@ -635,16 +646,23 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
     // Parse members
     final membersData = data['trip_members'] as List?;
     final members = membersData?.map((memberData) {
-      final profileData = memberData['profiles'];
+      // Supabase may return profiles as a Map (1-to-1 FK) or List (1-to-many)
+      final rawProfile = memberData['profiles'];
+      final profileData = rawProfile is List
+          ? (rawProfile.isNotEmpty ? rawProfile.first as Map<String, dynamic>? : null)
+          : rawProfile as Map<String, dynamic>?;
+      if (kDebugMode) {
+        debugPrint('👤 Member ${memberData['user_id']}: profile=$profileData');
+      }
       return TripMemberModel(
         id: memberData['id'],
         tripId: trip.id,
         userId: memberData['user_id'],
         role: memberData['role'],
         joinedAt: DateTime.parse(memberData['joined_at']),
-        email: profileData?['email'],
-        fullName: profileData?['full_name'],
-        avatarUrl: profileData?['avatar_url'],
+        email: profileData?['email'] as String?,
+        fullName: profileData?['full_name'] as String?,
+        avatarUrl: profileData?['avatar_url'] as String?,
       );
     }).toList() ?? [];
 

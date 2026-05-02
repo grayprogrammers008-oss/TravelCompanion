@@ -219,65 +219,61 @@ class GooglePlaceSearchDelegate extends SearchDelegate<PlaceDetails?> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search,
-            size: 64,
-            color: AppTheme.neutral300,
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search, size: 64, color: AppTheme.neutral300),
+              const SizedBox(height: 16),
+              Text(
+                'Search for a destination',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.neutral500,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Enter at least 2 characters',
+                style: TextStyle(fontSize: 14, color: AppTheme.neutral400),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Search for a destination',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppTheme.neutral500,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Enter at least 2 characters',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppTheme.neutral400,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildNoResults() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.location_off,
-            size: 64,
-            color: AppTheme.neutral300,
+    return SingleChildScrollView(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.location_off, size: 64, color: AppTheme.neutral300),
+              const SizedBox(height: 16),
+              Text(
+                'No destinations found',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.neutral500,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Try a different search term',
+                style: TextStyle(fontSize: 14, color: AppTheme.neutral400),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            'No destinations found',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppTheme.neutral500,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Try a different search term',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppTheme.neutral400,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

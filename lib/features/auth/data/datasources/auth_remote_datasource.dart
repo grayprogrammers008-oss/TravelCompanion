@@ -29,15 +29,52 @@ class AuthRemoteDataSource {
         throw Exception('Sign up failed: No user returned');
       }
 
-      // Wait a moment for the trigger to create profile
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Wait for the trigger to create profile with retry logic
+      Map<String, dynamic>? profileData;
+      int retryCount = 0;
+      const maxRetries = 5;
 
-      // Fetch user profile from profiles table
-      final profileData = await _client
-          .from('profiles')
-          .select()
-          .eq('id', response.user!.id)
-          .single();
+      while (profileData == null && retryCount < maxRetries) {
+        await Future.delayed(Duration(milliseconds: 500 * (retryCount + 1)));
+
+        try {
+          profileData = await _client
+              .from('profiles')
+              .select()
+              .eq('id', response.user!.id)
+              .maybeSingle();
+        } catch (e) {
+          debugPrint('🔄 Retry $retryCount: Profile not ready yet - $e');
+        }
+
+        retryCount++;
+      }
+
+      // If trigger didn't create the profile, create it manually
+      if (profileData == null) {
+        debugPrint('⚠️ Trigger did not create profile, creating manually...');
+        try {
+          await _client.from('profiles').insert({
+            'id': response.user!.id,
+            'email': response.user!.email,
+            'full_name': fullName,
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          });
+
+          profileData = await _client
+              .from('profiles')
+              .select()
+              .eq('id', response.user!.id)
+              .maybeSingle();
+        } catch (e) {
+          debugPrint('❌ Manual profile creation failed: $e');
+        }
+      }
+
+      if (profileData == null) {
+        throw Exception('Sign up failed: Profile creation failed. Please try logging in.');
+      }
 
       return UserModel.fromJson(profileData);
     } on AuthException catch (e) {
@@ -67,7 +104,11 @@ class AuthRemoteDataSource {
           .from('profiles')
           .select()
           .eq('id', response.user!.id)
-          .single();
+          .maybeSingle();
+
+      if (profileData == null) {
+        throw Exception('Sign in failed: User profile not found. Please contact support.');
+      }
 
       return UserModel.fromJson(profileData);
     } on AuthException catch (e) {
@@ -127,7 +168,9 @@ Original error: ${e.message}''';
           .from('profiles')
           .select()
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
+
+      if (profileData == null) return null;
 
       return UserModel.fromJson(profileData);
     } catch (e) {
@@ -163,7 +206,11 @@ Original error: ${e.message}''';
           .update(updates)
           .eq('id', userId)
           .select()
-          .single();
+          .maybeSingle();
+
+      if (profileData == null) {
+        throw Exception('Update profile failed: Profile not found');
+      }
 
       return UserModel.fromJson(profileData);
     } catch (e) {

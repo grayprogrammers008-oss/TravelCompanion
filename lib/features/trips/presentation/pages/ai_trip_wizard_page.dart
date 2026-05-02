@@ -847,6 +847,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
         actions: [
           TextButton(
             onPressed: () {
+              ref.invalidate(userTripsProvider);
               Navigator.of(context).pop();
               context.go('/trips/$tripId');
             },

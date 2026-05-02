@@ -8,13 +8,11 @@ import '../../../../core/services/google_places_service.dart';
 import '../../../itinerary/presentation/widgets/add_location_to_trip_sheet.dart';
 import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/place_category.dart';
-import '../../domain/entities/popular_destination.dart';
 import '../providers/discover_providers.dart';
 import '../widgets/mini_map_preview.dart';
 import '../widgets/place_card.dart';
 import '../widgets/smart_suggestions_section.dart';
 import '../widgets/place_detail_sheet.dart';
-import '../widgets/popular_destinations_section.dart';
 import '../widgets/trip_planning_assistant_sheet.dart';
 
 /// Discover Page - Browse tourist places by category
@@ -65,31 +63,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     AddLocationToTripSheet.show(context, location);
   }
 
-  void _onDestinationTapped(PopularDestination destination) {
-    // Show a bottom sheet with destination details
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _DestinationDetailSheet(
-        destination: destination,
-        onExploreNearby: () {
-          Navigator.pop(context);
-          _onExploreNearby(destination);
-        },
-      ),
-    );
-  }
-
-  void _onExploreNearby(PopularDestination destination) {
-    // Set the location to the destination and load nearby places
-    ref.read(discoverStateProvider.notifier).setLocation(
-      latitude: destination.latitude,
-      longitude: destination.longitude,
-      locationName: destination.name,
-      country: destination.country, // Pass country for category-specific search
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,14 +180,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               child: _buildLocationPrompt(discoverState),
             ),
 
-            // Popular Destinations (PROMINENT)
-            SliverToBoxAdapter(
-              child: PopularDestinationsSection(
-                onDestinationTapped: _onDestinationTapped,
-                onExploreNearby: _onExploreNearby,
-              ),
-            ),
-
             // Categories (for future use when they enable location)
             SliverToBoxAdapter(
               child: _buildCategorySection(discoverState, filteredPlaces.length),
@@ -298,10 +263,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                   ),
                 ),
 
-              // Popular Destinations (SECONDARY - Explore More)
-              SliverToBoxAdapter(
-                child: _buildExploreMoreSection(discoverState),
-              ),
             ],
           ],
         ],
@@ -719,52 +680,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     );
   }
 
-  Widget _buildExploreMoreSection(DiscoverState discoverState) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.travel_explore,
-                    size: 20,
-                    color: context.primaryColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Explore More Destinations',
-                    style: context.titleMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Discover popular places around the world',
-            style: context.bodySmall.copyWith(
-              color: context.textColor.withValues(alpha: 0.6),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Popular Destinations
-          PopularDestinationsSection(
-            onDestinationTapped: _onDestinationTapped,
-            onExploreNearby: _onExploreNearby,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget? _buildFloatingActionButton(DiscoverState discoverState) {
     final hasFavorites = discoverState.favoriteIds.isNotEmpty;
 
@@ -779,35 +694,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       );
     }
 
-    // Show hint FAB to guide users
-    return FloatingActionButton.extended(
-      onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.favorite, color: Colors.white, size: 20),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Tap the heart on places you like to save them for trip planning!',
-                  ),
-                ),
-              ],
-            ),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            duration: const Duration(seconds: 4),
-          ),
-        );
-      },
-      icon: const Icon(Icons.lightbulb_outline),
-      label: const Text('Get Trip Ideas'),
-      backgroundColor: Colors.amber[700],
-      foregroundColor: Colors.white,
-    );
+    return null;
   }
 
   Widget _buildMapView(List<DiscoverPlace> places, DiscoverState discoverState) {
@@ -1241,228 +1128,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
         ),
       ),
     );
-  }
-}
-
-/// Bottom sheet showing destination details
-class _DestinationDetailSheet extends StatelessWidget {
-  final PopularDestination destination;
-  final VoidCallback onExploreNearby;
-
-  const _DestinationDetailSheet({
-    required this.destination,
-    required this.onExploreNearby,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final regionInfo = RegionInfo.getInfo(destination.region);
-
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              // Handle
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Content
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    // Hero image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        destination.imageUrl,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          height: 200,
-                          color: regionInfo.color.withValues(alpha: 0.2),
-                          child: Icon(
-                            regionInfo.icon,
-                            size: 64,
-                            color: regionInfo.color,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Name and region
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            destination.name,
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: regionInfo.color,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(regionInfo.icon, size: 14, color: Colors.white),
-                              const SizedBox(width: 4),
-                              Text(
-                                destination.region.split(' ').first,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // Country
-                    Row(
-                      children: [
-                        const Icon(Icons.flag, size: 16, color: Colors.grey),
-                        const SizedBox(width: 4),
-                        Text(
-                          destination.country,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Description
-                    Text(
-                      destination.description,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    const SizedBox(height: 16),
-                    // Best time to visit
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.calendar_today, color: Colors.blue[700], size: 20),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Best Time to Visit',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.blue[700],
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  destination.bestTimeToVisit,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Highlights
-                    Text(
-                      'Highlights',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: destination.highlights.map((highlight) {
-                        return Chip(
-                          label: Text(highlight),
-                          backgroundColor: regionInfo.color.withValues(alpha: 0.1),
-                          side: BorderSide.none,
-                          padding: EdgeInsets.zero,
-                          labelStyle: TextStyle(
-                            color: regionInfo.color,
-                            fontSize: 12,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 24),
-                    // Action buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: onExploreNearby,
-                            icon: const Icon(Icons.explore),
-                            label: const Text('Explore Nearby'),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => _openInMaps(destination),
-                            icon: const Icon(Icons.map),
-                            label: const Text('View on Map'),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _openInMaps(PopularDestination destination) async {
-    final url = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=${destination.latitude},${destination.longitude}',
-    );
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
   }
 }
 

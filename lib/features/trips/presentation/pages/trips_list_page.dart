@@ -405,8 +405,13 @@ class _TripsListPageState extends ConsumerState<TripsListPage> {
     final visibleMembers = members.take(maxVisible).toList();
     final remaining = members.length - maxVisible;
 
+    final extraForOverflow = remaining > 0 ? 1 : 0;
+    final itemCount = visibleMembers.length + extraForOverflow;
+    final stackWidth = itemCount <= 1 ? 32.0 : (itemCount - 1) * 24.0 + 32.0;
+
     return SizedBox(
       height: 32,
+      width: stackWidth,
       child: Stack(
         children: [
           for (var i = 0; i < visibleMembers.length; i++)

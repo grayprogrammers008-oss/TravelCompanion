@@ -108,25 +108,14 @@ final tripCostSummaryProvider = FutureProvider.family<TripCostSummary, String>((
   return await useCase(tripId);
 });
 
-// User Trips Provider - REAL-TIME stream of all trips for current user
-// This provider automatically disposes and recreates when user changes (auth state changes)
-// This prevents showing cached data from previous user (security issue)
-final userTripsProvider = StreamProvider.autoDispose<List<TripWithMembers>>((ref) async* {
-  // Watch auth state to ensure provider recreates when user changes
+// User Trips Provider - fetches all trips for the current user
+// Invalidate this provider after any mutation to get fresh data
+final userTripsProvider = FutureProvider<List<TripWithMembers>>((ref) async {
   final authState = ref.watch(authStateProvider);
-
-  // Return empty list if not authenticated
-  if (authState.value == null) {
-    yield [];
-    return;
-  }
+  if (authState.value == null) return [];
 
   final repository = ref.watch(tripRepositoryProvider);
-
-  // Stream real-time updates
-  await for (final trips in repository.watchUserTrips()) {
-    yield trips;
-  }
+  return await repository.getUserTrips();
 });
 
 // Has Trips Provider - Quick check if user has any trips (for routing)
@@ -366,9 +355,6 @@ class TripController extends Notifier<TripState> {
         currency: currency,
         isPublic: isPublic,
       );
-
-      // Invalidate providers to trigger refresh
-      ref.invalidate(userTripsProvider);
 
       state = state.copyWith(isLoading: false, currentTrip: trip);
       return trip;
