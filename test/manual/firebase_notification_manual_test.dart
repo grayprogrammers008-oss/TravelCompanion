@@ -22,8 +22,20 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/notification_test_helper.dart';
+
+/// Test runner entry point. The file name ends in `_test.dart` so the
+/// flutter test harness picks it up; this `main()` is a no-op test that
+/// documents the file as a manual helper rather than an automated test.
+void main() {
+  test('FirebaseNotificationManualTest is a manual helper, not an automated test',
+      () {
+    // Intentionally empty. Use FirebaseNotificationManualTest from the app
+    // after authentication, per the docstring at the top of the file.
+  });
+}
 
 class FirebaseNotificationManualTest {
   static Future<void> runComprehensiveTest() async {
@@ -229,3 +241,4 @@ await helper.sendTestTripUpdateNotification(
 // 5. Check console for debug output
 ''';
 }
+
