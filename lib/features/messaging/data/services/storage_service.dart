@@ -7,10 +7,16 @@ import 'package:uuid/uuid.dart';
 /// Handles file uploads to Supabase Storage
 class StorageService {
   static final StorageService _instance = StorageService._internal();
-  factory StorageService() => _instance;
-  StorageService._internal();
+  factory StorageService({SupabaseClient? supabase}) {
+    if (supabase != null) {
+      return StorageService._withClient(supabase);
+    }
+    return _instance;
+  }
+  StorageService._internal() : _supabase = Supabase.instance.client;
+  StorageService._withClient(this._supabase);
 
-  final _supabase = Supabase.instance.client;
+  final SupabaseClient _supabase;
   static const String _bucketName = 'message-attachments';
 
   /// Upload image to Supabase Storage

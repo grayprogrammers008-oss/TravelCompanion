@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/validators.dart';
 import '../providers/auth_providers.dart';
@@ -168,7 +169,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         final email = _emailController.text.trim();
         debugPrint('🔐 [ForgotPassword] Sending OTP to email: $email');
 
-        await Supabase.instance.client.auth.resetPasswordForEmail(email);
+        await ref.read(supabaseClientProvider).auth.resetPasswordForEmail(email);
 
         debugPrint('✅ [ForgotPassword] Email OTP sent successfully!');
 
@@ -189,7 +190,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         debugPrint('🔐 [ForgotPassword] Sending OTP to phone: $phone');
 
         // Use signInWithOtp for phone - this sends SMS OTP
-        await Supabase.instance.client.auth.signInWithOtp(
+        await ref.read(supabaseClientProvider).auth.signInWithOtp(
           phone: phone,
         );
 
@@ -241,7 +242,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         }
 
         debugPrint('🔐 [ForgotPassword] Resending OTP to email: $email');
-        await Supabase.instance.client.auth.resetPasswordForEmail(email);
+        await ref.read(supabaseClientProvider).auth.resetPasswordForEmail(email);
         debugPrint('✅ [ForgotPassword] Email OTP resent successfully!');
 
         if (mounted) {
@@ -263,7 +264,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         }
 
         debugPrint('🔐 [ForgotPassword] Resending OTP to phone: $phone');
-        await Supabase.instance.client.auth.signInWithOtp(phone: phone);
+        await ref.read(supabaseClientProvider).auth.signInWithOtp(phone: phone);
         debugPrint('✅ [ForgotPassword] SMS OTP resent successfully!');
 
         if (mounted) {
@@ -315,14 +316,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
       if (resetState.method == ResetMethod.email) {
         // Verify email OTP
-        response = await Supabase.instance.client.auth.verifyOTP(
+        response = await ref.read(supabaseClientProvider).auth.verifyOTP(
           email: resetState.email ?? _emailController.text.trim(),
           token: _otpController.text.trim(),
           type: OtpType.recovery,
         );
       } else {
         // Verify phone OTP
-        response = await Supabase.instance.client.auth.verifyOTP(
+        response = await ref.read(supabaseClientProvider).auth.verifyOTP(
           phone: resetState.phone ?? _formatPhoneNumber(_phoneController.text.trim()),
           token: _otpController.text.trim(),
           type: OtpType.sms,
@@ -392,8 +393,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       debugPrint('🔐 [ForgotPassword] Updating password...');
 
       // Check if we have a current session from Supabase client
-      var currentSession = Supabase.instance.client.auth.currentSession;
-      final currentUser = Supabase.instance.client.auth.currentUser;
+      var currentSession = ref.read(supabaseClientProvider).auth.currentSession;
+      final currentUser = ref.read(supabaseClientProvider).auth.currentUser;
       debugPrint('   Current session: ${currentSession != null ? "exists" : "null"}');
       debugPrint('   Current user: ${currentUser?.email ?? "null"}');
       debugPrint('   Stored OTP session (local): ${_otpSession != null ? "exists" : "null"}');
@@ -418,7 +419,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         if (resetState.refreshToken != null && resetState.refreshToken!.isNotEmpty) {
           debugPrint('   Trying setSession with refresh token...');
           try {
-            final response = await Supabase.instance.client.auth.setSession(resetState.refreshToken!);
+            final response = await ref.read(supabaseClientProvider).auth.setSession(resetState.refreshToken!);
             debugPrint('   Session restored from refresh token: ${response.session != null}');
             debugPrint('   User after restore: ${response.user?.email ?? "null"}');
             currentSession = response.session;
@@ -431,7 +432,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         if (currentSession == null) {
           debugPrint('   Trying recoverSession with access token...');
           try {
-            final recoverResponse = await Supabase.instance.client.auth.recoverSession(resetState.accessToken!);
+            final recoverResponse = await ref.read(supabaseClientProvider).auth.recoverSession(resetState.accessToken!);
             debugPrint('   Recover session result: ${recoverResponse.session != null}');
             debugPrint('   User after recover: ${recoverResponse.user?.email ?? "null"}');
             currentSession = recoverResponse.session;
@@ -449,7 +450,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         // setSession expects a refresh token to get a new session
         if (_otpSession!.refreshToken != null) {
           try {
-            final response = await Supabase.instance.client.auth.setSession(_otpSession!.refreshToken!);
+            final response = await ref.read(supabaseClientProvider).auth.setSession(_otpSession!.refreshToken!);
             debugPrint('   Session restored: ${response.session != null}');
             debugPrint('   User after restore: ${response.user?.email ?? "null"}');
             currentSession = response.session;
@@ -458,7 +459,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             // Try alternative: recoverSession using the full access token
             debugPrint('   Trying alternative: recoverSession with access token...');
             try {
-              final recoverResponse = await Supabase.instance.client.auth.recoverSession(_otpSession!.accessToken);
+              final recoverResponse = await ref.read(supabaseClientProvider).auth.recoverSession(_otpSession!.accessToken);
               debugPrint('   Recover session result: ${recoverResponse.session != null}');
               currentSession = recoverResponse.session;
             } catch (recoverError) {
@@ -471,8 +472,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       }
 
       // Final check - do we have a valid session now?
-      final finalSession = Supabase.instance.client.auth.currentSession;
-      final finalUser = Supabase.instance.client.auth.currentUser;
+      final finalSession = ref.read(supabaseClientProvider).auth.currentSession;
+      final finalUser = ref.read(supabaseClientProvider).auth.currentUser;
       debugPrint('   Final session check: ${finalSession != null ? "exists" : "null"}');
       debugPrint('   Final user: ${finalUser?.email ?? "null"}');
 
@@ -481,7 +482,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       }
 
       debugPrint('   Calling updateUser...');
-      final updateResponse = await Supabase.instance.client.auth.updateUser(
+      final updateResponse = await ref.read(supabaseClientProvider).auth.updateUser(
         UserAttributes(password: _passwordController.text.trim()),
       );
 
@@ -499,7 +500,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
       // Sign out to force re-login (fire and forget - success view handles navigation)
       try {
-        await Supabase.instance.client.auth.signOut();
+        await ref.read(supabaseClientProvider).auth.signOut();
         debugPrint('   Signed out successfully');
       } catch (signOutError) {
         debugPrint('   Sign out error (non-critical): $signOutError');

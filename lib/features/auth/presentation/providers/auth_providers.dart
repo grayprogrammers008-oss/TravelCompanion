@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 import '../../data/datasources/profile_photo_service.dart';
 import '../../data/repositories/auth_repository_impl.dart';
@@ -41,7 +41,7 @@ class LoginUserModel {
 /// Provider to fetch all users for login dropdown (development/testing only)
 final allUsersForLoginProvider = FutureProvider<List<LoginUserModel>>((ref) async {
   try {
-    final client = Supabase.instance.client;
+    final client = ref.watch(supabaseClientProvider);
 
     // Fetch all users from profiles table
     // This query uses the public RLS policy (anyone can view profiles with is_active = true)

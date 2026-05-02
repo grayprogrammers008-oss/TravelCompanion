@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/validators.dart';
 import '../providers/auth_providers.dart';
@@ -53,8 +53,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
     // Give Supabase a moment to process the deep link and set the session
     await Future.delayed(const Duration(milliseconds: 500));
 
-    final session = Supabase.instance.client.auth.currentSession;
-    final user = Supabase.instance.client.auth.currentUser;
+    final session = ref.read(supabaseClientProvider).auth.currentSession;
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
 
     debugPrint('   Session: ${session != null ? "exists" : "null"}');
     debugPrint('   User: ${user?.email ?? "null"}');
@@ -118,7 +118,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       });
 
       // Sign out to force re-login with new password
-      await Supabase.instance.client.auth.signOut();
+      await ref.read(supabaseClientProvider).auth.signOut();
 
       // Show success message and navigate to login after delay
       if (mounted) {

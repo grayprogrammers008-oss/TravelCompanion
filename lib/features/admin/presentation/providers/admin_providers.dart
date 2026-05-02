@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travel_crew/core/providers/supabase_provider.dart';
 import 'package:travel_crew/features/admin/data/datasources/admin_remote_datasource.dart';
 import 'package:travel_crew/features/admin/data/repositories/admin_repository_impl.dart';
 import 'package:travel_crew/features/admin/domain/entities/admin_activity_log.dart';
@@ -20,7 +20,7 @@ import 'package:travel_crew/features/admin/domain/usecases/update_user_role_usec
 // ============================================================================
 
 final adminRemoteDataSourceProvider = Provider<AdminRemoteDataSource>((ref) {
-  return AdminRemoteDataSource(Supabase.instance.client);
+  return AdminRemoteDataSource(ref.watch(supabaseClientProvider));
 });
 
 // ============================================================================

@@ -12,7 +12,7 @@ class NotificationInitialization {
 
   /// Initialize notification services
   /// Call this after user authentication
-  static Future<void> initialize() async {
+  static Future<void> initialize({SupabaseClient? supabaseClient}) async {
     // Skip on web - Firebase not configured
     if (kIsWeb) {
       debugPrint('ℹ️ [NotificationInit] Skipped on web (Firebase not configured)');
@@ -33,7 +33,7 @@ class NotificationInitialization {
       debugPrint('   ✅ FCM service initialized');
 
       // Register FCM token with Supabase (if user is authenticated)
-      final supabase = Supabase.instance.client;
+      final supabase = supabaseClient ?? Supabase.instance.client;
       final user = supabase.auth.currentUser;
 
       if (user != null) {
@@ -64,7 +64,7 @@ class NotificationInitialization {
 
   /// Register FCM token for authenticated user
   /// Call this after successful login
-  static Future<void> registerToken() async {
+  static Future<void> registerToken({SupabaseClient? supabaseClient}) async {
     // Skip on web
     if (kIsWeb) return;
 
@@ -79,7 +79,7 @@ class NotificationInitialization {
         return;
       }
 
-      final supabase = Supabase.instance.client;
+      final supabase = supabaseClient ?? Supabase.instance.client;
       final user = supabase.auth.currentUser;
 
       if (user == null) {
@@ -102,7 +102,7 @@ class NotificationInitialization {
 
   /// Unregister FCM token
   /// Call this on logout
-  static Future<void> unregisterToken() async {
+  static Future<void> unregisterToken({SupabaseClient? supabaseClient}) async {
     // Skip on web
     if (kIsWeb) return;
 
@@ -119,7 +119,7 @@ class NotificationInitialization {
 
       // Use FCMService's lazy-initialized FirebaseMessaging instance
       final fcmService = FCMService();
-      final supabase = Supabase.instance.client;
+      final supabase = supabaseClient ?? Supabase.instance.client;
       final tokenManager = FCMTokenManager(
         supabase,
         fcmService.firebaseMessaging,

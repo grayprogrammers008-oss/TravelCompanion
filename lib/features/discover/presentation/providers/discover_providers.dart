@@ -7,15 +7,18 @@ import 'package:geocoding/geocoding.dart' as geo;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../../../core/services/google_places_service.dart';
 import '../../data/datasources/discover_local_datasource.dart';
 import '../../domain/entities/place_category.dart';
 import '../../domain/entities/discover_place.dart';
 import '../../domain/entities/weather_suggestion.dart';
 
-/// Provider for Supabase client
+/// Provider for Supabase client. Delegates to the global
+/// `supabaseClientProvider` so test overrides on the global propagate
+/// here automatically.
 final discoverSupabaseProvider = Provider<SupabaseClient>((ref) {
-  return Supabase.instance.client;
+  return ref.watch(supabaseClientProvider);
 });
 
 /// Provider for Google Places Service
