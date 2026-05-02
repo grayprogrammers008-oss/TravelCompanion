@@ -37,7 +37,7 @@ void main() {
           isCompleted: true,
           completedAt: endDate,
           rating: 4.5,
-          budget: 50000.0,
+          cost: 50000.0,
           currency: 'USD',
         );
 
@@ -51,7 +51,7 @@ void main() {
         expect(trip.isCompleted, true);
         expect(trip.completedAt, endDate);
         expect(trip.rating, 4.5);
-        expect(trip.budget, 50000.0);
+        expect(trip.cost, 50000.0);
         expect(trip.currency, 'USD');
       });
     });
@@ -72,7 +72,7 @@ void main() {
           'is_completed': true,
           'completed_at': '2024-01-20T18:00:00.000Z',
           'rating': 4.5,
-          'budget': 50000.0,
+          'cost': 50000.0,
           'currency': 'USD',
         };
 
@@ -84,7 +84,7 @@ void main() {
         expect(trip.destination, 'Goa');
         expect(trip.isCompleted, true);
         expect(trip.rating, 4.5);
-        expect(trip.budget, 50000.0);
+        expect(trip.cost, 50000.0);
         expect(trip.currency, 'USD');
       });
 
@@ -142,7 +142,7 @@ void main() {
           createdBy: 'user-1',
           isCompleted: true,
           rating: 4.5,
-          budget: 50000.0,
+          cost: 50000.0,
           currency: 'USD',
         );
 
@@ -155,7 +155,7 @@ void main() {
         expect(json['created_by'], 'user-1');
         expect(json['is_completed'], true);
         expect(json['rating'], 4.5);
-        expect(json['budget'], 50000.0);
+        expect(json['cost'], 50000.0);
         expect(json['currency'], 'USD');
       });
 
@@ -176,7 +176,7 @@ void main() {
         expect(json['created_at'], isNull);
         expect(json['updated_at'], isNull);
         expect(json['completed_at'], isNull);
-        expect(json['budget'], isNull);
+        expect(json['cost'], isNull);
       });
     });
 
@@ -217,7 +217,7 @@ void main() {
           isCompleted: true,
           completedAt: endDate,
           rating: 4.5,
-          budget: 50000.0,
+          cost: 50000.0,
           currency: 'USD',
         );
 
@@ -236,7 +236,7 @@ void main() {
         expect(copied.isCompleted, original.isCompleted);
         expect(copied.completedAt, original.completedAt);
         expect(copied.rating, original.rating);
-        expect(copied.budget, original.budget);
+        expect(copied.cost, original.cost);
         expect(copied.currency, original.currency);
       });
     });
