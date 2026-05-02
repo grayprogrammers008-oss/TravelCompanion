@@ -157,3 +157,6 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 flutter/
 *.generated.dart
+
+# Stray Windows redirect artifact
+/nul

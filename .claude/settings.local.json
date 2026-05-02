@@ -5,7 +5,10 @@
       "Bash(flutter analyze:*)",
       "Bash(git add:*)",
       "Bash(powershell -Command:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(flutter test *)",
+      "Bash(flutter/bin/flutter test *)",
+      "Bash(grep -E \"\\\\[E\\\\]$|Some tests\")"
     ],
     "deny": [],
     "ask": []
