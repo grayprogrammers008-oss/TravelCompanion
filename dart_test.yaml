@@ -1,0 +1,17 @@
+# Dart test runner configuration.
+# Used by `flutter test` / `dart test` to set sensible defaults.
+
+# Default per-test timeout. The full suite runs ~3 min; individual tests
+# should never need more than a few seconds. Bumped slightly above the
+# default to absorb the occasional slow widget animation.
+timeout: 60s
+
+# Don't run a test multiple times if it hangs.
+retry: 0
+
+# Define platform tags so flaky integration tests can opt-out of CI runs.
+tags:
+  flaky:
+    skip: false
+  manual:
+    skip: true
