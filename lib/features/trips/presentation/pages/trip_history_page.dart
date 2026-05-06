@@ -8,7 +8,7 @@ import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/trips/domain/usecases/get_trip_history_usecase.dart';
 import 'package:travel_crew/features/trips/domain/usecases/filter_trips_usecase.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import '../../../../shared/models/trip_model.dart';
 import 'package:intl/intl.dart';
 
 /// Trip History Page - Shows completed trips with ratings and statistics

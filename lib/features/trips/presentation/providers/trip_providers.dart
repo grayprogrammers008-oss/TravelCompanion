@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import '../../../../shared/models/trip_model.dart';
 import '../../data/datasources/trip_remote_datasource.dart';
 export '../../data/datasources/trip_remote_datasource.dart' show SystemUserModel;
 import '../../data/repositories/trip_repository_impl.dart';

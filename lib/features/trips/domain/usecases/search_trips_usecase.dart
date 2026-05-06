@@ -1,4 +1,4 @@
-import 'package:travel_crew/shared/models/trip_model.dart';
+import '../../../../shared/models/trip_model.dart';
 
 /// Use case for searching trips by query text
 /// Searches across trip name, description, and destination

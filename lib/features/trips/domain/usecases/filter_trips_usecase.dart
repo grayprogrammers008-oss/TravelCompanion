@@ -1,4 +1,4 @@
-import 'package:travel_crew/shared/models/trip_model.dart';
+import '../../../../shared/models/trip_model.dart';
 import 'search_trips_usecase.dart';
 
 /// Filter criteria for trips

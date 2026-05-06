@@ -8,7 +8,7 @@ import 'package:travel_crew/core/animations/animated_widgets.dart';
 import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
 import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
 import 'package:travel_crew/core/router/app_router.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import '../../../../shared/models/trip_model.dart';
 import 'package:travel_crew/core/utils/extensions.dart';
 import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
 
