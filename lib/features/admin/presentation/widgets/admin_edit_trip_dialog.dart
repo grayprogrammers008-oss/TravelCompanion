@@ -304,8 +304,9 @@ class _AdminEditTripDialogState extends ConsumerState<AdminEditTripDialog> {
                         children: [
                           // Currency Dropdown
                           SizedBox(
-                            width: 100,
+                            width: 110,
                             child: DropdownButtonFormField<String>(
+                              isExpanded: true,
                               initialValue: _currency,
                               decoration: const InputDecoration(
                                 labelText: 'Currency',

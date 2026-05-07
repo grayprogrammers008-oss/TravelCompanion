@@ -617,10 +617,6 @@ void main() {
         await _settle(tester);
         expect(find.text('View Map'), findsOneWidget);
       },
-      // Production layout bug: the "View Map" Row at
-      // lib/features/itinerary/presentation/pages/itinerary_list_page.dart:1197
-      // overflows the 80-wide fixed-size thumbnail by 20px.
-      skip: true,
     );
 
     testWidgets('item with start time shows HH:mm time chip', (tester) async {
@@ -776,11 +772,6 @@ void main() {
 
         expect(find.text('Open in Maps'), findsOneWidget);
       },
-      // Skipped: items with coordinates render the "View Map" thumbnail row,
-      // which overflows by 20px (production bug at
-      // lib/features/itinerary/presentation/pages/itinerary_list_page.dart:1197),
-      // failing the long-press render before the menu can appear.
-      skip: true,
     );
 
     testWidgets('Open in Maps option hidden when item has no coordinates',

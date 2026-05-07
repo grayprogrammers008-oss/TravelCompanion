@@ -247,10 +247,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
     });
 
-    // Skipped: AdminEditTripDialog has a known RenderFlex overflow bug in its
-    // DropdownButtonFormField at admin_edit_trip_dialog.dart:308 that surfaces
-    // in any test viewport. Re-enable once the production layout is fixed.
-    testWidgets('tapping edit opens edit dialog', skip: true, (tester) async {
+    testWidgets('tapping edit opens edit dialog', (tester) async {
       // Use a wider viewport for the dialog
       tester.view.physicalSize = const Size(1200, 2400);
       tester.view.devicePixelRatio = 1.0;

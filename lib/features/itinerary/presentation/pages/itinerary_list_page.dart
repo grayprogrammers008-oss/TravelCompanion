@@ -1196,6 +1196,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                           ),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.map,
@@ -1203,12 +1204,15 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                                 size: 11,
                               ),
                               SizedBox(width: 3),
-                              Text(
-                                'View Map',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
+                              Flexible(
+                                child: Text(
+                                  'View Map',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ],
