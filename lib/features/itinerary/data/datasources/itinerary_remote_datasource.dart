@@ -7,6 +7,10 @@ import '../../../../shared/models/itinerary_model.dart';
 
 /// Remote data source for itinerary operations using Supabase
 class ItineraryRemoteDataSource {
+  ItineraryRemoteDataSource([SupabaseClient? supabase])
+      : _supabase = supabase ?? SupabaseClientWrapper.client;
+
+  final SupabaseClient _supabase;
   final _uuid = const Uuid();
 
   /// Create a new itinerary item
@@ -24,7 +28,7 @@ class ItineraryRemoteDataSource {
     int orderIndex = 0,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
         throw Exception('User not authenticated');
       }
@@ -50,7 +54,7 @@ class ItineraryRemoteDataSource {
         'updated_at': now.toIso8601String(),
       };
 
-      final response = await SupabaseClientWrapper.client
+      final response = await _supabase
           .from('itinerary_items')
           .insert(data)
           .select('*, profiles!created_by(full_name)')
@@ -68,7 +72,7 @@ class ItineraryRemoteDataSource {
   /// Get all itinerary items for a trip
   Future<List<ItineraryItemModel>> getTripItinerary(String tripId) async {
     try {
-      final response = await SupabaseClientWrapper.client
+      final response = await _supabase
           .from('itinerary_items')
           .select('*, profiles!created_by(full_name)')
           .eq('trip_id', tripId)
@@ -92,7 +96,7 @@ class ItineraryRemoteDataSource {
     required int dayNumber,
   }) async {
     try {
-      final response = await SupabaseClientWrapper.client
+      final response = await _supabase
           .from('itinerary_items')
           .select('*, profiles!created_by(full_name)')
           .eq('trip_id', tripId)
@@ -140,7 +144,7 @@ class ItineraryRemoteDataSource {
   /// Get a single itinerary item by ID
   Future<ItineraryItemModel> getItem(String itemId) async {
     try {
-      final response = await SupabaseClientWrapper.client
+      final response = await _supabase
           .from('itinerary_items')
           .select('*, profiles!created_by(full_name)')
           .eq('id', itemId)
@@ -185,7 +189,7 @@ class ItineraryRemoteDataSource {
       if (dayNumber != null) updates['day_number'] = dayNumber;
       if (orderIndex != null) updates['order_index'] = orderIndex;
 
-      final response = await SupabaseClientWrapper.client
+      final response = await _supabase
           .from('itinerary_items')
           .update(updates)
           .eq('id', itemId)
@@ -204,7 +208,7 @@ class ItineraryRemoteDataSource {
   /// Delete an itinerary item
   Future<void> deleteItem(String itemId) async {
     try {
-      await SupabaseClientWrapper.client
+      await _supabase
           .from('itinerary_items')
           .delete()
           .eq('id', itemId);
@@ -222,7 +226,7 @@ class ItineraryRemoteDataSource {
     try {
       // Update order_index for each item
       for (int i = 0; i < itemIds.length; i++) {
-        await SupabaseClientWrapper.client
+        await _supabase
             .from('itinerary_items')
             .update({
               'order_index': i,
@@ -247,7 +251,7 @@ class ItineraryRemoteDataSource {
       final item = await getItem(itemId);
 
       // Get max order_index for the target day
-      final response = await SupabaseClientWrapper.client
+      final response = await _supabase
           .from('itinerary_items')
           .select('order_index')
           .eq('trip_id', item.tripId)
@@ -260,7 +264,7 @@ class ItineraryRemoteDataSource {
           : 0;
 
       // Update the item with new day and order
-      await SupabaseClientWrapper.client
+      await _supabase
           .from('itinerary_items')
           .update({
             'day_number': newDayNumber,
@@ -298,7 +302,7 @@ class ItineraryRemoteDataSource {
     }
 
     // Subscribe to itinerary_items table changes
-    final channel = SupabaseClientWrapper.client.channel('itinerary:$tripId');
+    final channel = _supabase.channel('itinerary:$tripId');
 
     channel
         .onPostgresChanges(
@@ -373,7 +377,7 @@ class ItineraryRemoteDataSource {
     }
 
     // Subscribe to itinerary_items table changes
-    final channel = SupabaseClientWrapper.client.channel('itinerary_days:$tripId');
+    final channel = _supabase.channel('itinerary_days:$tripId');
 
     channel
         .onPostgresChanges(

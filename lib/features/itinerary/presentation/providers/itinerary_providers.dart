@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/supabase_provider.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../../data/datasources/itinerary_remote_datasource.dart';
 import '../../data/repositories/itinerary_repository_impl.dart';
@@ -12,7 +13,7 @@ import '../../domain/usecases/reorder_items_usecase.dart';
 
 // Data Source Provider - Using Remote Supabase DataSource
 final itineraryRemoteDataSourceProvider = Provider<ItineraryRemoteDataSource>((ref) {
-  return ItineraryRemoteDataSource();
+  return ItineraryRemoteDataSource(ref.watch(supabaseClientProvider));
 });
 
 // Repository Provider - Using Remote DataSource
