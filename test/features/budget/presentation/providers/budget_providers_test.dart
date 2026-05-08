@@ -366,6 +366,260 @@ void main() {
       expect(projectedDifference, 0.0);
     });
   });
+
+  group('TripBudgetData.statusColorName', () {
+    TripBudgetData of(BudgetStatus status) => TripBudgetData(
+          currency: 'INR',
+          totalSpent: 0,
+          remaining: 0,
+          percentageUsed: 0,
+          status: status,
+          categoryBreakdown: const [],
+          expenseCount: 0,
+          daysElapsed: 0,
+          totalTripDays: 0,
+          averageDailySpending: 0,
+          projectedTotal: 0,
+          projectedDifference: 0,
+          isTripActive: false,
+        );
+
+    test('returns green for healthy', () {
+      expect(of(BudgetStatus.healthy).statusColorName, 'green');
+    });
+    test('returns blue for moderate', () {
+      expect(of(BudgetStatus.moderate).statusColorName, 'blue');
+    });
+    test('returns orange for warning', () {
+      expect(of(BudgetStatus.warning).statusColorName, 'orange');
+    });
+    test('returns red for critical', () {
+      expect(of(BudgetStatus.critical).statusColorName, 'red');
+    });
+    test('returns darkRed for exceeded', () {
+      expect(of(BudgetStatus.exceeded).statusColorName, 'darkRed');
+    });
+    test('returns gray for noBudget', () {
+      expect(of(BudgetStatus.noBudget).statusColorName, 'gray');
+    });
+  });
+
+  group('TripBudgetData.statusMessage', () {
+    TripBudgetData of(BudgetStatus status, {double? budget}) => TripBudgetData(
+          budget: budget,
+          currency: 'INR',
+          totalSpent: 0,
+          remaining: 0,
+          percentageUsed: 0,
+          status: status,
+          categoryBreakdown: const [],
+          expenseCount: 0,
+          daysElapsed: 0,
+          totalTripDays: 0,
+          averageDailySpending: 0,
+          projectedTotal: 0,
+          projectedDifference: 0,
+          isTripActive: false,
+        );
+
+    test('returns "No budget set" when budget is null', () {
+      expect(of(BudgetStatus.healthy).statusMessage, 'No budget set');
+    });
+    test('returns "On track!" for healthy when budget set', () {
+      expect(of(BudgetStatus.healthy, budget: 1000).statusMessage,
+          contains('On track'));
+    });
+    test('returns moderate message', () {
+      expect(of(BudgetStatus.moderate, budget: 1000).statusMessage,
+          contains('moderate'));
+    });
+    test('returns warning message', () {
+      expect(of(BudgetStatus.warning, budget: 1000).statusMessage,
+          contains('Approaching'));
+    });
+    test('returns critical message', () {
+      expect(of(BudgetStatus.critical, budget: 1000).statusMessage,
+          contains('Almost'));
+    });
+    test('returns exceeded message', () {
+      expect(of(BudgetStatus.exceeded, budget: 1000).statusMessage,
+          contains('exceeded'));
+    });
+    test('returns "No budget set" for noBudget status', () {
+      expect(of(BudgetStatus.noBudget, budget: 1000).statusMessage,
+          'No budget set');
+    });
+  });
+
+  group('TripBudgetData.paceMessage', () {
+    TripBudgetData paceOf({
+      double? budget,
+      required int days,
+      required int elapsed,
+      required double projectedDiff,
+      String currency = 'INR',
+    }) =>
+        TripBudgetData(
+          budget: budget,
+          currency: currency,
+          totalSpent: 0,
+          remaining: 0,
+          percentageUsed: 0,
+          status: BudgetStatus.healthy,
+          categoryBreakdown: const [],
+          expenseCount: 0,
+          daysElapsed: elapsed,
+          totalTripDays: days,
+          averageDailySpending: 0,
+          projectedTotal: 0,
+          projectedDifference: projectedDiff,
+          isTripActive: false,
+        );
+
+    test('empty when no budget', () {
+      expect(
+          paceOf(days: 7, elapsed: 3, projectedDiff: 1000).paceMessage, '');
+    });
+    test('empty when totalTripDays is 0', () {
+      expect(
+          paceOf(budget: 1000, days: 0, elapsed: 0, projectedDiff: 100)
+              .paceMessage,
+          '');
+    });
+    test('empty when daysElapsed is 0', () {
+      expect(
+          paceOf(budget: 1000, days: 7, elapsed: 0, projectedDiff: 100)
+              .paceMessage,
+          '');
+    });
+    test('exceed message when projectedDifference > 0', () {
+      final m =
+          paceOf(budget: 1000, days: 7, elapsed: 3, projectedDiff: 500)
+              .paceMessage;
+      expect(m, contains('exceed budget'));
+    });
+    test('savings message when projectedDifference < 0', () {
+      final m =
+          paceOf(budget: 1000, days: 7, elapsed: 3, projectedDiff: -250)
+              .paceMessage;
+      expect(m, contains('save'));
+    });
+    test('exact-meet message when projectedDifference == 0', () {
+      final m =
+          paceOf(budget: 1000, days: 7, elapsed: 3, projectedDiff: 0)
+              .paceMessage;
+      expect(m, contains('On track'));
+    });
+    test(r'formats USD with $ prefix', () {
+      final m = paceOf(
+              budget: 1000,
+              days: 7,
+              elapsed: 3,
+              projectedDiff: 250,
+              currency: 'USD')
+          .paceMessage;
+      expect(m, contains(r'$250'));
+    });
+    test('formats EUR with € prefix', () {
+      final m = paceOf(
+              budget: 1000,
+              days: 7,
+              elapsed: 3,
+              projectedDiff: 250,
+              currency: 'EUR')
+          .paceMessage;
+      expect(m, contains('€250'));
+    });
+    test('formats GBP with £ prefix', () {
+      final m = paceOf(
+              budget: 1000,
+              days: 7,
+              elapsed: 3,
+              projectedDiff: 250,
+              currency: 'GBP')
+          .paceMessage;
+      expect(m, contains('£250'));
+    });
+    test('formats unknown currency by name', () {
+      final m = paceOf(
+              budget: 1000,
+              days: 7,
+              elapsed: 3,
+              projectedDiff: 250,
+              currency: 'JPY')
+          .paceMessage;
+      expect(m, contains('JPY250'));
+    });
+    test('formats thousands as K', () {
+      final m =
+          paceOf(budget: 100000, days: 7, elapsed: 3, projectedDiff: 5500)
+              .paceMessage;
+      expect(m, contains('5.5K'));
+    });
+    test('formats lakhs as L', () {
+      final m = paceOf(
+              budget: 1000000, days: 7, elapsed: 3, projectedDiff: 250000)
+          .paceMessage;
+      expect(m, contains('2.5L'));
+    });
+    test('formats sub-thousand as plain', () {
+      final m = paceOf(budget: 5000, days: 7, elapsed: 3, projectedDiff: 50)
+          .paceMessage;
+      expect(m, contains('₹50'));
+    });
+  });
+
+  group('getCategoryIcon', () {
+    test('food/dining/restaurant → restaurant', () {
+      expect(getCategoryIcon('food'), 'restaurant');
+      expect(getCategoryIcon('Dining'), 'restaurant');
+      expect(getCategoryIcon('RESTAURANT'), 'restaurant');
+    });
+
+    test('transport/transportation/travel → directions_car', () {
+      expect(getCategoryIcon('transport'), 'directions_car');
+      expect(getCategoryIcon('Transportation'), 'directions_car');
+      expect(getCategoryIcon('travel'), 'directions_car');
+    });
+
+    test('accommodation/hotel/stay/lodging → hotel', () {
+      expect(getCategoryIcon('accommodation'), 'hotel');
+      expect(getCategoryIcon('Hotel'), 'hotel');
+      expect(getCategoryIcon('STAY'), 'hotel');
+      expect(getCategoryIcon('lodging'), 'hotel');
+    });
+
+    test('activities/entertainment/sightseeing → local_activity', () {
+      expect(getCategoryIcon('activities'), 'local_activity');
+      expect(getCategoryIcon('Entertainment'), 'local_activity');
+      expect(getCategoryIcon('Sightseeing'), 'local_activity');
+    });
+
+    test('shopping → shopping_bag', () {
+      expect(getCategoryIcon('shopping'), 'shopping_bag');
+      expect(getCategoryIcon('Shopping'), 'shopping_bag');
+    });
+
+    test('groceries → local_grocery_store', () {
+      expect(getCategoryIcon('groceries'), 'local_grocery_store');
+    });
+
+    test('health/medical → medical_services', () {
+      expect(getCategoryIcon('health'), 'medical_services');
+      expect(getCategoryIcon('Medical'), 'medical_services');
+    });
+
+    test('communication/phone → phone', () {
+      expect(getCategoryIcon('communication'), 'phone');
+      expect(getCategoryIcon('Phone'), 'phone');
+    });
+
+    test('unknown category falls back to receipt_long', () {
+      expect(getCategoryIcon('xyzzy'), 'receipt_long');
+      expect(getCategoryIcon(''), 'receipt_long');
+      expect(getCategoryIcon('Other'), 'receipt_long');
+    });
+  });
 }
 
 ExpenseModel _createExpense(String category, double amount) {
