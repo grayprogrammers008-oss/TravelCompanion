@@ -3,14 +3,34 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
 import '../models/invite_model.dart';
 import '../../../../core/services/email_service.dart';
+import 'invite_queries.dart';
 
-/// Remote data source for trip invites using Supabase
+/// Remote data source for trip invites.
+///
+/// All Supabase PostgREST chain calls live behind [InviteQueries] so the
+/// datasource itself can be exercised by unit tests. The default constructor
+/// wires up the production [InviteQueriesImpl]; tests inject a fake.
 class InviteRemoteDataSource {
-  final SupabaseClient _supabase;
-  final Uuid _uuid = const Uuid();
-  final EmailService _emailService = EmailService();
+  InviteRemoteDataSource(
+    SupabaseClient supabase, {
+    InviteQueries? queries,
+    EmailService? emailService,
+    Uuid? uuid,
+    DateTime Function()? clock,
+    String Function()? codeGenerator,
+  })  : _supabase = supabase,
+        _queries = queries ?? InviteQueriesImpl(supabase),
+        _emailService = emailService ?? EmailService(),
+        _uuid = uuid ?? const Uuid(),
+        _clock = clock ?? DateTime.now,
+        _codeGenerator = codeGenerator;
 
-  InviteRemoteDataSource(this._supabase);
+  final SupabaseClient _supabase;
+  final InviteQueries _queries;
+  final EmailService _emailService;
+  final Uuid _uuid;
+  final DateTime Function() _clock;
+  final String Function()? _codeGenerator;
 
   /// Create a new invite
   Future<InviteModel> createInvite({
@@ -25,8 +45,8 @@ class InviteRemoteDataSource {
         throw Exception('User not authenticated');
       }
 
-      final now = DateTime.now();
-      final inviteCode = _generateInviteCode();
+      final now = _clock();
+      final inviteCode = (_codeGenerator ?? _generateInviteCode)();
 
       final invite = InviteModel(
         id: _uuid.v4(),
@@ -41,46 +61,36 @@ class InviteRemoteDataSource {
       );
 
       // Insert invite into database (only core fields, not extended join fields)
-      final response = await _supabase
-          .from('trip_invites')
-          .insert({
-            'id': invite.id,
-            'trip_id': invite.tripId,
-            'invited_by': invite.invitedBy,
-            'email': invite.email,
-            'phone_number': invite.phoneNumber,
-            'status': invite.status,
-            'invite_code': invite.inviteCode,
-            'created_at': invite.createdAt.toIso8601String(),
-            'expires_at': invite.expiresAt.toIso8601String(),
-          })
-          .select()
-          .single();
+      final response = await _queries.insertInvite({
+        'id': invite.id,
+        'trip_id': invite.tripId,
+        'invited_by': invite.invitedBy,
+        'email': invite.email,
+        'phone_number': invite.phoneNumber,
+        'status': invite.status,
+        'invite_code': invite.inviteCode,
+        'created_at': invite.createdAt.toIso8601String(),
+        'expires_at': invite.expiresAt.toIso8601String(),
+      });
 
       final createdInvite = InviteModel.fromJson(response);
 
       // Get trip details for email
-      final tripResponse = await _supabase
-          .from('trips')
-          .select('name, destination, start_date, end_date')
-          .eq('id', tripId)
-          .single();
+      final tripResponse = await _queries.getTripDetailsById(tripId);
 
       // Get inviter details
-      final inviterResponse = await _supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', invitedBy)
-          .single();
+      final inviterResponse = await _queries.getProfileById(invitedBy);
 
       final tripName = tripResponse['name'] as String? ?? 'Trip';
       final tripDestination = tripResponse['destination'] as String?;
       final tripStartDate = tripResponse['start_date'] as String?;
       final tripEndDate = tripResponse['end_date'] as String?;
-      final inviterName = inviterResponse['full_name'] as String? ?? 'Someone';
+      final inviterName =
+          inviterResponse['full_name'] as String? ?? 'Someone';
 
       // Extract recipient name from email (before @)
-      final recipientName = email.split('@').first.replaceAll('.', ' ').replaceAll('_', ' ');
+      final recipientName =
+          email.split('@').first.replaceAll('.', ' ').replaceAll('_', ' ');
       final capitalizedName = recipientName.split(' ').map((word) {
         if (word.isEmpty) return word;
         return word[0].toUpperCase() + word.substring(1).toLowerCase();
@@ -95,18 +105,21 @@ class InviteRemoteDataSource {
           inviterName: inviterName,
           inviteCode: inviteCode,
           tripDestination: tripDestination,
-          tripStartDate: tripStartDate != null ? _formatDate(tripStartDate) : null,
+          tripStartDate:
+              tripStartDate != null ? _formatDate(tripStartDate) : null,
           tripEndDate: tripEndDate != null ? _formatDate(tripEndDate) : null,
         );
 
         if (!emailSent) {
           if (kDebugMode) {
-            debugPrint('⚠️ Warning: Failed to send email to $email for invite $inviteCode');
+            debugPrint(
+                '⚠️ Warning: Failed to send email to $email for invite $inviteCode');
           }
           // Don't throw error - invite is created, email is optional
         } else {
           if (kDebugMode) {
-            debugPrint('✅ Invitation email sent to $email for trip $tripName');
+            debugPrint(
+                '✅ Invitation email sent to $email for trip $tripName');
           }
         }
       } catch (emailError) {
@@ -126,7 +139,20 @@ class InviteRemoteDataSource {
   String _formatDate(String isoDate) {
     try {
       final date = DateTime.parse(isoDate);
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
       return '${months[date.month - 1]} ${date.day}, ${date.year}';
     } catch (e) {
       return isoDate;
@@ -140,16 +166,11 @@ class InviteRemoteDataSource {
   }) async {
     try {
       // First, get the invite
-      final inviteResponse = await _supabase
-          .from('trip_invites')
-          .select()
-          .eq('invite_code', inviteCode)
-          .single();
-
+      final inviteResponse = await _queries.findInviteByCodeStrict(inviteCode);
       final invite = InviteModel.fromJson(inviteResponse);
 
       // Check if expired
-      if (invite.expiresAt.isBefore(DateTime.now())) {
+      if (invite.expiresAt.isBefore(_clock())) {
         throw Exception('Invite has expired');
       }
 
@@ -159,27 +180,19 @@ class InviteRemoteDataSource {
       }
 
       // Update invite status
-      await _supabase
-          .from('trip_invites')
-          .update({'status': 'accepted'})
-          .eq('id', invite.id);
+      await _queries.updateInviteById(invite.id, {'status': 'accepted'});
 
       // Add user to trip_members
-      await _supabase.from('trip_members').insert({
+      await _queries.addTripMember({
         'id': _uuid.v4(),
         'trip_id': invite.tripId,
         'user_id': userId,
         'role': 'member',
-        'joined_at': DateTime.now().toIso8601String(),
+        'joined_at': _clock().toIso8601String(),
       });
 
       // Get updated invite
-      final updated = await _supabase
-          .from('trip_invites')
-          .select()
-          .eq('id', invite.id)
-          .single();
-
+      final updated = await _queries.findInviteByCodeStrict(inviteCode);
       return InviteModel.fromJson(updated);
     } catch (e) {
       throw Exception('Failed to accept invite: $e');
@@ -192,10 +205,7 @@ class InviteRemoteDataSource {
     required String userId,
   }) async {
     try {
-      await _supabase
-          .from('trip_invites')
-          .update({'status': 'rejected'})
-          .eq('invite_code', inviteCode);
+      await _queries.updateInviteByCode(inviteCode, {'status': 'rejected'});
     } catch (e) {
       throw Exception('Failed to reject invite: $e');
     }
@@ -207,10 +217,7 @@ class InviteRemoteDataSource {
     required String userId,
   }) async {
     try {
-      await _supabase
-          .from('trip_invites')
-          .update({'status': 'revoked'})
-          .eq('id', inviteId);
+      await _queries.updateInviteById(inviteId, {'status': 'revoked'});
     } catch (e) {
       throw Exception('Failed to revoke invite: $e');
     }
@@ -222,21 +229,12 @@ class InviteRemoteDataSource {
     bool includeExpired = false,
   }) async {
     try {
-      dynamic query = _supabase
-          .from('trip_invites')
-          .select()
-          .eq('trip_id', tripId);
-
-      if (!includeExpired) {
-        query = query.gte('expires_at', DateTime.now().toIso8601String());
-      }
-
-      query = query.order('created_at', ascending: false);
-
-      final response = await query;
-      return (response as List)
-          .map((json) => InviteModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findInvitesForTrip(
+        tripId,
+        expiresAtGte:
+            includeExpired ? null : _clock().toIso8601String(),
+      );
+      return rows.map((json) => InviteModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to get trip invites: $e');
     }
@@ -245,12 +243,7 @@ class InviteRemoteDataSource {
   /// Get invite by code
   Future<InviteModel?> getInviteByCode(String inviteCode) async {
     try {
-      final response = await _supabase
-          .from('trip_invites')
-          .select()
-          .eq('invite_code', inviteCode)
-          .maybeSingle();
-
+      final response = await _queries.findInviteByCodeMaybe(inviteCode);
       if (response == null) return null;
       return InviteModel.fromJson(response);
     } catch (e) {
@@ -261,15 +254,8 @@ class InviteRemoteDataSource {
   /// Get invites sent by a user
   Future<List<InviteModel>> getInvitesSentByUser(String userId) async {
     try {
-      final response = await _supabase
-          .from('trip_invites')
-          .select()
-          .eq('invited_by', userId)
-          .order('created_at', ascending: false);
-
-      return (response as List)
-          .map((json) => InviteModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findInvitesByInviter(userId);
+      return rows.map((json) => InviteModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to get user invites: $e');
     }
@@ -278,17 +264,11 @@ class InviteRemoteDataSource {
   /// Get pending invites for an email
   Future<List<InviteModel>> getPendingInvitesForEmail(String email) async {
     try {
-      final response = await _supabase
-          .from('trip_invites')
-          .select()
-          .eq('email', email)
-          .eq('status', 'pending')
-          .gte('expires_at', DateTime.now().toIso8601String())
-          .order('created_at', ascending: false);
-
-      return (response as List)
-          .map((json) => InviteModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findPendingInvitesForEmail(
+        email,
+        _clock().toIso8601String(),
+      );
+      return rows.map((json) => InviteModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to get pending invites: $e');
     }
@@ -297,17 +277,11 @@ class InviteRemoteDataSource {
   /// Resend an invite (updates created_at and extends expiry)
   Future<InviteModel> resendInvite(String inviteId) async {
     try {
-      final now = DateTime.now();
-      final response = await _supabase
-          .from('trip_invites')
-          .update({
-            'created_at': now.toIso8601String(),
-            'expires_at': now.add(const Duration(days: 7)).toIso8601String(),
-          })
-          .eq('id', inviteId)
-          .select()
-          .single();
-
+      final now = _clock();
+      final response = await _queries.updateInviteByIdReturning(inviteId, {
+        'created_at': now.toIso8601String(),
+        'expires_at': now.add(const Duration(days: 7)).toIso8601String(),
+      });
       return InviteModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to resend invite: $e');
@@ -317,16 +291,10 @@ class InviteRemoteDataSource {
   /// Delete expired invites
   Future<void> deleteExpiredInvites({String? tripId}) async {
     try {
-      var query = _supabase
-          .from('trip_invites')
-          .delete()
-          .lt('expires_at', DateTime.now().toIso8601String());
-
-      if (tripId != null) {
-        query = query.eq('trip_id', tripId);
-      }
-
-      await query;
+      await _queries.deleteInvitesExpiredBefore(
+        _clock().toIso8601String(),
+        tripId: tripId,
+      );
     } catch (e) {
       throw Exception('Failed to delete expired invites: $e');
     }
@@ -335,7 +303,7 @@ class InviteRemoteDataSource {
   /// Generate a unique invite code
   String _generateInviteCode() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    final random = DateTime.now().millisecondsSinceEpoch;
+    final random = _clock().millisecondsSinceEpoch;
     var code = '';
     var tempRandom = random;
 
