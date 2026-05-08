@@ -299,4 +299,304 @@ void main() {
   // always reach the StreamProvider's error branch in widget tests within a
   // few pumps; pumping further runs into pending-timer issues. The other
   // tests cover the page surface adequately.
+
+  group('ExpenseListPage — populated with multiple expenses', () {
+    testWidgets('renders 3 expenses each with title and amount', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Pizza', amount: 100, category: 'food'),
+          _ews(id: 'e2', title: 'Taxi', amount: 50, category: 'transport'),
+          _ews(id: 'e3', title: 'Hotel', amount: 500, category: 'accommodation'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Pizza'), findsOneWidget);
+      expect(find.text('Taxi'), findsOneWidget);
+      expect(find.text('Hotel'), findsOneWidget);
+      expect(find.text('3 items'), findsOneWidget);
+    });
+
+    testWidgets('shows section header "All Expenses" with receipt icon',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([_ews()]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('All Expenses'), findsOneWidget);
+      expect(find.byIcon(Icons.receipt_long), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('shows category labels on expense cards', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Pizza', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('food'), findsOneWidget);
+    });
+
+    testWidgets('shows "Paid by:" label with payer name', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          ExpenseWithSplits(
+            expense: ExpenseModel(
+              id: 'e1',
+              tripId: 't1',
+              title: 'Coffee',
+              amount: 50,
+              category: 'food',
+              paidBy: 'u1',
+              currency: 'INR',
+              payerName: 'Alice',
+            ),
+            splits: const [],
+          ),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.textContaining('Paid by: Alice'), findsOneWidget);
+    });
+
+    testWidgets('shows "Split N ways" label', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          _ews(id: 'e1', amount: 90, splits: 3),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Split 3 ways'), findsOneWidget);
+    });
+  });
+
+  group('ExpenseListPage — Who Owes Whom card', () {
+    testWidgets('renders the Who Owes Whom card when balances are loaded',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([_ews()]),
+        balances: AsyncValue.data([
+          BalanceSummary(
+            userId: 'u1',
+            userName: 'Alice',
+            totalPaid: 100,
+            totalOwed: 50,
+            balance: 50,
+          ),
+          BalanceSummary(
+            userId: 'u2',
+            userName: 'Bob',
+            totalPaid: 0,
+            totalOwed: 50,
+            balance: -50,
+          ),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      // Bob → Alice debt with currency formatted ₹50.00
+      expect(find.textContaining('₹50'), findsAtLeastNWidgets(1));
+    });
+
+    // SKIPPED: balances loading state. The FutureProvider override needs
+    // an indefinitely-pending future to mimic loading, which leaves a
+    // pending Timer in the test scheduler (FakeAsync flags it as 24h).
+
+    testWidgets(
+        'balances error renders SizedBox.shrink (no error in trip page top)',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([_ews()]),
+        balances: AsyncValue.error(Exception('balance err'), StackTrace.empty),
+      ));
+      await drainAnimations(tester);
+
+      // Page still renders other content (Total Expenses card)
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+  });
+
+  group('ExpenseListPage — currency from trip data', () {
+    testWidgets('USD trip currency renders Total Expenses without crash',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        trip: _trip(currency: 'USD'),
+        expenses: AsyncValue.data([_ews(amount: 100)]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Total Expenses'), findsOneWidget);
+      expect(find.textContaining('100'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('EUR trip currency renders without crash', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        trip: _trip(currency: 'EUR'),
+        expenses: AsyncValue.data([_ews(amount: 100)]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('default INR currency renders properly', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        trip: _trip(),
+        expenses: AsyncValue.data([_ews(amount: 100)]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+  });
+
+  group('ExpenseListPage — share button (no expenses)', () {
+    testWidgets('Share button shows "No expenses to share" snackbar when empty',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: const AsyncValue.data([]),
+      ));
+      await drainAnimations(tester);
+
+      // Empty list renders empty state, but share button is still in app bar
+      await tester.tap(find.byTooltip('Share Expense Report'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+
+      expect(find.text('No expenses to share'), findsOneWidget);
+    });
+  });
+
+  group('ExpenseListPage — transaction date display', () {
+    testWidgets('shows calendar icon next to date when expense has date',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          ExpenseWithSplits(
+            expense: ExpenseModel(
+              id: 'e1',
+              tripId: 't1',
+              title: 'Lunch',
+              amount: 50,
+              category: 'food',
+              paidBy: 'u1',
+              currency: 'INR',
+              transactionDate: DateTime(2026, 4, 15),
+            ),
+            splits: const [],
+          ),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.byIcon(Icons.calendar_today), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('expense card without date does not render calendar icon',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          ExpenseWithSplits(
+            expense: ExpenseModel(
+              id: 'e1',
+              tripId: 't1',
+              title: 'No-date',
+              amount: 50,
+              category: 'food',
+              paidBy: 'u1',
+              currency: 'INR',
+            ),
+            splits: const [],
+          ),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.byIcon(Icons.calendar_today), findsNothing);
+    });
+  });
+
+  group('ExpenseListPage — category icons', () {
+    Future<void> pumpForCategory(WidgetTester tester, String category) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          _ews(id: 'e1', category: category),
+        ]),
+      ));
+      await drainAnimations(tester);
+    }
+
+    testWidgets('food → restaurant icon', (tester) async {
+      await pumpForCategory(tester, 'food');
+      expect(find.byIcon(Icons.restaurant), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('transport → directions_car icon', (tester) async {
+      await pumpForCategory(tester, 'transport');
+      expect(find.byIcon(Icons.directions_car), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('accommodation → hotel icon', (tester) async {
+      await pumpForCategory(tester, 'accommodation');
+      expect(find.byIcon(Icons.hotel), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('activities → local_activity icon', (tester) async {
+      await pumpForCategory(tester, 'activities');
+      expect(find.byIcon(Icons.local_activity), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('shopping → shopping_bag icon', (tester) async {
+      await pumpForCategory(tester, 'shopping');
+      expect(find.byIcon(Icons.shopping_bag), findsAtLeastNWidgets(1));
+    });
+  });
+
+  group('ExpenseListPage — total calculation', () {
+    testWidgets('total reflects sum of expense amounts', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([
+          _ews(id: 'e1', amount: 100),
+          _ews(id: 'e2', amount: 50),
+          _ews(id: 'e3', amount: 25),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      // Total = 175 → ₹175.00 in INR
+      expect(find.textContaining('175'), findsAtLeastNWidgets(1));
+      expect(find.text('3 items'), findsOneWidget);
+    });
+
+    testWidgets('singular form "1 items" still pluralizes', (tester) async {
+      // Note: source uses literal "items" (not pluralization), so "1 items"
+      // is expected.
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        expenses: AsyncValue.data([_ews(id: 'e1')]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('1 items'), findsOneWidget);
+    });
+  });
 }

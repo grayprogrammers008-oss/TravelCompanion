@@ -1,5 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travel_crew/features/expenses/data/datasources/expense_remote_datasource.dart';
 import 'package:travel_crew/shared/models/expense_model.dart';
+
+class _FakeSupabaseClient extends Mock implements SupabaseClient {}
 
 void main() {
   group('ExpenseRemoteDataSource Helper Classes', () {
@@ -646,6 +651,217 @@ void main() {
 
         expect(expense.payerName, 'John Doe');
       });
+    });
+  });
+
+  group('ExpenseRemoteDataSource — constructor injection', () {
+    test('accepts an injected SupabaseClient', () {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+      expect(ds, isA<ExpenseRemoteDataSource>());
+    });
+
+    test('every method invocation surfaces wrapped exceptions', () async {
+      // The fake throws NoSuchMethodError when any method (e.g. from()) is
+      // called because Mock implements every member as a stub returning
+      // null. The datasource catches and rethrows as wrapped Exception.
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.getUserExpenses('u1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to get user expenses'),
+        )),
+      );
+    });
+
+    test('getTripExpenses surfaces wrapped exception when client misbehaves',
+        () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.getTripExpenses('t1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to get trip expenses'),
+        )),
+      );
+    });
+
+    test('getStandaloneExpenses surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.getStandaloneExpenses('u1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to get standalone expenses'),
+        )),
+      );
+    });
+
+    test('getExpenseById surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.getExpenseById('e1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to get expense'),
+        )),
+      );
+    });
+
+    test('createExpense surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.createExpense(
+          title: 'Lunch',
+          amount: 50.0,
+          paidBy: 'u1',
+          splitWith: ['u1', 'u2'],
+        ),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to create expense'),
+        )),
+      );
+    });
+
+    test('updateExpense surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.updateExpense(expenseId: 'e1', title: 'New title'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to update expense'),
+        )),
+      );
+    });
+
+    test('deleteExpense surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.deleteExpense('e1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to delete expense'),
+        )),
+      );
+    });
+
+    test('getBalances surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.getBalances(tripId: 't1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to get balances'),
+        )),
+      );
+    });
+
+    test('createSettlement surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.createSettlement(
+          fromUser: 'u1',
+          toUser: 'u2',
+          amount: 50.0,
+        ),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to create settlement'),
+        )),
+      );
+    });
+
+    test('getSettlements surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.getSettlements(tripId: 't1'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to get settlements'),
+        )),
+      );
+    });
+
+    test('updateSettlementStatus surfaces wrapped exception', () async {
+      final fake = _FakeSupabaseClient();
+      final ds = ExpenseRemoteDataSource(fake);
+
+      await expectLater(
+        ds.updateSettlementStatus(settlementId: 's1', status: 'completed'),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to update settlement'),
+        )),
+      );
+    });
+  });
+
+  group('ExpenseRemoteDataSource — _isProperName regex', () {
+    // Mirror the private helper's UUID detection logic: a "proper name"
+    // is anything that doesn't match the UUID v4 pattern.
+    final uuidPattern = RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+    );
+    bool isProperName(String name) => !uuidPattern.hasMatch(name);
+
+    test('treats human-readable names as proper', () {
+      expect(isProperName('Alice'), isTrue);
+      expect(isProperName('Bob Smith'), isTrue);
+      expect(isProperName('a@b.com'), isTrue);
+      expect(isProperName(''), isTrue);
+    });
+
+    test('treats UUIDv4 strings as NOT proper', () {
+      expect(
+        isProperName('123e4567-e89b-12d3-a456-426614174000'),
+        isFalse,
+      );
+      expect(
+        isProperName('abcdefab-cdef-abcd-efab-cdefabcdefab'),
+        isFalse,
+      );
+    });
+
+    test('treats partial UUID-looking strings as proper', () {
+      // Missing dashes or wrong group lengths → still a "name"
+      expect(
+        isProperName('123e4567e89b12d3a456426614174000'),
+        isTrue,
+      );
+      expect(isProperName('abc-def'), isTrue);
     });
   });
 

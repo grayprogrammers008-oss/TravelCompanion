@@ -176,6 +176,44 @@ void main() {
     });
   });
 
+  group('PaymentOptionsSheet — copy UPI clipboard interaction', () {
+    testWidgets('tapping the copy button shows confirmation snackbar',
+        (tester) async {
+      // Stub clipboard channel — Clipboard.setData calls
+      // SystemChannels.platform → Clipboard.setData method.
+      final clipboardCalls = <String>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'Clipboard.setData') {
+            clipboardCalls.add((call.arguments as Map)['text'] as String);
+          }
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(_wrap(const PaymentOptionsSheet(
+        recipientUPIId: 'alice@upi',
+        recipientName: 'Alice',
+        amount: 50,
+        note: 'Test',
+      )));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Tap the copy IconButton (tooltip: Copy UPI ID)
+      await tester.tap(find.byTooltip('Copy UPI ID'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Snackbar shows confirmation
+      expect(find.text('UPI ID copied to clipboard'), findsOneWidget);
+      // Clipboard was called with the UPI ID
+      expect(clipboardCalls, contains('alice@upi'));
+    });
+  });
+
   group('PaymentOptionsSheet — Cancel button closes the sheet', () {
     testWidgets('tapping Cancel closes the dialog', (tester) async {
       await tester.pumpWidget(MaterialApp(

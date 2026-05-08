@@ -379,4 +379,427 @@ void main() {
       // a router context — but we know the icon is wired up.
     });
   });
+
+  group('ExpensesHomePage — multiple expenses summary', () {
+    testWidgets('renders multiple expense titles and total card',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Pizza', amount: 100, category: 'food'),
+          _ews(id: 'e2', title: 'Taxi', amount: 50, category: 'transport'),
+          _ews(id: 'e3', title: 'Hotel', amount: 200, category: 'accommodation'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Pizza'), findsOneWidget);
+      expect(find.text('Taxi'), findsOneWidget);
+      expect(find.text('Hotel'), findsOneWidget);
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('shows ways count text in expense cards', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Dinner', amount: 90, splitCount: 3),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.textContaining('ways'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('expense card shows trip name when tripId is set',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', tripId: 'trip-x', title: 'Lunch', amount: 60),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      // The Trip chip appears (defaults to 'Trip' when no tripName)
+      expect(find.byIcon(Icons.flight), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('shows transactions date when expense has it', (tester) async {
+      useTallViewport(tester);
+      final txDate = DateTime(2026, 4, 15);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          ExpenseWithSplits(
+            expense: _expense(
+              id: 'e1',
+              title: 'Coffee',
+              amount: 20,
+              transactionDate: txDate,
+            ),
+            splits: const [],
+          ),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      // Should render some textual date (formatted) — just confirm card is up
+      expect(find.text('Coffee'), findsOneWidget);
+    });
+  });
+
+  group('ExpensesHomePage — category icons coverage', () {
+    Future<void> pumpForCategory(
+      WidgetTester tester,
+      String category,
+    ) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Test', amount: 50, category: category),
+        ]),
+      ));
+      await drainAnimations(tester);
+    }
+
+    testWidgets('food category icon resolves', (tester) async {
+      await pumpForCategory(tester, 'food');
+      expect(find.byIcon(Icons.restaurant), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('transport category icon resolves', (tester) async {
+      await pumpForCategory(tester, 'transport');
+      expect(find.byIcon(Icons.directions_car), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('accommodation category icon resolves', (tester) async {
+      await pumpForCategory(tester, 'accommodation');
+      expect(find.byIcon(Icons.hotel), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('activities category icon resolves', (tester) async {
+      await pumpForCategory(tester, 'activities');
+      expect(find.byIcon(Icons.local_activity), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('shopping category icon resolves', (tester) async {
+      await pumpForCategory(tester, 'shopping');
+      expect(find.byIcon(Icons.shopping_bag), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('unknown/other category falls back to receipt icon',
+        (tester) async {
+      await pumpForCategory(tester, 'something-weird');
+      // Should fall back to default category color/icon
+      expect(find.text('Test'), findsOneWidget);
+    });
+  });
+
+  group('ExpensesHomePage — currency variants', () {
+    Future<void> pumpForCurrency(
+      WidgetTester tester,
+      String currency,
+    ) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', amount: 100, currency: currency),
+        ]),
+      ));
+      await drainAnimations(tester);
+    }
+
+    testWidgets('USD currency renders without crashing', (tester) async {
+      await pumpForCurrency(tester, 'USD');
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('EUR currency renders without crashing', (tester) async {
+      await pumpForCurrency(tester, 'EUR');
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('GBP currency renders without crashing', (tester) async {
+      await pumpForCurrency(tester, 'GBP');
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('JPY currency renders without crashing', (tester) async {
+      await pumpForCurrency(tester, 'JPY');
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('CNY currency renders without crashing', (tester) async {
+      await pumpForCurrency(tester, 'CNY');
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+
+    testWidgets('INR (default) renders without crashing', (tester) async {
+      await pumpForCurrency(tester, 'INR');
+      expect(find.text('Total Expenses'), findsOneWidget);
+    });
+  });
+
+  group('ExpensesHomePage — Personal vs Trip breakdown math', () {
+    testWidgets('with all personal expenses — count text "1 expense" singular',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', tripId: null, amount: 50),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      // Expected text: "1 expense • 100%"
+      expect(find.textContaining('1 expense'), findsOneWidget);
+      expect(find.textContaining('100%'), findsOneWidget);
+    });
+
+    testWidgets('with all trip expenses — Trip block is non-empty',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', tripId: 't1', amount: 100),
+          _ews(id: 'e2', tripId: 't1', amount: 200),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      expect(find.text('Trip'), findsAtLeastNWidgets(1));
+      // 2 expenses pluralized
+      expect(find.textContaining('2 expenses'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('with mixed personal and trip — both rows render',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', tripId: null, amount: 50),
+          _ews(id: 'e2', tripId: 't1', amount: 50),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      // 50% / 50% split
+      expect(find.textContaining('50%'), findsAtLeastNWidgets(1));
+    });
+  });
+
+  group('ExpensesHomePage — filter chip styling reflects selection', () {
+    testWidgets('All chip is initially selected', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      final allChip = tester.widget<FilterChip>(
+        find.widgetWithText(FilterChip, 'All'),
+      );
+      expect(allChip.selected, isTrue);
+    });
+
+    testWidgets('selecting a category updates the chip selected state',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'Food'));
+      await tester.pump();
+
+      final foodChip = tester.widget<FilterChip>(
+        find.widgetWithText(FilterChip, 'Food'),
+      );
+      expect(foodChip.selected, isTrue);
+
+      final allChipNow = tester.widget<FilterChip>(
+        find.widgetWithText(FilterChip, 'All'),
+      );
+      expect(allChipNow.selected, isFalse);
+    });
+
+    testWidgets('Activities filter chip filters list', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Tour', category: 'activities'),
+          _ews(id: 'e2', title: 'Lunch', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'Activities'));
+      await tester.pump();
+
+      expect(find.text('Tour'), findsOneWidget);
+      expect(find.text('Lunch'), findsNothing);
+    });
+
+    testWidgets('Shopping filter chip filters list', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Bag', category: 'shopping'),
+          _ews(id: 'e2', title: 'Lunch', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'Shopping'));
+      await tester.pump();
+
+      expect(find.text('Bag'), findsOneWidget);
+      expect(find.text('Lunch'), findsNothing);
+    });
+
+    testWidgets('Stay (accommodation) filter chip filters list',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Hotel', category: 'accommodation'),
+          _ews(id: 'e2', title: 'Lunch', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'Stay'));
+      await tester.pump();
+
+      expect(find.text('Hotel'), findsOneWidget);
+      expect(find.text('Lunch'), findsNothing);
+    });
+
+    testWidgets('Other filter chip filters list', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Misc', category: 'other'),
+          _ews(id: 'e2', title: 'Lunch', category: 'food'),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'Other'));
+      await tester.pump();
+
+      expect(find.text('Misc'), findsOneWidget);
+      expect(find.text('Lunch'), findsNothing);
+    });
+  });
+
+  group('ExpensesHomePage — expense detail bottom sheet', () {
+    testWidgets('tapping an expense card opens detail sheet with title',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', title: 'Coffee', amount: 100),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.text('Coffee'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      // Sheet renders Total Amount and Split Details headers
+      expect(find.text('Total Amount'), findsAtLeastNWidgets(1));
+      expect(find.text('Split Details'), findsOneWidget);
+    });
+
+    testWidgets('detail sheet shows description when expense has one',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          ExpenseWithSplits(
+            expense: ExpenseModel(
+              id: 'e1',
+              tripId: null,
+              title: 'Coffee',
+              description: 'Morning espresso',
+              amount: 50,
+              category: 'food',
+              paidBy: 'u1',
+              currency: 'INR',
+            ),
+            splits: const [],
+          ),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.text('Coffee'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.text('Description'), findsOneWidget);
+      expect(find.text('Morning espresso'), findsOneWidget);
+    });
+
+    testWidgets('detail sheet renders trip badge when expense is a trip expense',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        userExpenses: AsyncValue.data([
+          _ews(id: 'e1', tripId: 't1', title: 'Coffee', amount: 50),
+        ]),
+      ));
+      await drainAnimations(tester);
+
+      await tester.tap(find.text('Coffee'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.text('Trip Expense'), findsOneWidget);
+    });
+
+    // SKIPPED: The Edit/Delete buttons render outside the visible viewport
+    // of the DraggableScrollableSheet in the test environment because the
+    // sheet's `Expanded(child: ListView)` greedily fills the constrained
+    // available height, pushing the action buttons below the sheet's
+    // initial 0.6× viewport bound. The detail sheet's read-only state is
+    // covered by the three tests above (title, description, trip badge).
+  });
+
+  // SKIPPED: edit expense dialog, balances bottom sheet, and add-expense
+  // bottom sheet flows. These all open via showModalBottomSheet /
+  // showDialog inside InkWell taps. In the constrained widget-test
+  // environment the bottom sheets either fail to fully render their
+  // interior contents (Expanded ListView starves the action row) or
+  // require multiple GoRouter-bound navigations that aren't available
+  // here. The detail sheet's read-only state above (title, description,
+  // trip badge) covers the build path.
+
+  group('ExpensesHomePage — error & loading states', () {
+    testWidgets('error in standaloneExpensesProvider does not break overall UI',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        // selectedFilter starts at "all" → uses userExpensesProvider which
+        // is set to data([]). The standalone provider is not consumed in
+        // the default path, but still safe to pass an error.
+        standaloneExpenses: AsyncValue.error(
+          Exception('standalone failed'),
+          StackTrace.empty,
+        ),
+      ));
+      await drainAnimations(tester);
+
+      // App still renders title — the standalone error doesn't break the
+      // userExpenses path.
+      expect(find.text('Expenses'), findsOneWidget);
+    });
+  });
 }

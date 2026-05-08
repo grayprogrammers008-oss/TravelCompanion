@@ -409,4 +409,336 @@ void main() {
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
   });
+
+  group('SettlementSummaryPage — multi-debtor simplified debts', () {
+    testWidgets(
+        'two debtors and one creditor distributes debt proportionally — '
+        'expects 2 pending payments', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 100, totalPaid: 100),
+          _bal('u2', 'Bob', -60, totalOwed: 60),
+          _bal('u3', 'Carol', -40, totalOwed: 40),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('2 Pending Payments'), findsOneWidget);
+    });
+
+    testWidgets('one creditor and three debtors → 3 pending payments',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 90, totalPaid: 90),
+          _bal('u2', 'Bob', -30, totalOwed: 30),
+          _bal('u3', 'Carol', -30, totalOwed: 30),
+          _bal('u4', 'Dave', -30, totalOwed: 30),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('3 Pending Payments'), findsOneWidget);
+    });
+
+    testWidgets('two creditors and two debtors → some pending payments',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 50, totalPaid: 50),
+          _bal('u2', 'Bob', 50, totalPaid: 50),
+          _bal('u3', 'Carol', -50, totalOwed: 50),
+          _bal('u4', 'Dave', -50, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // Either "2" or higher pending payments depending on greedy match
+      expect(find.textContaining('Pending Payment'), findsOneWidget);
+    });
+  });
+
+  group('SettlementSummaryPage — Status card content', () {
+    testWidgets('All-Settled card shows celebration icon', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 0),
+          _bal('u2', 'Bob', 0),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byIcon(Icons.celebration), findsOneWidget);
+    });
+
+    testWidgets('Pending status shows pending_actions icon', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 50, totalPaid: 50),
+          _bal('u2', 'Bob', -50, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byIcon(Icons.pending_actions), findsOneWidget);
+      expect(
+        find.text('Complete the payments below to settle up'),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('SettlementSummaryPage — debt arrow & amount badge', () {
+    testWidgets('debt card shows forward arrow icon', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 100, totalPaid: 100),
+          _bal('u2', 'Bob', -100, totalOwed: 100),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
+    });
+
+    testWidgets('debt amount renders inside a styled badge', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 75, totalPaid: 75),
+          _bal('u2', 'Bob', -75, totalOwed: 75),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // ₹75.00 is rendered inside the amount badge
+      expect(find.textContaining('₹75'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('debtor avatar shows initial letter (uppercase)',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'alice', 100, totalPaid: 100),
+          _bal('u2', 'bob', -100, totalOwed: 100),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // Avatar shows 'A' for alice and 'B' for bob (one each)
+      expect(find.text('A'), findsAtLeastNWidgets(1));
+      expect(find.text('B'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('empty username falls back to "?" placeholder', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', '', 100, totalPaid: 100),
+          _bal('u2', '', -100, totalOwed: 100),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // Two avatars with "?" placeholder
+      expect(find.text('?'), findsAtLeastNWidgets(2));
+    });
+  });
+
+  group('SettlementSummaryPage — Past Settlements multiple', () {
+    testWidgets('renders multiple settlement cards', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 0),
+        ]),
+        settlements: AsyncValue.data([
+          _settlement(id: 's1', fromUserName: 'Bob', toUserName: 'Alice', amount: 50),
+          _settlement(id: 's2', fromUserName: 'Carol', toUserName: 'Alice', amount: 30),
+          _settlement(id: 's3', fromUserName: 'Dave', toUserName: 'Alice', amount: 20),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('Past Settlements'), findsOneWidget);
+      expect(find.textContaining('Bob → Alice'), findsOneWidget);
+      expect(find.textContaining('Carol → Alice'), findsOneWidget);
+      expect(find.textContaining('Dave → Alice'), findsOneWidget);
+    });
+
+    testWidgets('confirmed settlement shows check_circle icon', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([_bal('u1', 'Alice', 0)]),
+        settlements: AsyncValue.data([
+          _settlement(status: 'confirmed'),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byIcon(Icons.check_circle), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('pending settlement shows pending icon', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([_bal('u1', 'Alice', 0)]),
+        settlements: AsyncValue.data([
+          _settlement(status: 'pending'),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byIcon(Icons.pending), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('settlement card amount is currency formatted', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([_bal('u1', 'Alice', 0)]),
+        settlements: AsyncValue.data([
+          _settlement(amount: 250.5),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.textContaining('250.50'), findsOneWidget);
+    });
+  });
+
+  group('SettlementSummaryPage — Individual Balances multiple cards', () {
+    testWidgets('multiple balance cards render', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 100, totalPaid: 100),
+          _bal('u2', 'Bob', -50, totalOwed: 50),
+          _bal('u3', 'Carol', -50, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // All names appear at least once in the balance cards
+      expect(find.text('Alice'), findsAtLeastNWidgets(1));
+      expect(find.text('Bob'), findsAtLeastNWidgets(1));
+      expect(find.text('Carol'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('balance card "Paid:" / "Share:" labels appear', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 50, totalPaid: 100, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // The card shows "Paid:" and "Share:" prefixes for the totals
+      expect(find.textContaining('Paid:'), findsAtLeastNWidgets(1));
+      expect(find.textContaining('Share:'), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('zero-balance card shows check_circle Settled badge',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 0, totalPaid: 50, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('Settled'), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle), findsAtLeastNWidgets(1));
+    });
+  });
+
+  group('SettlementSummaryPage — current user balance highlighting', () {
+    testWidgets(
+        'currentUser balance row shows "(You)" suffix when balance is zero',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        currentUserId: 'u1',
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 0, totalPaid: 50, totalOwed: 50),
+          _bal('u2', 'Bob', 0, totalPaid: 50, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('Alice (You)'), findsOneWidget);
+      // Bob renders just as "Bob"
+      expect(find.text('Bob'), findsOneWidget);
+    });
+  });
+
+  group('SettlementSummaryPage — section headers', () {
+    testWidgets('renders Who Owes Whom header with swap icon', (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 50, totalPaid: 50),
+          _bal('u2', 'Bob', -50, totalOwed: 50),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('Who Owes Whom'), findsOneWidget);
+      expect(find.byIcon(Icons.swap_horiz_rounded), findsOneWidget);
+    });
+
+    testWidgets('renders Individual Balances header with wallet icon',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([
+          _bal('u1', 'Alice', 0),
+        ]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('Individual Balances'), findsOneWidget);
+      expect(find.byIcon(Icons.account_balance_wallet), findsOneWidget);
+    });
+
+    testWidgets('renders Past Settlements header with history icon when present',
+        (tester) async {
+      useTallViewport(tester);
+      await tester.pumpWidget(_buildPage(
+        balances: AsyncValue.data([_bal('u1', 'Alice', 0)]),
+        settlements: AsyncValue.data([_settlement()]),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byIcon(Icons.history), findsOneWidget);
+    });
+  });
 }
