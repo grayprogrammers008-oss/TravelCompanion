@@ -1,22 +1,27 @@
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/checklist_model.dart';
+import 'checklist_queries.dart';
 
-/// Remote data source for checklists using Supabase
+/// Remote data source for checklists.
+///
+/// All Supabase PostgREST chain calls live behind [ChecklistQueries] so the
+/// datasource itself can be exercised by unit tests. The default constructor
+/// wires up the production [ChecklistQueriesImpl]; tests inject a fake.
 class ChecklistRemoteDataSource {
-  ChecklistRemoteDataSource();
+  ChecklistRemoteDataSource({
+    ChecklistQueries? queries,
+    DateTime Function()? clock,
+  })  : _queries = queries ?? ChecklistQueriesImpl(SupabaseClientWrapper.client),
+        _clock = clock ?? DateTime.now;
+
+  final ChecklistQueries _queries;
+  final DateTime Function() _clock;
 
   /// Get all checklists for a trip
   Future<List<ChecklistModel>> getTripChecklists(String tripId) async {
     try {
-      final response = await SupabaseClientWrapper.client
-          .from('checklists')
-          .select()
-          .eq('trip_id', tripId)
-          .order('created_at', ascending: false);
-
-      return (response as List)
-          .map((json) => ChecklistModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findChecklistsForTrip(tripId);
+      return rows.map((json) => ChecklistModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch trip checklists from Supabase: $e');
     }
@@ -25,12 +30,7 @@ class ChecklistRemoteDataSource {
   /// Get a single checklist
   Future<ChecklistModel?> getChecklist(String checklistId) async {
     try {
-      final response = await SupabaseClientWrapper.client
-          .from('checklists')
-          .select()
-          .eq('id', checklistId)
-          .maybeSingle();
-
+      final response = await _queries.findChecklistByIdMaybe(checklistId);
       if (response == null) return null;
       return ChecklistModel.fromJson(response);
     } catch (e) {
@@ -39,17 +39,11 @@ class ChecklistRemoteDataSource {
   }
 
   /// Get all items for a checklist
-  Future<List<ChecklistItemModel>> getChecklistItems(String checklistId) async {
+  Future<List<ChecklistItemModel>> getChecklistItems(
+      String checklistId) async {
     try {
-      final response = await SupabaseClientWrapper.client
-          .from('checklist_items')
-          .select()
-          .eq('checklist_id', checklistId)
-          .order('order_index', ascending: true);
-
-      return (response as List)
-          .map((json) => ChecklistItemModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findItemsForChecklist(checklistId);
+      return rows.map((json) => ChecklistItemModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch checklist items from Supabase: $e');
     }
@@ -58,73 +52,24 @@ class ChecklistRemoteDataSource {
   /// Create or update a checklist
   Future<ChecklistModel> upsertChecklist(ChecklistModel checklist) async {
     try {
-      print('🔵 [RemoteDataSource] upsertChecklist START');
-      print('   Checklist ID: ${checklist.id}');
-      print('   Checklist Name: ${checklist.name}');
-      print('   Trip ID: ${checklist.tripId}');
-      print('   Created By: ${checklist.createdBy}');
-
       // Use toDatabaseJson() to exclude joined fields (creator_name)
       final json = checklist.toDatabaseJson();
-      print('   Database JSON to send: $json');
-
-      print('   Calling Supabase.from("checklists").upsert()...');
-      final response = await SupabaseClientWrapper.client
-          .from('checklists')
-          .upsert(json)
-          .select()
-          .single();
-
-      print('   ✅ Supabase response received');
-      print('   Response type: ${response.runtimeType}');
-      print('   Response data: $response');
-
-      final result = ChecklistModel.fromJson(response);
-      print('   ✅ Successfully converted to ChecklistModel');
-      print('🔵 [RemoteDataSource] upsertChecklist SUCCESS');
-
-      return result;
-    } catch (e, stackTrace) {
-      print('❌ [RemoteDataSource] upsertChecklist FAILED');
-      print('   Exception: $e');
-      print('   Exception Type: ${e.runtimeType}');
-      print('   Stack Trace: $stackTrace');
+      final response = await _queries.upsertChecklist(json);
+      return ChecklistModel.fromJson(response);
+    } catch (e) {
       throw Exception('Failed to upsert checklist in Supabase: $e');
     }
   }
 
   /// Create or update a checklist item
-  Future<ChecklistItemModel> upsertChecklistItem(ChecklistItemModel item) async {
+  Future<ChecklistItemModel> upsertChecklistItem(
+      ChecklistItemModel item) async {
     try {
-      print('🔵 [RemoteDataSource] upsertChecklistItem START');
-      print('   Item ID: ${item.id}');
-      print('   Item Title: ${item.title}');
-      print('   Checklist ID: ${item.checklistId}');
-
-      // Use toDatabaseJson() to exclude joined fields (assigned_to_name, completed_by_name)
+      // Use toDatabaseJson() to exclude joined fields
       final json = item.toDatabaseJson();
-      print('   Database JSON to send: $json');
-
-      print('   Calling Supabase.from("checklist_items").upsert()...');
-      final response = await SupabaseClientWrapper.client
-          .from('checklist_items')
-          .upsert(json)
-          .select()
-          .single();
-
-      print('   ✅ Supabase response received');
-      print('   Response data: $response');
-
-      final result = ChecklistItemModel.fromJson(response);
-      print('   ✅ Successfully converted to ChecklistItemModel');
-      print('🔵 [RemoteDataSource] upsertChecklistItem SUCCESS');
-
-      return result;
-    } catch (e, stackTrace) {
-      print('❌ [RemoteDataSource] upsertChecklistItem FAILED');
-      print('   Exception: $e');
-      print('   Exception Type: ${e.runtimeType}');
-      print('   Stack Trace: $stackTrace');
+      final response = await _queries.upsertChecklistItem(json);
+      return ChecklistItemModel.fromJson(response);
+    } catch (e) {
       throw Exception('Failed to upsert checklist item in Supabase: $e');
     }
   }
@@ -132,10 +77,7 @@ class ChecklistRemoteDataSource {
   /// Delete a checklist
   Future<void> deleteChecklist(String checklistId) async {
     try {
-      await SupabaseClientWrapper.client
-          .from('checklists')
-          .delete()
-          .eq('id', checklistId);
+      await _queries.deleteChecklistById(checklistId);
     } catch (e) {
       throw Exception('Failed to delete checklist from Supabase: $e');
     }
@@ -144,10 +86,7 @@ class ChecklistRemoteDataSource {
   /// Delete a checklist item
   Future<void> deleteChecklistItem(String itemId) async {
     try {
-      await SupabaseClientWrapper.client
-          .from('checklist_items')
-          .delete()
-          .eq('id', itemId);
+      await _queries.deleteChecklistItemById(itemId);
     } catch (e) {
       throw Exception('Failed to delete checklist item from Supabase: $e');
     }
@@ -160,20 +99,16 @@ class ChecklistRemoteDataSource {
     required String userId,
   }) async {
     try {
+      final now = _clock();
       final Map<String, dynamic> updates = {
         'is_completed': isCompleted,
         'completed_by': isCompleted ? userId : null,
-        'completed_at': isCompleted ? DateTime.now().toIso8601String() : null,
-        'updated_at': DateTime.now().toIso8601String(),
+        'completed_at': isCompleted ? now.toIso8601String() : null,
+        'updated_at': now.toIso8601String(),
       };
 
-      final response = await SupabaseClientWrapper.client
-          .from('checklist_items')
-          .update(updates)
-          .eq('id', itemId)
-          .select()
-          .single();
-
+      final response =
+          await _queries.updateChecklistItemById(itemId, updates);
       return ChecklistItemModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to toggle item completion in Supabase: $e');
