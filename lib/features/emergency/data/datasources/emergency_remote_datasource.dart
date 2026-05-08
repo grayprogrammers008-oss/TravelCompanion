@@ -7,6 +7,7 @@ import '../../../../shared/models/emergency_alert_model.dart';
 import '../../../../shared/models/location_share_model.dart';
 import '../../../../shared/models/hospital_model.dart';
 import '../../../../shared/models/emergency_number_model.dart';
+import 'emergency_queries.dart';
 
 /// Emergency Remote Data Source - Supabase Implementation
 ///
@@ -122,10 +123,49 @@ abstract class EmergencyRemoteDataSource {
   });
 }
 
+/// Implementation of [EmergencyRemoteDataSource].
+///
+/// All Supabase chain calls (`from(...).select()...`) and RPC calls are
+/// routed through [EmergencyQueries], which is fakeable for unit tests.
+/// The realtime stream methods (`watchLocationShare`, `watchActiveAlerts`,
+/// `watchReceivedAlerts`) still attach a Supabase channel directly — they
+/// are covered by integration / live tests rather than the unit suite.
 class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
-  final SupabaseClient _client;
+  EmergencyRemoteDataSourceImpl([
+    SupabaseClient? supabase,
+  ])  : _suppliedClient = supabase,
+        _queries = EmergencyQueriesImpl(supabase ?? SupabaseClientWrapper.client),
+        _currentUserId = (() => SupabaseClientWrapper.currentUserId),
+        _now = DateTime.now;
 
-  EmergencyRemoteDataSourceImpl() : _client = SupabaseClientWrapper.client;
+  /// Internal constructor for tests — accepts injected queries / clock /
+  /// user-id supplier without touching [SupabaseClientWrapper].
+  @visibleForTesting
+  EmergencyRemoteDataSourceImpl.test({
+    required EmergencyQueries queries,
+    SupabaseClient? supabase,
+    String? Function()? currentUserId,
+    DateTime Function()? clock,
+  })  : _suppliedClient = supabase,
+        _queries = queries,
+        _currentUserId =
+            currentUserId ?? (() => SupabaseClientWrapper.currentUserId),
+        _now = clock ?? DateTime.now;
+
+  final SupabaseClient? _suppliedClient;
+  final EmergencyQueries _queries;
+  final String? Function() _currentUserId;
+  final DateTime Function() _now;
+
+  /// Lazy access to the underlying Supabase client.
+  ///
+  /// Only the realtime stream methods (`watchLocationShare`,
+  /// `watchActiveAlerts`, `watchReceivedAlerts`) need direct channel
+  /// access; non-stream methods route everything via [EmergencyQueries]
+  /// and never touch this getter, which lets unit tests inject only a
+  /// fake [EmergencyQueries] without initializing Supabase.
+  SupabaseClient get _client =>
+      _suppliedClient ?? SupabaseClientWrapper.client;
 
   // ============================================
   // Emergency Numbers Implementation
@@ -136,10 +176,7 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     String country = 'IN',
   }) async {
     try {
-      final response = await _client.rpc(
-        'get_all_emergency_numbers',
-        params: {'p_country': country},
-      );
+      final response = await _queries.getAllEmergencyNumbersRpc(country);
 
       if (response == null) {
         return [];
@@ -163,12 +200,9 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     String country = 'IN',
   }) async {
     try {
-      final response = await _client.rpc(
-        'get_emergency_numbers_by_type',
-        params: {
-          'p_service_type': serviceType.name,
-          'p_country': country,
-        },
+      final response = await _queries.getEmergencyNumbersByTypeRpc(
+        serviceType: serviceType.name,
+        country: country,
       );
 
       if (response == null) {
@@ -194,21 +228,13 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<List<EmergencyContactModel>> getEmergencyContacts() async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      final response = await _client
-          .from('emergency_contacts')
-          .select()
-          .eq('user_id', userId)
-          .order('is_primary', ascending: false)
-          .order('created_at', ascending: true);
-
-      return (response as List)
-          .map((json) => EmergencyContactModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findEmergencyContactsForUser(userId);
+      return rows.map(EmergencyContactModel.fromJson).toList();
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error fetching emergency contacts: $e');
@@ -221,20 +247,18 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   Future<EmergencyContactModel?> getEmergencyContactById(
       String contactId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      final response = await _client
-          .from('emergency_contacts')
-          .select()
-          .eq('id', contactId)
-          .eq('user_id', userId)
-          .maybeSingle();
+      final row = await _queries.findEmergencyContactById(
+        contactId: contactId,
+        userId: userId,
+      );
 
-      if (response == null) return null;
-      return EmergencyContactModel.fromJson(response);
+      if (row == null) return null;
+      return EmergencyContactModel.fromJson(row);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error fetching emergency contact: $e');
@@ -252,18 +276,14 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     bool isPrimary = false,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
       // If setting as primary, unset other primary contacts first
       if (isPrimary) {
-        await _client
-            .from('emergency_contacts')
-            .update({'is_primary': false})
-            .eq('user_id', userId)
-            .eq('is_primary', true);
+        await _queries.unsetPrimaryContactsForUser(userId);
       }
 
       final data = {
@@ -275,11 +295,7 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
         'is_primary': isPrimary,
       };
 
-      final response = await _client
-          .from('emergency_contacts')
-          .insert(data)
-          .select()
-          .single();
+      final response = await _queries.insertEmergencyContact(data);
 
       return EmergencyContactModel.fromJson(response);
     } catch (e) {
@@ -300,18 +316,14 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     bool? isPrimary,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
       // If setting as primary, unset other primary contacts first
       if (isPrimary == true) {
-        await _client
-            .from('emergency_contacts')
-            .update({'is_primary': false})
-            .eq('user_id', userId)
-            .eq('is_primary', true);
+        await _queries.unsetPrimaryContactsForUser(userId);
       }
 
       final data = <String, dynamic>{};
@@ -320,15 +332,13 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
       if (email != null) data['email'] = email;
       if (relationship != null) data['relationship'] = relationship;
       if (isPrimary != null) data['is_primary'] = isPrimary;
-      data['updated_at'] = DateTime.now().toIso8601String();
+      data['updated_at'] = _now().toIso8601String();
 
-      final response = await _client
-          .from('emergency_contacts')
-          .update(data)
-          .eq('id', contactId)
-          .eq('user_id', userId)
-          .select()
-          .single();
+      final response = await _queries.updateEmergencyContact(
+        contactId: contactId,
+        userId: userId,
+        data: data,
+      );
 
       return EmergencyContactModel.fromJson(response);
     } catch (e) {
@@ -342,16 +352,15 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<void> deleteEmergencyContact(String contactId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      await _client
-          .from('emergency_contacts')
-          .delete()
-          .eq('id', contactId)
-          .eq('user_id', userId);
+      await _queries.deleteEmergencyContact(
+        contactId: contactId,
+        userId: userId,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Emergency contact deleted: $contactId');
@@ -367,27 +376,20 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<void> setPrimaryContact(String contactId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
       // Unset all primary contacts first
-      await _client
-          .from('emergency_contacts')
-          .update({'is_primary': false})
-          .eq('user_id', userId)
-          .eq('is_primary', true);
+      await _queries.unsetPrimaryContactsForUser(userId);
 
       // Set the specified contact as primary
-      await _client
-          .from('emergency_contacts')
-          .update({
-            'is_primary': true,
-            'updated_at': DateTime.now().toIso8601String()
-          })
-          .eq('id', contactId)
-          .eq('user_id', userId);
+      await _queries.setContactAsPrimary(
+        contactId: contactId,
+        userId: userId,
+        updatedAtIso: _now().toIso8601String(),
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Primary contact set: $contactId');
@@ -418,12 +420,12 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     double? heading,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      final now = DateTime.now();
+      final now = _now();
       final data = {
         'user_id': userId,
         'trip_id': tripId,
@@ -442,8 +444,7 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
         'message': message,
       };
 
-      final response =
-          await _client.from('location_shares').insert(data).select().single();
+      final response = await _queries.insertLocationShare(data);
 
       if (kDebugMode) {
         debugPrint('✅ Location sharing started');
@@ -470,32 +471,30 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     String? message,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      final data = {
+      final data = <String, dynamic>{
         'latitude': latitude,
         'longitude': longitude,
         'accuracy': accuracy,
         'altitude': altitude,
         'speed': speed,
         'heading': heading,
-        'last_updated_at': DateTime.now().toIso8601String(),
+        'last_updated_at': _now().toIso8601String(),
       };
 
       if (message != null) {
         data['message'] = message;
       }
 
-      final response = await _client
-          .from('location_shares')
-          .update(data)
-          .eq('id', sessionId)
-          .eq('user_id', userId)
-          .select()
-          .single();
+      final response = await _queries.updateLocationShare(
+        sessionId: sessionId,
+        userId: userId,
+        data: data,
+      );
 
       return LocationShareModel.fromJson(response);
     } catch (e) {
@@ -509,16 +508,16 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<void> pauseLocationSharing(String sessionId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      await _client
-          .from('location_shares')
-          .update({'status': LocationShareStatus.paused.name})
-          .eq('id', sessionId)
-          .eq('user_id', userId);
+      await _queries.updateLocationShareStatus(
+        sessionId: sessionId,
+        userId: userId,
+        status: LocationShareStatus.paused.name,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Location sharing paused');
@@ -534,16 +533,16 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<void> resumeLocationSharing(String sessionId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      await _client
-          .from('location_shares')
-          .update({'status': LocationShareStatus.active.name})
-          .eq('id', sessionId)
-          .eq('user_id', userId);
+      await _queries.updateLocationShareStatus(
+        sessionId: sessionId,
+        userId: userId,
+        status: LocationShareStatus.active.name,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Location sharing resumed');
@@ -559,16 +558,16 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<void> stopLocationSharing(String sessionId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      await _client
-          .from('location_shares')
-          .update({'status': LocationShareStatus.stopped.name})
-          .eq('id', sessionId)
-          .eq('user_id', userId);
+      await _queries.updateLocationShareStatus(
+        sessionId: sessionId,
+        userId: userId,
+        status: LocationShareStatus.stopped.name,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Location sharing stopped');
@@ -584,20 +583,14 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<LocationShareModel?> getActiveLocationShare() async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      final response = await _client
-          .from('location_shares')
-          .select()
-          .eq('user_id', userId)
-          .eq('status', LocationShareStatus.active.name)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return LocationShareModel.fromJson(response);
+      final row = await _queries.findActiveLocationShareForUser(userId);
+      if (row == null) return null;
+      return LocationShareModel.fromJson(row);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error getting active location share: $e');
@@ -606,9 +599,11 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     }
   }
 
+  // Realtime: stream method — keeps direct Supabase channel subscription.
+  // Covered by integration / live tests, not the unit suite.
   @override
   Stream<LocationShareModel> watchLocationShare(String sessionId) {
-    final userId = SupabaseClientWrapper.currentUserId;
+    final userId = _currentUserId();
     if (userId == null) {
       return Stream.error(Exception('User not authenticated'));
     }
@@ -646,11 +641,8 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
         .subscribe();
 
     // Initial load
-    _client
-        .from('location_shares')
-        .select()
-        .eq('id', sessionId)
-        .single()
+    _queries
+        .findLocationShareById(sessionId)
         .then((response) {
       final location = LocationShareModel.fromJson(response);
       if (!controller.isClosed) {
@@ -673,7 +665,7 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<List<LocationShareModel>> getSharedLocations() async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
@@ -681,13 +673,9 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
       // Note: Currently returns all active location shares for the user
       // Could be filtered by emergency contact IDs if needed in the future
 
-      final response = await _client
-          .from('location_shares')
-          .select()
-          .eq('status', LocationShareStatus.active.name)
-          .order('last_updated_at', ascending: false);
+      final rows = await _queries.findAllActiveLocationShares();
 
-      return (response as List)
+      return rows
           .map((json) => LocationShareModel.fromJson(json))
           .where((share) => share.sharedWithContactIds.contains(userId))
           .toList();
@@ -713,7 +701,7 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     List<String>? contactIds,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
@@ -734,11 +722,10 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
         'latitude': latitude,
         'longitude': longitude,
         'notified_contact_ids': notifiedContacts,
-        'created_at': DateTime.now().toIso8601String(),
+        'created_at': _now().toIso8601String(),
       };
 
-      final response =
-          await _client.from('emergency_alerts').insert(data).select().single();
+      final response = await _queries.insertEmergencyAlert(data);
 
       if (kDebugMode) {
         debugPrint('🚨 Emergency alert triggered: ${type.name}');
@@ -756,23 +743,21 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<EmergencyAlertModel> acknowledgeAlert(String alertId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
       final data = {
         'status': EmergencyAlertStatus.acknowledged.name,
-        'acknowledged_at': DateTime.now().toIso8601String(),
+        'acknowledged_at': _now().toIso8601String(),
         'acknowledged_by': userId,
       };
 
-      final response = await _client
-          .from('emergency_alerts')
-          .update(data)
-          .eq('id', alertId)
-          .select()
-          .single();
+      final response = await _queries.updateEmergencyAlertById(
+        alertId: alertId,
+        data: data,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Emergency alert acknowledged: $alertId');
@@ -795,19 +780,17 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     try {
       final data = <String, dynamic>{
         'status': EmergencyAlertStatus.resolved.name,
-        'resolved_at': DateTime.now().toIso8601String(),
+        'resolved_at': _now().toIso8601String(),
       };
 
       if (resolution != null) {
         data['metadata'] = <String, dynamic>{'resolution': resolution};
       }
 
-      final response = await _client
-          .from('emergency_alerts')
-          .update(data)
-          .eq('id', alertId)
-          .select()
-          .single();
+      final response = await _queries.updateEmergencyAlertById(
+        alertId: alertId,
+        data: data,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Emergency alert resolved: $alertId');
@@ -825,23 +808,21 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<EmergencyAlertModel> cancelAlert(String alertId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
       final data = {
         'status': EmergencyAlertStatus.cancelled.name,
-        'resolved_at': DateTime.now().toIso8601String(),
+        'resolved_at': _now().toIso8601String(),
       };
 
-      final response = await _client
-          .from('emergency_alerts')
-          .update(data)
-          .eq('id', alertId)
-          .eq('user_id', userId)
-          .select()
-          .single();
+      final response = await _queries.updateEmergencyAlertByIdAndUser(
+        alertId: alertId,
+        userId: userId,
+        data: data,
+      );
 
       if (kDebugMode) {
         debugPrint('✅ Emergency alert cancelled: $alertId');
@@ -859,19 +840,14 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   @override
   Future<EmergencyAlertModel?> getAlertById(String alertId) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      final response = await _client
-          .from('emergency_alerts')
-          .select()
-          .eq('id', alertId)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return EmergencyAlertModel.fromJson(response);
+      final row = await _queries.findEmergencyAlertById(alertId);
+      if (row == null) return null;
+      return EmergencyAlertModel.fromJson(row);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error getting alert by ID: $e');
@@ -886,27 +862,18 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     DateTime? since,
   }) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      var query =
-          _client.from('emergency_alerts').select().eq('user_id', userId);
+      final rows = await _queries.findUserEmergencyAlerts(
+        userId: userId,
+        status: status?.name,
+        since: since,
+      );
 
-      if (status != null) {
-        query = query.eq('status', status.name);
-      }
-
-      if (since != null) {
-        query = query.gte('created_at', since.toIso8601String());
-      }
-
-      final response = await query.order('created_at', ascending: false);
-
-      return (response as List)
-          .map((json) => EmergencyAlertModel.fromJson(json))
-          .toList();
+      return rows.map(EmergencyAlertModel.fromJson).toList();
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error getting user alerts: $e');
@@ -915,9 +882,11 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     }
   }
 
+  // Realtime: stream method — keeps direct Supabase channel subscription.
+  // Covered by integration / live tests, not the unit suite.
   @override
   Stream<List<EmergencyAlertModel>> watchActiveAlerts() {
-    final userId = SupabaseClientWrapper.currentUserId;
+    final userId = _currentUserId();
     if (userId == null) {
       return Stream.error(Exception('User not authenticated'));
     }
@@ -970,9 +939,11 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     return controller.stream;
   }
 
+  // Realtime: stream method — keeps direct Supabase channel subscription.
+  // Covered by integration / live tests, not the unit suite.
   @override
   Stream<List<EmergencyAlertModel>> watchReceivedAlerts() {
-    final userId = SupabaseClientWrapper.currentUserId;
+    final userId = _currentUserId();
     if (userId == null) {
       return Stream.error(Exception('User not authenticated'));
     }
@@ -992,14 +963,11 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
           return;
         }
 
-        final response = await _client
-            .from('emergency_alerts')
-            .select()
-            .eq('status', EmergencyAlertStatus.active.name)
-            .order('created_at', ascending: false);
+        final rows = await _queries
+            .findAlertsByStatus(EmergencyAlertStatus.active.name);
 
-        final alerts = (response as List)
-            .map((json) => EmergencyAlertModel.fromJson(json))
+        final alerts = rows
+            .map(EmergencyAlertModel.fromJson)
             .where((alert) => alert.notifiedContactIds
                 .any((id) => contactIds.contains(id)))
             .toList();
@@ -1056,16 +1024,13 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   }) async {
     try {
       // Call the PostgreSQL function find_nearest_hospitals
-      final response = await _client.rpc(
-        'find_nearest_hospitals',
-        params: {
-          'user_lat': latitude,
-          'user_lng': longitude,
-          'max_distance_km': maxDistanceKm,
-          'result_limit': limit,
-          'only_emergency': onlyEmergency,
-          'only_24_7': only24_7,
-        },
+      final response = await _queries.findNearestHospitalsRpc(
+        latitude: latitude,
+        longitude: longitude,
+        maxDistanceKm: maxDistanceKm,
+        limit: limit,
+        onlyEmergency: onlyEmergency,
+        only24_7: only24_7,
       );
 
       if (response == null) {
@@ -1109,14 +1074,11 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   }) async {
     try {
       // Call the PostgreSQL function search_hospitals
-      final response = await _client.rpc(
-        'search_hospitals',
-        params: {
-          'search_term': searchTerm,
-          'search_city': city,
-          'search_state': state,
-          'result_limit': limit,
-        },
+      final response = await _queries.searchHospitalsRpc(
+        searchTerm: searchTerm,
+        city: city,
+        state: state,
+        limit: limit,
       );
 
       if (response == null) {
@@ -1142,13 +1104,10 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
   }) async {
     try {
       // Call the PostgreSQL function get_hospital_with_distance
-      final response = await _client.rpc(
-        'get_hospital_with_distance',
-        params: {
-          'hospital_id': hospitalId,
-          'user_lat': userLatitude,
-          'user_lng': userLongitude,
-        },
+      final response = await _queries.getHospitalWithDistanceRpc(
+        hospitalId: hospitalId,
+        userLatitude: userLatitude,
+        userLongitude: userLongitude,
       );
 
       // The function returns a table, so we get the first row
@@ -1171,23 +1130,12 @@ class EmergencyRemoteDataSourceImpl implements EmergencyRemoteDataSource {
     int limit = 50,
   }) async {
     try {
-      var query = _client.from('hospitals').select().eq('is_active', true);
-
-      if (city != null) {
-        query = query.ilike('city', city);
-      }
-
-      if (state != null) {
-        query = query.ilike('state', state);
-      }
-
-      final response = await query.limit(limit);
-
-      // Convert response to list of HospitalModel
-      final List<dynamic> data = response;
-      return data
-          .map((json) => HospitalModel.fromJson(json as Map<String, dynamic>))
-          .toList();
+      final rows = await _queries.findHospitalsByLocation(
+        city: city,
+        state: state,
+        limit: limit,
+      );
+      return rows.map(HospitalModel.fromJson).toList();
     } catch (e) {
       debugPrint('Error getting hospitals by location: $e');
       rethrow;
