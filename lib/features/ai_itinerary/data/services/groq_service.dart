@@ -9,6 +9,29 @@ import 'package:http/http.dart' as http;
 import 'gemini_service.dart';
 import '../../domain/entities/ai_itinerary.dart';
 
+/// Minimal HTTP poster interface so [GroqService] can be unit-tested
+/// without making real network calls. The real implementation just delegates
+/// to `package:http`'s top-level [http.post].
+abstract class GroqHttpClient {
+  Future<http.Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  });
+}
+
+class _DefaultGroqHttpClient implements GroqHttpClient {
+  const _DefaultGroqHttpClient();
+  @override
+  Future<http.Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  }) {
+    return http.post(url, headers: headers, body: body);
+  }
+}
+
 class GroqService {
   static const String _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -16,8 +39,20 @@ class GroqService {
   static const String _model = 'llama-3.3-70b-versatile';
 
   final String _apiKey;
+  final GroqHttpClient _httpClient;
+  final Future<void> Function(Duration)? _delay;
 
-  GroqService(this._apiKey);
+  GroqService(
+    this._apiKey, {
+    GroqHttpClient? httpClient,
+    Future<void> Function(Duration)? delay,
+  })  : _httpClient = httpClient ?? const _DefaultGroqHttpClient(),
+        _delay = delay;
+
+  Future<void> _sleep(Duration d) {
+    final delay = _delay;
+    return delay != null ? delay(d) : Future<void>.delayed(d);
+  }
 
   /// Clean JSON response by removing markdown code blocks and extra text
   /// LLMs sometimes wrap JSON in ```json ... ``` blocks despite instructions
@@ -107,7 +142,7 @@ class GroqService {
         'max_tokens': 8192,
       };
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +168,7 @@ class GroqService {
           throw Exception('Groq server error: ${response.statusCode}');
         }
         debugPrint('⏳ Groq server error (${response.statusCode}). Waiting ${delaySeconds}s before retry...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -417,7 +452,7 @@ Generate the complete trip plan now:
         'max_tokens': 8192,
       };
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
@@ -440,7 +475,7 @@ Generate the complete trip plan now:
         if (retryCount > maxRetries) {
           throw Exception('Groq server error: ${response.statusCode}');
         }
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -547,7 +582,7 @@ IMPORTANT RULES:
         'max_tokens': 8192,
       };
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
@@ -570,7 +605,7 @@ IMPORTANT RULES:
         if (retryCount > maxRetries) {
           throw Exception('Groq server error during refinement: ${response.statusCode}');
         }
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -783,7 +818,7 @@ IMPORTANT: Return ONLY the JSON object, no explanation, no markdown.
         'max_tokens': 8192,
       };
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
@@ -808,7 +843,7 @@ IMPORTANT: Return ONLY the JSON object, no explanation, no markdown.
           throw Exception('Groq server error: ${response.statusCode}');
         }
         debugPrint('⏳ Groq server error (${response.statusCode}). Waiting ${delaySeconds}s before retry...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -1579,7 +1614,7 @@ IMPORTANT RULES:
         'max_tokens': 8192,
       };
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
@@ -1602,7 +1637,7 @@ IMPORTANT RULES:
         if (retryCount > maxRetries) {
           throw Exception('Groq server error during refinement: ${response.statusCode}');
         }
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }

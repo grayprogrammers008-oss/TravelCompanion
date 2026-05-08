@@ -116,4 +116,79 @@ void main() {
       expect(travelStyles, ['Budget', 'Moderate', 'Luxury']);
     });
   });
+
+  group('AiItineraryState state-variation', () {
+    test('loading + error mutually visible', () {
+      final state = const AiItineraryState().copyWith(
+        isLoading: true,
+        error: 'oops',
+      );
+      expect(state.isLoading, true);
+      expect(state.error, 'oops');
+      expect(state.itinerary, isNull);
+    });
+
+    test('success state has itinerary, no error, not loading', () {
+      final itinerary = buildItinerary(destination: 'Paris');
+      final state = const AiItineraryState(isLoading: true).copyWith(
+        isLoading: false,
+        itinerary: itinerary,
+      );
+      expect(state.itinerary, isNotNull);
+      expect(state.itinerary!.destination, 'Paris');
+      expect(state.error, isNull);
+      expect(state.isLoading, false);
+    });
+
+    test('error path keeps previous itinerary unless clearItinerary', () {
+      final stale = buildItinerary(destination: 'Old');
+      final state = AiItineraryState(itinerary: stale).copyWith(
+        error: 'Network failure',
+        isLoading: false,
+      );
+      // Default behavior: error doesn't auto-clear itinerary
+      expect(state.itinerary?.destination, 'Old');
+      expect(state.error, 'Network failure');
+    });
+
+    test('clearItinerary on a state with itinerary nulls it out', () {
+      final state = AiItineraryState(itinerary: buildItinerary())
+          .copyWith(clearItinerary: true);
+      expect(state.itinerary, isNull);
+    });
+
+    test('clearItinerary alongside other field changes preserves them', () {
+      final state = AiItineraryState(
+        itinerary: buildItinerary(),
+        remainingGenerations: 4,
+      ).copyWith(
+        clearItinerary: true,
+        isLoading: false,
+        remainingGenerations: 4,
+      );
+      expect(state.itinerary, isNull);
+      expect(state.remainingGenerations, 4);
+    });
+
+    test('multiple chained copyWith calls compose correctly', () {
+      var state = const AiItineraryState();
+      state = state.copyWith(isLoading: true);
+      state = state.copyWith(remainingGenerations: 10);
+      state = state.copyWith(isLoading: false);
+      state = state.copyWith(itinerary: buildItinerary());
+      expect(state.isLoading, false);
+      expect(state.remainingGenerations, 10);
+      expect(state.itinerary, isNotNull);
+    });
+
+    test('remainingGenerations=0 documents free-quota-exhausted state', () {
+      const state = AiItineraryState(remainingGenerations: 0);
+      expect(state.remainingGenerations, 0);
+    });
+
+    test('remainingGenerations=-1 documents premium/unlimited state', () {
+      const state = AiItineraryState(remainingGenerations: -1);
+      expect(state.remainingGenerations, -1);
+    });
+  });
 }
