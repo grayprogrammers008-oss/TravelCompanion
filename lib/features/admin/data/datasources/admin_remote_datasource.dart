@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travel_crew/features/admin/data/datasources/admin_queries.dart';
 import 'package:travel_crew/features/admin/data/models/admin_activity_log_model.dart';
 import 'package:travel_crew/features/admin/data/models/admin_dashboard_stats_model.dart';
 import 'package:travel_crew/features/admin/data/models/admin_user_model.dart';
@@ -9,23 +10,29 @@ import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
 import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
 
 /// Admin Remote Data Source
-/// Handles all Supabase interactions for admin functionality
+///
+/// All Supabase RPC and PostgREST chain calls live behind [AdminQueries] so
+/// the datasource itself can be exercised by unit tests. The default
+/// constructor wires up the production [AdminQueriesImpl]; tests inject a
+/// fake.
 class AdminRemoteDataSource {
-  final SupabaseClient _supabase;
+  AdminRemoteDataSource(
+    SupabaseClient supabase, {
+    AdminQueries? queries,
+    DateTime Function()? clock,
+  })  : _queries = queries ?? AdminQueriesImpl(supabase),
+        _clock = clock ?? DateTime.now;
 
-  AdminRemoteDataSource(this._supabase);
+  final AdminQueries _queries;
+  final DateTime Function() _clock;
 
   /// Check if current user is admin
   Future<bool> isAdmin() async {
     try {
-      final userId = _supabase.auth.currentUser?.id;
+      final userId = _queries.currentUserId();
       if (userId == null) return false;
 
-      final response = await _supabase.rpc(
-        'is_admin',
-        params: {'user_id': userId},
-      );
-
+      final response = await _queries.rpcIsAdmin(userId);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to check admin status: $e');
@@ -41,32 +48,19 @@ class AdminRemoteDataSource {
     UserStatus? status,
   }) async {
     try {
-      print('🔍 DEBUG: Calling get_all_users_admin with params:');
-      print('  limit: $limit, offset: $offset, search: $search, role: $role, status: $status');
-
-      final response = await _supabase.rpc(
-        'get_all_users_admin',
-        params: {
-          'p_limit': limit,
-          'p_offset': offset,
-          if (search != null) 'p_search': search,
-          if (role != null) 'p_role': role.value,
-          if (status != null) 'p_status': status.value,
-        },
+      final response = await _queries.rpcGetAllUsersAdmin(
+        limit: limit,
+        offset: offset,
+        search: search,
+        role: role?.value,
+        status: status?.value,
       );
 
-      print('✅ DEBUG: Got response type: ${response.runtimeType}');
-      print('✅ DEBUG: Response: $response');
-
       final List<dynamic> data = response as List<dynamic>;
-      print('✅ DEBUG: Parsed ${data.length} users');
-
       return data
           .map((json) => AdminUserModel.fromJson(json as Map<String, dynamic>))
           .toList();
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: Error getting users: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
       throw Exception('Failed to get users: $e');
     }
   }
@@ -74,12 +68,9 @@ class AdminRemoteDataSource {
   /// Get user by ID with statistics
   Future<AdminUserModel> getUserById(String userId) async {
     try {
-      final response = await _supabase.rpc(
-        'get_all_users_admin',
-        params: {
-          'p_limit': 1,
-          'p_offset': 0,
-        },
+      final response = await _queries.rpcGetAllUsersAdmin(
+        limit: 1,
+        offset: 0,
       );
 
       final List<dynamic> data = response as List<dynamic>;
@@ -101,14 +92,7 @@ class AdminRemoteDataSource {
   /// Suspend user account
   Future<bool> suspendUser(String userId, String reason) async {
     try {
-      final response = await _supabase.rpc(
-        'suspend_user',
-        params: {
-          'p_user_id': userId,
-          'p_reason': reason,
-        },
-      );
-
+      final response = await _queries.rpcSuspendUser(userId, reason);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to suspend user: $e');
@@ -118,13 +102,7 @@ class AdminRemoteDataSource {
   /// Activate user account
   Future<bool> activateUser(String userId) async {
     try {
-      final response = await _supabase.rpc(
-        'activate_user',
-        params: {
-          'p_user_id': userId,
-        },
-      );
-
+      final response = await _queries.rpcActivateUser(userId);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to activate user: $e');
@@ -134,14 +112,8 @@ class AdminRemoteDataSource {
   /// Update user role
   Future<bool> updateUserRole(String userId, UserRole newRole) async {
     try {
-      final response = await _supabase.rpc(
-        'update_user_role',
-        params: {
-          'p_user_id': userId,
-          'p_new_role': newRole.value,
-        },
-      );
-
+      final response =
+          await _queries.rpcUpdateUserRole(userId, newRole.value);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to update user role: $e');
@@ -151,8 +123,7 @@ class AdminRemoteDataSource {
   /// Get admin dashboard statistics
   Future<AdminDashboardStatsModel> getDashboardStats() async {
     try {
-      final response = await _supabase.rpc('get_admin_dashboard_stats');
-
+      final response = await _queries.rpcGetAdminDashboardStats();
       return AdminDashboardStatsModel.fromJson(
         response as Map<String, dynamic>,
       );
@@ -169,26 +140,13 @@ class AdminRemoteDataSource {
     String? targetUserId,
   }) async {
     try {
-      var query = _supabase.from('admin_activity_log').select();
-
-      if (adminId != null) {
-        query = query.eq('admin_id', adminId);
-      }
-
-      if (targetUserId != null) {
-        query = query.eq('target_user_id', targetUserId);
-      }
-
-      final response = await query
-          .order('created_at', ascending: false)
-          .range(offset, offset + limit - 1);
-
-      final List<dynamic> data = response;
-
-      return data
-          .map((json) =>
-              AdminActivityLogModel.fromJson(json as Map<String, dynamic>))
-          .toList();
+      final rows = await _queries.findActivityLogs(
+        adminId: adminId,
+        targetUserId: targetUserId,
+        offset: offset,
+        limit: limit,
+      );
+      return rows.map(AdminActivityLogModel.fromJson).toList();
     } catch (e) {
       throw Exception('Failed to get activity logs: $e');
     }
@@ -209,9 +167,9 @@ class AdminRemoteDataSource {
         return await getUserById(userId);
       }
 
-      updates['updated_at'] = DateTime.now().toIso8601String();
+      updates['updated_at'] = _clock().toIso8601String();
 
-      await _supabase.from('profiles').update(updates).eq('id', userId);
+      await _queries.updateProfileById(userId, updates);
 
       return await getUserById(userId);
     } catch (e) {
@@ -231,31 +189,18 @@ class AdminRemoteDataSource {
     String? status,
   }) async {
     try {
-      print('🔍 DEBUG: Calling get_all_trips_admin with params:');
-      print('  limit: $limit, offset: $offset, search: $search, status: $status');
-
-      final response = await _supabase.rpc(
-        'get_all_trips_admin',
-        params: {
-          'p_limit': limit,
-          'p_offset': offset,
-          if (search != null) 'p_search': search,
-          if (status != null) 'p_status': status,
-        },
+      final response = await _queries.rpcGetAllTripsAdmin(
+        limit: limit,
+        offset: offset,
+        search: search,
+        status: status,
       );
 
-      print('✅ DEBUG: Got response type: ${response.runtimeType}');
-      print('✅ DEBUG: Response: $response');
-
       final List<dynamic> data = response as List<dynamic>;
-      print('✅ DEBUG: Parsed ${data.length} trips');
-
       return data
           .map((json) => AdminTripModel.fromJson(json as Map<String, dynamic>))
           .toList();
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: Error getting trips: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
       throw Exception('Failed to get trips: $e');
     }
   }
@@ -263,13 +208,7 @@ class AdminRemoteDataSource {
   /// Delete trip (admin only)
   Future<bool> deleteTrip(String tripId) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_delete_trip',
-        params: {
-          'p_trip_id': tripId,
-        },
-      );
-
+      final response = await _queries.rpcAdminDeleteTrip(tripId);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to delete trip: $e');
@@ -289,21 +228,17 @@ class AdminRemoteDataSource {
     bool? isCompleted,
   }) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_update_trip',
-        params: {
-          'p_trip_id': tripId,
-          if (name != null) 'p_name': name,
-          if (description != null) 'p_description': description,
-          if (destination != null) 'p_destination': destination,
-          if (startDate != null) 'p_start_date': startDate.toIso8601String(),
-          if (endDate != null) 'p_end_date': endDate.toIso8601String(),
-          if (budget != null) 'p_budget': budget,
-          if (currency != null) 'p_currency': currency,
-          if (isCompleted != null) 'p_is_completed': isCompleted,
-        },
+      final response = await _queries.rpcAdminUpdateTrip(
+        tripId: tripId,
+        name: name,
+        description: description,
+        destination: destination,
+        startDate: startDate?.toIso8601String(),
+        endDate: endDate?.toIso8601String(),
+        budget: budget,
+        currency: currency,
+        isCompleted: isCompleted,
       );
-
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to update trip: $e');
@@ -323,32 +258,20 @@ class AdminRemoteDataSource {
     String? tripId,
   }) async {
     try {
-      print('🔍 DEBUG: Calling get_all_checklists_admin with params:');
-      print('  limit: $limit, offset: $offset, search: $search, status: $status, tripId: $tripId');
-
-      final response = await _supabase.rpc(
-        'get_all_checklists_admin',
-        params: {
-          'p_limit': limit,
-          'p_offset': offset,
-          if (search != null) 'p_search': search,
-          if (status != null) 'p_status': status,
-          if (tripId != null) 'p_trip_id': tripId,
-        },
+      final response = await _queries.rpcGetAllChecklistsAdmin(
+        limit: limit,
+        offset: offset,
+        search: search,
+        status: status,
+        tripId: tripId,
       );
 
-      print('✅ DEBUG: Got response type: ${response.runtimeType}');
-      print('✅ DEBUG: Response: $response');
-
       final List<dynamic> data = response as List<dynamic>;
-      print('✅ DEBUG: Parsed ${data.length} checklists');
-
       return data
-          .map((json) => AdminChecklistModel.fromJson(json as Map<String, dynamic>))
+          .map((json) =>
+              AdminChecklistModel.fromJson(json as Map<String, dynamic>))
           .toList();
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: Error getting checklists: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
       throw Exception('Failed to get checklists: $e');
     }
   }
@@ -356,8 +279,7 @@ class AdminRemoteDataSource {
   /// Get checklist statistics (admin only)
   Future<AdminChecklistStatsModel> getChecklistStats() async {
     try {
-      final response = await _supabase.rpc('get_admin_checklist_stats');
-
+      final response = await _queries.rpcGetAdminChecklistStats();
       return AdminChecklistStatsModel.fromJson(
         response as Map<String, dynamic>,
       );
@@ -369,13 +291,7 @@ class AdminRemoteDataSource {
   /// Delete checklist (admin only)
   Future<bool> deleteChecklist(String checklistId) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_delete_checklist',
-        params: {
-          'p_checklist_id': checklistId,
-        },
-      );
-
+      final response = await _queries.rpcAdminDeleteChecklist(checklistId);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to delete checklist: $e');
@@ -388,14 +304,10 @@ class AdminRemoteDataSource {
     String? name,
   }) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_update_checklist',
-        params: {
-          'p_checklist_id': checklistId,
-          if (name != null) 'p_name': name,
-        },
+      final response = await _queries.rpcAdminUpdateChecklist(
+        checklistId: checklistId,
+        name: name,
       );
-
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to update checklist: $e');
@@ -408,14 +320,10 @@ class AdminRemoteDataSource {
     required bool isCompleted,
   }) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_bulk_update_checklist_items',
-        params: {
-          'p_checklist_id': checklistId,
-          'p_is_completed': isCompleted,
-        },
+      final response = await _queries.rpcAdminBulkUpdateChecklistItems(
+        checklistId: checklistId,
+        isCompleted: isCompleted,
       );
-
       return (response as num?)?.toInt() ?? 0;
     } catch (e) {
       throw Exception('Failed to bulk update checklist items: $e');
@@ -435,32 +343,20 @@ class AdminRemoteDataSource {
     String? tripId,
   }) async {
     try {
-      print('🔍 DEBUG: Calling get_all_expenses_admin with params:');
-      print('  limit: $limit, offset: $offset, search: $search, category: $category, tripId: $tripId');
-
-      final response = await _supabase.rpc(
-        'get_all_expenses_admin',
-        params: {
-          'p_limit': limit,
-          'p_offset': offset,
-          if (search != null) 'p_search': search,
-          if (category != null) 'p_category': category,
-          if (tripId != null) 'p_trip_id': tripId,
-        },
+      final response = await _queries.rpcGetAllExpensesAdmin(
+        limit: limit,
+        offset: offset,
+        search: search,
+        category: category,
+        tripId: tripId,
       );
 
-      print('✅ DEBUG: Got response type: ${response.runtimeType}');
-      print('✅ DEBUG: Response: $response');
-
       final List<dynamic> data = response as List<dynamic>;
-      print('✅ DEBUG: Parsed ${data.length} expenses');
-
       return data
-          .map((json) => AdminExpenseModel.fromJson(json as Map<String, dynamic>))
+          .map((json) =>
+              AdminExpenseModel.fromJson(json as Map<String, dynamic>))
           .toList();
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: Error getting expenses: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
       throw Exception('Failed to get expenses: $e');
     }
   }
@@ -468,8 +364,7 @@ class AdminRemoteDataSource {
   /// Get expense statistics (admin only)
   Future<AdminExpenseStatsModel> getExpenseStats() async {
     try {
-      final response = await _supabase.rpc('get_admin_expense_stats');
-
+      final response = await _queries.rpcGetAdminExpenseStats();
       return AdminExpenseStatsModel.fromJson(
         response as Map<String, dynamic>,
       );
@@ -481,13 +376,7 @@ class AdminRemoteDataSource {
   /// Delete expense (admin only)
   Future<bool> deleteExpense(String expenseId) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_delete_expense',
-        params: {
-          'p_expense_id': expenseId,
-        },
-      );
-
+      final response = await _queries.rpcAdminDeleteExpense(expenseId);
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to delete expense: $e');
@@ -504,18 +393,14 @@ class AdminRemoteDataSource {
     String? category,
   }) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_update_expense',
-        params: {
-          'p_expense_id': expenseId,
-          if (title != null) 'p_title': title,
-          if (description != null) 'p_description': description,
-          if (amount != null) 'p_amount': amount,
-          if (currency != null) 'p_currency': currency,
-          if (category != null) 'p_category': category,
-        },
+      final response = await _queries.rpcAdminUpdateExpense(
+        expenseId: expenseId,
+        title: title,
+        description: description,
+        amount: amount,
+        currency: currency,
+        category: category,
       );
-
       return response as bool? ?? false;
     } catch (e) {
       throw Exception('Failed to update expense: $e');
@@ -525,13 +410,7 @@ class AdminRemoteDataSource {
   /// Settle all splits for an expense (admin only)
   Future<int> settleExpenseSplits(String expenseId) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_settle_expense_splits',
-        params: {
-          'p_expense_id': expenseId,
-        },
-      );
-
+      final response = await _queries.rpcAdminSettleExpenseSplits(expenseId);
       return (response as num?)?.toInt() ?? 0;
     } catch (e) {
       throw Exception('Failed to settle expense splits: $e');
@@ -541,13 +420,7 @@ class AdminRemoteDataSource {
   /// Unsettle all splits for an expense (admin only)
   Future<int> unsettleExpenseSplits(String expenseId) async {
     try {
-      final response = await _supabase.rpc(
-        'admin_unsettle_expense_splits',
-        params: {
-          'p_expense_id': expenseId,
-        },
-      );
-
+      final response = await _queries.rpcAdminUnsettleExpenseSplits(expenseId);
       return (response as num?)?.toInt() ?? 0;
     } catch (e) {
       throw Exception('Failed to unsettle expense splits: $e');

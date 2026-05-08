@@ -1,13 +1,40 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 import '../../../../shared/models/expense_model.dart';
+import 'expense_queries.dart';
 
-/// Remote datasource for expenses using Supabase
+/// Remote datasource for expenses using Supabase.
+///
+/// All Supabase PostgREST chain calls live behind [ExpenseQueries] so the
+/// datasource itself can be exercised by unit tests. The default constructor
+/// wires up the production [ExpenseQueriesImpl]; tests inject a fake.
+///
+/// NOTE: The realtime stream methods ([watchTripExpenses], [watchUserExpenses])
+/// still talk to `_client` directly because the realtime channel/subscribe
+/// API is fundamentally callback-driven and is not part of [ExpenseQueries].
+/// Those streams are exercised by integration tests, not unit tests.
 class ExpenseRemoteDataSource {
-  final SupabaseClient _client;
+  ExpenseRemoteDataSource(
+    SupabaseClient client, {
+    ExpenseQueries? queries,
+    Uuid? uuid,
+    DateTime Function()? clock,
+  })  : _client = client,
+        _queries = queries ?? ExpenseQueriesImpl(client),
+        // ignore: unused_field
+        _uuid = uuid ?? const Uuid(),
+        // ignore: unused_field
+        _clock = clock ?? DateTime.now;
 
-  ExpenseRemoteDataSource(this._client);
+  final SupabaseClient _client;
+  final ExpenseQueries _queries;
+  // Reserved for future use; kept for API symmetry with sibling datasources.
+  // ignore: unused_field
+  final Uuid _uuid;
+  // ignore: unused_field
+  final DateTime Function() _clock;
 
   /// Get all expenses for a user (both trip and standalone)
   Future<List<ExpenseWithSplits>> getUserExpenses(String userId) async {
@@ -17,54 +44,30 @@ class ExpenseRemoteDataSource {
       }
 
       // First, get all expenses where user is the payer
-      final paidByResponse = await _client
-          .from('expenses')
-          .select('''
-            *,
-            trips:trips(name),
-            expense_splits(
-              *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
-            ),
-            payer:profiles!expenses_paid_by_fkey(full_name)
-          ''')
-          .eq('paid_by', userId)
-          .order('transaction_date', ascending: false);
+      final paidByResponse = await _queries.findExpensesPaidBy(userId);
 
       // Then, get all expense_splits where user is a participant
-      final splitsResponse = await _client
-          .from('expense_splits')
-          .select('expense_id')
-          .eq('user_id', userId);
+      final splitsResponse = await _queries.findSplitExpenseIdsForUser(userId);
 
       // Get unique expense IDs from splits
-      final expenseIdsFromSplits = (splitsResponse as List)
+      final expenseIdsFromSplits = splitsResponse
           .map((split) => split['expense_id'] as String)
           .toSet();
 
       // Fetch expenses for those IDs (excluding ones already fetched)
-      List<dynamic> splitExpenses = [];
+      List<Map<String, dynamic>> splitExpenses = const [];
       if (expenseIdsFromSplits.isNotEmpty) {
-        final splitExpensesResponse = await _client
-            .from('expenses')
-            .select('''
-              *,
-              trips:trips(name),
-              expense_splits(
-                *,
-                user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
-              ),
-              payer:profiles!expenses_paid_by_fkey(full_name)
-            ''')
-            .inFilter('id', expenseIdsFromSplits.toList())
-            .neq('paid_by', userId);
-        splitExpenses = splitExpensesResponse as List;
+        splitExpenses = await _queries.findExpensesByIdsNotPaidBy(
+          expenseIdsFromSplits.toList(),
+          userId,
+        );
       }
 
       // Combine and parse
-      final allExpenses = [...(paidByResponse as List), ...splitExpenses];
+      final allExpenses = [...paidByResponse, ...splitExpenses];
       if (kDebugMode) {
-        debugPrint('📊 Database returned ${allExpenses.length} expenses (${(paidByResponse as List).length} paid by user, ${splitExpenses.length} split with user)');
+        debugPrint(
+            '📊 Database returned ${allExpenses.length} expenses (${paidByResponse.length} paid by user, ${splitExpenses.length} split with user)');
       }
 
       return allExpenses
@@ -81,21 +84,8 @@ class ExpenseRemoteDataSource {
   /// Get all expenses for a trip
   Future<List<ExpenseWithSplits>> getTripExpenses(String tripId) async {
     try {
-      final response = await _client
-          .from('expenses')
-          .select('''
-            *,
-            trips:trips(name),
-            expense_splits(
-              *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
-            ),
-            payer:profiles!expenses_paid_by_fkey(full_name)
-          ''')
-          .eq('trip_id', tripId)
-          .order('transaction_date', ascending: false);
-
-      return (response as List)
+      final response = await _queries.findExpensesForTrip(tripId);
+      return response
           .map((json) => _parseExpenseWithSplits(json))
           .toList();
     } catch (e) {
@@ -110,53 +100,27 @@ class ExpenseRemoteDataSource {
         debugPrint('🔍 Fetching standalone expenses for userId: $userId');
       }
 
-      // Get standalone expenses where user is the payer
-      final paidByResponse = await _client
-          .from('expenses')
-          .select('''
-            *,
-            expense_splits(
-              *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
-            ),
-            payer:profiles!expenses_paid_by_fkey(full_name)
-          ''')
-          .isFilter('trip_id', null)
-          .eq('paid_by', userId)
-          .order('transaction_date', ascending: false);
+      final paidByResponse =
+          await _queries.findStandaloneExpensesPaidBy(userId);
 
-      // Get all expense_splits where user is a participant (for standalone only)
-      final splitsResponse = await _client
-          .from('expense_splits')
-          .select('expense_id')
-          .eq('user_id', userId);
+      final splitsResponse = await _queries.findSplitExpenseIdsForUser(userId);
 
-      final expenseIdsFromSplits = (splitsResponse as List)
+      final expenseIdsFromSplits = splitsResponse
           .map((split) => split['expense_id'] as String)
           .toSet();
 
-      // Fetch standalone expenses for those IDs (excluding ones already fetched)
-      List<dynamic> splitExpenses = [];
+      List<Map<String, dynamic>> splitExpenses = const [];
       if (expenseIdsFromSplits.isNotEmpty) {
-        final splitExpensesResponse = await _client
-            .from('expenses')
-            .select('''
-              *,
-              expense_splits(
-                *,
-                user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
-              ),
-              payer:profiles!expenses_paid_by_fkey(full_name)
-            ''')
-            .isFilter('trip_id', null)
-            .inFilter('id', expenseIdsFromSplits.toList())
-            .neq('paid_by', userId);
-        splitExpenses = splitExpensesResponse as List;
+        splitExpenses = await _queries.findStandaloneExpensesByIdsNotPaidBy(
+          expenseIdsFromSplits.toList(),
+          userId,
+        );
       }
 
-      final allExpenses = [...(paidByResponse as List), ...splitExpenses];
+      final allExpenses = [...paidByResponse, ...splitExpenses];
       if (kDebugMode) {
-        debugPrint('📊 Standalone expenses: ${allExpenses.length} total (${(paidByResponse as List).length} paid, ${splitExpenses.length} split)');
+        debugPrint(
+            '📊 Standalone expenses: ${allExpenses.length} total (${paidByResponse.length} paid, ${splitExpenses.length} split)');
       }
 
       return allExpenses
@@ -173,19 +137,7 @@ class ExpenseRemoteDataSource {
   /// Get a single expense by ID
   Future<ExpenseWithSplits> getExpenseById(String expenseId) async {
     try {
-      final response = await _client
-          .from('expenses')
-          .select('''
-            *,
-            expense_splits(
-              *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
-            ),
-            payer:profiles!expenses_paid_by_fkey(full_name)
-          ''')
-          .eq('id', expenseId)
-          .single();
-
+      final response = await _queries.findExpenseById(expenseId);
       return _parseExpenseWithSplits(response);
     } catch (e) {
       throw Exception('Failed to get expense: $e');
@@ -206,7 +158,8 @@ class ExpenseRemoteDataSource {
   }) async {
     try {
       if (kDebugMode) {
-        debugPrint('💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId');
+        debugPrint(
+            '💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId');
       }
 
       // Create expense
@@ -221,11 +174,7 @@ class ExpenseRemoteDataSource {
         'transaction_date': transactionDate?.toIso8601String(),
       };
 
-      final expenseResponse = await _client
-          .from('expenses')
-          .insert(expenseData)
-          .select()
-          .single();
+      final expenseResponse = await _queries.insertExpense(expenseData);
 
       final expense = ExpenseModel.fromJson(expenseResponse);
       if (kDebugMode) {
@@ -246,7 +195,7 @@ class ExpenseRemoteDataSource {
           )
           .toList();
 
-      await _client.from('expense_splits').insert(splitsData);
+      await _queries.insertExpenseSplits(splitsData);
       if (kDebugMode) {
         debugPrint('✅ Created ${splitsData.length} expense splits');
       }
@@ -279,13 +228,8 @@ class ExpenseRemoteDataSource {
         updateData['transaction_date'] = transactionDate.toIso8601String();
       }
 
-      final response = await _client
-          .from('expenses')
-          .update(updateData)
-          .eq('id', expenseId)
-          .select()
-          .single();
-
+      final response =
+          await _queries.updateExpenseById(expenseId, updateData);
       return ExpenseModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to update expense: $e');
@@ -296,7 +240,7 @@ class ExpenseRemoteDataSource {
   Future<void> deleteExpense(String expenseId) async {
     try {
       // Splits will be deleted automatically due to cascade delete
-      await _client.from('expenses').delete().eq('id', expenseId);
+      await _queries.deleteExpenseById(expenseId);
     } catch (e) {
       throw Exception('Failed to delete expense: $e');
     }
@@ -308,25 +252,10 @@ class ExpenseRemoteDataSource {
     String? userId,
   }) async {
     try {
-      // Build query
-      var query = _client.from('expenses').select('''
-            *,
-            expense_splits(
-              *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name)
-            ),
-            payer:profiles!expenses_paid_by_fkey(full_name)
-          ''');
-
-      if (tripId != null) {
-        query = query.eq('trip_id', tripId);
-      } else if (userId != null) {
-        query = query.or(
-          'paid_by.eq.$userId,expense_splits.user_id.eq.$userId',
-        );
-      }
-
-      final response = await query;
+      final response = await _queries.findExpensesForBalances(
+        tripId: tripId,
+        userId: userId,
+      );
 
       // Calculate balances
       final Map<String, BalanceSummary> balances = {};
@@ -334,7 +263,8 @@ class ExpenseRemoteDataSource {
       for (var expenseJson in response) {
         final expense = ExpenseModel.fromJson(expenseJson);
         // Parse splits with user names from nested 'user' object
-        final splits = (expenseJson['expense_splits'] as List).map((splitJson) {
+        final splits =
+            (expenseJson['expense_splits'] as List).map((splitJson) {
           final user = splitJson['user'];
           return ExpenseSplitModel.fromJson(splitJson).copyWith(
             userName: user?['full_name'],
@@ -356,7 +286,8 @@ class ExpenseRemoteDataSource {
         }
         // Preserve existing proper name (not a UUID) if we have one
         final existingPayerName = balances[payerId]!.userName;
-        final bestPayerName = _isProperName(existingPayerName) ? existingPayerName : payerName;
+        final bestPayerName =
+            _isProperName(existingPayerName) ? existingPayerName : payerName;
         balances[payerId] = BalanceSummary(
           userId: payerId,
           userName: bestPayerName,
@@ -379,7 +310,9 @@ class ExpenseRemoteDataSource {
           }
           // Preserve existing proper name (not a UUID) if we have one
           final existingSplitName = balances[split.userId]!.userName;
-          final bestSplitName = _isProperName(existingSplitName) ? existingSplitName : splitUserName;
+          final bestSplitName = _isProperName(existingSplitName)
+              ? existingSplitName
+              : splitUserName;
           balances[split.userId] = BalanceSummary(
             userId: split.userId,
             userName: bestSplitName,
@@ -433,12 +366,7 @@ class ExpenseRemoteDataSource {
         'status': 'pending',
       };
 
-      final response = await _client
-          .from('settlements')
-          .insert(settlementData)
-          .select()
-          .single();
-
+      final response = await _queries.insertSettlement(settlementData);
       return SettlementModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to create settlement: $e');
@@ -451,21 +379,12 @@ class ExpenseRemoteDataSource {
     String? userId,
   }) async {
     try {
-      var query = _client.from('settlements').select('''
-            *,
-            from:profiles!settlements_from_user_fkey(full_name),
-            to:profiles!settlements_to_user_fkey(full_name)
-          ''');
+      final response = await _queries.findSettlements(
+        tripId: tripId,
+        userId: userId,
+      );
 
-      if (tripId != null) {
-        query = query.eq('trip_id', tripId);
-      } else if (userId != null) {
-        query = query.or('from_user.eq.$userId,to_user.eq.$userId');
-      }
-
-      final response = await query.order('created_at', ascending: false);
-
-      return (response as List).map((json) {
+      return response.map((json) {
         final settlement = SettlementModel.fromJson(json);
         return settlement.copyWith(
           fromUserName: json['from']?['full_name'],
@@ -489,13 +408,8 @@ class ExpenseRemoteDataSource {
         if (paymentProofUrl != null) 'payment_proof_url': paymentProofUrl,
       };
 
-      final response = await _client
-          .from('settlements')
-          .update(updateData)
-          .eq('id', settlementId)
-          .select()
-          .single();
-
+      final response =
+          await _queries.updateSettlementById(settlementId, updateData);
       return SettlementModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to update settlement: $e');
@@ -518,7 +432,13 @@ class ExpenseRemoteDataSource {
     return ExpenseWithSplits(expense: expense, splits: splits);
   }
 
-  /// Watch trip expenses in real-time
+  /// Watch trip expenses in real-time.
+  ///
+  /// NOTE: This method uses [_client] directly for the realtime channel
+  /// subscription because realtime is callback-driven and falls outside the
+  /// [ExpenseQueries] interface. The actual data fetches inside the refetch
+  /// callback go through [getTripExpenses] and therefore through the queries
+  /// abstraction.
   Stream<List<ExpenseWithSplits>> watchTripExpenses(String tripId) {
     final controller = StreamController<List<ExpenseWithSplits>>.broadcast();
 
@@ -617,7 +537,11 @@ class ExpenseRemoteDataSource {
     return controller.stream;
   }
 
-  /// Watch user expenses in real-time
+  /// Watch user expenses in real-time.
+  ///
+  /// NOTE: Uses [_client] directly for the realtime subscription (see
+  /// [watchTripExpenses] for the rationale). The actual data fetches go
+  /// through [getUserExpenses] and therefore through [ExpenseQueries].
   Stream<List<ExpenseWithSplits>> watchUserExpenses() {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) {

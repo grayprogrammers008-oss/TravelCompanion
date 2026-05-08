@@ -4,14 +4,34 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/itinerary_model.dart';
+import 'itinerary_queries.dart';
 
-/// Remote data source for itinerary operations using Supabase
+/// Remote data source for itinerary operations using Supabase.
+///
+/// All Supabase PostgREST chain calls live behind [ItineraryQueries] so the
+/// datasource itself can be exercised by unit tests. The default constructor
+/// wires up the production [ItineraryQueriesImpl]; tests inject a fake.
+///
+/// Real-time stream methods (`watchTripItinerary`, `watchItineraryByDays`)
+/// continue to use `_supabase.channel(...)` directly because realtime
+/// subscriptions are not part of the PostgREST query surface and do not
+/// fit the chain abstraction.
 class ItineraryRemoteDataSource {
-  ItineraryRemoteDataSource([SupabaseClient? supabase])
-      : _supabase = supabase ?? SupabaseClientWrapper.client;
+  ItineraryRemoteDataSource(
+    SupabaseClient? supabase, {
+    ItineraryQueries? queries,
+    Uuid? uuid,
+    DateTime Function()? clock,
+  })  : _supabase = supabase ?? SupabaseClientWrapper.client,
+        _queries =
+            queries ?? ItineraryQueriesImpl(supabase ?? SupabaseClientWrapper.client),
+        _uuid = uuid ?? const Uuid(),
+        _clock = clock ?? DateTime.now;
 
   final SupabaseClient _supabase;
-  final _uuid = const Uuid();
+  final ItineraryQueries _queries;
+  final Uuid _uuid;
+  final DateTime Function() _clock;
 
   /// Create a new itinerary item
   Future<ItineraryItemModel> createItem({
@@ -33,7 +53,7 @@ class ItineraryRemoteDataSource {
         throw Exception('User not authenticated');
       }
 
-      final now = DateTime.now();
+      final now = _clock();
       final itemId = _uuid.v4();
 
       final data = {
@@ -54,11 +74,7 @@ class ItineraryRemoteDataSource {
         'updated_at': now.toIso8601String(),
       };
 
-      final response = await _supabase
-          .from('itinerary_items')
-          .insert(data)
-          .select('*, profiles!created_by(full_name)')
-          .single();
+      final response = await _queries.insertItem(data);
 
       return ItineraryItemModel.fromJson({
         ...response,
@@ -72,14 +88,9 @@ class ItineraryRemoteDataSource {
   /// Get all itinerary items for a trip
   Future<List<ItineraryItemModel>> getTripItinerary(String tripId) async {
     try {
-      final response = await _supabase
-          .from('itinerary_items')
-          .select('*, profiles!created_by(full_name)')
-          .eq('trip_id', tripId)
-          .order('day_number', ascending: true)
-          .order('order_index', ascending: true);
+      final rows = await _queries.findItemsForTrip(tripId);
 
-      return (response as List).map((json) {
+      return rows.map((json) {
         return ItineraryItemModel.fromJson({
           ...json,
           'creator_name': json['profiles']?['full_name'],
@@ -96,14 +107,9 @@ class ItineraryRemoteDataSource {
     required int dayNumber,
   }) async {
     try {
-      final response = await _supabase
-          .from('itinerary_items')
-          .select('*, profiles!created_by(full_name)')
-          .eq('trip_id', tripId)
-          .eq('day_number', dayNumber)
-          .order('order_index', ascending: true);
+      final rows = await _queries.findItemsForDay(tripId, dayNumber);
 
-      return (response as List).map((json) {
+      return rows.map((json) {
         return ItineraryItemModel.fromJson({
           ...json,
           'creator_name': json['profiles']?['full_name'],
@@ -144,11 +150,7 @@ class ItineraryRemoteDataSource {
   /// Get a single itinerary item by ID
   Future<ItineraryItemModel> getItem(String itemId) async {
     try {
-      final response = await _supabase
-          .from('itinerary_items')
-          .select('*, profiles!created_by(full_name)')
-          .eq('id', itemId)
-          .single();
+      final response = await _queries.findItemById(itemId);
 
       return ItineraryItemModel.fromJson({
         ...response,
@@ -175,7 +177,7 @@ class ItineraryRemoteDataSource {
   }) async {
     try {
       final updates = <String, dynamic>{
-        'updated_at': DateTime.now().toIso8601String(),
+        'updated_at': _clock().toIso8601String(),
       };
 
       if (title != null) updates['title'] = title;
@@ -189,12 +191,7 @@ class ItineraryRemoteDataSource {
       if (dayNumber != null) updates['day_number'] = dayNumber;
       if (orderIndex != null) updates['order_index'] = orderIndex;
 
-      final response = await _supabase
-          .from('itinerary_items')
-          .update(updates)
-          .eq('id', itemId)
-          .select('*, profiles!created_by(full_name)')
-          .single();
+      final response = await _queries.updateItemByIdReturning(itemId, updates);
 
       return ItineraryItemModel.fromJson({
         ...response,
@@ -208,10 +205,7 @@ class ItineraryRemoteDataSource {
   /// Delete an itinerary item
   Future<void> deleteItem(String itemId) async {
     try {
-      await _supabase
-          .from('itinerary_items')
-          .delete()
-          .eq('id', itemId);
+      await _queries.deleteItemById(itemId);
     } catch (e) {
       throw Exception('Failed to delete itinerary item: $e');
     }
@@ -226,15 +220,15 @@ class ItineraryRemoteDataSource {
     try {
       // Update order_index for each item
       for (int i = 0; i < itemIds.length; i++) {
-        await _supabase
-            .from('itinerary_items')
-            .update({
-              'order_index': i,
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('id', itemIds[i])
-            .eq('trip_id', tripId)
-            .eq('day_number', dayNumber);
+        await _queries.updateItemScopedToDay(
+          itemId: itemIds[i],
+          tripId: tripId,
+          dayNumber: dayNumber,
+          data: {
+            'order_index': i,
+            'updated_at': _clock().toIso8601String(),
+          },
+        );
       }
     } catch (e) {
       throw Exception('Failed to reorder items: $e');
@@ -251,27 +245,21 @@ class ItineraryRemoteDataSource {
       final item = await getItem(itemId);
 
       // Get max order_index for the target day
-      final response = await _supabase
-          .from('itinerary_items')
-          .select('order_index')
-          .eq('trip_id', item.tripId)
-          .eq('day_number', newDayNumber)
-          .order('order_index', ascending: false)
-          .limit(1);
+      final response = await _queries.findMaxOrderIndexForDay(
+        item.tripId,
+        newDayNumber,
+      );
 
       final maxOrder = response.isNotEmpty
           ? (response.first['order_index'] as int? ?? 0)
           : 0;
 
       // Update the item with new day and order
-      await _supabase
-          .from('itinerary_items')
-          .update({
-            'day_number': newDayNumber,
-            'order_index': maxOrder + 1,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .eq('id', itemId);
+      await _queries.updateItemById(itemId, {
+        'day_number': newDayNumber,
+        'order_index': maxOrder + 1,
+        'updated_at': _clock().toIso8601String(),
+      });
     } catch (e) {
       throw Exception('Failed to move item to day: $e');
     }
