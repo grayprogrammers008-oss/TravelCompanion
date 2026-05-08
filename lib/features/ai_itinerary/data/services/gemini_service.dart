@@ -7,13 +7,46 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/ai_itinerary.dart';
 
+/// Minimal HTTP poster interface so [GeminiService] can be unit-tested
+/// without making real network calls. The real implementation just delegates
+/// to `package:http`'s top-level [http.post].
+abstract class GeminiHttpClient {
+  Future<http.Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  });
+}
+
+class _DefaultGeminiHttpClient implements GeminiHttpClient {
+  const _DefaultGeminiHttpClient();
+  @override
+  Future<http.Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  }) {
+    return http.post(url, headers: headers, body: body);
+  }
+}
+
 class GeminiService {
   // Using Gemini 2.0 Flash for speed and cost efficiency
   static const String _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
   final String _apiKey;
+  final GeminiHttpClient _httpClient;
+  final Future<void> Function(Duration)? _delay;
 
-  GeminiService(this._apiKey);
+  GeminiService(
+    this._apiKey, {
+    GeminiHttpClient? httpClient,
+    Future<void> Function(Duration)? delay,
+  })  : _httpClient = httpClient ?? const _DefaultGeminiHttpClient(),
+        _delay = delay;
+
+  Future<void> _sleep(Duration d) =>
+      _delay != null ? _delay(d) : Future<void>.delayed(d);
 
   /// Generate an itinerary using Gemini AI
   /// Includes retry logic with exponential backoff for rate limiting (429 errors)
@@ -35,7 +68,7 @@ class GeminiService {
     while (retryCount <= maxRetries) {
       debugPrint('🌐 Making POST request to Gemini API (attempt ${retryCount + 1}/${maxRetries + 1})...');
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +101,7 @@ class GeminiService {
           throw Exception('AI service is busy. Please try again in a few moments.');
         }
         debugPrint('⏳ Rate limited (429). Waiting ${delaySeconds}s before retry $retryCount/$maxRetries...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -81,7 +114,7 @@ class GeminiService {
           throw Exception('AI service temporarily unavailable. Please try again.');
         }
         debugPrint('⏳ Server error (${response.statusCode}). Waiting ${delaySeconds}s before retry...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -295,7 +328,7 @@ Generate a complete itinerary with specific restaurant recommendations now:
     while (retryCount <= maxRetries) {
       debugPrint('🌐 Making POST request to Gemini API (attempt ${retryCount + 1}/${maxRetries + 1})...');
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -326,7 +359,7 @@ Generate a complete itinerary with specific restaurant recommendations now:
           throw Exception('AI service is busy. Please try again in a few moments.');
         }
         debugPrint('⏳ Rate limited (429). Waiting ${delaySeconds}s before retry $retryCount/$maxRetries...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -339,7 +372,7 @@ Generate a complete itinerary with specific restaurant recommendations now:
           throw Exception('AI service temporarily unavailable. Please try again.');
         }
         debugPrint('⏳ Server error (${response.statusCode}). Waiting ${delaySeconds}s before retry...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -494,7 +527,7 @@ Generate the checklist now:
     while (retryCount <= maxRetries) {
       debugPrint('🌐 Making POST request to Gemini API (attempt ${retryCount + 1}/${maxRetries + 1})...');
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -525,7 +558,7 @@ Generate the checklist now:
           throw Exception('AI service is busy. Please try again in a few moments.');
         }
         debugPrint('⏳ Rate limited (429). Waiting ${delaySeconds}s before retry $retryCount/$maxRetries...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2; // Exponential backoff: 2s, 4s, 8s
         continue;
       }
@@ -538,7 +571,7 @@ Generate the checklist now:
           throw Exception('AI service temporarily unavailable. Please try again.');
         }
         debugPrint('⏳ Server error (${response.statusCode}). Waiting ${delaySeconds}s before retry...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -749,7 +782,7 @@ Generate the complete trip plan now:
     while (retryCount <= maxRetries) {
       debugPrint('🌐 Making POST request to Gemini API (attempt ${retryCount + 1}/${maxRetries + 1})...');
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -778,7 +811,7 @@ Generate the complete trip plan now:
           throw Exception('AI service is busy. Please try again in a few moments.');
         }
         debugPrint('⏳ Rate limited. Waiting ${delaySeconds}s...');
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }
@@ -788,7 +821,7 @@ Generate the complete trip plan now:
         if (retryCount > maxRetries) {
           throw Exception('AI service temporarily unavailable.');
         }
-        await Future.delayed(Duration(seconds: delaySeconds));
+        await _sleep(Duration(seconds: delaySeconds));
         delaySeconds *= 2;
         continue;
       }

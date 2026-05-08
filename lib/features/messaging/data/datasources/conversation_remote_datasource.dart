@@ -4,13 +4,38 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/models/conversation_model.dart';
 import '../../../../shared/models/message_model.dart';
+import 'conversation_queries.dart';
 
-/// Remote data source for conversation operations using Supabase
+/// Remote data source for conversation operations using Supabase.
+///
+/// All Supabase PostgREST chain calls live behind [ConversationQueries] so
+/// the datasource itself can be exercised by unit tests. The default
+/// constructor wires up the production [ConversationQueriesImpl]; tests
+/// inject a fake.
+///
+/// Realtime stream methods ([subscribeToConversation],
+/// [subscribeToConversationMessages], [subscribeToTripMessages],
+/// [subscribeToConversationMemberChanges], [subscribeToTripActivityChanges])
+/// keep their direct channel/stream subscription on the [SupabaseClient]
+/// because Supabase realtime is not modelled by the queries seam.
 class ConversationRemoteDataSource {
-  final SupabaseClient _client;
+  final SupabaseClient? _clientOverride;
+  final ConversationQueries _queries;
+  final DateTime Function() _clock;
 
-  ConversationRemoteDataSource({SupabaseClient? client})
-      : _client = client ?? Supabase.instance.client;
+  ConversationRemoteDataSource({
+    SupabaseClient? client,
+    ConversationQueries? queries,
+    DateTime Function()? clock,
+  })  : _clientOverride = client,
+        _queries = queries ??
+            ConversationQueriesImpl(client ?? Supabase.instance.client),
+        _clock = clock ?? DateTime.now;
+
+  /// Lazily resolves the Supabase client used for realtime channels.
+  /// Tests that only exercise non-stream methods do not need a live
+  /// Supabase instance, so we defer the lookup.
+  SupabaseClient get _client => _clientOverride ?? Supabase.instance.client;
 
   // ============================================================================
   // CONVERSATION CRUD
@@ -27,31 +52,30 @@ class ConversationRemoteDataSource {
   }) async {
     try {
       // 1. Create the conversation
-      final conversationResponse = await _client
-          .from('conversations')
-          .insert({
-            'trip_id': tripId,
-            'name': name,
-            'description': description,
-            'created_by': createdBy,
-            'is_direct_message': isDirectMessage,
-          })
-          .select()
-          .single();
+      final conversationResponse = await _queries.insertConversation({
+        'trip_id': tripId,
+        'name': name,
+        'description': description,
+        'created_by': createdBy,
+        'is_direct_message': isDirectMessage,
+      });
 
       final conversationId = conversationResponse['id'] as String;
 
       // 2. Add creator as admin
-      await _client.from('conversation_members').insert({
-        'conversation_id': conversationId,
-        'user_id': createdBy,
-        'role': 'admin',
-      });
+      await _queries.insertConversationMembers([
+        {
+          'conversation_id': conversationId,
+          'user_id': createdBy,
+          'role': 'admin',
+        }
+      ]);
 
       // 3. Add other members
-      final otherMembers = memberUserIds.where((id) => id != createdBy).toList();
+      final otherMembers =
+          memberUserIds.where((id) => id != createdBy).toList();
       if (otherMembers.isNotEmpty) {
-        await _client.from('conversation_members').insert(
+        await _queries.insertConversationMembers(
           otherMembers
               .map((userId) => {
                     'conversation_id': conversationId,
@@ -76,26 +100,26 @@ class ConversationRemoteDataSource {
     String userId,
   ) async {
     try {
-      debugPrint('🔍 getTripConversations: Calling RPC with tripId=$tripId, userId=$userId');
-      final response = await _client.rpc(
-        'get_trip_conversations',
-        params: {
-          'p_trip_id': tripId,
-          'p_user_id': userId,
-        },
+      debugPrint(
+          '🔍 getTripConversations: Calling RPC with tripId=$tripId, userId=$userId');
+      final data = await _queries.rpcGetTripConversations(
+        tripId: tripId,
+        userId: userId,
       );
 
-      final data = response as List<dynamic>;
-      debugPrint('🔍 getTripConversations: RPC returned ${data.length} conversations');
+      debugPrint(
+          '🔍 getTripConversations: RPC returned ${data.length} conversations');
 
       // Debug: Log each conversation's tripId to verify filtering
       for (final json in data) {
         final convJson = json as Map<String, dynamic>;
-        debugPrint('🔍   - Conv "${convJson['name']}" has tripId=${convJson['trip_id']}');
+        debugPrint(
+            '🔍   - Conv "${convJson['name']}" has tripId=${convJson['trip_id']}');
       }
 
       return data
-          .map((json) => ConversationModel.fromJson(json as Map<String, dynamic>))
+          .map((json) =>
+              ConversationModel.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
       debugPrint('Error getting trip conversations: $e');
@@ -115,15 +139,11 @@ class ConversationRemoteDataSource {
 
     try {
       // Get conversation with details via RPC
-      final response = await _client.rpc(
-        'get_conversation_with_details',
-        params: {
-          'p_conversation_id': conversationId,
-          'p_user_id': userId,
-        },
+      final data = await _queries.rpcGetConversationWithDetails(
+        conversationId: conversationId,
+        userId: userId,
       );
 
-      final data = response as List<dynamic>;
       if (data.isEmpty) {
         throw Exception('Conversation not found');
       }
@@ -131,21 +151,11 @@ class ConversationRemoteDataSource {
       final conversationJson = data.first as Map<String, dynamic>;
 
       // Get members separately
-      final membersResponse = await _client
-          .from('conversation_members')
-          .select('''
-            *,
-            profiles:user_id (
-              id,
-              full_name,
-              avatar_url,
-              email
-            )
-          ''')
-          .eq('conversation_id', conversationId);
+      final membersResponse =
+          await _queries.findConversationMembers(conversationId);
 
-      final members = (membersResponse as List<dynamic>).map((m) {
-        final json = m as Map<String, dynamic>;
+      final members = membersResponse.map((m) {
+        final json = m;
         final profile = json['profiles'] as Map<String, dynamic>?;
         return ConversationMemberModel.fromJson({
           ...json,
@@ -179,10 +189,7 @@ class ConversationRemoteDataSource {
       if (avatarUrl != null) updates['avatar_url'] = avatarUrl;
 
       if (updates.isNotEmpty) {
-        await _client
-            .from('conversations')
-            .update(updates)
-            .eq('id', conversationId);
+        await _queries.updateConversationById(conversationId, updates);
       }
     } catch (e) {
       debugPrint('Error updating conversation: $e');
@@ -193,7 +200,7 @@ class ConversationRemoteDataSource {
   /// Delete a conversation
   Future<void> deleteConversation(String conversationId) async {
     try {
-      await _client.from('conversations').delete().eq('id', conversationId);
+      await _queries.deleteConversationById(conversationId);
     } catch (e) {
       debugPrint('Error deleting conversation: $e');
       rethrow;
@@ -210,7 +217,7 @@ class ConversationRemoteDataSource {
     required List<String> userIds,
   }) async {
     try {
-      await _client.from('conversation_members').insert(
+      await _queries.insertConversationMembers(
         userIds
             .map((userId) => {
                   'conversation_id': conversationId,
@@ -231,11 +238,10 @@ class ConversationRemoteDataSource {
     required String userId,
   }) async {
     try {
-      await _client
-          .from('conversation_members')
-          .delete()
-          .eq('conversation_id', conversationId)
-          .eq('user_id', userId);
+      await _queries.deleteConversationMember(
+        conversationId: conversationId,
+        userId: userId,
+      );
     } catch (e) {
       debugPrint('Error removing member: $e');
       rethrow;
@@ -249,11 +255,11 @@ class ConversationRemoteDataSource {
     required String role,
   }) async {
     try {
-      await _client
-          .from('conversation_members')
-          .update({'role': role})
-          .eq('conversation_id', conversationId)
-          .eq('user_id', userId);
+      await _queries.updateConversationMember(
+        conversationId: conversationId,
+        userId: userId,
+        data: {'role': role},
+      );
     } catch (e) {
       debugPrint('Error updating member role: $e');
       rethrow;
@@ -267,11 +273,11 @@ class ConversationRemoteDataSource {
     required bool muted,
   }) async {
     try {
-      await _client
-          .from('conversation_members')
-          .update({'is_muted': muted})
-          .eq('conversation_id', conversationId)
-          .eq('user_id', userId);
+      await _queries.updateConversationMember(
+        conversationId: conversationId,
+        userId: userId,
+        data: {'is_muted': muted},
+      );
     } catch (e) {
       debugPrint('Error setting muted status: $e');
       rethrow;
@@ -287,20 +293,23 @@ class ConversationRemoteDataSource {
     try {
       // Use RPC to set last_read_at on the server side
       // This ensures proper timezone handling and uses database NOW()
-      await _client.rpc('mark_conversation_as_read', params: {
-        'p_conversation_id': conversationId,
-        'p_user_id': userId,
-      });
-      debugPrint('✅ Marked conversation $conversationId as read for user $userId');
+      await _queries.rpcMarkConversationAsRead(
+        conversationId: conversationId,
+        userId: userId,
+      );
+      debugPrint(
+          '✅ Marked conversation $conversationId as read for user $userId');
     } catch (e) {
       debugPrint('Error marking as read via RPC: $e');
       // Fallback to client-side update with UTC time
       try {
-        await _client
-            .from('conversation_members')
-            .update({'last_read_at': DateTime.now().toUtc().toIso8601String()})
-            .eq('conversation_id', conversationId)
-            .eq('user_id', userId);
+        await _queries.updateConversationMember(
+          conversationId: conversationId,
+          userId: userId,
+          data: {
+            'last_read_at': _clock().toUtc().toIso8601String(),
+          },
+        );
         debugPrint('✅ Marked conversation as read (fallback)');
       } catch (e2) {
         debugPrint('Error marking as read (fallback): $e2');
@@ -314,22 +323,11 @@ class ConversationRemoteDataSource {
     String conversationId,
   ) async {
     try {
-      final response = await _client
-          .from('conversation_members')
-          .select('''
-            *,
-            profiles:user_id (
-              id,
-              full_name,
-              avatar_url,
-              email
-            )
-          ''')
-          .eq('conversation_id', conversationId)
-          .order('joined_at');
+      final response =
+          await _queries.findConversationMembers(conversationId, ordered: true);
 
-      return (response as List<dynamic>).map((m) {
-        final json = m as Map<String, dynamic>;
+      return response.map((m) {
+        final json = m;
         final profile = json['profiles'] as Map<String, dynamic>?;
         return ConversationMemberModel.fromJson({
           ...json,
@@ -355,23 +353,14 @@ class ConversationRemoteDataSource {
     int offset = 0,
   }) async {
     try {
-      final response = await _client
-          .from('messages')
-          .select('''
-            *,
-            sender:sender_id (
-              id,
-              full_name,
-              avatar_url
-            )
-          ''')
-          .eq('conversation_id', conversationId)
-          .eq('is_deleted', false)
-          .order('created_at', ascending: false)
-          .range(offset, offset + limit - 1);
+      final response = await _queries.findConversationMessages(
+        conversationId: conversationId,
+        limit: limit,
+        offset: offset,
+      );
 
-      return (response as List<dynamic>).map((m) {
-        final json = m as Map<String, dynamic>;
+      return response.map((m) {
+        final json = m;
         final sender = json['sender'] as Map<String, dynamic>?;
         return MessageModel.fromJson({
           ...json,
@@ -392,11 +381,10 @@ class ConversationRemoteDataSource {
     required String senderId,
   }) async {
     try {
-      await _client
-          .from('messages')
-          .update({'is_deleted': true})
-          .eq('id', messageId)
-          .eq('sender_id', senderId);
+      await _queries.softDeleteMessageBySender(
+        messageId: messageId,
+        senderId: senderId,
+      );
     } catch (e) {
       debugPrint('Error deleting message: $e');
       rethrow;
@@ -414,11 +402,10 @@ class ConversationRemoteDataSource {
 
       // Delete messages one by one to ensure proper error handling
       for (final messageId in messageIds) {
-        await _client
-            .from('messages')
-            .update({'is_deleted': true})
-            .eq('id', messageId)
-            .eq('sender_id', senderId);
+        await _queries.softDeleteMessageBySender(
+          messageId: messageId,
+          senderId: senderId,
+        );
         debugPrint('Deleted message: $messageId');
       }
 
@@ -440,26 +427,15 @@ class ConversationRemoteDataSource {
     String? attachmentUrl,
   }) async {
     try {
-      final response = await _client
-          .from('messages')
-          .insert({
-            'conversation_id': conversationId,
-            'trip_id': tripId,
-            'sender_id': senderId,
-            'message': message,
-            'message_type': messageType,
-            'reply_to_id': replyToId,
-            'attachment_url': attachmentUrl,
-          })
-          .select('''
-            *,
-            sender:sender_id (
-              id,
-              full_name,
-              avatar_url
-            )
-          ''')
-          .single();
+      final response = await _queries.insertMessage({
+        'conversation_id': conversationId,
+        'trip_id': tripId,
+        'sender_id': senderId,
+        'message': message,
+        'message_type': messageType,
+        'reply_to_id': replyToId,
+        'attachment_url': attachmentUrl,
+      });
 
       final sender = response['sender'] as Map<String, dynamic>?;
       return MessageModel.fromJson({
@@ -474,7 +450,7 @@ class ConversationRemoteDataSource {
   }
 
   // ============================================================================
-  // REAL-TIME STREAMS
+  // REAL-TIME STREAMS (kept on direct Supabase client - not part of queries seam)
   // ============================================================================
 
   /// Subscribe to conversation updates
@@ -554,7 +530,8 @@ class ConversationRemoteDataSource {
   /// Returns a stream that emits whenever any message changes in the trip
   /// Uses Postgres Changes channel for reliable real-time updates
   Stream<void> subscribeToTripMessages(String tripId) {
-    debugPrint('🔔 subscribeToTripMessages: Setting up realtime channel for tripId=$tripId');
+    debugPrint(
+        '🔔 subscribeToTripMessages: Setting up realtime channel for tripId=$tripId');
 
     // Use StreamController to create a more reliable stream
     final controller = StreamController<void>.broadcast();
@@ -576,15 +553,18 @@ class ConversationRemoteDataSource {
             value: tripId,
           ),
           callback: (payload) {
-            debugPrint('🔔 subscribeToTripMessages: Postgres change detected - ${payload.eventType} for tripId=$tripId');
+            debugPrint(
+                '🔔 subscribeToTripMessages: Postgres change detected - ${payload.eventType} for tripId=$tripId');
             debugPrint('🔔   New record: ${payload.newRecord}');
             controller.add(null);
           },
         )
         .subscribe((status, [error]) {
-          debugPrint('🔔 subscribeToTripMessages: Channel status: $status ${error != null ? '- Error: $error' : ''}');
+          debugPrint(
+              '🔔 subscribeToTripMessages: Channel status: $status ${error != null ? '- Error: $error' : ''}');
           if (status == RealtimeSubscribeStatus.subscribed) {
-            debugPrint('🔔 subscribeToTripMessages: Successfully subscribed to trip messages');
+            debugPrint(
+                '🔔 subscribeToTripMessages: Successfully subscribed to trip messages');
             // Emit initial event to trigger first calculation
             controller.add(null);
           }
@@ -592,7 +572,8 @@ class ConversationRemoteDataSource {
 
     // Clean up when stream is cancelled
     controller.onCancel = () {
-      debugPrint('🔔 subscribeToTripMessages: Unsubscribing from channel $channelName');
+      debugPrint(
+          '🔔 subscribeToTripMessages: Unsubscribing from channel $channelName');
       _client.removeChannel(channel);
     };
 
@@ -603,7 +584,8 @@ class ConversationRemoteDataSource {
   /// Returns a stream that emits whenever any conversation_members row changes
   /// This is essential for detecting when messages are marked as read (last_read_at updates)
   Stream<void> subscribeToConversationMemberChanges(String tripId) {
-    debugPrint('🔔 subscribeToConversationMemberChanges: Setting up realtime channel for tripId=$tripId');
+    debugPrint(
+        '🔔 subscribeToConversationMemberChanges: Setting up realtime channel for tripId=$tripId');
 
     final controller = StreamController<void>.broadcast();
     final channelName = 'conversation_members_$tripId';
@@ -614,25 +596,30 @@ class ConversationRemoteDataSource {
     // But we can listen to all updates and let the provider recalculate
     channel
         .onPostgresChanges(
-          event: PostgresChangeEvent.update, // Only updates (for last_read_at changes)
+          event: PostgresChangeEvent
+              .update, // Only updates (for last_read_at changes)
           schema: 'public',
           table: 'conversation_members',
           callback: (payload) {
-            debugPrint('🔔 subscribeToConversationMemberChanges: Member change detected - ${payload.eventType}');
+            debugPrint(
+                '🔔 subscribeToConversationMemberChanges: Member change detected - ${payload.eventType}');
             debugPrint('🔔   Old record: ${payload.oldRecord}');
             debugPrint('🔔   New record: ${payload.newRecord}');
             controller.add(null);
           },
         )
         .subscribe((status, [error]) {
-          debugPrint('🔔 subscribeToConversationMemberChanges: Channel status: $status ${error != null ? '- Error: $error' : ''}');
+          debugPrint(
+              '🔔 subscribeToConversationMemberChanges: Channel status: $status ${error != null ? '- Error: $error' : ''}');
           if (status == RealtimeSubscribeStatus.subscribed) {
-            debugPrint('🔔 subscribeToConversationMemberChanges: Successfully subscribed to member changes');
+            debugPrint(
+                '🔔 subscribeToConversationMemberChanges: Successfully subscribed to member changes');
           }
         });
 
     controller.onCancel = () {
-      debugPrint('🔔 subscribeToConversationMemberChanges: Unsubscribing from channel $channelName');
+      debugPrint(
+          '🔔 subscribeToConversationMemberChanges: Unsubscribing from channel $channelName');
       _client.removeChannel(channel);
     };
 
@@ -642,7 +629,8 @@ class ConversationRemoteDataSource {
   /// Combined stream that listens to both messages and conversation member changes
   /// This ensures unread counts update both when new messages arrive AND when messages are read
   Stream<void> subscribeToTripActivityChanges(String tripId) {
-    debugPrint('🔔 subscribeToTripActivityChanges: Setting up combined realtime channels for tripId=$tripId');
+    debugPrint(
+        '🔔 subscribeToTripActivityChanges: Setting up combined realtime channels for tripId=$tripId');
 
     final controller = StreamController<void>.broadcast();
     final messageChannelName = 'trip_activity_messages_$tripId';
@@ -663,12 +651,14 @@ class ConversationRemoteDataSource {
             value: tripId,
           ),
           callback: (payload) {
-            debugPrint('🔔 subscribeToTripActivityChanges: MESSAGE change - ${payload.eventType}');
+            debugPrint(
+                '🔔 subscribeToTripActivityChanges: MESSAGE change - ${payload.eventType}');
             controller.add(null);
           },
         )
         .subscribe((status, [error]) {
-          debugPrint('🔔 subscribeToTripActivityChanges: Message channel status: $status');
+          debugPrint(
+              '🔔 subscribeToTripActivityChanges: Message channel status: $status');
           if (status == RealtimeSubscribeStatus.subscribed) {
             // Emit initial event to trigger first calculation
             controller.add(null);
@@ -685,18 +675,21 @@ class ConversationRemoteDataSource {
           schema: 'public',
           table: 'conversation_members',
           callback: (payload) {
-            debugPrint('🔔 subscribeToTripActivityChanges: MEMBER UPDATE detected');
+            debugPrint(
+                '🔔 subscribeToTripActivityChanges: MEMBER UPDATE detected');
             debugPrint('🔔   newRecord: ${payload.newRecord}');
             // Trigger recalculation on ANY member update (most likely last_read_at change)
             controller.add(null);
           },
         )
         .subscribe((status, [error]) {
-          debugPrint('🔔 subscribeToTripActivityChanges: Member channel status: $status');
+          debugPrint(
+              '🔔 subscribeToTripActivityChanges: Member channel status: $status');
         });
 
     controller.onCancel = () {
-      debugPrint('🔔 subscribeToTripActivityChanges: Unsubscribing from channels');
+      debugPrint(
+          '🔔 subscribeToTripActivityChanges: Unsubscribing from channels');
       _client.removeChannel(messageChannel);
       _client.removeChannel(memberChannel);
     };
@@ -718,20 +711,18 @@ class ConversationRemoteDataSource {
       // Try to use efficient database function to find existing DM
       String? existingId;
       try {
-        final result = await _client.rpc(
-          'find_existing_dm',
-          params: {
-            'p_trip_id': tripId,
-            'p_user1_id': currentUserId,
-            'p_user2_id': otherUserId,
-          },
+        existingId = await _queries.rpcFindExistingDm(
+          tripId: tripId,
+          user1Id: currentUserId,
+          user2Id: otherUserId,
         );
-        existingId = result as String?;
         debugPrint('find_existing_dm result: $existingId');
       } catch (rpcError) {
         // Function might not exist yet, fall back to manual search
-        debugPrint('find_existing_dm RPC failed (function may not exist): $rpcError');
-        existingId = await _findExistingDmManually(tripId, currentUserId, otherUserId);
+        debugPrint(
+            'find_existing_dm RPC failed (function may not exist): $rpcError');
+        existingId =
+            await _findExistingDmManually(tripId, currentUserId, otherUserId);
       }
 
       if (existingId != null && existingId.isNotEmpty) {
@@ -762,24 +753,23 @@ class ConversationRemoteDataSource {
     required String userId,
   }) async {
     try {
-      debugPrint('🔐 ensureUserInDefaultGroup: tripId=$tripId, userId=$userId');
+      debugPrint(
+          '🔐 ensureUserInDefaultGroup: tripId=$tripId, userId=$userId');
 
       // Call the RPC function that ensures user is in default group
-      final result = await _client.rpc(
-        'ensure_user_in_default_group',
-        params: {
-          'p_trip_id': tripId,
-          'p_user_id': userId,
-        },
+      final conversationId = await _queries.rpcEnsureUserInDefaultGroup(
+        tripId: tripId,
+        userId: userId,
       );
 
-      final conversationId = result as String?;
       if (conversationId != null && conversationId.isNotEmpty) {
-        debugPrint('🔐 ensureUserInDefaultGroup: User is now in default group: $conversationId');
+        debugPrint(
+            '🔐 ensureUserInDefaultGroup: User is now in default group: $conversationId');
         return conversationId;
       }
 
-      debugPrint('🔐 ensureUserInDefaultGroup: No default group returned (user may not be trip member)');
+      debugPrint(
+          '🔐 ensureUserInDefaultGroup: No default group returned (user may not be trip member)');
       return null;
     } catch (e) {
       debugPrint('🔐 ensureUserInDefaultGroup: Error - $e');
@@ -795,27 +785,18 @@ class ConversationRemoteDataSource {
   }) async {
     try {
       // Fast query to just get the ID of the default group
-      final response = await _client
-          .from('conversations')
-          .select('id')
-          .eq('trip_id', tripId)
-          .eq('is_default_group', true)
-          .limit(1)
-          .maybeSingle();
+      final id = await _queries.findDefaultGroupIdForTrip(tripId);
 
-      if (response != null) {
-        debugPrint('Found default group ID: ${response['id']}');
-        return response['id'] as String;
+      if (id != null) {
+        debugPrint('Found default group ID: $id');
+        return id;
       }
 
       // Try to ensure default group exists via RPC
       try {
-        final result = await _client.rpc(
-          'ensure_trip_default_group',
-          params: {'p_trip_id': tripId},
-        );
+        final conversationId =
+            await _queries.rpcEnsureTripDefaultGroup(tripId);
 
-        final conversationId = result as String?;
         if (conversationId != null && conversationId.isNotEmpty) {
           debugPrint('Created default group: $conversationId');
           return conversationId;
@@ -860,13 +841,9 @@ class ConversationRemoteDataSource {
   ) async {
     try {
       // Find DM conversations in this trip where both users are members
-      final response = await _client
-          .from('conversations')
-          .select('id, conversation_members!inner(user_id)')
-          .eq('trip_id', tripId)
-          .eq('is_direct_message', true);
+      final response = await _queries.findDirectMessagesForTrip(tripId);
 
-      for (final conv in response as List<dynamic>) {
+      for (final conv in response) {
         final members = (conv['conversation_members'] as List<dynamic>)
             .map((m) => m['user_id'] as String)
             .toList();

@@ -5,6 +5,7 @@ import '../../../../core/network/supabase_client.dart';
 import '../../../../core/services/realtime_service.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../domain/usecases/get_user_stats_usecase.dart';
+import 'trip_queries.dart';
 
 /// Trip Remote Data Source - Supabase Implementation
 ///
@@ -103,36 +104,64 @@ abstract class TripRemoteDataSource {
   Future<List<String>> getFavoriteTripIds();
 }
 
+/// Default implementation backed by Supabase.
+///
+/// All PostgREST chain calls go through [TripQueries] so the datasource
+/// itself is unit-testable. Realtime subscriptions (`watchUserTrips`,
+/// `watchTrip`, `watchTripMembers`, `watchUserStats`) still call
+/// `_client.channel(...)` and the [RealtimeService] directly — they are
+/// covered by integration / live tests rather than the unit suite.
 class TripRemoteDataSourceImpl implements TripRemoteDataSource {
-  final SupabaseClient _client;
-  final RealtimeService _realtimeService;
+  TripRemoteDataSourceImpl({
+    SupabaseClient? supabase,
+    TripQueries? queries,
+    RealtimeService? realtimeService,
+    String? Function()? currentUserId,
+  })  : _suppliedClient = supabase,
+        _suppliedRealtime = realtimeService,
+        _queries = queries ??
+            TripQueriesImpl(supabase ?? SupabaseClientWrapper.client),
+        _currentUserId =
+            currentUserId ?? (() => SupabaseClientWrapper.currentUserId);
 
-  TripRemoteDataSourceImpl()
-      : _client = SupabaseClientWrapper.client,
-        _realtimeService = RealtimeService();
+  final SupabaseClient? _suppliedClient;
+  final RealtimeService? _suppliedRealtime;
+  RealtimeService? _cachedRealtime;
+  final TripQueries _queries;
+  final String? Function() _currentUserId;
+
+  /// Lazy access to the underlying Supabase client.
+  ///
+  /// Only the realtime stream methods (`watchUserTrips`, `watchUserStats`)
+  /// need direct channel access; non-stream methods route everything via
+  /// [TripQueries] and never touch this getter, which lets unit tests
+  /// inject only a fake [TripQueries] without initializing Supabase.
+  SupabaseClient get _client =>
+      _suppliedClient ?? SupabaseClientWrapper.client;
+
+  /// Lazy [RealtimeService]. Same rationale as [_client]: only the
+  /// realtime stream methods touch it, so unit tests can leave it null.
+  RealtimeService get _realtimeService =>
+      _suppliedRealtime ?? (_cachedRealtime ??= RealtimeService());
 
   @override
   Future<TripModel> createTrip(TripModel trip) async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) throw Exception('User not authenticated');
 
-      final response = await _client
-          .from('trips')
-          .insert({
-            'name': trip.name,
-            'description': trip.description,
-            'destination': trip.destination,
-            'start_date': trip.startDate?.toIso8601String(),
-            'end_date': trip.endDate?.toIso8601String(),
-            'cover_image_url': trip.coverImageUrl,
-            'cost': trip.cost,
-            'currency': trip.currency,
-            'is_public': trip.isPublic,
-            'created_by': userId,
-          })
-          .select()
-          .single();
+      final response = await _queries.insertTrip({
+        'name': trip.name,
+        'description': trip.description,
+        'destination': trip.destination,
+        'start_date': trip.startDate?.toIso8601String(),
+        'end_date': trip.endDate?.toIso8601String(),
+        'cover_image_url': trip.coverImageUrl,
+        'cost': trip.cost,
+        'currency': trip.currency,
+        'is_public': trip.isPublic,
+        'created_by': userId,
+      });
 
       final createdTrip = TripModel.fromJson(response);
       if (kDebugMode) debugPrint('✅ Trip created: ${createdTrip.id}');
@@ -146,7 +175,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<List<TripWithMembers>> getUserTrips() async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
@@ -156,14 +185,10 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       }
 
       // Get trip IDs where user is a member
-      final memberRows = await _client
-          .from('trip_members')
-          .select('trip_id')
-          .eq('user_id', userId);
+      final memberRows = await _queries.findTripIdsForUser(userId);
 
-      final tripIds = (memberRows as List)
-          .map((row) => (row as Map<String, dynamic>)['trip_id'] as String)
-          .toList();
+      final tripIds =
+          memberRows.map((row) => row['trip_id'] as String).toList();
 
       if (kDebugMode) {
         debugPrint('🔍 Found ${tripIds.length} trip IDs: $tripIds');
@@ -182,27 +207,9 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       }
 
       // Fetch trips with all their members
-      final response = await _client
-          .from('trips')
-          .select('''
-            *,
-            trip_members(
-              id,
-              user_id,
-              role,
-              joined_at,
-              profiles(
-                id,
-                email,
-                full_name,
-                avatar_url
-              )
-            )
-          ''')
-          .inFilter('id', tripIds)
-          .order('created_at', ascending: false);
+      final response = await _queries.findTripsWithMembersByIds(tripIds);
 
-      final trips = (response as List)
+      final trips = response
           .map((tripData) {
             final trip = _parseTripWithMembers(tripData);
             // Set isFavorite based on whether trip ID is in favorites
@@ -229,25 +236,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<TripWithMembers?> getTripById(String tripId) async {
     try {
-      final response = await _client
-          .from('trips')
-          .select('''
-            *,
-            trip_members(
-              id,
-              user_id,
-              role,
-              joined_at,
-              profiles(
-                id,
-                email,
-                full_name,
-                avatar_url
-              )
-            )
-          ''')
-          .eq('id', tripId)
-          .maybeSingle();
+      final response = await _queries.findTripWithMembersById(tripId);
 
       if (response == null) return null;
 
@@ -290,11 +279,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('DEBUG: Filtered Updates (after removing nulls): $filteredUpdates');
       }
 
-      final response = await _client
-          .from('trips')
-          .update(filteredUpdates)
-          .eq('id', tripId)
-          .select();
+      final response = await _queries.updateTripById(tripId, filteredUpdates);
 
       if (kDebugMode) {
         debugPrint('DEBUG: Supabase Update Response: $response');
@@ -313,9 +298,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
     try {
       // Use the admin_delete_trip RPC function to properly cascade delete all related data
       // This function handles: trip_members, expenses, checklists, itinerary_items, then the trip
-      final result = await _client.rpc('admin_delete_trip', params: {
-        'p_trip_id': tripId,
-      });
+      final result = await _queries.rpcDeleteTrip(tripId);
 
       if (result == false) {
         throw Exception('Trip not found or you do not have permission to delete it');
@@ -336,14 +319,11 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   Future<void> addMember(String tripId, String userId, {String role = 'member'}) async {
     try {
       // Use .select() to confirm the INSERT is committed before returning
-      final result = await _client
-          .from('trip_members')
-          .insert({
-            'trip_id': tripId,
-            'user_id': userId,
-            'role': role,
-          })
-          .select();
+      final result = await _queries.insertTripMember({
+        'trip_id': tripId,
+        'user_id': userId,
+        'role': role,
+      });
       if (kDebugMode) {
         debugPrint('✅ Member added to trip $tripId: ${result.length} row(s) inserted');
       }
@@ -355,11 +335,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<void> removeMember(String tripId, String userId) async {
     try {
-      await _client
-          .from('trip_members')
-          .delete()
-          .eq('trip_id', tripId)
-          .eq('user_id', userId);
+      await _queries.deleteTripMember(tripId, userId);
     } catch (e) {
       throw Exception('Failed to remove member: $e');
     }
@@ -372,25 +348,12 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
     int limit = 50,
   }) async {
     try {
-      // Build query to fetch users from profiles
-      var query = _client
-          .from('profiles')
-          .select('id, email, full_name, avatar_url');
+      final response = await _queries.searchProfiles(
+        search: search,
+        limit: limit,
+      );
 
-      // Apply search filter if provided
-      if (search != null && search.isNotEmpty) {
-        query = query.or('email.ilike.%$search%,full_name.ilike.%$search%');
-      }
-
-      // Execute query with ordering and limit
-      final response = await query
-          .order('full_name', ascending: true)
-          .limit(limit);
-
-      // Parse response
-      var users = (response as List)
-          .map((json) => SystemUserModel.fromJson(json))
-          .toList();
+      var users = response.map((json) => SystemUserModel.fromJson(json)).toList();
 
       // Filter out excluded users (existing members)
       if (excludeUserIds != null && excludeUserIds.isNotEmpty) {
@@ -412,7 +375,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
 
   @override
   Stream<List<TripWithMembers>> watchUserTrips() {
-    final userId = SupabaseClientWrapper.currentUserId;
+    final userId = _currentUserId();
     if (userId == null) {
       return Stream.error(Exception('User not authenticated'));
     }
@@ -687,26 +650,18 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<UserTravelStats> getUserStats() async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
       // Query 1: Count total trips where user is a member
-      final tripsResponse = await _client
-          .from('trip_members')
-          .select('trip_id')
-          .eq('user_id', userId);
-
-      final totalTrips = (tripsResponse as List).length;
+      final tripsResponse = await _queries.findTripIdsForUser(userId);
+      final totalTrips = tripsResponse.length;
 
       // Query 2 & 3: Get all expense splits for user (count and sum)
-      final expenseSplitsResponse = await _client
-          .from('expense_splits')
-          .select('id, amount')
-          .eq('user_id', userId);
-
-      final expenseSplitsList = expenseSplitsResponse as List;
+      final expenseSplitsList =
+          await _queries.findExpenseSplitsForUser(userId);
       final totalExpenses = expenseSplitsList.length;
 
       double totalSpent = 0.0;
@@ -715,25 +670,19 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       }
 
       // Query 4: Count unique crew members (other users in same trips)
-      final userTripsResponse = await _client
-          .from('trip_members')
-          .select('trip_id')
-          .eq('user_id', userId);
+      final userTripsResponse = await _queries.findTripIdsForUser(userId);
 
-      final userTripIds = (userTripsResponse as List)
+      final userTripIds = userTripsResponse
           .map((m) => m['trip_id'] as String)
           .toList();
 
       int uniqueCrewMembers = 0;
       if (userTripIds.isNotEmpty) {
-        final crewMembersResponse = await _client
-            .from('trip_members')
-            .select('user_id')
-            .inFilter('trip_id', userTripIds)
-            .neq('user_id', userId);
+        final crewMembersResponse =
+            await _queries.findCrewMemberIds(userTripIds, userId);
 
         // Get unique user IDs
-        final uniqueUserIds = (crewMembersResponse as List)
+        final uniqueUserIds = crewMembersResponse
             .map((m) => m['user_id'] as String)
             .toSet();
 
@@ -756,7 +705,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
 
   @override
   Stream<UserTravelStats> watchUserStats() {
-    final userId = SupabaseClientWrapper.currentUserId;
+    final userId = _currentUserId();
     if (userId == null) {
       return Stream.error(Exception('User not authenticated'));
     }
@@ -848,7 +797,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<List<TripWithMembers>> getDiscoverableTrips() async {
     try {
-      final userId = SupabaseClientWrapper.currentUserId;
+      final userId = _currentUserId();
       if (userId == null) {
         throw Exception('User not authenticated');
       }
@@ -858,12 +807,9 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       }
 
       // First, get all trip IDs where the user is already a member
-      final userTripsResponse = await _client
-          .from('trip_members')
-          .select('trip_id')
-          .eq('user_id', userId);
+      final userTripsResponse = await _queries.findTripIdsForUser(userId);
 
-      final userTripIds = (userTripsResponse as List)
+      final userTripIds = userTripsResponse
           .map((row) => row['trip_id'] as String)
           .toList();
 
@@ -872,29 +818,10 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       }
 
       // Query for all public trips
-      final response = await _client
-          .from('trips')
-          .select('''
-            *,
-            trip_members(
-              id,
-              user_id,
-              role,
-              joined_at,
-              profiles(
-                id,
-                email,
-                full_name,
-                avatar_url
-              )
-            )
-          ''')
-          .eq('is_public', true) // Only public trips
-          .order('created_at', ascending: false)
-          .limit(100); // Limit to 100 most recent public trips
+      final response = await _queries.findPublicTrips(limit: 100);
 
       // Parse all public trips and filter out trips where user is already a member
-      final allPublicTrips = (response as List)
+      final allPublicTrips = response
           .map((tripData) => _parseTripWithMembers(tripData))
           .toList();
 
@@ -935,19 +862,14 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('   Copy checklists: $copyChecklists');
       }
 
-      final response = await _client.rpc(
-        'copy_trip',
-        params: {
-          'p_source_trip_id': sourceTripId,
-          'p_new_name': newName,
-          'p_new_start_date': newStartDate.toIso8601String(),
-          'p_new_end_date': newEndDate.toIso8601String(),
-          'p_copy_itinerary': copyItinerary,
-          'p_copy_checklists': copyChecklists,
-        },
+      final newTripId = await _queries.rpcCopyTrip(
+        sourceTripId: sourceTripId,
+        newName: newName,
+        newStartDate: newStartDate,
+        newEndDate: newEndDate,
+        copyItinerary: copyItinerary,
+        copyChecklists: copyChecklists,
       );
-
-      final newTripId = response as String;
 
       if (kDebugMode) {
         debugPrint('✅ Trip copied successfully! New trip ID: $newTripId');
@@ -969,12 +891,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('⭐ Toggling favorite for trip: $tripId');
       }
 
-      final response = await _client.rpc(
-        'toggle_trip_favorite',
-        params: {'p_trip_id': tripId},
-      );
-
-      final isFavorite = response as bool;
+      final isFavorite = await _queries.rpcToggleFavorite(tripId);
 
       if (kDebugMode) {
         debugPrint('⭐ Trip $tripId is now ${isFavorite ? 'favorited' : 'unfavorited'}');
@@ -996,11 +913,10 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('⭐ Fetching favorite trip IDs');
       }
 
-      final response = await _client.rpc('get_user_favorite_trip_ids');
+      final response = await _queries.rpcGetFavoriteTripIds();
 
-      final tripIds = (response as List)
-          .map((row) => row['trip_id'] as String)
-          .toList();
+      final tripIds =
+          response.map((row) => row['trip_id'] as String).toList();
 
       if (kDebugMode) {
         debugPrint('⭐ Found ${tripIds.length} favorite trips');

@@ -1,10 +1,63 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/message_model.dart';
+import 'message_queries.dart';
 
 /// Message Remote Data Source
-/// Handles all Supabase operations for messaging
+/// Handles all Supabase operations for messaging.
+///
+/// All Supabase PostgREST chain calls live behind [MessageQueries] so the
+/// datasource itself can be exercised by unit tests. The default constructor
+/// wires up the production [MessageQueriesImpl]; tests inject a fake.
+///
+/// Realtime stream methods ([subscribeToTripMessages], [subscribeToMessageUpdates])
+/// keep their direct channel/stream subscription on the [SupabaseClient]
+/// because Supabase realtime streams are not modelled by the queries seam.
 class MessageRemoteDataSource {
+  MessageRemoteDataSource({
+    SupabaseClient? supabase,
+    MessageQueries? queries,
+    DateTime Function()? clock,
+  })  : _supabaseOverride = supabase,
+        _queriesOverride = queries,
+        _clock = clock ?? DateTime.now;
+
+  final SupabaseClient? _supabaseOverride;
+  final MessageQueries? _queriesOverride;
+  final DateTime Function() _clock;
+
+  /// Lazily resolves the [MessageQueries]. Tests inject one directly.
+  /// In production we pass through to the live Supabase client, which
+  /// requires [SupabaseClientWrapper.initialize] to have been called.
+  MessageQueries? _cachedQueries;
+  MessageQueries get _queries =>
+      _queriesOverride ?? (_cachedQueries ??= MessageQueriesImpl(_client));
+
+  SupabaseClient get _client =>
+      _supabaseOverride ?? SupabaseClientWrapper.client;
+
+  // ============================================================================
+  // HELPERS
+  // ============================================================================
+
+  /// Flatten the joined profile fields onto the message JSON object.
+  Map<String, dynamic> _flattenProfile(Map<String, dynamic> json) {
+    final profileData = json['profiles'] as Map<String, dynamic>?;
+    final messageJson = Map<String, dynamic>.from(json);
+    if (profileData != null) {
+      messageJson['sender_name'] = profileData['full_name'];
+      messageJson['sender_avatar_url'] = profileData['avatar_url'];
+    }
+    messageJson.remove('profiles');
+    return messageJson;
+  }
+
+  // ============================================================================
+  // CORE MESSAGE OPERATIONS
+  // ============================================================================
+
   /// Send a new message to Supabase
   Future<MessageModel> sendMessage(MessageModel message) async {
     try {
@@ -17,12 +70,7 @@ class MessageRemoteDataSource {
       final json = message.toDatabaseJson();
       debugPrint('   Database JSON to send: $json');
 
-      debugPrint('   Calling Supabase.from("messages").insert()...');
-      final response = await SupabaseClientWrapper.client
-          .from('messages')
-          .insert(json)
-          .select()
-          .single();
+      final response = await _queries.insertMessage(json);
 
       debugPrint('   ✅ Supabase response received');
       debugPrint('   Response data: $response');
@@ -30,7 +78,6 @@ class MessageRemoteDataSource {
       final result = MessageModel.fromJson(response);
       debugPrint('   ✅ Successfully converted to MessageModel');
       debugPrint('🔵 [RemoteDataSource] sendMessage SUCCESS');
-
       return result;
     } catch (e, stackTrace) {
       debugPrint('❌ [RemoteDataSource] sendMessage FAILED');
@@ -52,39 +99,15 @@ class MessageRemoteDataSource {
       debugPrint('   Trip ID: $tripId');
       debugPrint('   Limit: $limit, Offset: $offset');
 
-      final response = await SupabaseClientWrapper.client
-          .from('messages')
-          .select('''
-            *,
-            profiles!messages_sender_id_fkey(
-              full_name,
-              avatar_url
-            )
-          ''')
-          .eq('trip_id', tripId)
-          .eq('is_deleted', false)
-          .order('created_at', ascending: false)
-          .range(offset, offset + limit - 1);
+      final rows = await _queries.findTripMessages(
+        tripId: tripId,
+        limit: limit,
+        offset: offset,
+      );
 
-      debugPrint('   ✅ Retrieved ${(response as List).length} messages');
-
-      // Map response with joined profile data
-      final messages = (response as List).map((json) {
-        // Extract profile data if available
-        final profileData = json['profiles'] as Map<String, dynamic>?;
-        final messageJson = Map<String, dynamic>.from(json);
-
-        // Add sender name and avatar from joined profile
-        if (profileData != null) {
-          messageJson['sender_name'] = profileData['full_name'];
-          messageJson['sender_avatar_url'] = profileData['avatar_url'];
-        }
-
-        // Remove the nested profiles object
-        messageJson.remove('profiles');
-
-        return MessageModel.fromJson(messageJson);
-      }).toList();
+      debugPrint('   ✅ Retrieved ${rows.length} messages');
+      final messages =
+          rows.map((j) => MessageModel.fromJson(_flattenProfile(j))).toList();
 
       debugPrint('🔵 [RemoteDataSource] getTripMessages SUCCESS');
       return messages;
@@ -101,36 +124,14 @@ class MessageRemoteDataSource {
     try {
       debugPrint('🔵 [RemoteDataSource] getMessageById: $messageId');
 
-      final response = await SupabaseClientWrapper.client
-          .from('messages')
-          .select('''
-            *,
-            profiles!messages_sender_id_fkey(
-              full_name,
-              avatar_url
-            )
-          ''')
-          .eq('id', messageId)
-          .maybeSingle();
-
+      final response = await _queries.findMessageById(messageId);
       if (response == null) {
         debugPrint('   ⚠️ Message not found');
         return null;
       }
 
-      // Extract profile data
-      final profileData = response['profiles'] as Map<String, dynamic>?;
-      final messageJson = Map<String, dynamic>.from(response);
-
-      if (profileData != null) {
-        messageJson['sender_name'] = profileData['full_name'];
-        messageJson['sender_avatar_url'] = profileData['avatar_url'];
-      }
-
-      messageJson.remove('profiles');
-
       debugPrint('🔵 [RemoteDataSource] getMessageById SUCCESS');
-      return MessageModel.fromJson(messageJson);
+      return MessageModel.fromJson(_flattenProfile(response));
     } catch (e, stackTrace) {
       debugPrint('❌ [RemoteDataSource] getMessageById FAILED');
       debugPrint('   Exception: $e');
@@ -149,33 +150,13 @@ class MessageRemoteDataSource {
       debugPrint('   Trip ID: $tripId');
       debugPrint('   After: $timestamp');
 
-      final response = await SupabaseClientWrapper.client
-          .from('messages')
-          .select('''
-            *,
-            profiles!messages_sender_id_fkey(
-              full_name,
-              avatar_url
-            )
-          ''')
-          .eq('trip_id', tripId)
-          .eq('is_deleted', false)
-          .gt('created_at', timestamp.toIso8601String())
-          .order('created_at', ascending: false);
+      final rows = await _queries.findMessagesAfter(
+        tripId: tripId,
+        createdAtGt: timestamp.toIso8601String(),
+      );
 
-      final messages = (response as List).map((json) {
-        final profileData = json['profiles'] as Map<String, dynamic>?;
-        final messageJson = Map<String, dynamic>.from(json);
-
-        if (profileData != null) {
-          messageJson['sender_name'] = profileData['full_name'];
-          messageJson['sender_avatar_url'] = profileData['avatar_url'];
-        }
-
-        messageJson.remove('profiles');
-
-        return MessageModel.fromJson(messageJson);
-      }).toList();
+      final messages =
+          rows.map((j) => MessageModel.fromJson(_flattenProfile(j))).toList();
 
       debugPrint('   ✅ Retrieved ${messages.length} new messages');
       debugPrint('🔵 [RemoteDataSource] getMessagesAfter SUCCESS');
@@ -193,32 +174,9 @@ class MessageRemoteDataSource {
     try {
       debugPrint('🔵 [RemoteDataSource] getThreadedReplies: $messageId');
 
-      final response = await SupabaseClientWrapper.client
-          .from('messages')
-          .select('''
-            *,
-            profiles!messages_sender_id_fkey(
-              full_name,
-              avatar_url
-            )
-          ''')
-          .eq('reply_to_id', messageId)
-          .eq('is_deleted', false)
-          .order('created_at', ascending: true);
-
-      final messages = (response as List).map((json) {
-        final profileData = json['profiles'] as Map<String, dynamic>?;
-        final messageJson = Map<String, dynamic>.from(json);
-
-        if (profileData != null) {
-          messageJson['sender_name'] = profileData['full_name'];
-          messageJson['sender_avatar_url'] = profileData['avatar_url'];
-        }
-
-        messageJson.remove('profiles');
-
-        return MessageModel.fromJson(messageJson);
-      }).toList();
+      final rows = await _queries.findThreadedReplies(messageId);
+      final messages =
+          rows.map((j) => MessageModel.fromJson(_flattenProfile(j))).toList();
 
       debugPrint('   ✅ Retrieved ${messages.length} replies');
       debugPrint('🔵 [RemoteDataSource] getThreadedReplies SUCCESS');
@@ -235,12 +193,7 @@ class MessageRemoteDataSource {
   Future<void> deleteMessage(String messageId) async {
     try {
       debugPrint('🔵 [RemoteDataSource] deleteMessage: $messageId');
-
-      await SupabaseClientWrapper.client
-          .from('messages')
-          .update({'is_deleted': true})
-          .eq('id', messageId);
-
+      await _queries.softDeleteMessage(messageId);
       debugPrint('🔵 [RemoteDataSource] deleteMessage SUCCESS');
     } catch (e, stackTrace) {
       debugPrint('❌ [RemoteDataSource] deleteMessage FAILED');
@@ -260,13 +213,9 @@ class MessageRemoteDataSource {
       debugPrint('   Message ID: $messageId');
       debugPrint('   User ID: $userId');
 
-      // Use PostgreSQL array append operator
-      await SupabaseClientWrapper.client.rpc(
-        'mark_message_as_read',
-        params: {
-          'message_id': messageId,
-          'user_id': userId,
-        },
+      await _queries.rpcMarkMessageAsRead(
+        messageId: messageId,
+        userId: userId,
       );
 
       debugPrint('🔵 [RemoteDataSource] markMessageAsRead SUCCESS');
@@ -282,13 +231,10 @@ class MessageRemoteDataSource {
         // Add user to read_by if not already present
         if (!message.readBy.contains(userId)) {
           final updatedReadBy = [...message.readBy, userId];
-
-          await SupabaseClientWrapper.client
-              .from('messages')
-              .update({'read_by': updatedReadBy})
-              .eq('id', messageId);
-
-          debugPrint('🔵 [RemoteDataSource] markMessageAsRead SUCCESS (fallback)');
+          await _queries
+              .updateMessageById(messageId, {'read_by': updatedReadBy});
+          debugPrint(
+              '🔵 [RemoteDataSource] markMessageAsRead SUCCESS (fallback)');
         }
       } catch (e2, stackTrace) {
         debugPrint('❌ [RemoteDataSource] markMessageAsRead FAILED');
@@ -326,15 +272,12 @@ class MessageRemoteDataSource {
         final newReaction = {
           'emoji': emoji,
           'user_id': userId,
-          'created_at': DateTime.now().toIso8601String(),
+          'created_at': _clock().toIso8601String(),
         };
 
         final updatedReactions = [...message.reactions, newReaction];
-
-        await SupabaseClientWrapper.client
-            .from('messages')
-            .update({'reactions': updatedReactions})
-            .eq('id', messageId);
+        await _queries
+            .updateMessageById(messageId, {'reactions': updatedReactions});
 
         debugPrint('🔵 [RemoteDataSource] addReaction SUCCESS');
       } else {
@@ -371,10 +314,8 @@ class MessageRemoteDataSource {
           .where((r) => !(r['user_id'] == userId && r['emoji'] == emoji))
           .toList();
 
-      await SupabaseClientWrapper.client
-          .from('messages')
-          .update({'reactions': updatedReactions})
-          .eq('id', messageId);
+      await _queries
+          .updateMessageById(messageId, {'reactions': updatedReactions});
 
       debugPrint('🔵 [RemoteDataSource] removeReaction SUCCESS');
     } catch (e, stackTrace) {
@@ -385,17 +326,22 @@ class MessageRemoteDataSource {
     }
   }
 
-  /// Subscribe to new messages for a trip (realtime)
+  // ============================================================================
+  // REALTIME (kept on direct Supabase client - not part of queries seam)
+  // ============================================================================
+
+  /// Subscribe to new messages for a trip (realtime).
+  /// Kept as a direct stream subscription — Supabase realtime is not
+  /// modelled by [MessageQueries].
   Stream<MessageModel> subscribeToTripMessages(String tripId) {
     debugPrint('🔵 [RemoteDataSource] subscribeToTripMessages: $tripId');
 
-    return SupabaseClientWrapper.client
+    return _client
         .from('messages')
         .stream(primaryKey: ['id'])
         .order('created_at', ascending: false)
         .map((data) {
           debugPrint('   📡 Received realtime message update');
-          // Filter for trip_id and is_deleted in the map operation
           return data.where((message) =>
             message['trip_id'] == tripId &&
             (message['is_deleted'] == false || message['is_deleted'] == null)
@@ -404,11 +350,12 @@ class MessageRemoteDataSource {
         .expand((messages) => messages);
   }
 
-  /// Subscribe to message updates (reactions, read status, etc.)
+  /// Subscribe to message updates (reactions, read status, etc.).
+  /// Kept as a direct stream subscription.
   Stream<MessageModel> subscribeToMessageUpdates(String messageId) {
     debugPrint('🔵 [RemoteDataSource] subscribeToMessageUpdates: $messageId');
 
-    return SupabaseClientWrapper.client
+    return _client
         .from('messages')
         .stream(primaryKey: ['id'])
         .eq('id', messageId)
@@ -428,9 +375,7 @@ class MessageRemoteDataSource {
       debugPrint('🔵 [RemoteDataSource] queueMessage');
       debugPrint('   Queue ID: ${queuedMessage.id}');
 
-      await SupabaseClientWrapper.client
-          .from('message_queue')
-          .insert(queuedMessage.toJson());
+      await _queries.insertQueuedMessage(queuedMessage.toJson());
 
       debugPrint('🔵 [RemoteDataSource] queueMessage SUCCESS');
     } catch (e, stackTrace) {
@@ -446,15 +391,9 @@ class MessageRemoteDataSource {
     try {
       debugPrint('🔵 [RemoteDataSource] getPendingMessages');
 
-      final response = await SupabaseClientWrapper.client
-          .from('message_queue')
-          .select()
-          .inFilter('sync_status', ['pending', 'failed'])
-          .order('created_at', ascending: true);
-
-      final messages = (response as List)
-          .map((json) => QueuedMessageModel.fromJson(json))
-          .toList();
+      final rows = await _queries.findPendingQueuedMessages();
+      final messages =
+          rows.map((json) => QueuedMessageModel.fromJson(json)).toList();
 
       debugPrint('   ✅ Retrieved ${messages.length} pending messages');
       debugPrint('🔵 [RemoteDataSource] getPendingMessages SUCCESS');
@@ -478,14 +417,11 @@ class MessageRemoteDataSource {
       debugPrint('   Queue ID: $queueId');
       debugPrint('   Status: $status');
 
-      await SupabaseClientWrapper.client
-          .from('message_queue')
-          .update({
-            'sync_status': status,
-            'last_attempt_at': DateTime.now().toIso8601String(),
-            'error_message': errorMessage,
-          })
-          .eq('id', queueId);
+      await _queries.updateQueuedMessageById(queueId, {
+        'sync_status': status,
+        'last_attempt_at': _clock().toIso8601String(),
+        'error_message': errorMessage,
+      });
 
       debugPrint('🔵 [RemoteDataSource] updateQueueStatus SUCCESS');
     } catch (e, stackTrace) {
@@ -500,12 +436,7 @@ class MessageRemoteDataSource {
   Future<void> removeFromQueue(String queueId) async {
     try {
       debugPrint('🔵 [RemoteDataSource] removeFromQueue: $queueId');
-
-      await SupabaseClientWrapper.client
-          .from('message_queue')
-          .delete()
-          .eq('id', queueId);
-
+      await _queries.deleteQueuedMessageById(queueId);
       debugPrint('🔵 [RemoteDataSource] removeFromQueue SUCCESS');
     } catch (e, stackTrace) {
       debugPrint('❌ [RemoteDataSource] removeFromQueue FAILED');
