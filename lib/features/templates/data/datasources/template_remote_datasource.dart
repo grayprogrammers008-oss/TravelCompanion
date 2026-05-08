@@ -1,16 +1,29 @@
 // Template Remote Data Source
 //
 // Handles Supabase operations for trip templates and AI usage.
+//
+// All Supabase chain calls are routed through [TemplateQueries] so the
+// datasource itself can be unit-tested with a fake. The default constructor
+// wires up the production [TemplateQueriesImpl]; tests inject a fake.
 
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/trip_template.dart';
 import '../../domain/entities/ai_usage.dart';
+import 'template_queries.dart';
 
 class TemplateRemoteDataSource {
-  final SupabaseClient _client;
+  TemplateRemoteDataSource(
+    SupabaseClient client, {
+    TemplateQueries? queries,
+  })  : _client = client,
+        _queries = queries ?? TemplateQueriesImpl(client);
 
-  TemplateRemoteDataSource(this._client);
+  // Kept for backward compatibility with code that constructs this DS by
+  // passing a SupabaseClient. Production code does not read it directly.
+  // ignore: unused_field
+  final SupabaseClient _client;
+  final TemplateQueries _queries;
 
   // =====================================================
   // TRIP TEMPLATES
@@ -27,85 +40,34 @@ class TemplateRemoteDataSource {
     int limit = 50,
     int offset = 0,
   }) async {
-    var query = _client
-        .from('trip_templates')
-        .select()
-        .eq('is_active', true);
-
-    if (category != null) {
-      query = query.eq('category', category.name);
-    }
-
-    if (minDays != null) {
-      query = query.gte('duration_days', minDays);
-    }
-
-    if (maxDays != null) {
-      query = query.lte('duration_days', maxDays);
-    }
-
-    if (maxBudget != null) {
-      query = query.or('budget_min.is.null,budget_min.lte.$maxBudget');
-    }
-
-    if (featuredOnly == true) {
-      query = query.eq('is_featured', true);
-    }
-
-    if (search != null && search.isNotEmpty) {
-      query = query.or(
-        'name.ilike.%$search%,destination.ilike.%$search%,description.ilike.%$search%',
-      );
-    }
-
-    final response = await query
-        .order('is_featured', ascending: false)
-        .order('use_count', ascending: false)
-        .range(offset, offset + limit - 1);
-
-    return (response as List)
-        .map((e) => TripTemplate.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final rows = await _queries.getTemplates(
+      category: category?.name,
+      minDays: minDays,
+      maxDays: maxDays,
+      maxBudget: maxBudget,
+      featuredOnly: featuredOnly,
+      search: search,
+      limit: limit,
+      offset: offset,
+    );
+    return rows.map(TripTemplate.fromJson).toList();
   }
 
   /// Get featured templates for home page
   Future<List<TripTemplate>> getFeaturedTemplates({int limit = 5}) async {
-    final response = await _client
-        .from('trip_templates')
-        .select()
-        .eq('is_active', true)
-        .eq('is_featured', true)
-        .order('use_count', ascending: false)
-        .limit(limit);
-
-    return (response as List)
-        .map((e) => TripTemplate.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final rows = await _queries.getFeaturedTemplates(limit: limit);
+    return rows.map(TripTemplate.fromJson).toList();
   }
 
   /// Get popular templates
   Future<List<TripTemplate>> getPopularTemplates({int limit = 10}) async {
-    final response = await _client
-        .from('trip_templates')
-        .select()
-        .eq('is_active', true)
-        .order('use_count', ascending: false)
-        .limit(limit);
-
-    return (response as List)
-        .map((e) => TripTemplate.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final rows = await _queries.getPopularTemplates(limit: limit);
+    return rows.map(TripTemplate.fromJson).toList();
   }
 
   /// Get a single template by ID
   Future<TripTemplate?> getTemplateById(String templateId) async {
-    final response = await _client
-        .from('trip_templates')
-        .select()
-        .eq('id', templateId)
-        .eq('is_active', true)
-        .maybeSingle();
-
+    final response = await _queries.getTemplateById(templateId);
     if (response == null) return null;
     return TripTemplate.fromJson(response);
   }
@@ -115,29 +77,18 @@ class TemplateRemoteDataSource {
     final template = await getTemplateById(templateId);
     if (template == null) return null;
 
-    // Get itinerary items
-    final itineraryResponse = await _client
-        .from('template_itinerary_items')
-        .select()
-        .eq('template_id', templateId)
-        .order('day_number')
-        .order('order_index');
+    final itineraryRows =
+        await _queries.getTemplateItineraryItems(templateId);
+    final itineraryItems =
+        itineraryRows.map(TemplateItineraryItem.fromJson).toList();
 
-    final itineraryItems = (itineraryResponse as List)
-        .map((e) => TemplateItineraryItem.fromJson(e as Map<String, dynamic>))
-        .toList();
-
-    // Get checklists with items
-    final checklistsResponse = await _client
-        .from('template_checklists')
-        .select('*, template_checklist_items(*)')
-        .eq('template_id', templateId)
-        .order('order_index');
-
-    final checklists = (checklistsResponse as List).map((e) {
-      final json = e as Map<String, dynamic>;
+    final checklistRows =
+        await _queries.getTemplateChecklistsWithItems(templateId);
+    final checklists = checklistRows.map((row) {
+      final json = Map<String, dynamic>.from(row);
       final items = (json['template_checklist_items'] as List?)
-          ?.map((i) => TemplateChecklistItem.fromJson(i as Map<String, dynamic>))
+          ?.map((i) =>
+              TemplateChecklistItem.fromJson(Map<String, dynamic>.from(i as Map)))
           .toList();
       json.remove('template_checklist_items');
       return TemplateChecklist.fromJson(json).copyWith(items: items);
@@ -154,17 +105,11 @@ class TemplateRemoteDataSource {
     TemplateCategory category, {
     int limit = 20,
   }) async {
-    final response = await _client
-        .from('trip_templates')
-        .select()
-        .eq('is_active', true)
-        .eq('category', category.name)
-        .order('use_count', ascending: false)
-        .limit(limit);
-
-    return (response as List)
-        .map((e) => TripTemplate.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final rows = await _queries.getTemplatesByCategory(
+      category.name,
+      limit: limit,
+    );
+    return rows.map(TripTemplate.fromJson).toList();
   }
 
   /// Apply template to a trip
@@ -179,16 +124,14 @@ class TemplateRemoteDataSource {
     debugPrint('   userId: $userId');
 
     try {
-      final response = await _client.rpc(
-        'apply_template_to_trip',
-        params: {
-          'p_template_id': templateId,
-          'p_trip_id': tripId,
-          'p_user_id': userId,
-        },
+      final response = await _queries.applyTemplateToTripRpc(
+        templateId: templateId,
+        tripId: tripId,
+        userId: userId,
       );
 
-      debugPrint('📋 DataSource: RPC response = $response (type: ${response.runtimeType})');
+      debugPrint(
+          '📋 DataSource: RPC response = $response (type: ${response.runtimeType})');
       return response == true;
     } catch (e, stack) {
       debugPrint('❌ DataSource: RPC error: $e');
@@ -199,10 +142,7 @@ class TemplateRemoteDataSource {
 
   /// Increment template use count
   Future<void> incrementTemplateUseCount(String templateId) async {
-    await _client.rpc(
-      'increment_template_use_count',
-      params: {'p_template_id': templateId},
-    );
+    await _queries.incrementTemplateUseCountRpc(templateId);
   }
 
   // =====================================================
@@ -211,21 +151,14 @@ class TemplateRemoteDataSource {
 
   /// Get or create user AI usage record
   Future<UserAiUsage> getOrCreateAiUsage(String userId) async {
-    final response = await _client.rpc(
-      'get_or_create_ai_usage',
-      params: {'p_user_id': userId},
-    );
-
-    return UserAiUsage.fromJson(response as Map<String, dynamic>);
+    final response = await _queries.getOrCreateAiUsageRpc(userId);
+    return UserAiUsage.fromJson(response);
   }
 
   /// Check if user can generate AI itinerary
   Future<bool> canGenerateAiItinerary(String userId) async {
     try {
-      final response = await _client.rpc(
-        'can_generate_ai_itinerary',
-        params: {'p_user_id': userId},
-      );
+      final response = await _queries.canGenerateAiItineraryRpc(userId);
       return response == true;
     } catch (e) {
       // If function doesn't exist or any error, allow generation
@@ -237,10 +170,7 @@ class TemplateRemoteDataSource {
   /// Get remaining AI generations
   Future<int> getRemainingAiGenerations(String userId) async {
     try {
-      final response = await _client.rpc(
-        'get_remaining_ai_generations',
-        params: {'p_user_id': userId},
-      );
+      final response = await _queries.getRemainingAiGenerationsRpc(userId);
       return response as int;
     } catch (e) {
       // If function doesn't exist, return 5 (default free tier)
@@ -251,12 +181,8 @@ class TemplateRemoteDataSource {
 
   /// Increment AI usage after generation
   Future<UserAiUsage> incrementAiUsage(String userId) async {
-    final response = await _client.rpc(
-      'increment_ai_usage',
-      params: {'p_user_id': userId},
-    );
-
-    return UserAiUsage.fromJson(response as Map<String, dynamic>);
+    final response = await _queries.incrementAiUsageRpc(userId);
+    return UserAiUsage.fromJson(response);
   }
 
   /// Log AI generation for analytics
@@ -271,7 +197,7 @@ class TemplateRemoteDataSource {
     bool wasSuccessful = true,
     String? errorMessage,
   }) async {
-    await _client.from('ai_generation_logs').insert({
+    await _queries.insertAiGenerationLog({
       'user_id': userId,
       'destination': destination,
       'duration_days': durationDays,
@@ -289,16 +215,8 @@ class TemplateRemoteDataSource {
     String userId, {
     int limit = 20,
   }) async {
-    final response = await _client
-        .from('ai_generation_logs')
-        .select()
-        .eq('user_id', userId)
-        .order('created_at', ascending: false)
-        .limit(limit);
-
-    return (response as List)
-        .map((e) => AiGenerationLog.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final rows = await _queries.getAiGenerationHistory(userId, limit: limit);
+    return rows.map(AiGenerationLog.fromJson).toList();
   }
 }
 
