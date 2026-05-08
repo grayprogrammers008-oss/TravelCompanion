@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -22,6 +23,44 @@ class PdfExportService {
   static const _borderColor = PdfColors.grey300;
   static const _bgColor = PdfColors.grey50;
 
+  /// Build the PDF document bytes for a trip. Extracted from [exportTrip]
+  /// so unit tests can exercise the document construction without touching
+  /// platform IO (file writes, share sheets, etc.).
+  @visibleForTesting
+  static Future<Uint8List> buildTripPdfBytes({
+    required TripModel trip,
+    required List<TripMemberModel> members,
+    List<ChecklistWithItemsEntity>? checklists,
+    List<ItineraryItemEntity>? itinerary,
+  }) async {
+    final pdf = pw.Document();
+
+    final sections = <pw.Widget>[];
+    sections.add(_buildHeroSection(trip, members));
+    sections.add(pw.SizedBox(height: 24));
+    sections.add(_buildQuickStats(trip, itinerary, checklists));
+    sections.add(pw.SizedBox(height: 24));
+
+    if (itinerary != null && itinerary.isNotEmpty) {
+      sections.add(_buildItinerarySection(itinerary, trip.startDate));
+      sections.add(pw.SizedBox(height: 24));
+    }
+    if (checklists != null && checklists.isNotEmpty) {
+      sections.add(_buildChecklistsSection(checklists));
+    }
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        header: (context) => _buildHeader(trip, context),
+        footer: (context) => _buildFooter(context),
+        build: (context) => sections,
+      ),
+    );
+    return pdf.save();
+  }
+
   /// Generate and share/print a trip PDF
   static Future<void> exportTrip({
     required BuildContext context,
@@ -43,52 +82,13 @@ class PdfExportService {
         : const Rect.fromLTWH(0, 0, 100, 100);
 
     try {
-      final pdf = pw.Document();
-      debugPrint('📄 PDF Export: Document created');
-
-      // Build sections
-      final sections = <pw.Widget>[];
-
-      // Hero section with trip overview
-      sections.add(_buildHeroSection(trip, members));
-      sections.add(pw.SizedBox(height: 24));
-
-      // Quick stats row (simplified - no expenses)
-      sections.add(_buildQuickStats(trip, itinerary, checklists));
-      sections.add(pw.SizedBox(height: 24));
-
-      // Add itinerary if available
-      if (itinerary != null && itinerary.isNotEmpty) {
-        debugPrint('📄 PDF Export: Adding itinerary section (${itinerary.length} items)');
-        sections.add(_buildItinerarySection(itinerary, trip.startDate));
-        sections.add(pw.SizedBox(height: 24));
-      } else {
-        debugPrint('📄 PDF Export: Skipping itinerary - null: ${itinerary == null}, empty: ${itinerary?.isEmpty}');
-      }
-
-      // Add checklists if available
-      if (checklists != null && checklists.isNotEmpty) {
-        debugPrint('📄 PDF Export: Adding checklists section (${checklists.length} items)');
-        sections.add(_buildChecklistsSection(checklists));
-      } else {
-        debugPrint('📄 PDF Export: Skipping checklists - null: ${checklists == null}, empty: ${checklists?.isEmpty}');
-      }
-
-      // Add pages
-      pdf.addPage(
-        pw.MultiPage(
-          pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(32),
-          header: (context) => _buildHeader(trip, context),
-          footer: (context) => _buildFooter(context),
-          build: (context) => sections,
-        ),
-      );
-      debugPrint('📄 PDF Export: Pages added with ${sections.length} sections');
-
-      // Generate PDF bytes
       debugPrint('📄 PDF Export: Generating PDF bytes...');
-      final bytes = await pdf.save();
+      final bytes = await buildTripPdfBytes(
+        trip: trip,
+        members: members,
+        checklists: checklists,
+        itinerary: itinerary,
+      );
       debugPrint('📄 PDF Export: PDF bytes generated: ${bytes.length}');
 
       // Save to temp file and share

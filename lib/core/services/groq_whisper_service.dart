@@ -40,6 +40,22 @@ class WhisperTranscriptionResult {
   }
 }
 
+/// HTTP sender abstraction so [GroqWhisperService] can be unit-tested.
+/// The default implementation just executes the multipart request via
+/// `package:http` directly.
+abstract class WhisperHttpSender {
+  Future<http.Response> send(http.MultipartRequest request);
+}
+
+class _DefaultWhisperHttpSender implements WhisperHttpSender {
+  const _DefaultWhisperHttpSender();
+  @override
+  Future<http.Response> send(http.MultipartRequest request) async {
+    final streamed = await request.send();
+    return http.Response.fromStream(streamed);
+  }
+}
+
 /// Groq Whisper Service for multilingual speech-to-text
 class GroqWhisperService {
   static const String _baseUrl = 'https://api.groq.com/openai/v1/audio/transcriptions';
@@ -72,8 +88,13 @@ class GroqWhisperService {
 
   final String _apiKey;
   final bool useFullModelForIndianLanguages;
+  final WhisperHttpSender _httpSender;
 
-  GroqWhisperService(this._apiKey, {this.useFullModelForIndianLanguages = true});
+  GroqWhisperService(
+    this._apiKey, {
+    this.useFullModelForIndianLanguages = true,
+    WhisperHttpSender? httpSender,
+  }) : _httpSender = httpSender ?? const _DefaultWhisperHttpSender();
 
   /// Get the appropriate model based on language
   String _getModelForLanguage(String? language) {
@@ -203,8 +224,7 @@ class GroqWhisperService {
       debugPrint('═══════════════════════════════════════════════════════');
 
       debugPrint('🌐 Sending request to Groq Whisper API...');
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
+      final response = await _httpSender.send(request);
 
       debugPrint('📥 Response status: ${response.statusCode}');
 

@@ -3,6 +3,36 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import '../config/supabase_config.dart';
 
+/// Minimal HTTP client interface so [EmailService] can be unit-tested
+/// without making real network calls. The real implementation just delegates
+/// to `package:http`'s top-level functions.
+abstract class EmailHttpClient {
+  Future<http.Response> get(Uri url, {Map<String, String>? headers});
+  Future<http.Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  });
+}
+
+class _DefaultEmailHttpClient implements EmailHttpClient {
+  const _DefaultEmailHttpClient();
+
+  @override
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) {
+    return http.get(url, headers: headers);
+  }
+
+  @override
+  Future<http.Response> post(
+    Uri url, {
+    Map<String, String>? headers,
+    Object? body,
+  }) {
+    return http.post(url, headers: headers, body: body);
+  }
+}
+
 /// Email service using Brevo (SendinBlue) API for sending trip invitations and notifications
 ///
 /// Usage:
@@ -19,18 +49,36 @@ import '../config/supabase_config.dart';
 class EmailService {
   static final EmailService _instance = EmailService._internal();
   factory EmailService() => _instance;
-  EmailService._internal();
+  EmailService._internal()
+      : _httpClient = const _DefaultEmailHttpClient(),
+        _apiKey = SupabaseConfig.brevoApiKey,
+        _senderEmail = SupabaseConfig.brevoSenderEmail,
+        _senderName = SupabaseConfig.brevoSenderName;
+
+  /// Test-only constructor that allows injecting an HTTP client and
+  /// overriding configuration. Not for production use.
+  @visibleForTesting
+  EmailService.test({
+    required EmailHttpClient httpClient,
+    String apiKey = 'test-api-key',
+    String senderEmail = 'test@example.com',
+    String senderName = 'Test Sender',
+  })  : _httpClient = httpClient,
+        _apiKey = apiKey,
+        _senderEmail = senderEmail,
+        _senderName = senderName;
 
   static const String _brevoApiUrl = 'https://api.brevo.com/v3';
 
-  final String _apiKey = SupabaseConfig.brevoApiKey;
-  final String _senderEmail = SupabaseConfig.brevoSenderEmail;
-  final String _senderName = SupabaseConfig.brevoSenderName;
+  final EmailHttpClient _httpClient;
+  final String _apiKey;
+  final String _senderEmail;
+  final String _senderName;
 
   /// Test the Brevo API connection
   Future<bool> testConnection() async {
     try {
-      final response = await http.get(
+      final response = await _httpClient.get(
         Uri.parse('$_brevoApiUrl/account'),
         headers: {
           'api-key': _apiKey,
@@ -94,7 +142,7 @@ class EmailService {
       );
 
       // Send via Brevo API
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$_brevoApiUrl/smtp/email'),
         headers: {
           'api-key': _apiKey,
@@ -149,7 +197,7 @@ class EmailService {
     String? toName,
   }) async {
     try {
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$_brevoApiUrl/smtp/email'),
         headers: {
           'api-key': _apiKey,
@@ -203,7 +251,7 @@ class EmailService {
     try {
       final recipients = toEmails.map((email) => {'email': email}).toList();
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$_brevoApiUrl/smtp/email'),
         headers: {
           'api-key': _apiKey,

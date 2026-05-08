@@ -18,6 +18,15 @@ class RealtimeService {
     _setupAuthListener();
   }
 
+  /// Test-only constructor that lets a test inject its own client and skip
+  /// the auth listener wiring (which would otherwise fire on first use).
+  @visibleForTesting
+  RealtimeService.withClient(this._client, {bool wireAuthListener = false}) {
+    if (wireAuthListener) {
+      _setupAuthListener();
+    }
+  }
+
   /// Setup auth state listener to handle token refresh and reconnection
   void _setupAuthListener() {
     _authSubscription = _client.auth.onAuthStateChange.listen((data) {
