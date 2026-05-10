@@ -2,10 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../models/user_model.dart';
+import 'auth_queries.dart';
 
-/// Remote data source for authentication using Supabase
+/// Remote data source for authentication using Supabase.
+///
+/// All Supabase profile chain calls and `auth` calls live behind
+/// [AuthQueries] so the datasource itself can be exercised by unit tests.
+/// The default constructor wires up the production [AuthQueriesImpl];
+/// tests inject a fake.
 class AuthRemoteDataSource {
-  final SupabaseClient _client = SupabaseClientWrapper.client;
+  AuthRemoteDataSource({SupabaseClient? supabase, AuthQueries? queries})
+      : _queries = queries ??
+            AuthQueriesImpl(supabase ?? SupabaseClientWrapper.client);
+
+  final AuthQueries _queries;
 
   /// Sign up with email and password
   Future<UserModel> signUp({
@@ -16,7 +26,7 @@ class AuthRemoteDataSource {
   }) async {
     try {
       // Sign up with Supabase Auth
-      final response = await _client.auth.signUp(
+      final response = await _queries.authSignUp(
         email: email,
         password: password,
         data: {
@@ -38,11 +48,7 @@ class AuthRemoteDataSource {
         await Future.delayed(Duration(milliseconds: 500 * (retryCount + 1)));
 
         try {
-          profileData = await _client
-              .from('profiles')
-              .select()
-              .eq('id', response.user!.id)
-              .maybeSingle();
+          profileData = await _queries.getProfileById(response.user!.id);
         } catch (e) {
           debugPrint('🔄 Retry $retryCount: Profile not ready yet - $e');
         }
@@ -54,7 +60,7 @@ class AuthRemoteDataSource {
       if (profileData == null) {
         debugPrint('⚠️ Trigger did not create profile, creating manually...');
         try {
-          await _client.from('profiles').insert({
+          await _queries.insertProfile({
             'id': response.user!.id,
             'email': response.user!.email,
             'full_name': fullName,
@@ -62,18 +68,15 @@ class AuthRemoteDataSource {
             'updated_at': DateTime.now().toIso8601String(),
           });
 
-          profileData = await _client
-              .from('profiles')
-              .select()
-              .eq('id', response.user!.id)
-              .maybeSingle();
+          profileData = await _queries.getProfileById(response.user!.id);
         } catch (e) {
           debugPrint('❌ Manual profile creation failed: $e');
         }
       }
 
       if (profileData == null) {
-        throw Exception('Sign up failed: Profile creation failed. Please try logging in.');
+        throw Exception(
+            'Sign up failed: Profile creation failed. Please try logging in.');
       }
 
       return UserModel.fromJson(profileData);
@@ -90,7 +93,7 @@ class AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      final response = await _client.auth.signInWithPassword(
+      final response = await _queries.authSignIn(
         email: email,
         password: password,
       );
@@ -100,14 +103,11 @@ class AuthRemoteDataSource {
       }
 
       // Fetch user profile
-      final profileData = await _client
-          .from('profiles')
-          .select()
-          .eq('id', response.user!.id)
-          .maybeSingle();
+      final profileData = await _queries.getProfileById(response.user!.id);
 
       if (profileData == null) {
-        throw Exception('Sign in failed: User profile not found. Please contact support.');
+        throw Exception(
+            'Sign in failed: User profile not found. Please contact support.');
       }
 
       return UserModel.fromJson(profileData);
@@ -152,7 +152,7 @@ Original error: ${e.message}''';
   /// Sign out
   Future<void> signOut() async {
     try {
-      await _client.auth.signOut();
+      await _queries.authSignOut();
     } catch (e) {
       throw Exception('Sign out failed: $e');
     }
@@ -161,14 +161,10 @@ Original error: ${e.message}''';
   /// Get current user
   Future<UserModel?> getCurrentUser() async {
     try {
-      final user = _client.auth.currentUser;
+      final user = _queries.currentUser;
       if (user == null) return null;
 
-      final profileData = await _client
-          .from('profiles')
-          .select()
-          .eq('id', user.id)
-          .maybeSingle();
+      final profileData = await _queries.getProfileById(user.id);
 
       if (profileData == null) return null;
 
@@ -179,9 +175,7 @@ Original error: ${e.message}''';
   }
 
   /// Get auth state changes stream
-  Stream<User?> get authStateChanges {
-    return _client.auth.onAuthStateChange.map((event) => event.session?.user);
-  }
+  Stream<User?> get authStateChanges => _queries.authStateChanges;
 
   /// Update user profile
   Future<UserModel> updateProfile({
@@ -201,12 +195,7 @@ Original error: ${e.message}''';
       if (avatarUrl != null) updates['avatar_url'] = avatarUrl;
       if (bio != null) updates['bio'] = bio;
 
-      final profileData = await _client
-          .from('profiles')
-          .update(updates)
-          .eq('id', userId)
-          .select()
-          .maybeSingle();
+      final profileData = await _queries.updateProfileById(userId, updates);
 
       if (profileData == null) {
         throw Exception('Update profile failed: Profile not found');
@@ -236,7 +225,7 @@ Original error: ${e.message}''';
       debugPrint('🔐 [ResetPassword] Redirect URL: $redirectUrl');
       debugPrint('🔐 [ResetPassword] Sending reset email via Supabase...');
 
-      await _client.auth.resetPasswordForEmail(
+      await _queries.authResetPasswordForEmail(
         email,
         redirectTo: redirectUrl,
       );
@@ -270,7 +259,7 @@ Original error: ${e.message}''';
     print('🔐 [ChangePassword] Starting password change process...');
 
     try {
-      final user = _client.auth.currentUser;
+      final user = _queries.currentUser;
       if (user == null) {
         print('❌ [ChangePassword] Error: No user logged in');
         throw Exception('No user logged in');
@@ -284,11 +273,12 @@ Original error: ${e.message}''';
       }
 
       print('🔐 [ChangePassword] User: $email');
-      print('🔐 [ChangePassword] Step 1: Verifying current password via re-authentication...');
+      print(
+          '🔐 [ChangePassword] Step 1: Verifying current password via re-authentication...');
 
       // Step 1: Verify current password by attempting to re-authenticate
       try {
-        final verificationResponse = await _client.auth.signInWithPassword(
+        final verificationResponse = await _queries.authSignIn(
           email: email,
           password: currentPassword,
         );
@@ -319,11 +309,7 @@ Original error: ${e.message}''';
       print('🔐 [ChangePassword] Step 2: Updating to new password...');
 
       // Step 2: Current password verified, now update to new password
-      final response = await _client.auth.updateUser(
-        UserAttributes(
-          password: newPassword,
-        ),
-      );
+      final response = await _queries.authUpdatePassword(newPassword);
 
       if (response.user == null) {
         print('❌ [ChangePassword] Password update returned null user');
@@ -352,9 +338,7 @@ Original error: ${e.message}''';
       print('🔐 [UpdatePassword] Updating password via reset link...');
 
       // User is already authenticated via the access token from the reset link
-      final response = await _client.auth.updateUser(
-        UserAttributes(password: newPassword),
-      );
+      final response = await _queries.authUpdatePassword(newPassword);
 
       if (response.user == null) {
         print('❌ [UpdatePassword] Update returned null user');
@@ -385,23 +369,19 @@ Original error: ${e.message}''';
       print('🔐 [VerifyOTP] Token: ${token.substring(0, 8)}...');
 
       // Step 1: Verify the OTP token (this will authenticate the user)
-      final verifyResponse = await _client.auth.verifyOTP(
-        type: OtpType.recovery,
-        token: token,
-      );
+      final verifyResponse = await _queries.authVerifyOtpRecovery(token);
 
       if (verifyResponse.user == null) {
         print('❌ [VerifyOTP] Token verification failed - no user returned');
-        throw Exception('Invalid or expired reset link. Please request a new one.');
+        throw Exception(
+            'Invalid or expired reset link. Please request a new one.');
       }
 
       print('✅ [VerifyOTP] Step 1 SUCCESS: Token verified, user authenticated');
       print('🔐 [VerifyOTP] Step 2: Updating password...');
 
       // Step 2: Update the password (user is now authenticated)
-      final updateResponse = await _client.auth.updateUser(
-        UserAttributes(password: newPassword),
-      );
+      final updateResponse = await _queries.authUpdatePassword(newPassword);
 
       if (updateResponse.user == null) {
         print('❌ [VerifyOTP] Password update failed - no user returned');
@@ -416,7 +396,8 @@ Original error: ${e.message}''';
       // Provide user-friendly error messages
       if (e.message.toLowerCase().contains('invalid') ||
           e.message.toLowerCase().contains('expired')) {
-        throw Exception('Invalid or expired reset link. Please request a new password reset email.');
+        throw Exception(
+            'Invalid or expired reset link. Please request a new password reset email.');
       } else if (e.message.toLowerCase().contains('weak')) {
         throw Exception('Password is too weak. Please use a stronger password.');
       }
@@ -435,5 +416,5 @@ Original error: ${e.message}''';
   }
 
   /// Check if user is authenticated
-  bool get isAuthenticated => _client.auth.currentUser != null;
+  bool get isAuthenticated => _queries.currentUser != null;
 }
