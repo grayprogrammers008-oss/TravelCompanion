@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
 
 void main() {
   group('UserRole', () {

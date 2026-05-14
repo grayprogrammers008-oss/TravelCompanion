@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/checklists/data/datasources/checklist_queries.dart';
-import 'package:travel_crew/features/checklists/data/datasources/checklist_remote_datasource.dart';
-import 'package:travel_crew/shared/models/checklist_model.dart';
+import 'package:pathio/features/checklists/data/datasources/checklist_queries.dart';
+import 'package:pathio/features/checklists/data/datasources/checklist_remote_datasource.dart';
+import 'package:pathio/shared/models/checklist_model.dart';
 
 /// Comprehensive unit tests for [ChecklistRemoteDataSource].
 ///

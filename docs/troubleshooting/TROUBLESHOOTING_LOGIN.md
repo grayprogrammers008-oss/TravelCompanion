@@ -1,4 +1,4 @@
-# 🔧 Login Troubleshooting Guide - Travel Crew
+# 🔧 Login Troubleshooting Guide - Pathio
 
 ## Issue: "Invalid email and password" for Remote Collaborators
 

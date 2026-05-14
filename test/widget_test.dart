@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('Basic smoke test - Math operations', () {
     expect(2 + 2, equals(4));
-    expect('Travel Crew', isNotEmpty);
+    expect('Pathio', isNotEmpty);
   });
 
   // Widget tests are commented out due to async timer issues in the router
@@ -18,7 +18,7 @@ void main() {
 
   /*
   testWidgets('App initializes smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: TravelCrewApp()));
+    await tester.pumpWidget(const ProviderScope(child: PathioApp()));
     expect(find.byType(MaterialApp), findsOneWidget);
   });
   */

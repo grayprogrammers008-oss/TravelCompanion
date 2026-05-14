@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/widgets/ai_sphere_animation.dart';
+import 'package:pathio/core/widgets/ai_sphere_animation.dart';
 
 import 'test_helpers.dart';
 

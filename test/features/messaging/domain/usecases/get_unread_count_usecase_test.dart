@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/messaging/domain/repositories/message_repository.dart';
-import 'package:travel_crew/features/messaging/domain/usecases/get_unread_count_usecase.dart';
+import 'package:pathio/features/messaging/domain/repositories/message_repository.dart';
+import 'package:pathio/features/messaging/domain/usecases/get_unread_count_usecase.dart';
 
 import 'get_unread_count_usecase_test.mocks.dart';
 

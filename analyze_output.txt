@@ -457,14 +457,14 @@ warning • The declaration 'getSupabaseAuthState' isn't referenced • lib/test
    info • Don't invoke 'print' in production code • reset_password_helper.dart:184:5 • avoid_print
    info • Don't invoke 'print' in production code • reset_password_helper.dart:185:5 • avoid_print
    info • Don't invoke 'print' in production code • reset_password_helper.dart:186:5 • avoid_print
-  error • Target of URI doesn't exist: 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/e2e/settings_navigation_e2e_test.dart:5:8 • uri_does_not_exist
+  error • Target of URI doesn't exist: 'package:pathio/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/e2e/settings_navigation_e2e_test.dart:5:8 • uri_does_not_exist
   error • Undefined class 'AuthLocalDataSource' • test/features/settings/e2e/settings_navigation_e2e_test.dart:15:10 • undefined_class
   error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/e2e/settings_navigation_e2e_test.dart:19:28 • undefined_function
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:35:13 • undefined_identifier
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:139:13 • undefined_identifier
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:237:13 • undefined_identifier
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/e2e/settings_navigation_e2e_test.dart:302:13 • undefined_identifier
-  error • Target of URI doesn't exist: 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:5:8 • uri_does_not_exist
+  error • Target of URI doesn't exist: 'package:pathio/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:5:8 • uri_does_not_exist
   error • Undefined class 'AuthLocalDataSource' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:12:10 • undefined_class
   error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:19:28 • undefined_function
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:34:13 • undefined_identifier
@@ -484,7 +484,7 @@ warning • The declaration 'getSupabaseAuthState' isn't referenced • lib/test
   error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:383:28 • undefined_function
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:400:13 • undefined_identifier
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_enhanced_test.dart:426:13 • undefined_identifier
-  error • Target of URI doesn't exist: 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/presentation/pages/settings_page_test.dart:4:8 • uri_does_not_exist
+  error • Target of URI doesn't exist: 'package:pathio/features/auth/data/datasources/auth_local_datasource.dart' • test/features/settings/presentation/pages/settings_page_test.dart:4:8 • uri_does_not_exist
   error • Undefined class 'AuthLocalDataSource' • test/features/settings/presentation/pages/settings_page_test.dart:11:10 • undefined_class
   error • The function 'AuthLocalDataSource' isn't defined • test/features/settings/presentation/pages/settings_page_test.dart:14:28 • undefined_function
   error • Undefined name 'authLocalDataSourceProvider' • test/features/settings/presentation/pages/settings_page_test.dart:22:13 • undefined_identifier

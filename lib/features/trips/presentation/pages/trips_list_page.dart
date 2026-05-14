@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/animations/animation_constants.dart';
-import 'package:travel_crew/core/animations/animated_widgets.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/core/router/app_router.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/animations/animation_constants.dart';
+import 'package:pathio/core/animations/animated_widgets.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/core/router/app_router.dart';
 import '../../../../shared/models/trip_model.dart';
-import 'package:travel_crew/core/utils/extensions.dart';
-import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
+import 'package:pathio/core/utils/extensions.dart';
+import 'package:pathio/core/widgets/app_loading_indicator.dart';
 
 /// Main page showing list of user's trips
 class TripsListPage extends ConsumerStatefulWidget {

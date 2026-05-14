@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/core/services/place_search_service.dart';
-import 'package:travel_crew/core/widgets/place_search_delegate.dart';
+import 'package:pathio/core/services/place_search_service.dart';
+import 'package:pathio/core/widgets/place_search_delegate.dart';
 
 /// Widget tests for [PlaceSearchDelegate].
 ///

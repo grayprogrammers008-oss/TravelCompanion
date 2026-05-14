@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trip_invites/data/models/invite_model.dart';
-import 'package:travel_crew/features/trip_invites/domain/entities/invite_entity.dart';
+import 'package:pathio/features/trip_invites/data/models/invite_model.dart';
+import 'package:pathio/features/trip_invites/domain/entities/invite_entity.dart';
 
 void main() {
   group('InviteModel', () {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_stats_overview.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_user_list.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_activity_log_list.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_trip_list.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_checklist_list.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_expense_list.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_config_list.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_stats_overview.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_user_list.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_activity_log_list.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_trip_list.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_checklist_list.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_expense_list.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_config_list.dart';
 
 /// Admin Dashboard Page
 /// Main admin panel with seven tabs: Overview, Users, Trips, Checklists, Expenses, Config, Activity

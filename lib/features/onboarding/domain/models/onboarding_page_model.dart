@@ -20,7 +20,7 @@ class OnboardingPageModel {
   static List<OnboardingPageModel> get pages => [
         // Screen 1: Welcome - Plan trips together
         const OnboardingPageModel(
-          title: 'Welcome to Travel Crew',
+          title: 'Welcome to Pathio',
           subtitle: 'Plan trips together with your crew and make unforgettable memories',
           icon: Icons.luggage,
           gradientColors: [Color(0xFF00B8A9), Color(0xFF008C7D)],

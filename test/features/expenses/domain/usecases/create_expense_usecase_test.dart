@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/expenses/domain/repositories/expense_repository.dart';
-import 'package:travel_crew/features/expenses/domain/usecases/create_expense_usecase.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/expenses/domain/repositories/expense_repository.dart';
+import 'package:pathio/features/expenses/domain/usecases/create_expense_usecase.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 @GenerateMocks([ExpenseRepository])
 import 'create_expense_usecase_test.mocks.dart';

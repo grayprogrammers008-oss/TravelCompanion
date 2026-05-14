@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
-import 'package:travel_crew/features/emergency/presentation/widgets/sos_button.dart';
+import 'package:pathio/features/emergency/presentation/providers/emergency_providers.dart';
+import 'package:pathio/features/emergency/presentation/widgets/sos_button.dart';
 
 import 'fake_emergency_repository.dart';
 

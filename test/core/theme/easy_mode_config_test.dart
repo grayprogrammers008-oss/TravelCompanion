@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/easy_mode_provider.dart';
+import 'package:pathio/core/theme/easy_mode_provider.dart';
 
 void main() {
   group('EasyModeConfig', () {

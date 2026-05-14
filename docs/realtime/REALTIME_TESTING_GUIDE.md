@@ -23,7 +23,7 @@ The Trip module now has **real-time synchronization**. This means:
 **Requirements**:
 - Your iPhone/Android phone
 - Another phone (Nithya's phone or a friend's)
-- Both have Travel Crew installed
+- Both have Pathio installed
 - Both logged into accounts
 
 **Pros**: Most realistic, tests actual user experience
@@ -71,14 +71,14 @@ flutter run -d emulator-5554
 
 **Device A** (Your phone):
 ```
-1. Open Travel Crew app
+1. Open Pathio app
 2. Login as yourself (e.g., vinoth@example.com)
 3. Stay on home screen
 ```
 
 **Device B** (Second phone):
 ```
-1. Open Travel Crew app
+1. Open Pathio app
 2. Login as different user (e.g., nithya@example.com)
    OR use same account (both work!)
 3. Stay on home screen

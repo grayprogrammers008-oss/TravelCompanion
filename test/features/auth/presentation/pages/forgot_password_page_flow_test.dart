@@ -4,11 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/providers/supabase_provider.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/auth/presentation/pages/forgot_password_page.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/core/providers/supabase_provider.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
 
 /// Tests that exercise the actual Supabase auth call sequences in
 /// [ForgotPasswordPage]. Uses a hand-rolled fake [SupabaseClient]/[GoTrueClient]

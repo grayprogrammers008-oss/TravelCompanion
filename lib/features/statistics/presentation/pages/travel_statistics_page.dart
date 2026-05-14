@@ -226,7 +226,7 @@ class TravelStatisticsPage extends ConsumerWidget {
             Expanded(
               child: _AchievementCard(
                 icon: Icons.group,
-                label: 'Travel Crew',
+                label: 'Pathio',
                 value: stats.uniqueCrewMembers.toString(),
                 subtitle: 'people traveled with',
                 color: Colors.indigo,

@@ -2,7 +2,7 @@
 
 ## ✅ Integration Status: COMPLETE
 
-Your Travel Crew app is now integrated with Supabase!
+Your Pathio app is now integrated with Supabase!
 
 ---
 
@@ -84,7 +84,7 @@ Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### **Check if Supabase is Working**
 
 ```dart
-import 'package:travel_crew/core/network/supabase_client.dart';
+import 'package:pathio/core/network/supabase_client.dart';
 
 // Check initialization
 if (SupabaseClientWrapper.isAuthenticated) {

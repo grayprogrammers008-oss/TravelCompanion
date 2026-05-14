@@ -22,7 +22,7 @@ flutter test --coverage test/core/services/payment_service_test.dart
 ### 2. Use Payment Service
 
 ```dart
-import 'package:travel_crew/core/services/payment_service.dart';
+import 'package:pathio/core/services/payment_service.dart';
 
 final paymentService = PaymentService();
 
@@ -45,7 +45,7 @@ if (result.success) {
 ### 3. Show Payment Sheet
 
 ```dart
-import 'package:travel_crew/features/expenses/presentation/widgets/payment_options_sheet.dart';
+import 'package:pathio/features/expenses/presentation/widgets/payment_options_sheet.dart';
 
 await PaymentOptionsSheet.show(
   context,

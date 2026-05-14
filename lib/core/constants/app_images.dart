@@ -1,4 +1,4 @@
-// App Images - Asset paths and default images for the Travel Crew app
+// App Images - Asset paths and default images for the Pathio app
 //
 // This class manages all image assets, including default trip destination images,
 // illustrations, and placeholder images for a premium visual experience.

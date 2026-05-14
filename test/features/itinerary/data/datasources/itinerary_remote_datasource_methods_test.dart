@@ -3,8 +3,8 @@ import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:travel_crew/features/itinerary/data/datasources/itinerary_queries.dart';
-import 'package:travel_crew/features/itinerary/data/datasources/itinerary_remote_datasource.dart';
+import 'package:pathio/features/itinerary/data/datasources/itinerary_queries.dart';
+import 'package:pathio/features/itinerary/data/datasources/itinerary_remote_datasource.dart';
 
 /// Comprehensive unit tests for [ItineraryRemoteDataSource].
 ///

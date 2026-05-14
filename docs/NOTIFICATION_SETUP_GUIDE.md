@@ -33,7 +33,7 @@ The push notification system is **implemented but NOT configured**. Follow this 
 ### 1.2 Add Android App
 
 1. In Firebase Console → Click "Add app" → Select Android (🤖)
-2. **Android package name**: `com.example.travel_crew`
+2. **Android package name**: `com.pathio.travel`
    - ⚠️ Find yours in `android/app/build.gradle` → `applicationId`
 3. **App nickname**: `TravelCompanion Android` (optional)
 4. Click "Register app"

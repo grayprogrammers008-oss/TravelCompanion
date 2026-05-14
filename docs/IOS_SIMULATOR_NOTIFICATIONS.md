@@ -52,7 +52,7 @@ If you see the success snackbar but don't see the notification, it's working! Yo
 3. **Look for your notification:**
    ```
    🎉 Test Notification
-   Firebase notifications are working! This is a test message from TravelCrew.
+   Firebase notifications are working! This is a test message from Pathio.
    ```
 
 4. **If you don't see it:**
@@ -131,7 +131,7 @@ Make sure permissions are granted:
 - Did you tap "Allow"?
 
 **To verify:**
-1. In iOS Simulator: Settings → Notifications → TravelCrew
+1. In iOS Simulator: Settings → Notifications → Pathio
 2. Ensure "Allow Notifications" is ON
 3. Check these are enabled:
    - Lock Screen ✓

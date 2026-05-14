@@ -78,7 +78,7 @@ open -a Xcode
    - **Platform**: iOS
    - **Name**: TravelCompanion (or your desired name)
    - **Primary Language**: English
-   - **Bundle ID**: Create new → `com.travelcrew.travelCrew`
+   - **Bundle ID**: Create new → `com.pathio.travel`
    - **SKU**: `travelcompanion-ios` (unique identifier)
    - **User Access**: Full Access
 
@@ -92,7 +92,7 @@ Check your current Bundle ID:
 # Check Info.plist
 cat /Users/vinothvs/Development/TravelCompanion/ios/Runner/Info.plist | grep -A 1 "CFBundleIdentifier"
 
-# Current Bundle ID: com.travelcrew.travelCrew
+# Current Bundle ID: com.pathio.travel
 ```
 
 ---
@@ -139,7 +139,7 @@ cat /Users/vinothvs/Development/TravelCompanion/ios/Runner/Info.plist | grep -A 
 1. **Go to** [Provisioning Profiles](https://developer.apple.com/account/resources/profiles)
 2. **Click** "+" to create new
 3. **Select** "App Store"
-4. **Choose** your App ID: `com.travelcrew.travelCrew`
+4. **Choose** your App ID: `com.pathio.travel`
 5. **Select** your distribution certificate
 6. **Name** it: `TravelCompanion App Store`
 7. **Download** and double-click to install
@@ -230,7 +230,7 @@ Edit [ios/Runner/Info.plist](../ios/Runner/Info.plist):
 ```xml
 <!-- Already configured, verify these keys exist: -->
 <key>CFBundleDisplayName</key>
-<string>TravelCrew</string>
+<string>Pathio</string>
 
 <key>CFBundleShortVersionString</key>
 <string>$(FLUTTER_BUILD_NAME)</string>
@@ -690,7 +690,7 @@ version: 2.0.0+4  # Major update
 
 ```bash
 cat ios/Runner/Info.plist | grep -A 1 "CFBundleIdentifier"
-# Current: com.travelcrew.travelCrew
+# Current: com.pathio.travel
 ```
 
 ---

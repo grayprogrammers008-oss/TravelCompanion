@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_providers.dart';
+import 'package:pathio/features/admin/domain/entities/admin_trip.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_providers.dart';
 
-export 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
+export 'package:pathio/features/admin/domain/entities/admin_trip.dart';
 
 /// Admin trips provider - fetches trips with filtering
 final adminTripsProvider =

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/presentation/widgets/image_viewer.dart';
+import 'package:pathio/features/messaging/presentation/widgets/image_viewer.dart';
 
 void main() {
   void expandViewport(WidgetTester tester) {

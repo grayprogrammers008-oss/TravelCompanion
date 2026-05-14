@@ -62,7 +62,7 @@ await tester.pumpWidget(
 ## Category 2: Onboarding Text Finding (Est. 1 failure)
 
 ### Issue
-Test expects "Welcome to Travel Crew" but actual text may be different.
+Test expects "Welcome to Pathio" but actual text may be different.
 
 ### File Affected
 - `test/features/onboarding/presentation/pages/onboarding_page_test.dart:390`
@@ -70,14 +70,14 @@ Test expects "Welcome to Travel Crew" but actual text may be different.
 ### Current Error
 ```
 Expected: exactly one matching candidate
-  Actual: _TextWidgetFinder:<Found 0 widgets with text "Welcome to Travel Crew": []>
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Welcome to Pathio": []>
 ```
 
 ### Fix
 Check actual onboarding page text and update test:
 ```dart
 // Before
-expect(find.text('Welcome to Travel Crew'), findsOneWidget);
+expect(find.text('Welcome to Pathio'), findsOneWidget);
 
 // After - Check actual text in onboarding_page_model.dart
 expect(find.text('Actual Page Title'), findsOneWidget);
@@ -101,7 +101,7 @@ StreamController.close() called before dispose, causing "Cannot add new events a
 ```
 Bad state: Cannot add new events after calling close
 
-#1      PrioritySyncQueue.pause (package:travel_crew/features/messaging/data/services/priority_sync_queue.dart:134:22)
+#1      PrioritySyncQueue.pause (package:pathio/features/messaging/data/services/priority_sync_queue.dart:134:22)
 #2      SyncCoordinator.stopAutoSync
 #3      SyncCoordinator.dispose
 ```

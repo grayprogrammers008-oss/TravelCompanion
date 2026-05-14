@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/checklists/presentation/providers/checklist_providers.dart';
+import 'package:pathio/features/checklists/presentation/providers/checklist_providers.dart';
 
 import '../widgets/fake_checklist_repository.dart';
 

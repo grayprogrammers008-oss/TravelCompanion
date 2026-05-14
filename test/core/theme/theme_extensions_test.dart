@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/theme_extensions.dart';
+import 'package:pathio/core/theme/theme_extensions.dart';
 
 void main() {
   Future<void> pumpWithContext(

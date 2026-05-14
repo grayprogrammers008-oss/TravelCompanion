@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart';
-import 'package:travel_crew/features/emergency/data/repositories/emergency_repository_impl.dart';
-import 'package:travel_crew/features/emergency/domain/usecases/find_nearest_hospitals_usecase.dart';
-import 'package:travel_crew/core/services/location_service.dart';
-import 'package:travel_crew/shared/models/hospital_model.dart';
+import 'package:pathio/features/emergency/data/datasources/emergency_remote_datasource.dart';
+import 'package:pathio/features/emergency/data/repositories/emergency_repository_impl.dart';
+import 'package:pathio/features/emergency/domain/usecases/find_nearest_hospitals_usecase.dart';
+import 'package:pathio/core/services/location_service.dart';
+import 'package:pathio/shared/models/hospital_model.dart';
 
 import 'hospital_finder_integration_test.mocks.dart';
 

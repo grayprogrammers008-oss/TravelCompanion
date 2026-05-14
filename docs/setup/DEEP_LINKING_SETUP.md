@@ -5,8 +5,8 @@ This guide explains how to configure deep linking for the Trip Invite feature.
 ## Overview
 
 Deep links allow users to open the app directly from invite links like:
-- `https://travelcrew.app/invite/ABC123`
-- `travelcrew://invite/ABC123`
+- `https://pathio.travel/invite/ABC123`
+- `pathio://invite/ABC123`
 
 ## Android Configuration
 
@@ -34,12 +34,12 @@ Add the following intent filter inside the `<activity>` tag (the MainActivity):
         <!-- HTTP/HTTPS links -->
         <data
             android:scheme="https"
-            android:host="travelcrew.app"
+            android:host="pathio.travel"
             android:pathPrefix="/invite" />
 
         <!-- Custom scheme -->
         <data
-            android:scheme="travelcrew"
+            android:scheme="pathio"
             android:host="invite" />
     </intent-filter>
 </activity>
@@ -48,7 +48,7 @@ Add the following intent filter inside the `<activity>` tag (the MainActivity):
 ### 2. App Links Verification (Optional - Production Only)
 
 For verified app links (auto-open without prompt), host a `.well-known/assetlinks.json` file at:
-`https://travelcrew.app/.well-known/assetlinks.json`
+`https://pathio.travel/.well-known/assetlinks.json`
 
 Example content:
 ```json
@@ -56,7 +56,7 @@ Example content:
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "com.travelcrew.app",
+    "package_name": "com.pathio.travel",
     "sha256_cert_fingerprints": [
       "YOUR_SHA256_FINGERPRINT_HERE"
     ]
@@ -83,10 +83,10 @@ Add the following inside the `<dict>` tag:
         <key>CFBundleTypeRole</key>
         <string>Editor</string>
         <key>CFBundleURLName</key>
-        <string>com.travelcrew.app</string>
+        <string>com.pathio.travel</string>
         <key>CFBundleURLSchemes</key>
         <array>
-            <string>travelcrew</string>
+            <string>pathio</string>
         </array>
     </dict>
 </array>
@@ -94,14 +94,14 @@ Add the following inside the `<dict>` tag:
 <!-- Universal Links -->
 <key>com.apple.developer.associated-domains</key>
 <array>
-    <string>applinks:travelcrew.app</string>
+    <string>applinks:pathio.travel</string>
 </array>
 ```
 
 ### 2. Universal Links Setup (Optional - Production Only)
 
 Host an `apple-app-site-association` file at:
-`https://travelcrew.app/.well-known/apple-app-site-association`
+`https://pathio.travel/.well-known/apple-app-site-association`
 
 Example content:
 ```json
@@ -110,7 +110,7 @@ Example content:
     "apps": [],
     "details": [
       {
-        "appID": "TEAM_ID.com.travelcrew.app",
+        "appID": "TEAM_ID.com.pathio.travel",
         "paths": [
           "/invite/*"
         ]
@@ -132,7 +132,7 @@ Example content:
 3. Go to "Signing & Capabilities"
 4. Click "+ Capability"
 5. Add "Associated Domains"
-6. Add: `applinks:travelcrew.app`
+6. Add: `applinks:pathio.travel`
 
 ## Testing Deep Links
 
@@ -143,13 +143,13 @@ Test using ADB:
 ```bash
 # Test HTTPS link
 adb shell am start -W -a android.intent.action.VIEW \
-  -d "https://travelcrew.app/invite/ABC123" \
-  com.travelcrew.app
+  -d "https://pathio.travel/invite/ABC123" \
+  com.pathio.travel
 
 # Test custom scheme
 adb shell am start -W -a android.intent.action.VIEW \
-  -d "travelcrew://invite/ABC123" \
-  com.travelcrew.app
+  -d "pathio://invite/ABC123" \
+  com.pathio.travel
 ```
 
 ### iOS
@@ -158,10 +158,10 @@ Test using Simulator:
 
 ```bash
 # Open Simulator
-xcrun simctl openurl booted "travelcrew://invite/ABC123"
+xcrun simctl openurl booted "pathio://invite/ABC123"
 
 # Or test HTTPS
-xcrun simctl openurl booted "https://travelcrew.app/invite/ABC123"
+xcrun simctl openurl booted "https://pathio.travel/invite/ABC123"
 ```
 
 Test on physical device:
@@ -216,7 +216,7 @@ GoRouter automatically handles deep link routing when configured correctly.
 
 Before releasing to production:
 
-- [ ] Replace `travelcrew.app` with your actual domain
+- [ ] Replace `pathio.travel` with your actual domain
 - [ ] Update package name/bundle identifier
 - [ ] Host assetlinks.json (Android)
 - [ ] Host apple-app-site-association (iOS)
@@ -244,25 +244,25 @@ Before releasing to production:
 When sharing invites, the app generates links in this format:
 
 ```
-https://travelcrew.app/invite/{INVITE_CODE}
+https://pathio.travel/invite/{INVITE_CODE}
 
-Example: https://travelcrew.app/invite/ABC123
+Example: https://pathio.travel/invite/ABC123
 ```
 
 This ensures:
 - **Web fallback**: If app isn't installed, link can redirect to app store
 - **Universal links**: Auto-opens app if installed (with proper setup)
-- **Custom scheme**: Fallback option (`travelcrew://invite/ABC123`)
+- **Custom scheme**: Fallback option (`pathio://invite/ABC123`)
 
 ## Next Steps
 
 1. **Development Testing:**
    - Configure AndroidManifest.xml and Info.plist locally
-   - Test with custom scheme (`travelcrew://`)
+   - Test with custom scheme (`pathio://`)
    - Test invite flow end-to-end
 
 2. **Production Deployment:**
-   - Register domain (e.g., travelcrew.app)
+   - Register domain (e.g., pathio.travel)
    - Set up web hosting for verification files
    - Configure production certificates
    - Test with production domain

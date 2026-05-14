@@ -233,7 +233,7 @@ If you want to add Trip History access from other parts of the app:
 
 ```dart
 // Import the router
-import 'package:travel_crew/core/router/app_router.dart';
+import 'package:pathio/core/router/app_router.dart';
 
 // Use in onPressed or onTap
 onPressed: () => context.push(AppRoutes.tripHistory)

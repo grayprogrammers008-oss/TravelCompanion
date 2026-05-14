@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/itinerary/presentation/widgets/timeline_view.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/features/itinerary/presentation/widgets/timeline_view.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 ItineraryItemModel _item({
   String id = 'i1',

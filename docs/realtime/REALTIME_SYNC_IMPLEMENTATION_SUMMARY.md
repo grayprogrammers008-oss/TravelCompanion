@@ -411,7 +411,7 @@ class DebugPanel extends ConsumerWidget {
 
 ## 🎊 Summary
 
-Real-time synchronization is now **50% complete** for Travel Crew! The core infrastructure and Trip module are fully functional. Changes made on one device instantly appear on all other devices.
+Real-time synchronization is now **50% complete** for Pathio! The core infrastructure and Trip module are fully functional. Changes made on one device instantly appear on all other devices.
 
 **Key Achievement**: Users can now collaborate in real-time without manual refreshes! 🎉
 

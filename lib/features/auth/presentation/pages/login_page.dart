@@ -223,7 +223,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
       await localNotifications.show(
         DateTime.now().millisecondsSinceEpoch ~/ 1000,
         '🎉 Test Notification',
-        'Firebase notifications are working! This is a test message from TravelCrew.',
+        'Firebase notifications are working! This is a test message from Pathio.',
         details,
       );
 
@@ -379,7 +379,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
                               // App Name
                               Text(
-                                'Travel Crew',
+                                'Pathio',
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall

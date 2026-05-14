@@ -3,11 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/core/services/location_service.dart';
-import 'package:travel_crew/features/emergency/domain/repositories/emergency_repository.dart';
-import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
-import 'package:travel_crew/features/emergency/presentation/widgets/nearest_hospitals_widget.dart';
-import 'package:travel_crew/shared/models/hospital_model.dart';
+import 'package:pathio/core/services/location_service.dart';
+import 'package:pathio/features/emergency/domain/repositories/emergency_repository.dart';
+import 'package:pathio/features/emergency/presentation/providers/emergency_providers.dart';
+import 'package:pathio/features/emergency/presentation/widgets/nearest_hospitals_widget.dart';
+import 'package:pathio/shared/models/hospital_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'nearest_hospitals_widget_e2e_test.mocks.dart';

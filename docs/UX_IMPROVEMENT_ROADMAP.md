@@ -232,7 +232,7 @@ Trip Detail → Share → "QR Code" tab
 - Share button for native sharing
 - Invite code displayed below QR for manual entry
 - Error handling with retry option
-- Works with existing deep link system (travelcrew.app/invite/CODE)
+- Works with existing deep link system (pathio.travel/invite/CODE)
 
 ---
 

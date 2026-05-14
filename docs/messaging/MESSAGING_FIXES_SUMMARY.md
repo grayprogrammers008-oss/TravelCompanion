@@ -40,7 +40,7 @@ void main() async {
   await MessagingInitialization.initialize();
 
   await SupabaseClientWrapper.initialize();
-  runApp(const ProviderScope(child: TravelCrewApp()));
+  runApp(const ProviderScope(child: PathioApp()));
 }
 ```
 

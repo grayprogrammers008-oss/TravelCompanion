@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/router/app_router.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
-import 'package:travel_crew/features/auth/presentation/pages/splash_page.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/core/router/app_router.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/widgets/app_loading_indicator.dart';
+import 'package:pathio/features/auth/presentation/pages/splash_page.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
 
 /// Tests for [SplashPage]. The page uses [AppLoadingIndicator] which animates
 /// forever and schedules `Future.delayed` timers on a recursive retry loop,
@@ -89,7 +89,7 @@ void main() {
       await tester.pump();
 
       expect(find.byIcon(Icons.flight_takeoff), findsOneWidget);
-      expect(find.text('Travel Crew'), findsOneWidget);
+      expect(find.text('Pathio'), findsOneWidget);
       expect(find.byType(AppLoadingIndicator), findsOneWidget);
       expect(
         find.byWidgetPredicate(

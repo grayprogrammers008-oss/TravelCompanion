@@ -29,14 +29,14 @@ Look for these messages in your console:
 3. Press the test button again
 
 **Check Settings:**
-- Go to **Settings → Notifications → TravelCrew**
+- Go to **Settings → Notifications → Pathio**
 - Ensure "Allow Notifications" is **ON**
 - Check "Lock Screen", "Notification Center", and "Banners" are enabled
 
 #### Android Emulator/Device:
 1. The app should auto-request permissions on first use
 2. If not, manually grant permissions:
-   - **Settings → Apps → TravelCrew → Notifications**
+   - **Settings → Apps → Pathio → Notifications**
    - Enable all notification categories
 
 ### 3. Check Simulator/Emulator Setup
@@ -152,8 +152,8 @@ Add this before pressing the button:
    ```
 
 2. **Check notification settings in app:**
-   - iOS: Settings → Notifications → TravelCrew
-   - Android: Settings → Apps → TravelCrew → Notifications
+   - iOS: Settings → Notifications → Pathio
+   - Android: Settings → Apps → Pathio → Notifications
 
 3. **Test with a simpler notification first:**
    ```dart
@@ -175,7 +175,7 @@ Add this before pressing the button:
 3. **Snackbar appears:** "✅ Test notification sent! Check your notification tray."
 4. **Notification appears** in notification tray/center:
    - Title: 🎉 Test Notification
-   - Body: Firebase notifications are working! This is a test message from TravelCrew.
+   - Body: Firebase notifications are working! This is a test message from Pathio.
 5. **Sound plays** (if enabled)
 6. **Device vibrates** (Android, if enabled)
 

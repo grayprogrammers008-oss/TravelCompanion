@@ -11,15 +11,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/easy_mode_provider.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/expenses/presentation/pages/expenses_home_page.dart';
-import 'package:travel_crew/features/expenses/presentation/providers/expense_providers.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/easy_mode_provider.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/expenses/presentation/pages/expenses_home_page.dart';
+import 'package:pathio/features/expenses/presentation/providers/expense_providers.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/expense_model.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 final _theme = AppThemeData.getThemeData(AppThemeType.ocean);
 

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/constants/app_constants.dart';
+import 'package:pathio/core/constants/app_constants.dart';
 
 void main() {
   group('AppConstants', () {

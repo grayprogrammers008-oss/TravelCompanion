@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# GitHub Issues Creation Script for Travel Crew
+# GitHub Issues Creation Script for Pathio
 # This script creates all 23 issues with proper labels and assignments
 
 set -e
 
 REPO="grayprogrammers008-oss/TravelCompanion"
 
-echo "🚀 Creating GitHub Issues for Travel Crew"
+echo "🚀 Creating GitHub Issues for Pathio"
 echo "Repository: $REPO"
 echo ""
 
@@ -551,9 +551,9 @@ gh issue create \
 
 ## URL Scheme
 \`\`\`
-https://travelcrew.app/invite/{invite_code}
-https://travelcrew.app/trip/{trip_id}
-https://travelcrew.app/expense/{expense_id}
+https://pathio.travel/invite/{invite_code}
+https://pathio.travel/trip/{trip_id}
+https://pathio.travel/expense/{expense_id}
 \`\`\`
 
 ## Files to Modify

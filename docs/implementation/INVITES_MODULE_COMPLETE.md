@@ -382,7 +382,7 @@ NO EXCEPTIONS
 
 Use this code to join: ABC123
 
-Or click this link: https://travelcrew.app/invite/ABC123
+Or click this link: https://pathio.travel/invite/ABC123
 
 Expires in 7 days.
 

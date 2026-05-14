@@ -3,9 +3,9 @@ import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:travel_crew/core/services/email_service.dart';
-import 'package:travel_crew/features/trip_invites/data/datasources/invite_queries.dart';
-import 'package:travel_crew/features/trip_invites/data/datasources/invite_remote_datasource.dart';
+import 'package:pathio/core/services/email_service.dart';
+import 'package:pathio/features/trip_invites/data/datasources/invite_queries.dart';
+import 'package:pathio/features/trip_invites/data/datasources/invite_remote_datasource.dart';
 
 /// Comprehensive unit tests for [InviteRemoteDataSource].
 ///

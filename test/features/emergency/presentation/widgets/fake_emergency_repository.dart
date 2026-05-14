@@ -1,9 +1,9 @@
-import 'package:travel_crew/features/emergency/domain/repositories/emergency_repository.dart';
-import 'package:travel_crew/shared/models/emergency_alert_model.dart';
-import 'package:travel_crew/shared/models/emergency_contact_model.dart';
-import 'package:travel_crew/shared/models/emergency_number_model.dart';
-import 'package:travel_crew/shared/models/hospital_model.dart';
-import 'package:travel_crew/shared/models/location_share_model.dart';
+import 'package:pathio/features/emergency/domain/repositories/emergency_repository.dart';
+import 'package:pathio/shared/models/emergency_alert_model.dart';
+import 'package:pathio/shared/models/emergency_contact_model.dart';
+import 'package:pathio/shared/models/emergency_number_model.dart';
+import 'package:pathio/shared/models/hospital_model.dart';
+import 'package:pathio/shared/models/location_share_model.dart';
 
 /// A no-op fake EmergencyRepository for widget tests that don't interact
 /// with the network. All methods return empty/default values without

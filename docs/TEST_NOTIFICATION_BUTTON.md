@@ -27,7 +27,7 @@ flutter run
 - ✅ A snackbar appears: "✅ Test notification sent!"
 - ✅ A notification appears in the notification tray:
   - **Title:** 🎉 Test Notification
-  - **Body:** Firebase notifications are working! This is a test message from TravelCrew.
+  - **Body:** Firebase notifications are working! This is a test message from Pathio.
 
 ## What It Does
 
@@ -89,7 +89,7 @@ Future<void> _sendTestNotification() async {
   await localNotifications.show(
     DateTime.now().millisecondsSinceEpoch ~/ 1000,
     '🎉 Test Notification',
-    'Firebase notifications are working! This is a test message from TravelCrew.',
+    'Firebase notifications are working! This is a test message from Pathio.',
     NotificationDetails(android: androidDetails, iOS: iosDetails),
   );
 }
@@ -131,7 +131,7 @@ Future<void> _sendTestNotification() async {
 3. Check "Do Not Disturb" mode is off
 
 **iOS:**
-1. Check Settings > Notifications > TravelCrew
+1. Check Settings > Notifications > Pathio
 2. Ensure "Allow Notifications" is enabled
 3. Check notification preview settings
 

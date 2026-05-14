@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/emergency/presentation/widgets/sos_button.dart';
-import 'package:travel_crew/features/emergency/presentation/widgets/nearest_hospitals_widget.dart';
-import 'package:travel_crew/features/emergency/presentation/widgets/medical_emergency_button.dart';
-import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/emergency/presentation/widgets/sos_button.dart';
+import 'package:pathio/features/emergency/presentation/widgets/nearest_hospitals_widget.dart';
+import 'package:pathio/features/emergency/presentation/widgets/medical_emergency_button.dart';
+import 'package:pathio/features/emergency/presentation/providers/emergency_providers.dart';
 
 /// Emergency Service Page - Centralized emergency features
 ///

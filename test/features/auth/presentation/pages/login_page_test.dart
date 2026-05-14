@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/router/app_router.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
-import 'package:travel_crew/features/auth/domain/repositories/auth_repository.dart';
-import 'package:travel_crew/features/auth/presentation/pages/login_page.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/core/router/app_router.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/auth/domain/entities/user_entity.dart';
+import 'package:pathio/features/auth/domain/repositories/auth_repository.dart';
+import 'package:pathio/features/auth/presentation/pages/login_page.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
 
 /// Tests for [LoginPage] using a hand-rolled fake [AuthRepository] to drive
 /// the auth flows without requiring a real Supabase singleton.
@@ -182,7 +182,7 @@ void main() {
       await tester.pumpWidget(createApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Travel Crew'), findsOneWidget);
+      expect(find.text('Pathio'), findsOneWidget);
       expect(find.text('Your Journey, Together'), findsOneWidget);
       expect(find.text('Welcome Back!'), findsOneWidget);
       expect(find.text('Sign in to continue your adventure'), findsOneWidget);
@@ -456,7 +456,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // The SignUp page renders this title.
-      expect(find.text('Join Travel Crew'), findsOneWidget);
+      expect(find.text('Join Pathio'), findsOneWidget);
     });
   });
 

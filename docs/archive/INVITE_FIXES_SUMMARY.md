@@ -78,7 +78,7 @@ final inviteLocalDataSourceProvider = Provider<InviteLocalDataSource>((ref) {
 
 Use this code to join: ABC123
 
-Or click this link: https://travelcrew.app/invite/ABC123
+Or click this link: https://pathio.travel/invite/ABC123
 
 Expires in 7 days.
 
@@ -92,7 +92,7 @@ Let's make it an adventure! 🎉
 🌍 You're invited to join "Summer Vacation"!
 
 Join using this link:
-https://travelcrew.app/invite/ABC123
+https://pathio.travel/invite/ABC123
 
 Or use invite code: ABC123
 
@@ -258,7 +258,7 @@ Email clients use various heuristics to detect URLs:
 
 **Bad** ❌:
 ```
-Or click this link: https://travelcrew.app/invite/ABC123
+Or click this link: https://pathio.travel/invite/ABC123
 ```
 - URL not isolated
 - May be detected as part of sentence
@@ -267,7 +267,7 @@ Or click this link: https://travelcrew.app/invite/ABC123
 **Good** ✅:
 ```
 Join using this link:
-https://travelcrew.app/invite/ABC123
+https://pathio.travel/invite/ABC123
 ```
 - URL on own line
 - Clear whitespace boundaries

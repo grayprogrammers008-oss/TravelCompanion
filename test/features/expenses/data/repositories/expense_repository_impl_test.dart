@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/expenses/data/datasources/expense_remote_datasource.dart';
-import 'package:travel_crew/features/expenses/data/repositories/expense_repository_impl.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/expenses/data/datasources/expense_remote_datasource.dart';
+import 'package:pathio/features/expenses/data/repositories/expense_repository_impl.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 import 'expense_repository_impl_test.mocks.dart';
 

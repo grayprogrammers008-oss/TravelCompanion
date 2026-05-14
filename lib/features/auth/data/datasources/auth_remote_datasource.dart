@@ -216,10 +216,10 @@ Original error: ${e.message}''';
       String redirectUrl;
       if (kIsWeb) {
         // For web: Use HTTPS URL
-        redirectUrl = 'https://travelcrew.app/auth/reset-password';
+        redirectUrl = 'https://pathio.travel/auth/reset-password';
       } else {
         // For mobile: Use custom scheme
-        redirectUrl = 'travelcrew://auth/reset-password';
+        redirectUrl = 'pathio://auth/reset-password';
       }
 
       debugPrint('🔐 [ResetPassword] Redirect URL: $redirectUrl');

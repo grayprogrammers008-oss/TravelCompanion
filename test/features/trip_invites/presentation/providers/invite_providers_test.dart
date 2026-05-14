@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trip_invites/domain/entities/invite_entity.dart';
-import 'package:travel_crew/features/trip_invites/domain/repositories/invite_repository.dart';
-import 'package:travel_crew/features/trip_invites/domain/usecases/accept_invite_usecase.dart';
-import 'package:travel_crew/features/trip_invites/domain/usecases/generate_invite_usecase.dart';
-import 'package:travel_crew/features/trip_invites/domain/usecases/get_trip_invites_usecase.dart';
-import 'package:travel_crew/features/trip_invites/domain/usecases/revoke_invite_usecase.dart';
-import 'package:travel_crew/features/trip_invites/presentation/providers/invite_providers.dart';
+import 'package:pathio/features/trip_invites/domain/entities/invite_entity.dart';
+import 'package:pathio/features/trip_invites/domain/repositories/invite_repository.dart';
+import 'package:pathio/features/trip_invites/domain/usecases/accept_invite_usecase.dart';
+import 'package:pathio/features/trip_invites/domain/usecases/generate_invite_usecase.dart';
+import 'package:pathio/features/trip_invites/domain/usecases/get_trip_invites_usecase.dart';
+import 'package:pathio/features/trip_invites/domain/usecases/revoke_invite_usecase.dart';
+import 'package:pathio/features/trip_invites/presentation/providers/invite_providers.dart';
 
 /// Hand-rolled fake repository for InviteRepository
 ///

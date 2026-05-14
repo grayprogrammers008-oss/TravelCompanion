@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_checklist_providers.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_checklist_providers.dart';
 
 /// Admin Checklist List Widget
 /// Displays all checklists with search, filter, and management capabilities

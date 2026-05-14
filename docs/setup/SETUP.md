@@ -1,4 +1,4 @@
-# Travel Crew App - Setup Guide
+# Pathio App - Setup Guide
 
 ## Prerequisites
 
@@ -74,14 +74,14 @@ flutter run --dart-define=SUPABASE_URL=https://your-project.supabase.co \
 ### 3.2 Add Android App
 
 1. In Firebase project, click "Add app" → Android
-2. Package name: `com.travelcrew.travel_crew`
+2. Package name: `com.pathio.travel`
 3. Download `google-services.json`
 4. Place it in `android/app/`
 
 ### 3.3 Add iOS App
 
 1. Click "Add app" → iOS
-2. Bundle ID: `com.travelcrew.travelCrew`
+2. Bundle ID: `com.pathio.travel`
 3. Download `GoogleService-Info.plist`
 4. Add it to `ios/Runner/` via Xcode
 

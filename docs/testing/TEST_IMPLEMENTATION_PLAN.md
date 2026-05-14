@@ -49,7 +49,7 @@ test/features/onboarding/presentation/pages/onboarding_page_test.dart:390
 
 # Issues:
 - Color assertion mismatch (expected vs actual)
-- Text finder not finding "Welcome to Travel Crew"
+- Text finder not finding "Welcome to Pathio"
 
 # Solution:
 - Update color expectations to match current theme

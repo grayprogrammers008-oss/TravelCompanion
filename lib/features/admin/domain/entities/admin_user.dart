@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
 
 /// Admin User Entity
 /// Extended user information for admin management

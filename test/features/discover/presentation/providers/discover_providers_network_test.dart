@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
-import 'package:travel_crew/features/discover/data/datasources/discover_local_datasource.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/core/services/google_places_service.dart';
+import 'package:pathio/features/discover/data/datasources/discover_local_datasource.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
 
 /// Configurable fake `GooglePlacesService` — returns canned `NearbyPlace`
 /// lists from `responses[category.name]`. Records each call.

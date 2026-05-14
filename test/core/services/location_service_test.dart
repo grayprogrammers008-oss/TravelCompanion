@@ -3,7 +3,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:travel_crew/core/services/location_service.dart';
+import 'package:pathio/core/services/location_service.dart';
 
 const _geoChannel = MethodChannel('flutter.baseflow.com/geolocator');
 const _eventChannelUpdates =

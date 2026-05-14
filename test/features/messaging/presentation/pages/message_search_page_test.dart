@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/features/messaging/presentation/pages/message_search_page.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/conversation_providers.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/presentation/pages/message_search_page.dart';
+import 'package:pathio/features/messaging/presentation/providers/conversation_providers.dart';
 
 void main() {
   void expandViewport(WidgetTester tester) {

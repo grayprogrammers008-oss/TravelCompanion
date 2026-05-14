@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
-import 'package:travel_crew/features/discover/data/datasources/discover_local_datasource.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/core/services/google_places_service.dart';
+import 'package:pathio/features/discover/data/datasources/discover_local_datasource.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
 
 /// Minimal hand-rolled fake of `GooglePlacesService` so tests don't hit the
 /// real Google Places HTTP API. Records the calls they made and returns

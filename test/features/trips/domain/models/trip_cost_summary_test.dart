@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trips/domain/models/trip_cost_summary.dart';
+import 'package:pathio/features/trips/domain/models/trip_cost_summary.dart';
 
 void main() {
   TripCostSummary summary({

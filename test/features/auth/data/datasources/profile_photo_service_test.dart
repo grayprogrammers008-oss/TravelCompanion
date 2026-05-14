@@ -4,8 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/auth/data/datasources/profile_photo_service.dart';
-import 'package:travel_crew/core/constants/app_constants.dart';
+import 'package:pathio/features/auth/data/datasources/profile_photo_service.dart';
+import 'package:pathio/core/constants/app_constants.dart';
 
 // Generate mocks for ImagePicker and Supabase components
 @GenerateMocks([

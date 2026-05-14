@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// Run this with: dart diagnose_login_issue.dart
 void main() async {
   if (kDebugMode) {
-    debugPrint('🔍 Travel Crew Login Diagnostics');
+    debugPrint('🔍 Pathio Login Diagnostics');
     debugPrint('=' * 60);
   }
 

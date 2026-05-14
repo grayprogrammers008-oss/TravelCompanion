@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.travelcrew" "\0"
-            VALUE "FileDescription", "travel_crew" "\0"
+            VALUE "CompanyName", "Pathio" "\0"
+            VALUE "FileDescription", "pathio" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "travel_crew" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.travelcrew. All rights reserved." "\0"
-            VALUE "OriginalFilename", "travel_crew.exe" "\0"
-            VALUE "ProductName", "travel_crew" "\0"
+            VALUE "InternalName", "pathio" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 Pathio. All rights reserved." "\0"
+            VALUE "OriginalFilename", "pathio.exe" "\0"
+            VALUE "ProductName", "pathio" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

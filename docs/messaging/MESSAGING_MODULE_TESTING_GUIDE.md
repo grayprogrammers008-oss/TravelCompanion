@@ -318,7 +318,7 @@ BLE Service initialized successfully
 ```
 WiFi Direct group created successfully
 Host mode activated
-Group Name: DIRECT-XX-TravelCrew
+Group Name: DIRECT-XX-Pathio
 ```
 
 ---

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/messaging/data/services/storage_service.dart';
+import 'package:pathio/features/messaging/data/services/storage_service.dart';
 
 /// Tests for [StorageService].
 ///

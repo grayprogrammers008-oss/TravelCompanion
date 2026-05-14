@@ -6,7 +6,7 @@
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-echo "🚀 Starting Travel Crew iOS app..."
+echo "🚀 Starting Pathio iOS app..."
 echo "✅ UTF-8 encoding set"
 echo ""
 

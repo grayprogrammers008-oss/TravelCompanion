@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/admin/data/models/admin_dashboard_stats_model.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_dashboard_stats.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_providers.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_stats_overview.dart';
+import 'package:pathio/features/admin/data/models/admin_dashboard_stats_model.dart';
+import 'package:pathio/features/admin/domain/entities/admin_dashboard_stats.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_providers.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_stats_overview.dart';
 
 const _sampleStats = AdminDashboardStatsModel(
   totalUsers: 100,

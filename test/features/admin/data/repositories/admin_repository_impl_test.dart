@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/admin/data/datasources/admin_remote_datasource.dart';
-import 'package:travel_crew/features/admin/data/models/admin_user_model.dart';
-import 'package:travel_crew/features/admin/data/repositories/admin_repository_impl.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_user.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/data/datasources/admin_remote_datasource.dart';
+import 'package:pathio/features/admin/data/models/admin_user_model.dart';
+import 'package:pathio/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:pathio/features/admin/domain/entities/admin_user.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
 
 import 'admin_repository_impl_test.mocks.dart';
 

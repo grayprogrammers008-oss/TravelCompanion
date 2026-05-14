@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/data/datasources/conversation_queries.dart';
-import 'package:travel_crew/features/messaging/data/datasources/conversation_remote_datasource.dart';
-import 'package:travel_crew/features/messaging/domain/entities/conversation_entity.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/features/messaging/domain/repositories/conversation_repository.dart';
-import 'package:travel_crew/features/messaging/domain/usecases/send_message_usecase.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/conversation_providers.dart';
+import 'package:pathio/features/messaging/data/datasources/conversation_queries.dart';
+import 'package:pathio/features/messaging/data/datasources/conversation_remote_datasource.dart';
+import 'package:pathio/features/messaging/domain/entities/conversation_entity.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/domain/repositories/conversation_repository.dart';
+import 'package:pathio/features/messaging/domain/usecases/send_message_usecase.dart';
+import 'package:pathio/features/messaging/presentation/providers/conversation_providers.dart';
 
 /// Hand-rolled fake [ConversationRepository] used to drive the providers.
 class _FakeConversationRepository implements ConversationRepository {

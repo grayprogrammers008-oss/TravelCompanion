@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
 
 void main() {
   group('ChecklistEntity', () {

@@ -12,7 +12,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/expenses/presentation/widgets/quick_expense_sheet.dart';
+import 'package:pathio/features/expenses/presentation/widgets/quick_expense_sheet.dart';
 
 void main() {
   group('expenseCategories — public constants', () {

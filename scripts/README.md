@@ -1,4 +1,4 @@
-# 🔧 Travel Crew Scripts
+# 🔧 Pathio Scripts
 
 Utility scripts for database management, diagnostics, and GitHub automation.
 

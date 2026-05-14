@@ -1,7 +1,7 @@
 /// App-wide constants
 class AppConstants {
   // App Info
-  static const String appName = 'Travel Crew';
+  static const String appName = 'Pathio';
   static const String appVersion = '1.0.0';
   static const String appTagline = 'Your Ultimate Group Travel Companion';
 
@@ -47,7 +47,7 @@ class AppConstants {
   static const int maxItineraryDescriptionLength = 500;
 
   // Notifications
-  static const String fcmTopic = 'travel_crew_all';
+  static const String fcmTopic = 'pathio_all';
 
   // Payment Methods
   static const List<String> paymentMethods = [

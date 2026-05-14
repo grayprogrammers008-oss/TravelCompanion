@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/features/checklists/domain/repositories/checklist_repository.dart';
-import 'package:travel_crew/features/checklists/domain/usecases/get_checklist_with_items_usecase.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/checklists/domain/repositories/checklist_repository.dart';
+import 'package:pathio/features/checklists/domain/usecases/get_checklist_with_items_usecase.dart';
 
 import 'get_checklist_with_items_usecase_test.mocks.dart';
 

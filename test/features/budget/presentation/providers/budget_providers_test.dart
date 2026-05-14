@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/budget/presentation/providers/budget_providers.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/budget/presentation/providers/budget_providers.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 void main() {
   group('TripBudgetData', () {

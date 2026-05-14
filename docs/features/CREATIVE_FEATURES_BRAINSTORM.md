@@ -1,4 +1,4 @@
-# 🎨 Creative Features Brainstorm - Travel Crew
+# 🎨 Creative Features Brainstorm - Pathio
 
 **Date**: October 21, 2025
 **Goal**: Innovative features that competitors don't have
@@ -42,7 +42,7 @@ Day 3: Rice Terraces
 👥 4 amazing crew members
 
 [Ends with group photo]
-"Made with Travel Crew ❤️"
+"Made with Pathio ❤️"
 ```
 
 **Why it's viral**:
@@ -889,7 +889,7 @@ These are super easy but add delight:
 
 ## 🎊 The Dream Feature Set
 
-Imagine Travel Crew with:
+Imagine Pathio with:
 - ✅ Beautiful premium design (done)
 - ✅ 5-second expense split (done)
 - 📶 Offline messaging (planned)

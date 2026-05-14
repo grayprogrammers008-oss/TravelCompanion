@@ -2,7 +2,7 @@
 
 **Date**: October 21, 2025
 **Issue**: [#27 - Feature: Messaging Module with Offline P2P (Bluetooth + WiFi)](https://github.com/grayprogrammers008-oss/TravelCompanion/issues/27)
-**Project**: [Travel Crew MVP - 8 Week Sprint](https://github.com/users/vinothvsbe/projects/2)
+**Project**: [Pathio MVP - 8 Week Sprint](https://github.com/users/vinothvsbe/projects/2)
 
 ---
 
@@ -16,7 +16,7 @@
 - **URL**: https://github.com/grayprogrammers008-oss/TravelCompanion/issues/27
 
 ### ✅ Added to GitHub Project
-- **Project**: Travel Crew MVP - 8 Week Sprint
+- **Project**: Pathio MVP - 8 Week Sprint
 - **Project ID**: 2
 - Issue #27 is now visible in your project board
 
@@ -167,7 +167,7 @@ Your messaging module includes features that **most travel apps don't have**:
 - Battery-conscious travelers
 
 ### Marketing Angle
-> "Travel Crew: The only travel app that works completely offline.
+> "Pathio: The only travel app that works completely offline.
 > Stay connected with your crew anywhere on Earth, even without internet."
 
 ---
@@ -176,7 +176,7 @@ Your messaging module includes features that **most travel apps don't have**:
 
 ### GitHub Project
 - **URL**: https://github.com/users/vinothvsbe/projects/2
-- **Name**: Travel Crew MVP - 8 Week Sprint
+- **Name**: Pathio MVP - 8 Week Sprint
 - **Issue #27**: Now visible in project
 
 ### Repository
@@ -204,7 +204,7 @@ All documentation files are in:
 - [x] Messaging module designed with Bluetooth + WiFi offline capabilities
 - [x] Complete documentation created (3 comprehensive guides)
 - [x] GitHub Issue #27 created
-- [x] Issue #27 added to "Travel Crew MVP - 8 Week Sprint" project
+- [x] Issue #27 added to "Pathio MVP - 8 Week Sprint" project
 - [x] Script created for detailed sub-issues (optional)
 - [x] All documentation indexes updated
 - [x] Implementation ready to start

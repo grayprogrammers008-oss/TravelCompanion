@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/conversation_entity.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/features/messaging/domain/repositories/conversation_repository.dart';
-import 'package:travel_crew/features/messaging/domain/usecases/create_conversation_usecase.dart';
-import 'package:travel_crew/features/messaging/domain/usecases/get_trip_conversations_usecase.dart';
-import 'package:travel_crew/features/messaging/domain/usecases/send_message_usecase.dart';
+import 'package:pathio/features/messaging/domain/entities/conversation_entity.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/domain/repositories/conversation_repository.dart';
+import 'package:pathio/features/messaging/domain/usecases/create_conversation_usecase.dart';
+import 'package:pathio/features/messaging/domain/usecases/get_trip_conversations_usecase.dart';
+import 'package:pathio/features/messaging/domain/usecases/send_message_usecase.dart';
 
 /// Manual mock for ConversationRepository
 class MockConversationRepository implements ConversationRepository {

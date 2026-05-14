@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/data/services/mesh_coordinator.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/data/services/mesh_coordinator.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('MeshMessage', () {

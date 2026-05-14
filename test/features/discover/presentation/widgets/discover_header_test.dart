@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
-import 'package:travel_crew/features/discover/presentation/widgets/discover_header.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/features/discover/presentation/widgets/discover_header.dart';
 
 class _FakeDiscoverStateNotifier extends DiscoverStateNotifier {
   _FakeDiscoverStateNotifier(this._initialState);

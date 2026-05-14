@@ -14,7 +14,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/services/fcm_token_manager.dart';
+import 'package:pathio/core/services/fcm_token_manager.dart';
 
 class _ThrowingFirebaseMessaging implements FirebaseMessaging {
   int getTokenCalls = 0;

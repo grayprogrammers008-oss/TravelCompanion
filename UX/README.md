@@ -1,8 +1,8 @@
-# Travel Crew App - UX Documentation
+# Pathio App - UX Documentation
 
 ## 📱 Overview
 
-Travel Crew is a collaborative trip planning and expense management app designed for groups of friends traveling together. The UX is built around three core pillars:
+Pathio is a collaborative trip planning and expense management app designed for groups of friends traveling together. The UX is built around three core pillars:
 
 1. **Simple & Intuitive** - Minimize cognitive load, maximum clarity
 2. **Collaborative** - Real-time updates, transparent information sharing
@@ -336,4 +336,4 @@ Trip Details → Balances Tab → View Who Owes Whom → Create Settlement → M
 
 **Last Updated**: 2025-10-11
 **Version**: 1.0
-**Maintained by**: Travel Crew UX Team
+**Maintained by**: Pathio UX Team

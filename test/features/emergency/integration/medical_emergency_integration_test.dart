@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/core/services/location_service.dart';
-import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart';
-import 'package:travel_crew/features/emergency/data/repositories/emergency_repository_impl.dart';
-import 'package:travel_crew/shared/models/emergency_alert_model.dart';
+import 'package:pathio/core/services/location_service.dart';
+import 'package:pathio/features/emergency/data/datasources/emergency_remote_datasource.dart';
+import 'package:pathio/features/emergency/data/repositories/emergency_repository_impl.dart';
+import 'package:pathio/shared/models/emergency_alert_model.dart';
 
 import 'medical_emergency_integration_test.mocks.dart';
 

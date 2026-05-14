@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/itinerary/domain/repositories/itinerary_repository.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/create_itinerary_item_usecase.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/delete_itinerary_item_usecase.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/get_itinerary_by_days_usecase.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/get_trip_itinerary_usecase.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/reorder_items_usecase.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/update_itinerary_item_usecase.dart';
-import 'package:travel_crew/features/itinerary/presentation/providers/itinerary_providers.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/features/itinerary/domain/repositories/itinerary_repository.dart';
+import 'package:pathio/features/itinerary/domain/usecases/create_itinerary_item_usecase.dart';
+import 'package:pathio/features/itinerary/domain/usecases/delete_itinerary_item_usecase.dart';
+import 'package:pathio/features/itinerary/domain/usecases/get_itinerary_by_days_usecase.dart';
+import 'package:pathio/features/itinerary/domain/usecases/get_trip_itinerary_usecase.dart';
+import 'package:pathio/features/itinerary/domain/usecases/reorder_items_usecase.dart';
+import 'package:pathio/features/itinerary/domain/usecases/update_itinerary_item_usecase.dart';
+import 'package:pathio/features/itinerary/presentation/providers/itinerary_providers.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 /// Hand-rolled fake repository allowing fine control over each method's
 /// behaviour so we can drive ItineraryController through its happy and

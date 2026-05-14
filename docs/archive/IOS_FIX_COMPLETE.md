@@ -282,7 +282,7 @@ The app runs in debug mode by default for faster development.
 ./run_ios.sh
 ```
 
-That's it! Your Travel Crew app should now launch on the iOS Simulator. 🎉
+That's it! Your Pathio app should now launch on the iOS Simulator. 🎉
 
 ---
 

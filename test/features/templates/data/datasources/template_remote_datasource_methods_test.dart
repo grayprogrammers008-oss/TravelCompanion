@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:travel_crew/features/templates/data/datasources/template_queries.dart';
-import 'package:travel_crew/features/templates/data/datasources/template_remote_datasource.dart';
-import 'package:travel_crew/features/templates/domain/entities/trip_template.dart';
+import 'package:pathio/features/templates/data/datasources/template_queries.dart';
+import 'package:pathio/features/templates/data/datasources/template_remote_datasource.dart';
+import 'package:pathio/features/templates/domain/entities/trip_template.dart';
 
 /// Hand-rolled fake of [TemplateQueries] that records every call and lets
 /// tests script the response. No mockito codegen.

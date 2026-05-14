@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/statistics/presentation/providers/statistics_providers.dart';
+import 'package:pathio/features/statistics/presentation/providers/statistics_providers.dart';
 
 void main() {
   group('quickStatsProvider', () {

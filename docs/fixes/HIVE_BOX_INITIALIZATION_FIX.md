@@ -68,7 +68,7 @@ void main() async {
   // Initialize Supabase Backend (online-only mode)
   await SupabaseClientWrapper.initialize();
 
-  runApp(const ProviderScope(child: TravelCrewApp()));
+  runApp(const ProviderScope(child: PathioApp()));
 }
 ```
 
@@ -97,7 +97,7 @@ void main() async {
   // Initialize Supabase Backend (online-only mode)
   await SupabaseClientWrapper.initialize();
 
-  runApp(const ProviderScope(child: TravelCrewApp()));
+  runApp(const ProviderScope(child: PathioApp()));
 }
 ```
 

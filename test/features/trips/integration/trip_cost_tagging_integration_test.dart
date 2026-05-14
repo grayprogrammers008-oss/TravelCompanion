@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/expenses/domain/repositories/expense_repository.dart';
-import 'package:travel_crew/features/trips/domain/usecases/calculate_trip_budget_status_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_trip_cost_usecase.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/expenses/domain/repositories/expense_repository.dart';
+import 'package:pathio/features/trips/domain/usecases/calculate_trip_budget_status_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/get_trip_cost_usecase.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 import 'trip_cost_tagging_integration_test.mocks.dart';
 

@@ -13,9 +13,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/expenses/domain/repositories/expense_repository.dart';
-import 'package:travel_crew/features/expenses/presentation/providers/expense_providers.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/expenses/domain/repositories/expense_repository.dart';
+import 'package:pathio/features/expenses/presentation/providers/expense_providers.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 /// Hand-rolled fake repository — implements every method by recording
 /// invocations and returning canned values. Tests don't need every behavior,

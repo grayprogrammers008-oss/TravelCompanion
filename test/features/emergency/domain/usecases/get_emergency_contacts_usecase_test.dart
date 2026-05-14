@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/emergency/domain/repositories/emergency_repository.dart';
-import 'package:travel_crew/features/emergency/domain/usecases/get_emergency_contacts_usecase.dart';
-import 'package:travel_crew/shared/models/emergency_contact_model.dart';
+import 'package:pathio/features/emergency/domain/repositories/emergency_repository.dart';
+import 'package:pathio/features/emergency/domain/usecases/get_emergency_contacts_usecase.dart';
+import 'package:pathio/shared/models/emergency_contact_model.dart';
 
 import 'get_emergency_contacts_usecase_test.mocks.dart';
 

@@ -372,7 +372,7 @@ Phase 1A (Core Infrastructure) is complete when:
 
 ## 📝 Notes
 
-- Schema follows existing Travel Crew patterns
+- Schema follows existing Pathio patterns
 - Compatible with future Bluetooth/WiFi P2P features
 - Ready for real-time Supabase subscriptions
 - Supports message reactions and threading

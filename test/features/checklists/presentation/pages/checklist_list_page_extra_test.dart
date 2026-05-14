@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/features/checklists/presentation/pages/checklist_list_page.dart';
-import 'package:travel_crew/features/checklists/presentation/providers/checklist_providers.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/checklists/presentation/pages/checklist_list_page.dart';
+import 'package:pathio/features/checklists/presentation/providers/checklist_providers.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 import '../widgets/fake_checklist_repository.dart';
 

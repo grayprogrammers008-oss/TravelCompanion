@@ -49,10 +49,10 @@ Please upgrade or add the address to your authorized recipients.
 ```bash
 curl --user 'api:a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0' \
   https://api.mailgun.net/v3/sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org/messages \
-  -F from='Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>' \
+  -F from='Pathio <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>' \
   -F to='vinothvsbe@gmail.com' \
-  -F subject='🎉 Test from Travel Crew' \
-  -F text='Test email from Travel Crew app!'
+  -F subject='🎉 Test from Pathio' \
+  -F text='Test email from Pathio app!'
 ```
 
 **Expected Response** (after authorization):
@@ -70,7 +70,7 @@ curl --user 'api:a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0' \
 ### Benefits of Upgrading
 
 - ✅ Send to **any email address** (no authorization needed)
-- ✅ Use a **custom domain** (e.g., `mg.travelcrew.com`)
+- ✅ Use a **custom domain** (e.g., `mg.pathio.com`)
 - ✅ Higher sending limits
 - ✅ Better deliverability
 - ✅ Professional appearance
@@ -87,15 +87,15 @@ curl --user 'api:a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0' \
 3. **Add a Custom Domain** (optional but recommended)
    - Go to "Sending" → "Domains"
    - Click "Add New Domain"
-   - Enter your domain (e.g., `mg.travelcrew.com`)
+   - Enter your domain (e.g., `mg.pathio.com`)
    - Follow DNS setup instructions
 
 4. **Update Configuration**
    - Edit `lib/core/config/supabase_config.dart`
    - Replace sandbox domain with your custom domain:
    ```dart
-   defaultValue: 'mg.travelcrew.com',
-   defaultValue: 'Travel Crew <noreply@mg.travelcrew.com>',
+   defaultValue: 'mg.pathio.com',
+   defaultValue: 'Pathio <noreply@mg.pathio.com>',
    ```
 
 ---
@@ -125,15 +125,15 @@ curl --user 'api:a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0' \
 # Test sending to your authorized email
 curl --user 'api:a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0' \
   https://api.mailgun.net/v3/sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org/messages \
-  -F from='Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>' \
+  -F from='Pathio <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>' \
   -F to='vinothvsbe@gmail.com' \
-  -F subject='🎉 Travel Crew Test Email' \
+  -F subject='🎉 Pathio Test Email' \
   -F html='<h1>Success!</h1><p>Your Mailgun integration is working!</p>'
 ```
 
 ### Option 2: Using the App
 
-1. Run the Travel Crew app
+1. Run the Pathio app
 2. Create a trip
 3. Invite yourself (`vinothvsbe@gmail.com`)
 4. Check console for success message

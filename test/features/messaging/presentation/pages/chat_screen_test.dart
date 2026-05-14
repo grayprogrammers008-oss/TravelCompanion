@@ -2,14 +2,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/features/messaging/presentation/pages/chat_screen.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/ble_providers.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/messaging_providers.dart';
-import 'package:travel_crew/features/messaging/presentation/widgets/message_bubble.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/presentation/pages/chat_screen.dart';
+import 'package:pathio/features/messaging/presentation/providers/ble_providers.dart';
+import 'package:pathio/features/messaging/presentation/providers/messaging_providers.dart';
+import 'package:pathio/features/messaging/presentation/widgets/message_bubble.dart';
 
 /// Stubbed BLE notifier that no-ops initialize() so we don't trip Bluetooth
 /// platform channels in widget tests.

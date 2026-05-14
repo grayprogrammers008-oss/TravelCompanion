@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/shared/models/message_model.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/shared/models/message_model.dart';
 
 void main() {
   group('MessageModel', () {

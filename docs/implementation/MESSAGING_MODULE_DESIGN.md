@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-The Travel Crew messaging module enables real-time and **offline** communication between trip crew members through multiple channels:
+The Pathio messaging module enables real-time and **offline** communication between trip crew members through multiple channels:
 
 1. **Internet** - Supabase Realtime (primary, most reliable)
 2. **WiFi Direct** - High-bandwidth P2P for images/files
@@ -17,7 +17,7 @@ The Travel Crew messaging module enables real-time and **offline** communication
 
 ### Key Differentiator
 
-Unlike most travel apps, Travel Crew works **completely offline** using Bluetooth and WiFi Direct peer-to-peer messaging. Perfect for:
+Unlike most travel apps, Pathio works **completely offline** using Bluetooth and WiFi Direct peer-to-peer messaging. Perfect for:
 - Remote hiking trips without cell service
 - International travel with limited data
 - Group coordination in areas with poor connectivity
@@ -106,7 +106,7 @@ Unlike most travel apps, Travel Crew works **completely offline** using Bluetoot
 **Technical Details**:
 ```dart
 // BLE Service UUID
-Travel Crew BLE Service: 0000TCMSG-0000-1000-8000-00805F9B34FB
+Pathio BLE Service: 0000TCMSG-0000-1000-8000-00805F9B34FB
 
 Characteristics:
 ├─ MESSAGE_TX (Write, Notify) - Send/receive messages

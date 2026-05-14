@@ -188,7 +188,7 @@ If the resume button doesn't work or project is deleted:
 ### Create New Project (5 minutes)
 
 1. **Supabase Dashboard → New Project**
-2. **Name:** TravelCrew
+2. **Name:** Pathio
 3. **Region:** Singapore (closest to India)
 4. **Database Password:** [strong password]
 5. **Click "Create Project"**

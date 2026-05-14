@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/itinerary/data/datasources/itinerary_remote_datasource.dart';
+import 'package:pathio/features/itinerary/data/datasources/itinerary_remote_datasource.dart';
 
 /// Verifies that [ItineraryRemoteDataSource] now accepts an injectable
 /// [SupabaseClient]. This is the contract that lets tests stub Supabase

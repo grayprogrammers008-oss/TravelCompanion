@@ -229,7 +229,7 @@ flutter build ios --release
 When creating new UI components, use the theme system:
 
 ```dart
-import 'package:travel_crew/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_access.dart';
 
 class MyWidget extends ConsumerWidget {
   @override

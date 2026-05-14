@@ -9,10 +9,10 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:travel_crew/features/ai_itinerary/data/services/gemini_service.dart';
-import 'package:travel_crew/features/ai_itinerary/data/services/groq_service.dart';
-import 'package:travel_crew/features/ai_itinerary/data/services/multi_provider_ai_service.dart';
-import 'package:travel_crew/features/ai_itinerary/domain/entities/ai_itinerary.dart'
+import 'package:pathio/features/ai_itinerary/data/services/gemini_service.dart';
+import 'package:pathio/features/ai_itinerary/data/services/groq_service.dart';
+import 'package:pathio/features/ai_itinerary/data/services/multi_provider_ai_service.dart';
+import 'package:pathio/features/ai_itinerary/domain/entities/ai_itinerary.dart'
     hide AiItineraryDay, AiItineraryActivity;
 
 class _GroqFake implements GroqHttpClient {

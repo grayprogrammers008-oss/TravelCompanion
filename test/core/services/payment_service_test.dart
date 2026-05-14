@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/payment_service.dart';
+import 'package:pathio/core/services/payment_service.dart';
 
 /// Unit tests for PaymentService
 /// Tests all UPI payment functionality including:

@@ -8,7 +8,7 @@
 
 ## 🌟 Overview
 
-Transformed the Travel Crew app from functional to **stunning** with premium animations, glassmorphic effects, and beautiful visual feedback. The app now delivers a **luxury, premium experience** that matches world-class travel applications.
+Transformed the Pathio app from functional to **stunning** with premium animations, glassmorphic effects, and beautiful visual feedback. The app now delivers a **luxury, premium experience** that matches world-class travel applications.
 
 ---
 

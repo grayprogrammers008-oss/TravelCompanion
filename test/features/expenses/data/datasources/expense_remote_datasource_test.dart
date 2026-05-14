@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/expenses/data/datasources/expense_remote_datasource.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/expenses/data/datasources/expense_remote_datasource.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 class _FakeSupabaseClient extends Mock implements SupabaseClient {}
 

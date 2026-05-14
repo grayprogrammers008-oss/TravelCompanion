@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:travel_crew/core/theme/easy_mode_provider.dart';
+import 'package:pathio/core/theme/easy_mode_provider.dart';
 
 /// Tests for [EasyModeNotifier] and the helpers + extensions exported
 /// from `easy_mode_provider.dart`.

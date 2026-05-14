@@ -1411,7 +1411,7 @@ COMMENT ON VIEW user_statistics IS 'Simplified user statistics view for admin pa
 -- ============================================
 
 -- =============================================
--- Storage Buckets Setup for Travel Crew
+-- Storage Buckets Setup for Pathio
 -- =============================================
 -- Created: 2025-02-01
 -- Purpose: Create storage buckets for user avatars, trip covers,

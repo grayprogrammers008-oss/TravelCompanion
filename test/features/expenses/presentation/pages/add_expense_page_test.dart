@@ -16,11 +16,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/easy_mode_provider.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/expenses/presentation/pages/add_expense_page.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/easy_mode_provider.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/expenses/presentation/pages/add_expense_page.dart';
 
 final _theme = AppThemeData.getThemeData(AppThemeType.ocean);
 

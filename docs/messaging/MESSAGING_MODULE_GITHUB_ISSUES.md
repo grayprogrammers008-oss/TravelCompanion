@@ -37,7 +37,7 @@ bash scripts/create_messaging_issues.sh
 ## 📱 Core Messaging Infrastructure
 
 ### Description
-Implement the foundational messaging system for Travel Crew with real-time and offline capabilities.
+Implement the foundational messaging system for Pathio with real-time and offline capabilities.
 
 ### Requirements
 
@@ -209,14 +209,14 @@ Others' messages:
 - [ ] Typing indicators work
 - [ ] Offline messages show in queue
 - [ ] Works perfectly on small screens (iPhone SE)
-- [ ] Follows Travel Crew design system
+- [ ] Follows Pathio design system
 
 ### Estimated Time: 4 days
 
 ### Design References
 - WhatsApp chat UI (familiar UX)
 - Telegram bubbles (clean design)
-- Travel Crew glossy design system
+- Pathio glossy design system
 
 ### Files to Create
 ```

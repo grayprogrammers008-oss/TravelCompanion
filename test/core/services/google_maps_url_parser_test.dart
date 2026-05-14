@@ -1,7 +1,7 @@
 // Tests for GoogleMapsUrlParser - pure URL parsing logic, no SDK dependencies.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/google_maps_url_parser.dart';
+import 'package:pathio/core/services/google_maps_url_parser.dart';
 
 void main() {
   group('GoogleMapsUrlParser.isGoogleMapsUrl', () {

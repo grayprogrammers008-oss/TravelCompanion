@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
 
 /// Default theme used across widget tests.
 final AppThemeData testTheme = AppThemeData.getThemeData(AppThemeType.ocean);

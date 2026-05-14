@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/onboarding/domain/models/onboarding_page_model.dart';
-import 'package:travel_crew/features/onboarding/presentation/widgets/onboarding_screen.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/onboarding/domain/models/onboarding_page_model.dart';
+import 'package:pathio/features/onboarding/presentation/widgets/onboarding_screen.dart';
 
 void main() {
   group('OnboardingScreen Widget', () {

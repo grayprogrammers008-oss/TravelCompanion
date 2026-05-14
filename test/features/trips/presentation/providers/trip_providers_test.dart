@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
-import 'package:travel_crew/features/trips/domain/usecases/filter_trips_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/features/trips/domain/repositories/trip_repository.dart';
+import 'package:pathio/features/trips/domain/usecases/filter_trips_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/get_user_stats_usecase.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Hand-rolled fake trip repository for provider tests.
 class _FakeTripRepository implements TripRepository {

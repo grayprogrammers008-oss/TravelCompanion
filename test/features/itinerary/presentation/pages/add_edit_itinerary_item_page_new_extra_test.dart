@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/itinerary/domain/repositories/itinerary_repository.dart';
-import 'package:travel_crew/features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
-import 'package:travel_crew/features/itinerary/presentation/providers/itinerary_providers.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/itinerary/domain/repositories/itinerary_repository.dart';
+import 'package:pathio/features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
+import 'package:pathio/features/itinerary/presentation/providers/itinerary_providers.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 class _FakeRepo implements ItineraryRepository {
   ItineraryItemModel? itemToReturn;

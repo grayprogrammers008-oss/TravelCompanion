@@ -103,7 +103,7 @@ class _InviteBottomSheetState extends ConsumerState<InviteBottomSheet>
   Future<void> _shareInvite() async {
     if (_generatedInviteCode == null) return;
 
-    final inviteLink = 'https://travelcrew.app/invite/$_generatedInviteCode';
+    final inviteLink = 'https://pathio.travel/invite/$_generatedInviteCode';
 
     // Format message to make link auto-detectable by email/messaging apps
     // Most email clients will automatically make URLs clickable

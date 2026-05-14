@@ -5,7 +5,7 @@
 // fromNominatim() factory are pure and fully testable.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/place_search_service.dart';
+import 'package:pathio/core/services/place_search_service.dart';
 
 void main() {
   group('Place.fromNominatim', () {

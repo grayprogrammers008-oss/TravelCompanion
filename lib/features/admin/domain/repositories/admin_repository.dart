@@ -1,8 +1,8 @@
-import 'package:travel_crew/features/admin/domain/entities/admin_activity_log.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_dashboard_stats.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_user.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/domain/entities/admin_activity_log.dart';
+import 'package:pathio/features/admin/domain/entities/admin_dashboard_stats.dart';
+import 'package:pathio/features/admin/domain/entities/admin_user.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
 
 /// Admin Repository Interface
 /// Defines contract for admin user management operations

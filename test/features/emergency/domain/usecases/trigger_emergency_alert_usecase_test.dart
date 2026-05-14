@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/emergency/domain/repositories/emergency_repository.dart';
-import 'package:travel_crew/features/emergency/domain/usecases/trigger_emergency_alert_usecase.dart';
-import 'package:travel_crew/shared/models/emergency_alert_model.dart';
+import 'package:pathio/features/emergency/domain/repositories/emergency_repository.dart';
+import 'package:pathio/features/emergency/domain/usecases/trigger_emergency_alert_usecase.dart';
+import 'package:pathio/shared/models/emergency_alert_model.dart';
 
 @GenerateMocks([EmergencyRepository])
 import 'trigger_emergency_alert_usecase_test.mocks.dart';

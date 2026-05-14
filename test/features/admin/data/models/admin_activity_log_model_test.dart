@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/admin/data/models/admin_activity_log_model.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_activity_log.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_action_type.dart';
+import 'package:pathio/features/admin/data/models/admin_activity_log_model.dart';
+import 'package:pathio/features/admin/domain/entities/admin_activity_log.dart';
+import 'package:pathio/features/admin/domain/entities/admin_action_type.dart';
 
 void main() {
   group('AdminActivityLogModel', () {

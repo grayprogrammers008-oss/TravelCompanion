@@ -1,12 +1,12 @@
 # 🎨 Theme Comparison: Existing vs Fitonist
 
-Side-by-side comparison of your existing Travel Crew theme and the new Fitonist-inspired theme.
+Side-by-side comparison of your existing Pathio theme and the new Fitonist-inspired theme.
 
 ---
 
 ## 🎯 Quick Comparison
 
-| Feature | **Travel Crew (Existing)** | **Fitonist (New)** |
+| Feature | **Pathio (Existing)** | **Fitonist (New)** |
 |---------|---------------------------|-------------------|
 | **Primary Color** | Teal `#00B8A9` | Purple `#7B5FE8` |
 | **Secondary Color** | Coral `#FF6B9D` | Pink `#FF88CC` |
@@ -21,7 +21,7 @@ Side-by-side comparison of your existing Travel Crew theme and the new Fitonist-
 
 ### Primary Colors
 
-**Travel Crew Theme:**
+**Pathio Theme:**
 ```
 Primary Teal      #00B8A9  ███████  Tropical waters
 Primary Deep      #008C7D  ███████  Ocean depths
@@ -41,7 +41,7 @@ Fitonist Purple Pale  #EFE9FF  ███████  Subtle container
 
 ### Accent Colors
 
-**Travel Crew Theme:**
+**Pathio Theme:**
 ```
 Accent Coral      #FF6B9D  ███████  Tropical sunset
 Accent Gold       #FFC145  ███████  Golden hour
@@ -62,7 +62,7 @@ Fitonist Yellow   #FFE066  ███████  Bright yellow
 
 ## 🎨 Gradient Comparison
 
-### Travel Crew Gradients
+### Pathio Gradients
 
 **Primary Gradient** (Teal)
 ```
@@ -126,7 +126,7 @@ Mint green → Purple
 
 ## 🎭 When to Use Which Theme
 
-### Use **Travel Crew Theme** (Teal) When:
+### Use **Pathio Theme** (Teal) When:
 
 ✅ Targeting luxury/premium travelers
 ✅ Emphasizing sophistication and elegance
@@ -163,7 +163,7 @@ Mint green → Purple
 
 ## 📱 Visual Style Comparison
 
-### Travel Crew Theme Style
+### Pathio Theme Style
 
 **Design Characteristics:**
 - Rounded corners: 12-16dp (moderate)
@@ -205,7 +205,7 @@ You can mix both themes in your app!
 ### Strategy 1: Feature-Based
 
 ```dart
-// Main app uses Travel Crew (teal)
+// Main app uses Pathio (teal)
 MaterialApp(
   theme: AppTheme.lightTheme,
 )
@@ -244,7 +244,7 @@ Chip(
 
 ## 📊 Color Psychology
 
-### Travel Crew (Teal)
+### Pathio (Teal)
 
 **Teal Evokes:**
 - Trust and reliability
@@ -281,29 +281,29 @@ Chip(
 | Feature | Recommended Theme | Why |
 |---------|------------------|-----|
 | **Trip Planning** | Either | Core feature works with both |
-| **Hotel Booking** | Travel Crew | Premium, trustworthy |
+| **Hotel Booking** | Pathio | Premium, trustworthy |
 | **Social Sharing** | Fitonist | Energetic, fun |
 | **Itinerary Builder** | Either | Depends on target audience |
-| **Budget Tracking** | Travel Crew | Professional, serious |
+| **Budget Tracking** | Pathio | Professional, serious |
 | **Travel Challenges** | Fitonist | Gamified, exciting |
 | **Photo Sharing** | Fitonist | Creative, vibrant |
-| **Flight Booking** | Travel Crew | Trustworthy, reliable |
+| **Flight Booking** | Pathio | Trustworthy, reliable |
 | **Group Planning** | Fitonist | Social, collaborative |
-| **Premium Features** | Travel Crew | Luxury positioning |
+| **Premium Features** | Pathio | Luxury positioning |
 
 ---
 
 ## 🚀 Implementation Strategy
 
 ### Phase 1: Test & Learn
-1. Keep Travel Crew as default
+1. Keep Pathio as default
 2. Add Fitonist as alternate theme in settings
 3. Track user preferences
 4. Gather feedback
 
 ### Phase 2: Feature-Specific
 1. Use Fitonist for social features
-2. Keep Travel Crew for bookings
+2. Keep Pathio for bookings
 3. A/B test conversion rates
 
 ### Phase 3: Full Migration (if desired)
@@ -316,7 +316,7 @@ Chip(
 ## 💡 Pro Tips
 
 1. **Don't Mix Gradients**
-   - Use Travel Crew gradients with teal theme
+   - Use Pathio gradients with teal theme
    - Use Fitonist gradients with purple theme
    - Avoid mixing purple and teal gradients
 
@@ -337,7 +337,7 @@ Chip(
 
 ## 📈 Decision Matrix
 
-**Choose Travel Crew (Teal) if:**
+**Choose Pathio (Teal) if:**
 - Primary goal is trust/reliability
 - Targeting 30+ age group
 - Premium/luxury positioning
@@ -363,7 +363,7 @@ Chip(
 
 Both themes are **fully implemented and ready to use**!
 
-**Travel Crew Theme:**
+**Pathio Theme:**
 - `AppTheme.lightTheme`
 - `AppTheme.darkTheme`
 - Teal-based, premium, sophisticated

@@ -2,7 +2,7 @@
 
 ## ✅ Integration Status: COMPLETE
 
-Your Travel Crew app is now integrated with Supabase! This guide explains what was done and how to use it.
+Your Pathio app is now integrated with Supabase! This guide explains what was done and how to use it.
 
 ---
 
@@ -77,7 +77,7 @@ After running the schema, you should see these tables:
 ### **Authentication Example**
 
 ```dart
-import 'package:travel_crew/core/network/supabase_client.dart';
+import 'package:pathio/core/network/supabase_client.dart';
 
 // Sign up
 final response = await SupabaseClientWrapper.client.auth.signUp(

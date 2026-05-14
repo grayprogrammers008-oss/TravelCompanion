@@ -120,7 +120,7 @@
 **Root Cause**: Text finding issues, animation timing
 
 **Common Errors:**
-- "Found 0 widgets with text 'Welcome to Travel Crew'"
+- "Found 0 widgets with text 'Welcome to Pathio'"
 - Widget not found errors
 
 **Fix Complexity**: Low (30 minutes)

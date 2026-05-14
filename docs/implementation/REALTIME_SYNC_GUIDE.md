@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-Travel Crew now has comprehensive real-time synchronization powered by Supabase Realtime. Changes made on one device instantly appear on all other devices viewing the same data.
+Pathio now has comprehensive real-time synchronization powered by Supabase Realtime. Changes made on one device instantly appear on all other devices viewing the same data.
 
 ### What's Synchronized
 
@@ -497,11 +497,11 @@ controller.onCancel = () {
 ### Test Scenario 1: Two Devices
 
 1. **Device A (Your phone)**:
-   - Open Travel Crew
+   - Open Pathio
    - View trips list
 
 2. **Device B (Nithya's phone)**:
-   - Open Travel Crew
+   - Open Pathio
    - Create a new trip
 
 3. **Result**: Device A sees new trip appear instantly! ✨

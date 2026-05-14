@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_trip_providers.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_trip_list.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/admin/domain/entities/admin_trip.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_trip_providers.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_trip_list.dart';
 
 final _theme = AppThemeData.getThemeData(AppThemeType.ocean);
 

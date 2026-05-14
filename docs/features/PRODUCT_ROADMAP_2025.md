@@ -1,4 +1,4 @@
-# 🗺️ Travel Crew Product Roadmap 2025
+# 🗺️ Pathio Product Roadmap 2025
 
 **Last Updated**: October 21, 2025
 **Vision**: The only travel app that works everywhere you do
@@ -81,7 +81,7 @@
 **Marketing Campaign**:
 ```
 "No WiFi? No Problem."
-Travel Crew now works in:
+Pathio now works in:
 ✅ Mountains (Himalayas ✅)
 ✅ Deserts (Sahara ✅)
 ✅ Oceans (Pacific Islands ✅)
@@ -169,7 +169,7 @@ Want me to add one to your itinerary?"
 - 🎥 User-generated content contest
 - 🏆 "Best Trip of 2026" competition
 - 🤝 Travel brand partnerships (Airbnb, Booking.com)
-- 📊 Press: "Travel Crew hits 50K users"
+- 📊 Press: "Pathio hits 50K users"
 
 **Success Metrics**:
 - 👥 50,000 total users
@@ -394,7 +394,7 @@ Clear traction, unique tech, large market = investor-ready
 ## 🎯 The Vision
 
 **By December 2026**:
-- 100K+ users using Travel Crew for group travel
+- 100K+ users using Pathio for group travel
 - 5K+ Pro subscribers paying for offline + AI features
 - $25K MRR with clear path to $100K
 - Category leader in "Travel Planning & Collaboration"

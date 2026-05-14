@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
-import 'package:travel_crew/features/discover/presentation/widgets/trip_planning_assistant_sheet.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/features/discover/presentation/widgets/trip_planning_assistant_sheet.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 class _FakeDiscoverStateNotifier extends DiscoverStateNotifier {
   _FakeDiscoverStateNotifier(this._initialState, {this.favoritePlaces = const []});

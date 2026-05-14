@@ -6,9 +6,9 @@
 // and can be exercised directly.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/share_service.dart';
-import 'package:travel_crew/features/ai_itinerary/domain/entities/ai_itinerary.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/services/share_service.dart';
+import 'package:pathio/features/ai_itinerary/domain/entities/ai_itinerary.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 TripModel _trip({
   String? destination,

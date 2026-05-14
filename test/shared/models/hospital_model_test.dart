@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/shared/models/hospital_model.dart';
+import 'package:pathio/shared/models/hospital_model.dart';
 
 void main() {
   group('HospitalType', () {

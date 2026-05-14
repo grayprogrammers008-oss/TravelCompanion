@@ -1,4 +1,4 @@
-import 'package:travel_crew/features/admin/domain/entities/admin_dashboard_stats.dart';
+import 'package:pathio/features/admin/domain/entities/admin_dashboard_stats.dart';
 
 /// Admin Dashboard Stats Model
 /// Maps database JSON to domain entity

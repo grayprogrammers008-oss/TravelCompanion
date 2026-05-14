@@ -1,5 +1,5 @@
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/features/checklists/domain/repositories/checklist_repository.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/checklists/domain/repositories/checklist_repository.dart';
 
 /// A configurable fake [ChecklistRepository] used by widget tests for
 /// the checklists module. All async methods return canned data and

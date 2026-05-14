@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/messaging/domain/entities/conversation_entity.dart';
-import 'package:travel_crew/features/messaging/presentation/pages/conversation_info_page.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/conversation_providers.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/messaging/domain/entities/conversation_entity.dart';
+import 'package:pathio/features/messaging/presentation/pages/conversation_info_page.dart';
+import 'package:pathio/features/messaging/presentation/providers/conversation_providers.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 void main() {
   void expandViewport(WidgetTester tester) {

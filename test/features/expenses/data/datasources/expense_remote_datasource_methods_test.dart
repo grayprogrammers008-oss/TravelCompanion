@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:travel_crew/features/expenses/data/datasources/expense_queries.dart';
-import 'package:travel_crew/features/expenses/data/datasources/expense_remote_datasource.dart';
+import 'package:pathio/features/expenses/data/datasources/expense_queries.dart';
+import 'package:pathio/features/expenses/data/datasources/expense_remote_datasource.dart';
 
 /// Comprehensive unit tests for [ExpenseRemoteDataSource].
 ///

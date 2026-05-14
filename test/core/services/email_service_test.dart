@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:travel_crew/core/services/email_service.dart';
+import 'package:pathio/core/services/email_service.dart';
 
 /// Hand-rolled fake of [EmailHttpClient]. Each `get`/`post` call pops
 /// the next queued response or rethrows the next queued exception.

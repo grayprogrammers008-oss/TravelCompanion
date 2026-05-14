@@ -2,11 +2,11 @@
 // path that does NOT touch the file system or the Share plugin.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/pdf_export_service.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/features/itinerary/domain/entities/itinerary_entity.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/core/services/pdf_export_service.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/itinerary/domain/entities/itinerary_entity.dart';
+import 'package:pathio/shared/models/trip_model.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 TripModel _trip({
   String? name,

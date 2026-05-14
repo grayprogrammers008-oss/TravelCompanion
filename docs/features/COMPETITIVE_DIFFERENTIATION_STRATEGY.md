@@ -1,4 +1,4 @@
-# 🚀 Travel Crew - Competitive Differentiation Strategy
+# 🚀 Pathio - Competitive Differentiation Strategy
 
 **Date**: October 21, 2025
 **Status**: Strategic Planning
@@ -31,7 +31,7 @@
 #### Why It Stands Out
 ```
 ❌ Competitors: Need internet for everything
-✅ Travel Crew: Works in airplane mode, mountains, deserts, remote islands
+✅ Pathio: Works in airplane mode, mountains, deserts, remote islands
 ```
 
 **Marketing Angles**:
@@ -42,7 +42,7 @@
 **User Stories**:
 ```
 "I was hiking in Patagonia with zero cell service.
-Travel Crew let us coordinate meeting points via Bluetooth.
+Pathio let us coordinate meeting points via Bluetooth.
 Life-saving!" - Sarah, Adventure Traveler
 ```
 
@@ -68,7 +68,7 @@ Life-saving!" - Sarah, Adventure Traveler
 #### Why It Stands Out
 ```
 ❌ Competitors: Static recommendations from database
-✅ Travel Crew: AI understands your trip, crew preferences, budget in real-time
+✅ Pathio: AI understands your trip, crew preferences, budget in real-time
 ```
 
 **What It Does**:
@@ -112,7 +112,7 @@ Based on your crew's love for photography and $50 budget."
 ```
 ❌ Splitwise: Manual entry, complex UI, not travel-specific
 ❌ Venmo: No tracking, no trip context
-✅ Travel Crew: Tap twice, done. Auto-splits with trip crew.
+✅ Pathio: Tap twice, done. Auto-splits with trip crew.
 ```
 
 **User Flow Comparison**:
@@ -128,7 +128,7 @@ Based on your crew's love for photography and $50 budget."
 7. Confirm
 ```
 
-**Travel Crew** (2 taps, 5 seconds):
+**Pathio** (2 taps, 5 seconds):
 ```
 1. Tap "+" on expense tab
 2. Enter "$45 dinner" → Auto-splits with current trip crew ✨
@@ -161,7 +161,7 @@ Based on your crew's love for photography and $50 budget."
 #### Why It Stands Out
 ```
 ❌ Competitors: Boring, corporate, outdated UI
-✅ Travel Crew: Premium, glossy, makes you WANT to travel
+✅ Pathio: Premium, glossy, makes you WANT to travel
 ```
 
 **Design Language**:
@@ -197,7 +197,7 @@ Based on your crew's love for photography and $50 budget."
 #### Why It Stands Out
 ```
 ❌ Competitors: Refresh to see updates, sync delays
-✅ Travel Crew: Changes appear instantly (< 1 second)
+✅ Pathio: Changes appear instantly (< 1 second)
 ```
 
 **What Users See**:
@@ -306,7 +306,7 @@ No refresh needed ✨
 **Focus**: Offline messaging (Bluetooth + WiFi)
 
 **Launch Message**:
-> "Travel Crew now works ANYWHERE on Earth. Mountains, deserts, oceans - stay connected without internet."
+> "Pathio now works ANYWHERE on Earth. Mountains, deserts, oceans - stay connected without internet."
 
 **Target Audience**: Adventure travelers, hikers, backpackers, international travelers
 
@@ -353,7 +353,7 @@ No refresh needed ✨
 - Up to 10 crew members per trip
 - Basic expense splitting
 - Standard itinerary
-- Travel Crew branding
+- Pathio branding
 
 ### Pro Tier ($4.99/month or $49/year)
 - Unlimited trips
@@ -379,7 +379,7 @@ No refresh needed ✨
 ## 📣 Marketing Taglines
 
 ### Primary Tagline
-**"Travel Crew: The only app that works everywhere you do"**
+**"Pathio: The only app that works everywhere you do"**
 
 ### Secondary Options
 1. "Plan together, travel better"
@@ -418,8 +418,8 @@ No refresh needed ✨
 [Scene 1: Himalayas, no cell service]
 "Your crew is hiking in the mountains. No WiFi. No cell service."
 
-[Scene 2: Phone shows Travel Crew]
-"But with Travel Crew, you're still connected."
+[Scene 2: Phone shows Pathio]
+"But with Pathio, you're still connected."
 [Demo: Send message via Bluetooth, appears on friend's phone]
 
 [Scene 3: Split screen - Bali beach]
@@ -438,7 +438,7 @@ No refresh needed ✨
 "Beautiful design. Offline messaging. AI assistant."
 
 [Text overlay]
-"Travel Crew
+"Pathio
 The app that works everywhere you do
 Free on App Store & Google Play"
 ```
@@ -468,7 +468,7 @@ Offline messaging + AI + Real-time + Beautiful design = 🔥
 - Better with more friends using it
 - Crews invite each other
 - Viral sharing of trip screenshots
-- "Join my trip on Travel Crew"
+- "Join my trip on Pathio"
 
 ---
 
@@ -499,7 +499,7 @@ Offline messaging + AI + Real-time + Beautiful design = 🔥
 
 ## 🎯 Competitive Advantages (Summary)
 
-| Feature | Travel Crew | TripIt | Splitwise | Google Trips |
+| Feature | Pathio | TripIt | Splitwise | Google Trips |
 |---------|-------------|--------|-----------|--------------|
 | **Offline Messaging** | ✅ BLE + WiFi | ❌ | ❌ | ❌ |
 | **AI Assistant** | ✅ Claude | ❌ | ❌ | ❌ (discontinued) |
@@ -543,7 +543,7 @@ Offline messaging + AI + Real-time + Beautiful design = 🔥
 > "We're building the Notion of group travel - beautiful, collaborative, and AI-powered. With one twist: it works offline via Bluetooth/WiFi."
 
 **For Users**:
-> "Travel Crew is the only app that works everywhere you do - mountains, deserts, oceans. Stay connected with your crew, even without internet."
+> "Pathio is the only app that works everywhere you do - mountains, deserts, oceans. Stay connected with your crew, even without internet."
 
 **For Press**:
 > "This travel app uses Bluetooth mesh networking to let groups coordinate in remote areas with zero cell service - a first in the travel tech space."

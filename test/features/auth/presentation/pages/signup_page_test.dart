@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
-import 'package:travel_crew/features/auth/domain/repositories/auth_repository.dart';
-import 'package:travel_crew/features/auth/presentation/pages/signup_page.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/auth/domain/entities/user_entity.dart';
+import 'package:pathio/features/auth/domain/repositories/auth_repository.dart';
+import 'package:pathio/features/auth/presentation/pages/signup_page.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
 
 /// Tests for [SignUpPage] using a hand-rolled fake [AuthRepository].
 
@@ -169,7 +169,7 @@ void main() {
       await tester.pumpWidget(createApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Join Travel Crew'), findsOneWidget);
+      expect(find.text('Join Pathio'), findsOneWidget);
       expect(find.text('Start planning amazing trips together'), findsOneWidget);
       expect(find.widgetWithText(TextFormField, 'Full Name'), findsOneWidget);
       expect(find.widgetWithText(TextFormField, 'Email Address'), findsOneWidget);
@@ -519,7 +519,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Still on signup page (success snackbar not shown).
-      expect(find.text('Join Travel Crew'), findsOneWidget);
+      expect(find.text('Join Pathio'), findsOneWidget);
       expect(find.text('Account created successfully! 🎉'), findsNothing);
     });
   });
@@ -559,14 +559,14 @@ void main() {
       // Push the SignUpPage onto the navigator.
       await tester.tap(find.text('GO_TO_SIGNUP'));
       await tester.pumpAndSettle();
-      expect(find.text('Join Travel Crew'), findsOneWidget);
+      expect(find.text('Join Pathio'), findsOneWidget);
 
       // Tap the back arrow icon and verify we pop back.
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
       expect(find.text('GO_TO_SIGNUP'), findsOneWidget);
-      expect(find.text('Join Travel Crew'), findsNothing);
+      expect(find.text('Join Pathio'), findsNothing);
     });
   });
 }

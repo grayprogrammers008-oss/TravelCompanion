@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:travel_crew/features/auth/data/datasources/auth_queries.dart';
-import 'package:travel_crew/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:pathio/features/auth/data/datasources/auth_queries.dart';
+import 'package:pathio/features/auth/data/datasources/auth_remote_datasource.dart';
 
 /// Comprehensive unit tests for [AuthRemoteDataSource].
 ///
@@ -558,7 +558,7 @@ void main() {
       expect(q.lastResetEmail, 'a@b.com');
       // kIsWeb is false in unit tests → mobile URL
       expect(q.lastResetRedirectTo,
-          'travelcrew://auth/reset-password');
+          'pathio://auth/reset-password');
     });
 
     test('wraps AuthException with "Password reset failed: <msg>"', () async {

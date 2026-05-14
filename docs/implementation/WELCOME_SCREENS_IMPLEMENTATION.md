@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-Comprehensive onboarding experience for first-time users of the Travel Crew app, introducing key features and setting expectations.
+Comprehensive onboarding experience for first-time users of the Pathio app, introducing key features and setting expectations.
 
 ---
 
@@ -37,7 +37,7 @@ Comprehensive onboarding experience for first-time users of the Travel Crew app,
 ### Onboarding Screens (4 screens)
 
 #### Screen 1: Welcome
-- **Title**: "Welcome to Travel Crew"
+- **Title**: "Welcome to Pathio"
 - **Subtitle**: "Plan trips with friends, split expenses fairly, and create unforgettable memories together"
 - **Icon/Image**: App logo with gradient background
 - **Color**: Primary Teal gradient
@@ -121,7 +121,7 @@ class OnboardingPageModel {
 
   static List<OnboardingPageModel> get pages => [
     OnboardingPageModel(
-      title: 'Welcome to Travel Crew',
+      title: 'Welcome to Pathio',
       subtitle: 'Plan trips with friends, split expenses fairly...',
       icon: Icons.luggage,
       gradientColors: [AppTheme.primaryTeal, AppTheme.primaryDeep],
@@ -339,7 +339,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_crew/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:pathio/features/onboarding/presentation/pages/onboarding_page.dart';
 
 void main() {
   setUp(() {
@@ -355,7 +355,7 @@ void main() {
       );
 
       // Verify first screen
-      expect(find.text('Welcome to Travel Crew'), findsOneWidget);
+      expect(find.text('Welcome to Pathio'), findsOneWidget);
       expect(find.text('Skip'), findsOneWidget);
     });
 
@@ -530,7 +530,7 @@ mkdir -p test/features/onboarding/e2e
 
 ## 📝 Notes
 
-- Use existing Travel Crew design system
+- Use existing Pathio design system
 - Leverage animations from `lib/core/animations/`
 - Follow clean architecture pattern
 - Ensure all strings are externalizable for i18n

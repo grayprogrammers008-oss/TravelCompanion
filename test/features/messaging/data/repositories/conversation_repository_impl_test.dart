@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/shared/models/conversation_model.dart';
-import 'package:travel_crew/shared/models/message_model.dart';
-import 'package:travel_crew/features/messaging/data/datasources/conversation_remote_datasource.dart';
-import 'package:travel_crew/features/messaging/data/repositories/conversation_repository_impl.dart';
+import 'package:pathio/shared/models/conversation_model.dart';
+import 'package:pathio/shared/models/message_model.dart';
+import 'package:pathio/features/messaging/data/datasources/conversation_remote_datasource.dart';
+import 'package:pathio/features/messaging/data/repositories/conversation_repository_impl.dart';
 
 /// Manual mock for ConversationRemoteDataSource
 class MockConversationRemoteDataSource implements ConversationRemoteDataSource {

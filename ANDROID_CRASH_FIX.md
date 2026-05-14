@@ -137,7 +137,7 @@ void main() async {
     // Continue anyway - show error screen in app
   }
 
-  runApp(const ProviderScope(child: TravelCrewApp()));
+  runApp(const ProviderScope(child: PathioApp()));
 }
 ```
 

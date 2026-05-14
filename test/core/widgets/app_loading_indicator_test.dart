@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/widgets/app_loading_indicator.dart';
+import 'package:pathio/core/widgets/app_loading_indicator.dart';
 
 import 'test_helpers.dart';
 

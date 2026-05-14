@@ -6,7 +6,7 @@
 // testable.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/bill_scanner_service.dart';
+import 'package:pathio/core/services/bill_scanner_service.dart';
 
 void main() {
   group('ParsedBillData.fromJson', () {

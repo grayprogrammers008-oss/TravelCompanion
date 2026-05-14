@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/templates/domain/entities/trip_template.dart';
-import 'package:travel_crew/features/templates/presentation/widgets/template_card.dart';
+import 'package:pathio/features/templates/domain/entities/trip_template.dart';
+import 'package:pathio/features/templates/presentation/widgets/template_card.dart';
 
 TripTemplate _template({
   String id = 't-1',

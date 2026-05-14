@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/features/checklists/domain/repositories/checklist_repository.dart';
-import 'package:travel_crew/features/checklists/domain/usecases/get_trip_checklists_usecase.dart';
-import 'package:travel_crew/features/checklists/presentation/pages/add_checklist_page.dart';
-import 'package:travel_crew/features/checklists/presentation/pages/checklist_list_page.dart';
-import 'package:travel_crew/features/checklists/presentation/providers/checklist_providers.dart';
-import 'package:travel_crew/features/checklists/presentation/widgets/add_item_bottom_sheet.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/checklists/domain/repositories/checklist_repository.dart';
+import 'package:pathio/features/checklists/domain/usecases/get_trip_checklists_usecase.dart';
+import 'package:pathio/features/checklists/presentation/pages/add_checklist_page.dart';
+import 'package:pathio/features/checklists/presentation/pages/checklist_list_page.dart';
+import 'package:pathio/features/checklists/presentation/providers/checklist_providers.dart';
+import 'package:pathio/features/checklists/presentation/widgets/add_item_bottom_sheet.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Stand-in [GetTripChecklistsUseCase] that always throws, used to drive the
 /// error branch in [ChecklistListPage]. Riverpod converts the throw into an

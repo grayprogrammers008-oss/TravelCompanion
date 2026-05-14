@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trips/domain/usecases/search_trips_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/filter_trips_usecase.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/trips/domain/usecases/search_trips_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/filter_trips_usecase.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Integration tests for combining search and filter functionality
 /// Tests realistic scenarios of searching and filtering trips together

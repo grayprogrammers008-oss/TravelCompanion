@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/messaging/domain/entities/notification_payload.dart';
+import 'package:pathio/features/messaging/domain/entities/notification_payload.dart';
 
 /// Test utility for sending sample notifications
 /// Use this to manually test push notifications during development

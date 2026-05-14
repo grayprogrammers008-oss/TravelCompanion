@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:travel_crew/core/services/groq_whisper_service.dart';
+import 'package:pathio/core/services/groq_whisper_service.dart';
 
 /// Hand-rolled fake of [WhisperHttpSender]. Each `send` call captures the
 /// request and returns the next queued response.

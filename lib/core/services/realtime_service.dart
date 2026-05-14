@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../network/supabase_client.dart';
 
-/// Real-time synchronization service for Travel Crew
+/// Real-time synchronization service for Pathio
 ///
 /// Manages Supabase Realtime channels for trips, expenses, itineraries, and checklists.
 /// Provides optimistic updates, conflict resolution, and offline queue support.

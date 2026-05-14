@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/trips/presentation/pages/trip_filter_page.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/trips/presentation/pages/trip_filter_page.dart';
 
 /// Build a router that hosts the TripFilterPage and a /home route to pop back to.
 GoRouter _buildRouter({

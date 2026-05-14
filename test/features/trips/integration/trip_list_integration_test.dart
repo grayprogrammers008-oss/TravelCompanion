@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/trips/data/datasources/trip_remote_datasource.dart';
-import 'package:travel_crew/features/trips/data/repositories/trip_repository_impl.dart';
-import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_user_trips_usecase.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/trips/data/datasources/trip_remote_datasource.dart';
+import 'package:pathio/features/trips/data/repositories/trip_repository_impl.dart';
+import 'package:pathio/features/trips/domain/repositories/trip_repository.dart';
+import 'package:pathio/features/trips/domain/usecases/get_user_trips_usecase.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 import 'trip_list_integration_test.mocks.dart';
 

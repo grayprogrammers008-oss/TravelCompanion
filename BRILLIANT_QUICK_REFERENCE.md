@@ -5,7 +5,7 @@
 ## 🚀 Apply Theme (One Line!)
 
 ```dart
-import 'package:travel_crew/core/theme/brilliant_theme.dart';
+import 'package:pathio/core/theme/brilliant_theme.dart';
 
 MaterialApp(
   theme: BrilliantTheme.lightTheme,

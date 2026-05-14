@@ -320,7 +320,7 @@ flutter build ios --release
 
 #### Test 2: URL Scheme Registration
 - Check if custom URL schemes work
-- Verify app returns to TravelCrew after payment
+- Verify app returns to Pathio after payment
 
 #### Test 3: Universal Links
 - Some UPI apps use universal links on iOS
@@ -337,7 +337,7 @@ Create `test/integration/payment_integration_test.dart`:
 ```dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:travel_crew/main.dart' as app;
+import 'package:pathio/main.dart' as app;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -795,6 +795,6 @@ jobs:
 
 ---
 
-**Document Owner:** Travel Crew QA Team
+**Document Owner:** Pathio QA Team
 **Last Review:** 2025-10-25
 **Next Review:** 2025-11-25

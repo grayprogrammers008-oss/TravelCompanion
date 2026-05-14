@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
-import 'package:travel_crew/features/discover/presentation/pages/discover_page.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/core/services/google_places_service.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/presentation/pages/discover_page.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
 
 /// `_FakeDiscoverStateNotifier` returns a fixed state and records calls so
 /// tests can verify which methods the page invokes. Every notifier method

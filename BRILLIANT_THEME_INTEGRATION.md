@@ -130,7 +130,7 @@ This contains:
 
 **Example:**
 ```dart
-import 'package:travel_crew/core/theme/brilliant_theme.dart';
+import 'package:pathio/core/theme/brilliant_theme.dart';
 
 // Use Brilliant colors anywhere
 Container(

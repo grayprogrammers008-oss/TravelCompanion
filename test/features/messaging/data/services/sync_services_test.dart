@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/data/services/message_deduplication_service.dart';
-import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
-import 'package:travel_crew/features/messaging/data/services/conflict_resolution_engine.dart';
-import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/data/services/message_deduplication_service.dart';
+import 'package:pathio/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:pathio/features/messaging/data/services/conflict_resolution_engine.dart';
+import 'package:pathio/features/messaging/data/services/sync_coordinator.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('MessageDeduplicationService Tests', () {

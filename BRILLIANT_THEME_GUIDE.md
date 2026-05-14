@@ -21,7 +21,7 @@ An absolutely **STUNNING** design system inspired by Fitonist's playful 3D aesth
 ### 1. Import the Theme
 
 ```dart
-import 'package:travel_crew/core/theme/brilliant_theme.dart';
+import 'package:pathio/core/theme/brilliant_theme.dart';
 ```
 
 ### 2. Apply to Your App

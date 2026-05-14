@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
-import 'package:travel_crew/features/emergency/presentation/widgets/location_sharing_widget.dart';
-import 'package:travel_crew/shared/models/location_share_model.dart';
+import 'package:pathio/features/emergency/presentation/providers/emergency_providers.dart';
+import 'package:pathio/features/emergency/presentation/widgets/location_sharing_widget.dart';
+import 'package:pathio/shared/models/location_share_model.dart';
 
 /// Test stub of [EmergencyController] that records calls to
 /// [stopLocationSharing] and lets us simulate success/failure paths without

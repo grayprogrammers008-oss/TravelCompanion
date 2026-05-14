@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/checklists/data/smart_checklist_generator.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/checklists/data/smart_checklist_generator.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Comprehensive unit tests for [SmartChecklistGenerator].
 ///

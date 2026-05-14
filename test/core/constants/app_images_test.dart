@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/constants/app_images.dart';
+import 'package:pathio/core/constants/app_images.dart';
 
 void main() {
   group('AppImages', () {

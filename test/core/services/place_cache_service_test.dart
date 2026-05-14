@@ -5,8 +5,8 @@
 // access; those code paths are intentionally NOT tested here.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/place_cache_service.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
+import 'package:pathio/core/services/place_cache_service.dart';
+import 'package:pathio/core/services/google_places_service.dart';
 
 void main() {
   group('CachedPlace.fromJson', () {

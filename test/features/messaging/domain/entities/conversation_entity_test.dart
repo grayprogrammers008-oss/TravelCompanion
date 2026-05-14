@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/conversation_entity.dart';
+import 'package:pathio/features/messaging/domain/entities/conversation_entity.dart';
 
 void main() {
   group('ConversationEntity', () {

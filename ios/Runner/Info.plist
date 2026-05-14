@@ -78,11 +78,9 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.travelcompanion.app</string>
+			<string>com.pathio.travel.deeplinks</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>travelcompanion</string>
-				<string>travelcrew</string>
 				<string>pathio</string>
 			</array>
 		</dict>

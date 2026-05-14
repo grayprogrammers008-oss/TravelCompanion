@@ -9,7 +9,7 @@
 
 ## 🎉 Summary
 
-Successfully implemented the complete **Itinerary Builder** feature with day-wise organization for the Travel Crew app. This feature allows users to create, edit, delete, and organize trip activities by day with full CRUD operations, premium animations, and comprehensive test coverage.
+Successfully implemented the complete **Itinerary Builder** feature with day-wise organization for the Pathio app. This feature allows users to create, edit, delete, and organize trip activities by day with full CRUD operations, premium animations, and comprehensive test coverage.
 
 ---
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_config.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/admin/domain/entities/admin_config.dart';
 
 /// Default app configurations
 /// These are stored locally for now but can be synced with database later
@@ -214,7 +214,7 @@ final _defaultConfigs = [
   AdminConfigModel(
     id: '25',
     key: 'app_name',
-    value: 'Travel Crew',
+    value: 'Pathio',
     description: 'Application display name',
     category: 'general',
     valueType: 'string',
@@ -222,7 +222,7 @@ final _defaultConfigs = [
   AdminConfigModel(
     id: '26',
     key: 'support_email',
-    value: 'support@travelcrew.app',
+    value: 'support@pathio.travel',
     description: 'Support contact email',
     category: 'general',
     valueType: 'string',

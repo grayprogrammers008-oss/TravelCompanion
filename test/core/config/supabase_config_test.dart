@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/config/supabase_config.dart';
+import 'package:pathio/core/config/supabase_config.dart';
 
 void main() {
   group('SupabaseConfig', () {

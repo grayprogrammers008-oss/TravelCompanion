@@ -2,15 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/features/settings/presentation/pages/profile_page.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
-import 'package:travel_crew/features/expenses/presentation/providers/expense_providers.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
+import 'package:pathio/features/settings/presentation/pages/profile_page.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/features/trips/domain/usecases/get_user_stats_usecase.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/features/auth/domain/entities/user_entity.dart';
+import 'package:pathio/features/expenses/presentation/providers/expense_providers.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
 
 void main() {
   group('Profile Page E2E Tests - User Travel Stats', () {

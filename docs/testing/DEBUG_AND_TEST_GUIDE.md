@@ -1,4 +1,4 @@
-# Debug and Test Guide - Travel Crew App
+# Debug and Test Guide - Pathio App
 
 **Created**: 2025-10-09
 **Purpose**: Complete testing guide with debug steps to verify all features work
@@ -107,7 +107,7 @@ DEBUG HomePage: Showing trips list
 2. **Check Database**
    - Trip is saved to SQLite
    - Location: App documents directory
-   - File: `travel_crew.db`
+   - File: `pathio.db`
 
 3. **Common Issues**:
 
@@ -131,7 +131,7 @@ DEBUG HomePage: Showing trips list
    # Find the database file
    adb shell run-as com.example.travel_companion
    cd app_flutter
-   ls -la travel_crew.db
+   ls -la pathio.db
 
    # Or use sqflite inspector in DevTools
    ```

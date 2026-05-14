@@ -1,13 +1,13 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/admin/data/datasources/admin_queries.dart';
-import 'package:travel_crew/features/admin/data/models/admin_activity_log_model.dart';
-import 'package:travel_crew/features/admin/data/models/admin_dashboard_stats_model.dart';
-import 'package:travel_crew/features/admin/data/models/admin_user_model.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_checklist.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_expense.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_trip.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/data/datasources/admin_queries.dart';
+import 'package:pathio/features/admin/data/models/admin_activity_log_model.dart';
+import 'package:pathio/features/admin/data/models/admin_dashboard_stats_model.dart';
+import 'package:pathio/features/admin/data/models/admin_user_model.dart';
+import 'package:pathio/features/admin/domain/entities/admin_checklist.dart';
+import 'package:pathio/features/admin/domain/entities/admin_expense.dart';
+import 'package:pathio/features/admin/domain/entities/admin_trip.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
 
 /// Admin Remote Data Source
 ///

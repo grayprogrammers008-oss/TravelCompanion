@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/statistics/presentation/pages/travel_statistics_page.dart';
-import 'package:travel_crew/features/statistics/presentation/providers/statistics_providers.dart';
+import 'package:pathio/features/statistics/presentation/pages/travel_statistics_page.dart';
+import 'package:pathio/features/statistics/presentation/providers/statistics_providers.dart';
 
 Widget _wrap(Widget child, {required List<Object> overrides}) {
   return ProviderScope(

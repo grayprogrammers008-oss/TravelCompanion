@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/message_search_providers.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/presentation/providers/message_search_providers.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('MessageSearchParams', () {

@@ -1,4 +1,4 @@
-# Travel Crew App - Testing Guide
+# Pathio App - Testing Guide
 
 **Phase 1 - Trip Management Testing**
 **Last Updated**: 2025-10-09

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:travel_crew/core/services/notification_initialization.dart';
-import 'package:travel_crew/features/messaging/data/services/fcm_service.dart';
+import 'package:pathio/core/services/notification_initialization.dart';
+import 'package:pathio/features/messaging/data/services/fcm_service.dart';
 
 /// Integration tests for Firebase connectivity and FCM functionality
 /// These tests verify that Firebase is properly configured and can connect

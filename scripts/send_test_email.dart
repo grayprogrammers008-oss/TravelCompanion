@@ -1,4 +1,4 @@
-import 'package:travel_crew/core/services/email_service.dart';
+import 'package:pathio/core/services/email_service.dart';
 
 /// Send a test trip invitation email to verify Brevo integration
 ///

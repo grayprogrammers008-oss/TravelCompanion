@@ -2,11 +2,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/messaging/data/datasources/message_local_datasource.dart';
-import 'package:travel_crew/features/messaging/data/datasources/message_remote_datasource.dart';
-import 'package:travel_crew/features/messaging/data/repositories/message_repository_impl.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/shared/models/message_model.dart';
+import 'package:pathio/features/messaging/data/datasources/message_local_datasource.dart';
+import 'package:pathio/features/messaging/data/datasources/message_remote_datasource.dart';
+import 'package:pathio/features/messaging/data/repositories/message_repository_impl.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/shared/models/message_model.dart';
 
 import 'message_repository_impl_test.mocks.dart';
 

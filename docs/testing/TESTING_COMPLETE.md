@@ -274,8 +274,8 @@ For production deployment, configure platform-specific deep linking:
   <action android:name="android.intent.action.VIEW" />
   <category android:name="android.intent.category.DEFAULT" />
   <category android:name="android.intent.category.BROWSABLE" />
-  <data android:scheme="https" android:host="travelcrew.app" android:pathPrefix="/invite" />
-  <data android:scheme="travelcrew" android:host="invite" />
+  <data android:scheme="https" android:host="pathio.travel" android:pathPrefix="/invite" />
+  <data android:scheme="pathio" android:host="invite" />
 </intent-filter>
 ```
 
@@ -286,7 +286,7 @@ For production deployment, configure platform-specific deep linking:
   <dict>
     <key>CFBundleURLSchemes</key>
     <array>
-      <string>travelcrew</string>
+      <string>pathio</string>
     </array>
   </dict>
 </array>
@@ -303,7 +303,7 @@ For production deployment, configure platform-specific deep linking:
 - [ ] Test invalid invites
 
 ### 3. Production Deployment
-- [ ] Register domain (e.g., travelcrew.app)
+- [ ] Register domain (e.g., pathio.travel)
 - [ ] Host assetlinks.json (Android verification)
 - [ ] Host apple-app-site-association (iOS verification)
 - [ ] Test with production domain

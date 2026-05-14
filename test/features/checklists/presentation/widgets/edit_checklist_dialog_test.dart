@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/features/checklists/presentation/providers/checklist_providers.dart';
-import 'package:travel_crew/features/checklists/presentation/widgets/edit_checklist_dialog.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/features/checklists/presentation/providers/checklist_providers.dart';
+import 'package:pathio/features/checklists/presentation/widgets/edit_checklist_dialog.dart';
 
 import 'fake_checklist_repository.dart';
 

@@ -14,13 +14,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/ai_itinerary/domain/entities/ai_itinerary.dart';
-import 'package:travel_crew/features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
-import 'package:travel_crew/features/ai_itinerary/presentation/providers/ai_itinerary_providers.dart';
-import 'package:travel_crew/features/templates/presentation/providers/template_providers.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/ai_itinerary/domain/entities/ai_itinerary.dart';
+import 'package:pathio/features/ai_itinerary/presentation/pages/ai_itinerary_generator_page.dart';
+import 'package:pathio/features/ai_itinerary/presentation/providers/ai_itinerary_providers.dart';
+import 'package:pathio/features/templates/presentation/providers/template_providers.dart';
 
 class _FakeAiController extends AiItineraryController {
   _FakeAiController(this._initialState);

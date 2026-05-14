@@ -15,7 +15,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/services/realtime_service.dart';
+import 'package:pathio/core/services/realtime_service.dart';
 
 class _StubAuthClient implements GoTrueClient {
   final _ctrl = StreamController<AuthState>.broadcast();

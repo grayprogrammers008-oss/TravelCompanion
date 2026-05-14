@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-Complete implementation of user settings and profile management for the Travel Crew app, including notification preferences, theme customization, language/currency selection, and account management.
+Complete implementation of user settings and profile management for the Pathio app, including notification preferences, theme customization, language/currency selection, and account management.
 
 ---
 
@@ -213,7 +213,7 @@ These are UI test limitations, not functional bugs. The features work correctly 
 ## 🎨 UI/UX Highlights
 
 ### Settings Page Design
-- **Material Design 3** with Travel Crew theme
+- **Material Design 3** with Pathio theme
 - **Sectioned Layout**:
   - Profile Section (tappable, navigates to ProfilePage)
   - Notifications (5 toggle switches)
@@ -224,7 +224,7 @@ These are UI test limitations, not functional bugs. The features work correctly 
   - Danger Zone (Delete Account, Logout)
 - **Visual Hierarchy**: Clear grouping with section headers
 - **Interactive Elements**: All toggles provide immediate feedback
-- **Consistent Styling**: Matches Travel Crew design system
+- **Consistent Styling**: Matches Pathio design system
 
 ### Theme Selection Page
 - **Visual Preview Cards**: Each theme shows gradient preview

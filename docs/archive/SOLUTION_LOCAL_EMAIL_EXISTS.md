@@ -56,13 +56,13 @@ cd "d:\Nithya\Travel Companion\TravelCompanion"
 echo %APPDATA%\..\..\Local\Packages
 
 # Delete Travel Companion app data
-# Look for a folder named something like "com.travelcrew.app_*"
+# Look for a folder named something like "com.pathio.travel_*"
 # Delete the entire folder
 ```
 
 **On Android (via ADB):**
 ```bash
-adb shell pm clear com.travelcrew.app
+adb shell pm clear com.pathio.travel
 ```
 
 **On iOS:**
@@ -78,22 +78,22 @@ adb shell pm clear com.travelcrew.app
 ```dart
 // The database is typically at:
 // Windows: C:\Users\<YourName>\AppData\Local\<PackageName>\databases\
-// Android: /data/data/com.travelcrew.app/databases/
+// Android: /data/data/com.pathio.travel/databases/
 // iOS: Library/Application Support/databases/
 
-// Look for: travel_crew.db or app_database.db
+// Look for: pathio.db or app_database.db
 ```
 
 **Delete it:**
 ```bash
 # Windows (in app data folder)
-del travel_crew.db*
+del pathio.db*
 
 # Android
 adb shell
-run-as com.travelcrew.app
+run-as com.pathio.travel
 cd databases
-rm travel_crew.db*
+rm pathio.db*
 exit
 ```
 
@@ -108,7 +108,7 @@ import 'package:path/path.dart';
 
 void main() async {
   final databasePath = await getDatabasesPath();
-  final path = join(databasePath, 'travel_crew.db');
+  final path = join(databasePath, 'pathio.db');
 
   final db = await openDatabase(path);
 

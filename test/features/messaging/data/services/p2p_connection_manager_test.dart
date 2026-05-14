@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/data/services/p2p_connection_manager.dart';
+import 'package:pathio/features/messaging/data/services/p2p_connection_manager.dart';
 
 void main() {
   group('P2PPeer', () {

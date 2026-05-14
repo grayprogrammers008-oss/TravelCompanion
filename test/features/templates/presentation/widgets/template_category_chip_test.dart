@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/templates/presentation/widgets/template_category_chip.dart';
+import 'package:pathio/features/templates/presentation/widgets/template_category_chip.dart';
 
 void main() {
   Widget wrap(Widget child, {Color primaryColor = const Color(0xFF1976D2)}) {

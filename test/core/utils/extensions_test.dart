@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/utils/extensions.dart';
+import 'package:pathio/core/utils/extensions.dart';
 
 void main() {
   group('StringExtensions', () {

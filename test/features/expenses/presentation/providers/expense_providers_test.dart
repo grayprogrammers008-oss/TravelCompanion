@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/expenses/presentation/providers/expense_providers.dart';
+import 'package:pathio/features/expenses/presentation/providers/expense_providers.dart';
 
 void main() {
   group('ExpenseState', () {

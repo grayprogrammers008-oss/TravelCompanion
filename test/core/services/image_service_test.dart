@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/core/services/image_service.dart';
+import 'package:pathio/core/services/image_service.dart';
 
 /// Tests for the [CachedImage] data class exported from image_service.dart.
 ///

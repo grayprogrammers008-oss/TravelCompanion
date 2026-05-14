@@ -31,7 +31,7 @@ Fast-track guide to get TravelCompanion on the App Store in under 2 hours.
 3. Fill in:
    - **Name**: TravelCompanion
    - **Platform**: iOS
-   - **Bundle ID**: `com.travelcrew.travelCrew` (create new)
+   - **Bundle ID**: `com.pathio.travel` (create new)
    - **SKU**: `travelcompanion-ios`
    - **Language**: English
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_trip_providers.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_trip_providers.dart';
 
 /// Admin Edit Trip Dialog
 /// Allows admins to edit trip details

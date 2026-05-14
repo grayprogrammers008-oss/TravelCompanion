@@ -19,8 +19,8 @@
 
 **Test Details**:
 - ✅ **To**: `palkarfoods224@gmail.com` (Authorized recipient)
-- ✅ **From**: `Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>`
-- ✅ **Subject**: "Test from Travel Crew App"
+- ✅ **From**: `Pathio <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>`
+- ✅ **Subject**: "Test from Pathio App"
 - ✅ **Status**: Queued and sent successfully
 - ✅ **Message ID**: `20251019205317.36afead61881d1b6@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org`
 
@@ -35,7 +35,7 @@
 
 API Key: f6beec82ebcca0b6836ed84eb209c4c8-5e1ffd43-9d8d601f
 Domain: sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org
-From Email: Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>
+From Email: Pathio <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>
 ```
 
 ### Authorized Recipients
@@ -89,9 +89,9 @@ To manually test email sending:
 ```bash
 curl --user 'api:f6beec82ebcca0b6836ed84eb209c4c8-5e1ffd43-9d8d601f' \
   https://api.mailgun.net/v3/sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org/messages \
-  -F from='Travel Crew <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>' \
+  -F from='Pathio <postmaster@sandboxea0ac54e12f242219a426c2219f44e12.mailgun.org>' \
   -F to='palkarfoods224@gmail.com' \
-  -F subject='Test from Travel Crew' \
+  -F subject='Test from Pathio' \
   -F text='Test email message'
 ```
 
@@ -121,7 +121,7 @@ Since you're using a **sandbox domain** (free tier):
 **Upgrade to a paid plan**:
 1. Go to https://app.mailgun.com/account/billing
 2. Choose a plan (starting at $35/month)
-3. Add a custom domain (e.g., `mg.travelcrew.com`)
+3. Add a custom domain (e.g., `mg.pathio.com`)
 4. Update configuration to use custom domain
 
 **Benefits**:
@@ -140,7 +140,7 @@ When you send a trip invitation, the recipient receives:
 ### Email Content
 ```
 ┌──────────────────────────────────┐
-│  ✈️ Travel Crew                   │
+│  ✈️ Pathio                   │
 │  (Beautiful gradient header)      │
 ├──────────────────────────────────┤
 │                                   │
@@ -201,7 +201,7 @@ When you send a trip invitation, the recipient receives:
 
 **Mailgun email service is fully configured and working!**
 
-You can now send trip invitation emails through the Travel Crew app. Just make sure to send to authorized recipients on the sandbox plan, or upgrade to send to anyone.
+You can now send trip invitation emails through the Pathio app. Just make sure to send to authorized recipients on the sandbox plan, or upgrade to send to anyone.
 
 **Check `palkarfoods224@gmail.com` inbox to see the test email!** 📬
 

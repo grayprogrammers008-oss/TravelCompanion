@@ -268,7 +268,7 @@ flutter run -d <device-id>
 ```
 
 **Option 2: Clear app data**
-- In simulator: Settings → General → iPhone Storage → Travel Crew → Delete App
+- In simulator: Settings → General → iPhone Storage → Pathio → Delete App
 - Reinstall
 
 **Option 3: Manual database delete** (advanced)

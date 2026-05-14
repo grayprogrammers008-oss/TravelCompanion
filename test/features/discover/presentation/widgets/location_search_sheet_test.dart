@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
-import 'package:travel_crew/features/discover/presentation/widgets/location_search_sheet.dart';
+import 'package:pathio/core/services/google_places_service.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/features/discover/presentation/widgets/location_search_sheet.dart';
 
 class _FakeGooglePlacesService extends GooglePlacesService {
   _FakeGooglePlacesService();

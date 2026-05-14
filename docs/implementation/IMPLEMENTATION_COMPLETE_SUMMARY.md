@@ -352,7 +352,7 @@ if (success) {
 
 ## 🎨 Design System Integration
 
-The implementation is ready to integrate with the Travel Crew design system:
+The implementation is ready to integrate with the Pathio design system:
 
 - **Colors**: Primary Teal (#00B8A9), Coral accents
 - **Typography**: Plus Jakarta Sans (headers), Inter (body)

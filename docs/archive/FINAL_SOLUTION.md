@@ -1,4 +1,4 @@
-# 🎯 Travel Crew App - Final Solution Guide
+# 🎯 Pathio App - Final Solution Guide
 
 ## 📊 Current Situation
 

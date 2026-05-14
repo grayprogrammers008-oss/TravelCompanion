@@ -129,7 +129,7 @@ Your specific requirement: **"Offline messaging through bluetooth or wifi"**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Travel Crew Messaging                     │
+│                    Pathio Messaging                     │
 └─────────────────────────────────────────────────────────────┘
                               │
                 ┌─────────────┼─────────────┐
@@ -250,7 +250,7 @@ cd /Users/vinothvs/Development/TravelCompanion
 
 🔗 Next Steps:
   1. Run this script to create all GitHub issues ✅
-  2. Add issues to 'Travel Crew MVP - 8 Week' project
+  2. Add issues to 'Pathio MVP - 8 Week' project
   3. Prioritize based on MVP requirements
   4. Consider: Do you need ALL offline features for Phase 1?
      - Core messaging (Issues 1-6): Essential
@@ -263,7 +263,7 @@ cd /Users/vinothvs/Development/TravelCompanion
 
 **Option A: GitHub Web UI**
 1. Go to https://github.com/vinothvino42/TravelCompanion/projects
-2. Open "Travel Crew MVP - 8 Week"
+2. Open "Pathio MVP - 8 Week"
 3. Click "+ Add item"
 4. Add all 9 messaging issues
 

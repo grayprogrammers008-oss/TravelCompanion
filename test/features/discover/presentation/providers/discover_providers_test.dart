@@ -2,11 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
-import 'package:travel_crew/features/discover/data/datasources/discover_local_datasource.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/core/services/google_places_service.dart';
+import 'package:pathio/features/discover/data/datasources/discover_local_datasource.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
 
 /// Stub GooglePlacesService that throws on every method call.
 /// Tier A tests should NEVER hit this; if they do the test will fail loudly.

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/itinerary/domain/repositories/itinerary_repository.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/reorder_items_usecase.dart';
+import 'package:pathio/features/itinerary/domain/repositories/itinerary_repository.dart';
+import 'package:pathio/features/itinerary/domain/usecases/reorder_items_usecase.dart';
 
 import 'reorder_items_usecase_test.mocks.dart';
 

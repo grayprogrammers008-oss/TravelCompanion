@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
-import 'package:travel_crew/features/discover/domain/entities/weather_suggestion.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/domain/entities/weather_suggestion.dart';
 
 DiscoverPlace _place({
   String id = 'p',

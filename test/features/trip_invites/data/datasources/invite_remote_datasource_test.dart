@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trip_invites/data/datasources/invite_remote_datasource.dart';
+import 'package:pathio/features/trip_invites/data/datasources/invite_remote_datasource.dart';
 
 /// Tests for [InviteRemoteDataSource].
 ///

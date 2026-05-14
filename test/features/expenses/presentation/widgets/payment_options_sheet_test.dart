@@ -11,7 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/expenses/presentation/widgets/payment_options_sheet.dart';
+import 'package:pathio/features/expenses/presentation/widgets/payment_options_sheet.dart';
 
 void _stubUrlLauncher() {
   // url_launcher uses the 'plugins.flutter.io/url_launcher_android' (etc.)

@@ -142,18 +142,18 @@ void main() async {
   // Run the app
   runApp(
     // ProviderScope enables Riverpod state management
-    const ProviderScope(child: TravelCrewApp()),
+    const ProviderScope(child: PathioApp()),
   );
 }
 
-class TravelCrewApp extends ConsumerStatefulWidget {
-  const TravelCrewApp({super.key});
+class PathioApp extends ConsumerStatefulWidget {
+  const PathioApp({super.key});
 
   @override
-  ConsumerState<TravelCrewApp> createState() => _TravelCrewAppState();
+  ConsumerState<PathioApp> createState() => _PathioAppState();
 }
 
-class _TravelCrewAppState extends ConsumerState<TravelCrewApp> {
+class _PathioAppState extends ConsumerState<PathioApp> {
   @override
   void initState() {
     super.initState();

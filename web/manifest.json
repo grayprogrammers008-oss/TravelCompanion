@@ -1,11 +1,11 @@
 {
-    "name": "travel_crew",
-    "short_name": "travel_crew",
+    "name": "Pathio",
+    "short_name": "Pathio",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Pathio - Your ultimate group travel companion app",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

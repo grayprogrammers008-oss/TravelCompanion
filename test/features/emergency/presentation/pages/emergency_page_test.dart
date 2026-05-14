@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart';
-import 'package:travel_crew/features/emergency/presentation/pages/emergency_page.dart';
-import 'package:travel_crew/features/emergency/presentation/providers/emergency_providers.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/emergency/data/datasources/emergency_remote_datasource.dart';
+import 'package:pathio/features/emergency/presentation/pages/emergency_page.dart';
+import 'package:pathio/features/emergency/presentation/providers/emergency_providers.dart';
 
 /// A no-op fake [EmergencyRemoteDataSource] that returns nothing for every
 /// method. The page's child widgets (SOSButton, NearestHospitalsWidget) will

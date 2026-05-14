@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/domain/entities/popular_destination.dart';
+import 'package:pathio/features/discover/domain/entities/popular_destination.dart';
 
 void main() {
   group('PopularDestination constructor', () {

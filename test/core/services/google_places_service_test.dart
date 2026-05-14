@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_crew/core/services/google_places_service.dart';
+import 'package:pathio/core/services/google_places_service.dart';
 
 class _FakeHttpDriver {
   final List<http.Response> queue = [];

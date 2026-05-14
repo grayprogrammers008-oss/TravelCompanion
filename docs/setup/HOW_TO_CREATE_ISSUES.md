@@ -44,7 +44,7 @@ If the web browser authentication doesn't work, use token authentication:
 
 1. Go to: https://github.com/settings/tokens
 2. Click **"Generate new token"** → **"Generate new token (classic)"**
-3. Give it a name: `GitHub CLI for Travel Crew`
+3. Give it a name: `GitHub CLI for Pathio`
 4. Select scopes:
    - ✅ **repo** (all)
    - ✅ **admin:org** → **read:org**
@@ -104,7 +104,7 @@ Visit: https://github.com/grayprogrammers008-oss/TravelCompanion/issues
 1. Go to: https://github.com/grayprogrammers008-oss/TravelCompanion/projects
 2. Click **"New project"**
 3. Select **"Board"** template
-4. Name it: **"Travel Crew MVP"**
+4. Name it: **"Pathio MVP"**
 5. Click **"Create"**
 6. Click **"Add items"** and select all issues
 7. Organize by priority:

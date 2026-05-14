@@ -8,7 +8,7 @@
 
 ## 🌟 Overview
 
-Created comprehensive **premium form components** and **gradient backgrounds** to deliver an extraordinarily rich, luxurious user experience throughout the Travel Crew app.
+Created comprehensive **premium form components** and **gradient backgrounds** to deliver an extraordinarily rich, luxurious user experience throughout the Pathio app.
 
 ---
 

@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/sync_providers.dart';
-import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart' hide SyncStatus;
-import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart' as sc show SyncStatus;
-import 'package:travel_crew/features/messaging/data/services/priority_sync_queue.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/presentation/providers/sync_providers.dart';
+import 'package:pathio/features/messaging/data/services/sync_coordinator.dart' hide SyncStatus;
+import 'package:pathio/features/messaging/data/services/sync_coordinator.dart' as sc show SyncStatus;
+import 'package:pathio/features/messaging/data/services/priority_sync_queue.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
 
 void main() {
   group('Sync Providers Tests', () {

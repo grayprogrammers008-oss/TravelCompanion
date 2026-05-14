@@ -9,8 +9,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/expenses/presentation/widgets/who_owes_whom_card.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
+import 'package:pathio/features/expenses/presentation/widgets/who_owes_whom_card.dart';
+import 'package:pathio/shared/models/expense_model.dart';
 
 BalanceSummary _bal(
   String userId,

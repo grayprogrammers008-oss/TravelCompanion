@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:travel_crew/core/presentation/main_scaffold.dart';
+import 'package:pathio/core/presentation/main_scaffold.dart';
 
 /// Widget tests for [MainScaffold] and its bottom-nav routing.
 ///

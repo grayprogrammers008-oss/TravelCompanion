@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trips/domain/models/trip_cost_summary.dart';
-import 'package:travel_crew/features/trips/domain/usecases/calculate_trip_budget_status_usecase.dart';
+import 'package:pathio/features/trips/domain/models/trip_cost_summary.dart';
+import 'package:pathio/features/trips/domain/usecases/calculate_trip_budget_status_usecase.dart';
 
 void main() {
   late CalculateTripBudgetStatusUseCase useCase;

@@ -5,9 +5,9 @@
 // for representative inputs and handles edge cases gracefully).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/services/expense_pdf_service.dart';
-import 'package:travel_crew/shared/models/expense_model.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/services/expense_pdf_service.dart';
+import 'package:pathio/shared/models/expense_model.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 TripModel _trip({
   String name = 'Bali Trip',

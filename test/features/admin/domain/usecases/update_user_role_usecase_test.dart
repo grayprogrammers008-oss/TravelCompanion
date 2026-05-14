@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/repositories/admin_repository.dart';
-import 'package:travel_crew/features/admin/domain/usecases/update_user_role_usecase.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/repositories/admin_repository.dart';
+import 'package:pathio/features/admin/domain/usecases/update_user_role_usecase.dart';
 
 import 'update_user_role_usecase_test.mocks.dart';
 

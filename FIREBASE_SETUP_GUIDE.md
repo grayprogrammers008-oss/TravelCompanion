@@ -27,7 +27,7 @@ This guide will walk you through setting up Firebase Cloud Messaging (FCM) for T
 
 ### Step 1: Register Android App
 1. In Firebase Console, click the **Android icon** (robot)
-2. **Android package name:** `com.travelcrew.app`
+2. **Android package name:** `com.pathio.travel`
    - ⚠️ This must match your app's package name exactly
    - Check: `android/app/build.gradle` → look for `applicationId`
 3. **App nickname (optional):** `TravelCompanion Android`
@@ -49,7 +49,7 @@ This guide will walk you through setting up Firebase Cloud Messaging (FCM) for T
 
 ### Step 1: Register iOS App
 1. In Firebase Console, click **Add app** → Select **iOS icon** (Apple)
-2. **iOS bundle ID:** `com.travelcrew.app`
+2. **iOS bundle ID:** `com.pathio.travel`
    - ⚠️ Must match your iOS bundle identifier exactly
    - Check: Open `ios/Runner.xcodeproj` in Xcode → General tab → Bundle Identifier
 3. **App nickname (optional):** `TravelCompanion iOS`

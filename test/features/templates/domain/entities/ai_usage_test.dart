@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/templates/domain/entities/ai_usage.dart';
+import 'package:pathio/features/templates/domain/entities/ai_usage.dart';
 
 UserAiUsage _usage({
   String id = 'u-1',

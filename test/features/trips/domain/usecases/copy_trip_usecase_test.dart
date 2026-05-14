@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
-import 'package:travel_crew/features/trips/domain/usecases/copy_trip_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/trips/domain/repositories/trip_repository.dart';
+import 'package:pathio/features/trips/domain/usecases/copy_trip_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/get_user_stats_usecase.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Mock implementation of TripRepository for testing CopyTripUseCase
 class MockTripRepository implements TripRepository {

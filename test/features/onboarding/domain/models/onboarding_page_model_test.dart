@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/features/onboarding/domain/models/onboarding_page_model.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/features/onboarding/domain/models/onboarding_page_model.dart';
 
 void main() {
   group('OnboardingPageModel', () {
@@ -69,7 +69,7 @@ void main() {
         final pages = OnboardingPageModel.pages;
 
         // Assert
-        expect(pages[0].title, 'Welcome to Travel Crew');
+        expect(pages[0].title, 'Welcome to Pathio');
         expect(pages[1].title, 'Split Costs Effortlessly');
         expect(pages[2].title, 'Build the Perfect Schedule');
         expect(pages[3].title, 'Let AI Guide Your Adventure');
@@ -80,7 +80,7 @@ void main() {
         final page = OnboardingPageModel.pages[0];
 
         // Assert
-        expect(page.title, 'Welcome to Travel Crew');
+        expect(page.title, 'Welcome to Pathio');
         expect(
           page.subtitle,
           'Plan trips together with your crew and make unforgettable memories',

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/messaging/data/datasources/conversation_queries.dart';
-import 'package:travel_crew/features/messaging/data/datasources/conversation_remote_datasource.dart';
+import 'package:pathio/features/messaging/data/datasources/conversation_queries.dart';
+import 'package:pathio/features/messaging/data/datasources/conversation_remote_datasource.dart';
 
 /// Comprehensive unit tests for [ConversationRemoteDataSource].
 ///

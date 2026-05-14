@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/checklists/data/mappers/checklist_mapper.dart';
-import 'package:travel_crew/features/checklists/domain/entities/checklist_entity.dart';
-import 'package:travel_crew/shared/models/checklist_model.dart';
+import 'package:pathio/features/checklists/data/mappers/checklist_mapper.dart';
+import 'package:pathio/features/checklists/domain/entities/checklist_entity.dart';
+import 'package:pathio/shared/models/checklist_model.dart';
 
 void main() {
   group('ChecklistMapper.toEntity', () {

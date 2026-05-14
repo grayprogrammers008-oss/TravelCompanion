@@ -1,5 +1,5 @@
-import 'package:travel_crew/features/admin/domain/entities/admin_dashboard_stats.dart';
-import 'package:travel_crew/features/admin/domain/repositories/admin_repository.dart';
+import 'package:pathio/features/admin/domain/entities/admin_dashboard_stats.dart';
+import 'package:pathio/features/admin/domain/repositories/admin_repository.dart';
 
 /// Use Case: Get Dashboard Statistics
 /// Retrieves admin dashboard statistics (admin only)

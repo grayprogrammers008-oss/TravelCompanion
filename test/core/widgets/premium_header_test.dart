@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/widgets/premium_header.dart';
+import 'package:pathio/core/widgets/premium_header.dart';
 
 import 'test_helpers.dart';
 

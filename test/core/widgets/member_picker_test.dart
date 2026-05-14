@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/widgets/member_picker.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/widgets/member_picker.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 import 'test_helpers.dart';
 

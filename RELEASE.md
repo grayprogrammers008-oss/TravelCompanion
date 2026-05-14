@@ -107,7 +107,7 @@ flutter build appbundle --release
 cd ios && pod install --repo-update && cd ..
 flutter build ipa --release \
   --export-options-plist=ios/ExportOptions.plist
-# Output: build/ios/ipa/travel_crew.ipa
+# Output: build/ios/ipa/pathio.ipa
 ```
 
 Upload via **Transporter** app or `xcrun altool`.

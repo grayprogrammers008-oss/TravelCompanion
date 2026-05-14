@@ -1,4 +1,4 @@
-# 🧭 Travel Crew - Your Ultimate Group Travel Companion
+# 🧭 Pathio - Your Ultimate Group Travel Companion
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.35.5-blue.svg)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-3.9.2-blue.svg)](https://dart.dev/)
@@ -18,7 +18,7 @@ A comprehensive Flutter mobile app for group travel planning and coordination wi
 
 ## 🎯 Overview
 
-Travel Crew simplifies group travel planning by providing:
+Pathio simplifies group travel planning by providing:
 - **Real-time collaboration** on itineraries and plans
 - **Transparent expense tracking** with automated splitting
 - **Shared checklists** to ensure nothing is forgotten

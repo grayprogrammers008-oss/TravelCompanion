@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/trip_invites/domain/entities/invite_entity.dart';
-import 'package:travel_crew/features/trip_invites/domain/repositories/invite_repository.dart';
-import 'package:travel_crew/features/trip_invites/presentation/providers/invite_providers.dart';
-import 'package:travel_crew/features/trips/presentation/widgets/trip_qr_share.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/trip_invites/domain/entities/invite_entity.dart';
+import 'package:pathio/features/trip_invites/domain/repositories/invite_repository.dart';
+import 'package:pathio/features/trip_invites/presentation/providers/invite_providers.dart';
+import 'package:pathio/features/trips/presentation/widgets/trip_qr_share.dart';
 
 /// Hand-rolled fake repository for invite operations.
 class _FakeInviteRepository implements InviteRepository {
@@ -81,7 +81,7 @@ InviteEntity _fakeInvite({String code = 'ABCD1234'}) {
     id: 'invite-1',
     tripId: 'trip-1',
     invitedBy: 'user-1',
-    email: 'qr-share@travelcrew.app',
+    email: 'qr-share@pathio.travel',
     status: 'pending',
     inviteCode: code,
     createdAt: now,

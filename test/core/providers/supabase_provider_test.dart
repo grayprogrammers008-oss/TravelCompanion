@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:travel_crew/core/providers/supabase_provider.dart';
+import 'package:pathio/core/providers/supabase_provider.dart';
 
 /// Tests for the four exported providers in [supabase_provider.dart].
 ///

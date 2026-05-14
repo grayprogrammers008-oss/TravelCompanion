@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:travel_crew/features/messaging/data/datasources/message_remote_datasource.dart';
-import 'package:travel_crew/shared/models/message_model.dart';
+import 'package:pathio/features/messaging/data/datasources/message_remote_datasource.dart';
+import 'package:pathio/shared/models/message_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'message_remote_datasource_test.mocks.dart';

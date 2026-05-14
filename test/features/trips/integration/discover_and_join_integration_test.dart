@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trips/domain/repositories/trip_repository.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_discoverable_trips_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_user_trips_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/join_trip_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_user_stats_usecase.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/trips/domain/repositories/trip_repository.dart';
+import 'package:pathio/features/trips/domain/usecases/get_discoverable_trips_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/get_user_trips_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/join_trip_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/get_user_stats_usecase.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Manual mock — covers methods used by the three use cases under test.

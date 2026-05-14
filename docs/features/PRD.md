@@ -1,8 +1,8 @@
-🧭 Product Requirements Document (PRD) — Travel Crew App
+🧭 Product Requirements Document (PRD) — Pathio App
 
 1. Overview
 
-Product Name: Travel Crew
+Product Name: Pathio
 Platform: Flutter (Android & iOS) with Supabase backend
 Purpose: Simplify group travel planning and coordination by providing real-time itinerary updates, expense tracking, checklists, and in-app communication for travel crews.
 Vision: To become the go-to travel companion app for groups — friends, families, and corporate teams — offering AI-driven trip organization and financial transparency without the complexity of booking systems.
@@ -196,6 +196,6 @@ API token leakage	High	Scoped API keys; rotate monthly
 
 12. Summary
 
-Travel Crew App is designed to be the control center for group travel, blending coordination, finance, and AI-based personalization. The stack (Flutter + Supabase) enables rapid development and scalability, while Claude AI integration provides intelligence and automation.
+Pathio App is designed to be the control center for group travel, blending coordination, finance, and AI-based personalization. The stack (Flutter + Supabase) enables rapid development and scalability, while Claude AI integration provides intelligence and automation.
 
 By balancing simplicity, smart monetization, and modular scalability, this app has strong potential to reach ₹1 crore+ annual revenue and grow globally within 2 years.

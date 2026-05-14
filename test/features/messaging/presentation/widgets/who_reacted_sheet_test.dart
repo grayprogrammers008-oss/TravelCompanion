@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/message_entity.dart';
-import 'package:travel_crew/features/messaging/presentation/widgets/who_reacted_sheet.dart';
+import 'package:pathio/features/messaging/domain/entities/message_entity.dart';
+import 'package:pathio/features/messaging/presentation/widgets/who_reacted_sheet.dart';
 
 void main() {
   void expandViewport(WidgetTester tester) {

@@ -6,8 +6,8 @@
 // which are available in unit tests.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/ai_itinerary/domain/entities/ai_itinerary.dart';
-import 'package:travel_crew/features/ai_itinerary/presentation/providers/ai_itinerary_providers.dart';
+import 'package:pathio/features/ai_itinerary/domain/entities/ai_itinerary.dart';
+import 'package:pathio/features/ai_itinerary/presentation/providers/ai_itinerary_providers.dart';
 
 void main() {
   AiGeneratedItinerary buildItinerary({String destination = 'Goa'}) {

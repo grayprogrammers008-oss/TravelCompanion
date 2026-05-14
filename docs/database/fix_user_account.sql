@@ -1,5 +1,5 @@
 -- ============================================================================
--- Travel Crew - User Account Troubleshooting SQL Script
+-- Pathio - User Account Troubleshooting SQL Script
 -- Run this in Supabase SQL Editor to diagnose and fix login issues
 -- ============================================================================
 

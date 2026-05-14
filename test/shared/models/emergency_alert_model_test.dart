@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/shared/models/emergency_alert_model.dart';
+import 'package:pathio/shared/models/emergency_alert_model.dart';
 
 void main() {
   group('EmergencyAlertModel', () {

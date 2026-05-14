@@ -227,7 +227,7 @@ Based on your situation (you + Nithya):
 
 ### Option A: Single Shared Test Account
 ```
-Email: testuser@travelcrew.com
+Email: testuser@pathio.com
 Password: Test123456!
 Use: Both of you for testing
 ```

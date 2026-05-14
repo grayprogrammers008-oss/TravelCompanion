@@ -9,11 +9,11 @@ adb devices
 echo.
 
 echo Step 2: Clearing app data...
-adb shell pm clear com.example.travel_crew
+adb shell pm clear com.pathio.travel
 echo.
 
 echo Step 3: Uninstalling old version...
-adb uninstall com.example.travel_crew
+adb uninstall com.pathio.travel
 echo.
 
 echo Step 4: Installing fresh build...
@@ -23,4 +23,4 @@ echo.
 
 echo Step 5: Checking logcat for crashes...
 echo [Press Ctrl+C to stop watching logs]
-adb logcat *:E | findstr /C:"FATAL" /C:"AndroidRuntime" /C:"travel_crew"
+adb logcat *:E | findstr /C:"FATAL" /C:"AndroidRuntime" /C:"pathio"

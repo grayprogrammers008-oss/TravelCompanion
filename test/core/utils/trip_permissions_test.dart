@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/utils/trip_permissions.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/core/utils/trip_permissions.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 TripModel _trip({
   String createdBy = 'owner-1',

@@ -213,7 +213,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage>
 
                                     // Title
                                     Text(
-                                      'Join Travel Crew',
+                                      'Join Pathio',
                                       style: context.headlineLarge.copyWith(
                                             color: const Color(0xFF1A1A2E), // Dark navy - always visible
                                             fontWeight: FontWeight.w800,

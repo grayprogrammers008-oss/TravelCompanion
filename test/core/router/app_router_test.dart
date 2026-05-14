@@ -8,7 +8,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travel_crew/core/router/app_router.dart';
+import 'package:pathio/core/router/app_router.dart';
 
 void main() {
   group('AppRoutes constants', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/itinerary/domain/entities/itinerary_entity.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/features/itinerary/domain/entities/itinerary_entity.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 void main() {
   group('ItineraryEntity type aliases', () {

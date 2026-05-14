@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
 
 void main() {
   group('UserStatus', () {

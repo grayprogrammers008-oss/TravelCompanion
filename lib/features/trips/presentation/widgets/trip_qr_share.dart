@@ -65,7 +65,7 @@ class _TripQrShareState extends ConsumerState<TripQrShare> {
       // Generate a 7-day invite code for QR sharing
       final invite = await ref.read(inviteControllerProvider.notifier).generateInvite(
             tripId: widget.tripId,
-            email: 'qr-share@travelcrew.app', // Placeholder for QR shares
+            email: 'qr-share@pathio.travel', // Placeholder for QR shares
             expiresInDays: 7,
           );
 
@@ -90,7 +90,7 @@ class _TripQrShareState extends ConsumerState<TripQrShare> {
     }
   }
 
-  String get _inviteLink => 'https://travelcrew.app/invite/$_inviteCode';
+  String get _inviteLink => 'https://pathio.travel/invite/$_inviteCode';
 
   Future<void> _copyLink() async {
     if (_inviteCode == null) return;
@@ -123,7 +123,7 @@ class _TripQrShareState extends ConsumerState<TripQrShare> {
     if (_inviteCode == null) return;
 
     final message = '''
-Join my trip "${widget.tripName}" on TravelCrew!
+Join my trip "${widget.tripName}" on Pathio!
 
 $_inviteLink
 
@@ -133,7 +133,7 @@ Or use code: $_inviteCode
     try {
       await Share.share(
         message,
-        subject: 'Join ${widget.tripName} on TravelCrew',
+        subject: 'Join ${widget.tripName} on Pathio',
       );
     } catch (e) {
       if (mounted) {

@@ -37,7 +37,7 @@ A vibrant, playful theme inspired by the Fitonist design's 3D aesthetic, now int
 ### Apply Fitonist Theme to Your App
 
 ```dart
-import 'package:travel_crew/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme.dart';
 
 MaterialApp(
   title: 'TravelCompanion',
@@ -55,7 +55,7 @@ MaterialApp(
 ### Direct Color Access
 
 ```dart
-import 'package:travel_crew/core/theme/app_theme.dart';
+import 'package:pathio/core/theme/app_theme.dart';
 
 // Use Fitonist colors directly
 Container(

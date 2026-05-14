@@ -249,7 +249,7 @@ To inspect the SQLite database directly:
 ### Find the Database File
 ```bash
 # iOS Simulator
-~/Library/Developer/CoreSimulator/Devices/{DEVICE_ID}/data/Containers/Data/Application/{APP_ID}/Documents/travel_crew.db
+~/Library/Developer/CoreSimulator/Devices/{DEVICE_ID}/data/Containers/Data/Application/{APP_ID}/Documents/pathio.db
 
 # Android Emulator
 adb shell

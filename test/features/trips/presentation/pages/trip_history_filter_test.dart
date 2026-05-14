@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/trips/domain/usecases/filter_trips_usecase.dart';
-import 'package:travel_crew/features/trips/domain/usecases/get_trip_history_usecase.dart';
-import 'package:travel_crew/features/trips/presentation/providers/trip_providers.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/trips/domain/usecases/filter_trips_usecase.dart';
+import 'package:pathio/features/trips/domain/usecases/get_trip_history_usecase.dart';
+import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Unit tests for FilterTripsUseCase and TripHistoryFilterController.
 /// No providers, no widgets — pure domain logic.

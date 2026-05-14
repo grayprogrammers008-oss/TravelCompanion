@@ -1026,7 +1026,7 @@ final userTripsProvider = FutureProvider.autoDispose<List<TripWithMembers>>((ref
 **Fix Applied:**
 ```dart
 // ❌ BEFORE
-import 'package:travel_crew/features/auth/data/datasources/auth_local_datasource.dart';
+import 'package:pathio/features/auth/data/datasources/auth_local_datasource.dart';
 late AuthLocalDataSource mockAuthDataSource;
 authLocalDataSourceProvider.overrideWithValue(mockAuthDataSource),
 

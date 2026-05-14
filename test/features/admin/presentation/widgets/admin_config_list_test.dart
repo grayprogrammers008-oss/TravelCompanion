@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_config.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_config_list.dart';
+import 'package:pathio/features/admin/domain/entities/admin_config.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_config_list.dart';
 
 Widget _wrap() {
   return const ProviderScope(

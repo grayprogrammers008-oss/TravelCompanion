@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/conversation_entity.dart';
-import 'package:travel_crew/features/messaging/presentation/pages/conversation_list_page.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/conversation_providers.dart';
+import 'package:pathio/features/messaging/domain/entities/conversation_entity.dart';
+import 'package:pathio/features/messaging/presentation/pages/conversation_list_page.dart';
+import 'package:pathio/features/messaging/presentation/providers/conversation_providers.dart';
 
 /// Local filter enum used for tests since the production page doesn't expose one.
 enum ConversationFilter { all, directMessages, groups }

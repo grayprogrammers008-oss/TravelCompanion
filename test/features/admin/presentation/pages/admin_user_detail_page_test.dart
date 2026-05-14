@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/features/admin/data/models/admin_user_model.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_user.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
-import 'package:travel_crew/features/admin/presentation/pages/admin_user_detail_page.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_providers.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/features/admin/data/models/admin_user_model.dart';
+import 'package:pathio/features/admin/domain/entities/admin_user.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/presentation/pages/admin_user_detail_page.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_providers.dart';
 
 final _theme = AppThemeData.getThemeData(AppThemeType.ocean);
 

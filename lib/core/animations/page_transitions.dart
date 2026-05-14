@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'animation_constants.dart';
 
-/// Premium page route transitions for Travel Crew
+/// Premium page route transitions for Pathio
 ///
 /// Creates delightful navigation experiences with smooth,
 /// physics-based animations

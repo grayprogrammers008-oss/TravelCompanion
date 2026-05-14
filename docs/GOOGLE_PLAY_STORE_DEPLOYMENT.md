@@ -237,7 +237,7 @@ Edit `android/app/build.gradle`:
 ```gradle
 android {
     defaultConfig {
-        applicationId "com.example.travel_crew"  // ⚠️ Change this!
+        applicationId "com.pathio.travel"  // ⚠️ Change this!
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 1         // Increment for each release

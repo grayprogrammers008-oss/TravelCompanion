@@ -1,6 +1,6 @@
 # Mailgun Email Service Setup Guide
 
-This guide will help you configure Mailgun for sending trip invitation emails in the Travel Crew app.
+This guide will help you configure Mailgun for sending trip invitation emails in the Pathio app.
 
 ## 📧 What is Mailgun?
 
@@ -18,7 +18,7 @@ You'll need to provide your **Mailgun domain** to complete the setup. Your API k
 
 **What you need**:
 - Mailgun Domain (e.g., `mg.yourdomain.com` or `sandbox123.mailgun.org`)
-- From Email Address (e.g., `Travel Crew <noreply@mg.yourdomain.com>`)
+- From Email Address (e.g., `Pathio <noreply@mg.yourdomain.com>`)
 
 ---
 
@@ -40,14 +40,14 @@ static const String mailgunDomain = String.fromEnvironment(
 
 static const String mailgunFromEmail = String.fromEnvironment(
   'MAILGUN_FROM_EMAIL',
-  defaultValue: 'Travel Crew <noreply@mg.yourdomain.com>', // ⚠️ UPDATE THIS
+  defaultValue: 'Pathio <noreply@mg.yourdomain.com>', // ⚠️ UPDATE THIS
 );
 ```
 
 **Example**:
 ```dart
-defaultValue: 'mg.travelcrew.com', // Your Mailgun domain
-defaultValue: 'Travel Crew <noreply@mg.travelcrew.com>', // Your from email
+defaultValue: 'mg.pathio.com', // Your Mailgun domain
+defaultValue: 'Pathio <noreply@mg.pathio.com>', // Your from email
 ```
 
 ---
@@ -90,13 +90,13 @@ Edit `.env`:
 ```env
 MAILGUN_API_KEY=a90e871ea23589e2e548d10cd52a4c02-5e1ffd43-ac389ec0
 MAILGUN_DOMAIN=mg.yourdomain.com
-MAILGUN_FROM_EMAIL=Travel Crew <noreply@mg.yourdomain.com>
+MAILGUN_FROM_EMAIL=Pathio <noreply@mg.yourdomain.com>
 ```
 
 Run the app with environment variables:
 ```bash
 flutter run --dart-define=MAILGUN_DOMAIN=mg.yourdomain.com \
-            --dart-define=MAILGUN_FROM_EMAIL="Travel Crew <noreply@mg.yourdomain.com>"
+            --dart-define=MAILGUN_FROM_EMAIL="Pathio <noreply@mg.yourdomain.com>"
 ```
 
 ---
@@ -106,7 +106,7 @@ flutter run --dart-define=MAILGUN_DOMAIN=mg.yourdomain.com \
 The trip invitation emails include:
 
 ✨ **Premium Design Features**:
-- Beautiful gradient header with Travel Crew branding
+- Beautiful gradient header with Pathio branding
 - Trip details card with destination and dates
 - Highlighted invite code in a dashed border box
 - Glossy CTA button with deep link to the app
@@ -138,7 +138,7 @@ String _buildInviteEmailHtml({...}) {
 ### Sending Test Emails
 
 ```dart
-import 'package:travel_crew/core/services/email_service.dart';
+import 'package:pathio/core/services/email_service.dart';
 
 final emailService = EmailService();
 
@@ -210,7 +210,7 @@ curl -s --user 'api:YOUR_API_KEY' \
 **Solutions**:
 - Set up SPF, DKIM, and DMARC records in your domain DNS
 - Use a verified sending domain (not sandbox)
-- Add "Travel Crew" to sender name
+- Add "Pathio" to sender name
 - Avoid spam trigger words in subject/body
 
 ---
@@ -237,7 +237,7 @@ curl -s --user 'api:YOUR_API_KEY' \
 
 ## 🎉 You're All Set!
 
-Once configured, the Travel Crew app will automatically send beautiful invitation emails whenever you invite friends to your trips. No additional code needed!
+Once configured, the Pathio app will automatically send beautiful invitation emails whenever you invite friends to your trips. No additional code needed!
 
 **Questions?** Check the troubleshooting section above or review the email service implementation in `lib/core/services/email_service.dart`.
 

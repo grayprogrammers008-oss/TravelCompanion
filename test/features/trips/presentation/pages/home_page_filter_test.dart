@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Unit tests for HomePage filter functionality
 /// Tests budget filtering, date filtering, and combined filters

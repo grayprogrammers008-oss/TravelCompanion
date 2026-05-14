@@ -1,6 +1,6 @@
 # 🚀 Messaging Module - Quick Start Guide
 
-**Ready to add messaging to Travel Crew?** Follow these steps!
+**Ready to add messaging to Pathio?** Follow these steps!
 
 ---
 
@@ -62,7 +62,7 @@ Total Estimated Time: 34 days (~7 weeks)
 
 ### Step 3: Add Issues to GitHub Project
 
-Add the created issues to your **"Travel Crew MVP - 8 Week"** project:
+Add the created issues to your **"Pathio MVP - 8 Week"** project:
 
 #### Option A: GitHub CLI (Fastest)
 ```bash
@@ -76,7 +76,7 @@ gh project item-add <PROJECT_ID> --owner vinothvino42 \
 
 #### Option B: GitHub Web UI
 1. Go to https://github.com/vinothvino42/TravelCompanion/projects
-2. Open "Travel Crew MVP - 8 Week" project
+2. Open "Pathio MVP - 8 Week" project
 3. Click "+ Add item"
 4. Search for "Feature: Core Messaging" (and other messaging issues)
 5. Add all 9 issues
@@ -329,7 +329,7 @@ The chat UI (Issue #2) will evolve. Don't try to make it perfect on first pass. 
 ### Consider MVP Scope
 **For MVP**: Implement Issues 1-6 (internet messaging) first. Get feedback before investing in P2P.
 
-**For Differentiation**: Implement all 9 issues. Offline P2P makes Travel Crew unique in the market.
+**For Differentiation**: Implement all 9 issues. Offline P2P makes Pathio unique in the market.
 
 ---
 

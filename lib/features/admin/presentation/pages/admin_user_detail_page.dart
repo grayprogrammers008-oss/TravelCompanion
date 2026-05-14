@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/core/theme/app_theme.dart';
-import 'package:travel_crew/core/widgets/destination_image.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_providers.dart';
+import 'package:pathio/core/theme/app_theme.dart';
+import 'package:pathio/core/widgets/destination_image.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_providers.dart';
 
 /// Admin User Detail Page
 /// View and edit individual user details with admin actions

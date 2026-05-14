@@ -36,7 +36,7 @@ final class OnboardingStateProvider
   OnboardingState create() => OnboardingState();
 }
 
-String _$onboardingStateHash() => r'f65ec9e9fb3c98abd12175e9f0f2c2ca6949195f';
+String _$onboardingStateHash() => r'2d2474767aae87c460ce630d53aaf2624ad40a15';
 
 /// Provider for managing onboarding state
 

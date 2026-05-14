@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/shared/models/checklist_model.dart';
+import 'package:pathio/shared/models/checklist_model.dart';
 
 void main() {
   group('ChecklistModel', () {

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
-import 'package:travel_crew/features/itinerary/domain/repositories/itinerary_repository.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/create_itinerary_item_usecase.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
+import 'package:pathio/features/itinerary/domain/repositories/itinerary_repository.dart';
+import 'package:pathio/features/itinerary/domain/usecases/create_itinerary_item_usecase.dart';
 
 // Manual Mock Repository
 class MockItineraryRepository implements ItineraryRepository {

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/services/notification_initialization.dart';
+import 'package:pathio/core/services/notification_initialization.dart';
 
 /// Tests for [NotificationInitialization].
 ///

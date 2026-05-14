@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/trip_invites/domain/entities/invite_entity.dart';
-import 'package:travel_crew/features/trip_invites/domain/repositories/invite_repository.dart';
-import 'package:travel_crew/features/trip_invites/domain/usecases/get_trip_invites_usecase.dart';
+import 'package:pathio/features/trip_invites/domain/entities/invite_entity.dart';
+import 'package:pathio/features/trip_invites/domain/repositories/invite_repository.dart';
+import 'package:pathio/features/trip_invites/domain/usecases/get_trip_invites_usecase.dart';
 
 import 'get_trip_invites_usecase_test.mocks.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:travel_crew/features/messaging/data/services/fcm_service.dart';
+import 'package:pathio/features/messaging/data/services/fcm_service.dart';
 
 import 'fcm_service_test.mocks.dart';
 

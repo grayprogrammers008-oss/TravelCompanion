@@ -1,4 +1,4 @@
-# Travel Crew - GitHub Issues for Collaboration
+# Pathio - GitHub Issues for Collaboration
 
 **Repository**: https://github.com/grayprogrammers008-oss/TravelCompanion
 **Team Members**: Vinoth, Nithya
@@ -519,9 +519,9 @@ Support deep links so invite links, trip shares, and notification taps open spec
 
 **URL Scheme**:
 ```
-https://travelcrew.app/invite/{invite_code}
-https://travelcrew.app/trip/{trip_id}
-https://travelcrew.app/expense/{expense_id}
+https://pathio.travel/invite/{invite_code}
+https://pathio.travel/trip/{trip_id}
+https://pathio.travel/expense/{expense_id}
 ```
 
 **Files to Modify**:
@@ -955,4 +955,4 @@ Create app store assets and listings for both iOS and Android.
 
 ---
 
-_Generated on 2025-10-14 for Travel Crew Collaboration_
+_Generated on 2025-10-14 for Pathio Collaboration_

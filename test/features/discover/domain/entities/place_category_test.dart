@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
 
 void main() {
   group('PlaceCategory enum', () {

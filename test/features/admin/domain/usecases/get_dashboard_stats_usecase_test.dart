@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_dashboard_stats.dart';
-import 'package:travel_crew/features/admin/domain/repositories/admin_repository.dart';
-import 'package:travel_crew/features/admin/domain/usecases/get_dashboard_stats_usecase.dart';
+import 'package:pathio/features/admin/domain/entities/admin_dashboard_stats.dart';
+import 'package:pathio/features/admin/domain/repositories/admin_repository.dart';
+import 'package:pathio/features/admin/domain/usecases/get_dashboard_stats_usecase.dart';
 
 import 'get_dashboard_stats_usecase_test.mocks.dart';
 

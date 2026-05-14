@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
+import 'package:pathio/features/auth/domain/entities/user_entity.dart';
 
 void main() {
   group('UserEntity', () {

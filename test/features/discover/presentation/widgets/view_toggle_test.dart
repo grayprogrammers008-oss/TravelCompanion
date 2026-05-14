@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/presentation/widgets/view_toggle.dart';
+import 'package:pathio/features/discover/presentation/widgets/view_toggle.dart';
 
 void main() {
   Widget wrap(Widget child) {

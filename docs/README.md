@@ -1,6 +1,6 @@
-# 📚 Travel Crew Documentation
+# 📚 Pathio Documentation
 
-Welcome to the Travel Crew documentation! All project documentation has been organized into logical folders.
+Welcome to the Pathio documentation! All project documentation has been organized into logical folders.
 
 ---
 

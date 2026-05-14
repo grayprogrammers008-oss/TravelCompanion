@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/trips/data/datasources/trip_queries.dart';
-import 'package:travel_crew/features/trips/data/datasources/trip_remote_datasource.dart';
-import 'package:travel_crew/shared/models/trip_model.dart';
+import 'package:pathio/features/trips/data/datasources/trip_queries.dart';
+import 'package:pathio/features/trips/data/datasources/trip_remote_datasource.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 
 /// Comprehensive unit tests for [TripRemoteDataSourceImpl].
 ///

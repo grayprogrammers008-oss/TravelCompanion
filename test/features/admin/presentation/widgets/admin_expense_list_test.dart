@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/admin/data/datasources/admin_remote_datasource.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_expense.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_expense_providers.dart';
-import 'package:travel_crew/features/admin/presentation/providers/admin_providers.dart';
-import 'package:travel_crew/features/admin/presentation/widgets/admin_expense_list.dart';
+import 'package:pathio/features/admin/data/datasources/admin_remote_datasource.dart';
+import 'package:pathio/features/admin/domain/entities/admin_expense.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_expense_providers.dart';
+import 'package:pathio/features/admin/presentation/providers/admin_providers.dart';
+import 'package:pathio/features/admin/presentation/widgets/admin_expense_list.dart';
 
 class _StubSupabaseClient extends Mock implements SupabaseClient {}
 

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/checklists/data/packing_templates.dart';
+import 'package:pathio/features/checklists/data/packing_templates.dart';
 
 void main() {
   group('PackingTemplate constructor', () {

@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_crew/features/onboarding/domain/models/onboarding_page_model.dart';
-import 'package:travel_crew/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:travel_crew/features/onboarding/presentation/widgets/onboarding_screen.dart';
+import 'package:pathio/features/onboarding/domain/models/onboarding_page_model.dart';
+import 'package:pathio/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:pathio/features/onboarding/presentation/widgets/onboarding_screen.dart';
 
 void main() {
   group('OnboardingPage Widget', () {

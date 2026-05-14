@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/animations/animated_widgets.dart';
+import 'package:pathio/core/animations/animated_widgets.dart';
 
 void main() {
   group('FadeInAnimation', () {

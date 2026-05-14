@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/auth/domain/repositories/auth_repository.dart';
-import 'package:travel_crew/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:pathio/features/auth/domain/repositories/auth_repository.dart';
+import 'package:pathio/features/auth/domain/usecases/sign_out_usecase.dart';
 
 import 'sign_out_usecase_test.mocks.dart';
 

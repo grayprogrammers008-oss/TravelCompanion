@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/core/providers/supabase_provider.dart';
-import 'package:travel_crew/features/templates/data/datasources/template_remote_datasource.dart';
-import 'package:travel_crew/features/templates/domain/entities/ai_usage.dart';
-import 'package:travel_crew/features/templates/domain/entities/trip_template.dart';
-import 'package:travel_crew/features/templates/presentation/providers/template_providers.dart';
+import 'package:pathio/core/providers/supabase_provider.dart';
+import 'package:pathio/features/templates/data/datasources/template_remote_datasource.dart';
+import 'package:pathio/features/templates/domain/entities/ai_usage.dart';
+import 'package:pathio/features/templates/domain/entities/trip_template.dart';
+import 'package:pathio/features/templates/presentation/providers/template_providers.dart';
 
 /// Bare SupabaseClient stub: never accessed because the fake datasource
 /// overrides every method that would touch it.

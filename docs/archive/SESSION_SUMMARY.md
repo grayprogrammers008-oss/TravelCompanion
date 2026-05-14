@@ -71,8 +71,8 @@
 **File**: `DEEP_LINKING_SETUP.md` (Complete guide)
 
 **Supported URL Formats**:
-- HTTPS: `https://travelcrew.app/invite/ABC123`
-- Custom Scheme: `travelcrew://invite/ABC123`
+- HTTPS: `https://pathio.travel/invite/ABC123`
+- Custom Scheme: `pathio://invite/ABC123`
 
 **Platform Support**:
 - ✅ Android Intent Filters (documented)
@@ -95,7 +95,7 @@
 
 Use this code to join: ABC123
 
-Or click this link: https://travelcrew.app/invite/ABC123
+Or click this link: https://pathio.travel/invite/ABC123
 
 Expires in 7 days.
 
@@ -254,7 +254,7 @@ if (isInviteRoute) {
 
 ## 🎨 Design System Compliance
 
-All new UI follows the **Travel Crew Premium Design System**:
+All new UI follows the **Pathio Premium Design System**:
 
 ### Colors
 - ✅ Primary Teal gradient (`#00B8A9` → `#008C7D`)
@@ -314,7 +314,7 @@ All new UI follows the **Travel Crew Premium Design System**:
 
 **Deep Linking**:
 - [ ] Test HTTPS link (after AndroidManifest/Info.plist setup)
-- [ ] Test custom scheme (travelcrew://)
+- [ ] Test custom scheme (pathio://)
 - [ ] Test on physical Android device
 - [ ] Test on physical iOS device
 - [ ] Test when app is closed
@@ -396,7 +396,7 @@ All new UI follows the **Travel Crew Premium Design System**:
 
 ### Production Deployment
 1. **Domain Setup**:
-   - Register domain (e.g., travelcrew.app)
+   - Register domain (e.g., pathio.travel)
    - Set up web hosting
    - Host assetlinks.json (Android)
    - Host apple-app-site-association (iOS)

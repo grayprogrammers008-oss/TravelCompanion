@@ -2,7 +2,7 @@
 
 ## ✅ Integration Complete!
 
-Your Travel Crew app is now fully integrated with Supabase. All code is ready - you just need to deploy the database schema.
+Your Pathio app is now fully integrated with Supabase. All code is ready - you just need to deploy the database schema.
 
 ---
 

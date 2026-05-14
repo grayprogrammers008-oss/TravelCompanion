@@ -460,7 +460,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 // Import the code to test
-import 'package:travel_crew/features/messaging/.../your_file.dart';
+import 'package:pathio/features/messaging/.../your_file.dart';
 
 // Import the generated mocks
 import 'your_test_file.mocks.dart';

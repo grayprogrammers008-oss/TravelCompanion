@@ -5,13 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
-import 'package:travel_crew/core/theme/theme_provider.dart' as theme_provider;
-import 'package:travel_crew/features/templates/data/datasources/template_remote_datasource.dart';
-import 'package:travel_crew/features/templates/domain/entities/trip_template.dart';
-import 'package:travel_crew/features/templates/presentation/pages/template_detail_page.dart';
-import 'package:travel_crew/features/templates/presentation/providers/template_providers.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
+import 'package:pathio/core/theme/theme_provider.dart' as theme_provider;
+import 'package:pathio/features/templates/data/datasources/template_remote_datasource.dart';
+import 'package:pathio/features/templates/domain/entities/trip_template.dart';
+import 'package:pathio/features/templates/presentation/pages/template_detail_page.dart';
+import 'package:pathio/features/templates/presentation/providers/template_providers.dart';
 
 /// Bare SupabaseClient stub: never accessed because the fake datasource
 /// overrides the methods the page transitively calls.

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_action_type.dart';
+import 'package:pathio/features/admin/domain/entities/admin_action_type.dart';
 
 /// Admin Activity Log Entity
 /// Represents an action performed by an admin user

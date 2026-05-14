@@ -1,6 +1,6 @@
 # Unsplash API Setup Guide
 
-This guide will help you set up the Unsplash API to fetch real destination images for the Travel Crew app.
+This guide will help you set up the Unsplash API to fetch real destination images for the Pathio app.
 
 ---
 
@@ -38,7 +38,7 @@ Beautiful, high-quality travel destination images that automatically load for:
 
 ### Step 3: Fill in Application Details
 
-**Application name**: `Travel Crew MVP`
+**Application name**: `Pathio MVP`
 
 **Description**:
 ```
@@ -247,4 +247,4 @@ Once images are working:
 
 ---
 
-**Enjoy beautiful destination images in your Travel Crew app!** 🎉✈️
+**Enjoy beautiful destination images in your Pathio app!** 🎉✈️

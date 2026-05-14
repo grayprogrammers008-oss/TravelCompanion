@@ -1,6 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/animations/animation_constants.dart';
+import 'package:pathio/core/animations/animation_constants.dart';
 
 void main() {
   group('AppAnimations durations', () {

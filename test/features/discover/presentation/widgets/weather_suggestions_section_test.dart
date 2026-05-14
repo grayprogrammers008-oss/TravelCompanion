@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/discover/domain/entities/discover_place.dart';
-import 'package:travel_crew/features/discover/domain/entities/place_category.dart';
-import 'package:travel_crew/features/discover/domain/entities/weather_suggestion.dart';
-import 'package:travel_crew/features/discover/presentation/providers/discover_providers.dart';
-import 'package:travel_crew/features/discover/presentation/widgets/weather_suggestions_section.dart';
+import 'package:pathio/features/discover/domain/entities/discover_place.dart';
+import 'package:pathio/features/discover/domain/entities/place_category.dart';
+import 'package:pathio/features/discover/domain/entities/weather_suggestion.dart';
+import 'package:pathio/features/discover/presentation/providers/discover_providers.dart';
+import 'package:pathio/features/discover/presentation/widgets/weather_suggestions_section.dart';
 
 class _FakeDiscoverStateNotifier extends DiscoverStateNotifier {
   _FakeDiscoverStateNotifier(this._initialState);

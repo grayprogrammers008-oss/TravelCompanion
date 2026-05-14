@@ -4,10 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_crew/features/auth/data/datasources/profile_photo_service.dart';
-import 'package:travel_crew/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:travel_crew/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:travel_crew/features/auth/data/models/user_model.dart';
+import 'package:pathio/features/auth/data/datasources/profile_photo_service.dart';
+import 'package:pathio/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:pathio/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:pathio/features/auth/data/models/user_model.dart';
 
 @GenerateMocks([
   AuthRemoteDataSource,

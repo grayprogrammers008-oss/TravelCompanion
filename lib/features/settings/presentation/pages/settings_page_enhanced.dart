@@ -423,7 +423,7 @@ class _SettingsPageEnhancedState extends ConsumerState<SettingsPageEnhanced> {
                   onTap: () {
                     showLicensePage(
                       context: context,
-                      applicationName: 'Travel Crew',
+                      applicationName: 'Pathio',
                       applicationVersion: _appVersion,
                     );
                   },

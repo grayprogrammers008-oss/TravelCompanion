@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:travel_crew/features/ai_itinerary/data/services/gemini_service.dart';
+import 'package:pathio/features/ai_itinerary/data/services/gemini_service.dart';
 // `AiItineraryDay` and `AiItineraryActivity` are declared by both files, so
 // we hide the domain copies and use the service copies (which is what
 // AiCompleteTripPlan internally references).
-import 'package:travel_crew/features/ai_itinerary/domain/entities/ai_itinerary.dart' hide AiItineraryDay, AiItineraryActivity;
+import 'package:pathio/features/ai_itinerary/domain/entities/ai_itinerary.dart' hide AiItineraryDay, AiItineraryActivity;
 
 /// Comprehensive unit tests for [GeminiService].
 ///

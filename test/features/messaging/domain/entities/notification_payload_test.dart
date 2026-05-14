@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/domain/entities/notification_payload.dart';
+import 'package:pathio/features/messaging/domain/entities/notification_payload.dart';
 
 void main() {
   NotificationPayload base({

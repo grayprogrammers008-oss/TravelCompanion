@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/data/services/encryption_service.dart';
+import 'package:pathio/features/messaging/data/services/encryption_service.dart';
 
 void main() {
   group('EncryptionService', () {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/features/messaging/presentation/widgets/sync_status_sheet.dart';
-import 'package:travel_crew/features/messaging/presentation/providers/sync_providers.dart';
-import 'package:travel_crew/features/messaging/data/services/sync_coordinator.dart';
+import 'package:pathio/features/messaging/presentation/widgets/sync_status_sheet.dart';
+import 'package:pathio/features/messaging/presentation/providers/sync_providers.dart';
+import 'package:pathio/features/messaging/data/services/sync_coordinator.dart';
 
 void main() {
   group('SyncStatusSheet Widget Tests', () {

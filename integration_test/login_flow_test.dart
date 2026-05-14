@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:travel_crew/main.dart' as app;
+import 'package:pathio/main.dart' as app;
 
 /// On-device flow tests that drive the real app to user-visible screens
 /// and exercise interactive elements.

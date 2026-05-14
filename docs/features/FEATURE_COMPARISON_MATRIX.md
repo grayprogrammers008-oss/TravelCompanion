@@ -1,4 +1,4 @@
-# 🏆 Travel Crew vs Competitors - Feature Matrix
+# 🏆 Pathio vs Competitors - Feature Matrix
 
 **Last Updated**: October 21, 2025
 **Purpose**: See exactly where we beat the competition
@@ -7,7 +7,7 @@
 
 ## 📊 Core Features Comparison
 
-| Feature | Travel Crew | TripIt | Splitwise | Google Trips | Sygic | Our Advantage |
+| Feature | Pathio | TripIt | Splitwise | Google Trips | Sygic | Our Advantage |
 |---------|-------------|--------|-----------|--------------|-------|---------------|
 | **Offline Messaging** | ✅ BLE+WiFi | ❌ | ❌ | ❌ | ❌ | **ONLY US** 🔥 |
 | **AI Travel Assistant** | ✅ Claude | ❌ | ❌ | ❌ | ❌ | **ONLY US** 🔥 |
@@ -33,7 +33,7 @@
 
 ## 🎯 Unique Features Score
 
-### Travel Crew: 8 Unique Features
+### Pathio: 8 Unique Features
 1. ✅ Offline Messaging (BLE/WiFi)
 2. ✅ Claude AI Autopilot
 3. ✅ 5-second expense split
@@ -52,13 +52,13 @@
 ### Sygic: 1 Unique Feature
 - Offline maps (but not messaging)
 
-**Winner**: Travel Crew (8x more unique features)
+**Winner**: Pathio (8x more unique features)
 
 ---
 
 ## 💰 Value Proposition Comparison
 
-### Travel Crew
+### Pathio
 ```
 Free Tier:
 • 3 trips
@@ -107,7 +107,7 @@ Value: 🌟🌟🌟 (3/5)
 Reason: Free tier sufficient for most
 ```
 
-**Winner**: Travel Crew (strongest value proposition)
+**Winner**: Pathio (strongest value proposition)
 
 ---
 
@@ -115,12 +115,12 @@ Reason: Free tier sufficient for most
 
 | App | UI Score | UX Score | Delight Factor | Total |
 |-----|----------|----------|----------------|-------|
-| **Travel Crew** | 10/10 | 9/10 | 10/10 | **29/30** 🥇 |
+| **Pathio** | 10/10 | 9/10 | 10/10 | **29/30** 🥇 |
 | TripIt | 5/10 | 6/10 | 4/10 | 15/30 |
 | Splitwise | 4/10 | 7/10 | 3/10 | 14/30 |
 | Sygic | 6/10 | 7/10 | 5/10 | 18/30 |
 
-**Travel Crew Advantages**:
+**Pathio Advantages**:
 - Premium glossy design
 - Tropical teal gradients
 - Smooth animations (60 FPS)
@@ -132,7 +132,7 @@ Reason: Free tier sufficient for most
 
 ## 🚀 Viral Potential
 
-| Feature | Travel Crew | Competitors | Viral Score |
+| Feature | Pathio | Competitors | Viral Score |
 |---------|-------------|-------------|-------------|
 | Shareable Content | Trip Rewind videos, Awards | Basic sharing | 10/10 🔥 |
 | Network Effects | Trip cloning, Crew invites | Limited | 9/10 🔥 |
@@ -151,7 +151,7 @@ Reason: Free tier sufficient for most
 
 ### Adventure Travelers
 ```
-Travel Crew: ✅✅✅✅✅ (5/5)
+Pathio: ✅✅✅✅✅ (5/5)
 - Offline messaging = PERFECT
 - SOS mode = Essential
 - Crew collaboration = Great
@@ -165,7 +165,7 @@ Splitwise: ⭐⭐⭐ (3/5)
 
 ### Digital Nomads
 ```
-Travel Crew: ✅✅✅✅ (4/5)
+Pathio: ✅✅✅✅ (4/5)
 - Real-time collaboration
 - WiFi map
 - Expense tracking
@@ -179,7 +179,7 @@ Splitwise: ⭐⭐⭐ (3/5)
 
 ### Group Travelers
 ```
-Travel Crew: ✅✅✅✅✅ (5/5)
+Pathio: ✅✅✅✅✅ (5/5)
 - Built FOR groups
 - Every feature supports collaboration
 
@@ -192,7 +192,7 @@ Splitwise: ⭐⭐⭐ (3/5)
 
 ### Families
 ```
-Travel Crew: ✅✅✅✅ (4/5)
+Pathio: ✅✅✅✅ (4/5)
 - SOS mode
 - Live trip sharing
 - Safety features
@@ -204,13 +204,13 @@ Others: ⭐⭐ (2/5)
 - Not family-focused
 ```
 
-**Winner**: Travel Crew (fits ALL segments)
+**Winner**: Pathio (fits ALL segments)
 
 ---
 
 ## 🏆 Overall Competitive Score
 
-### Travel Crew
+### Pathio
 ```
 Features:        ⭐⭐⭐⭐⭐ 10/10
 Design:          ⭐⭐⭐⭐⭐ 10/10
@@ -277,7 +277,7 @@ Total: 25/50 (50%)
 ```
 Location: Remote Himalayas, no cell service
 
-Travel Crew:
+Pathio:
 ✅ Crew coordinates via Bluetooth
 ✅ Offline maps work
 ✅ SOS mode active
@@ -291,14 +291,14 @@ Competitors:
 ❌ Safety features offline
 Result: Fails completely
 
-Winner: Travel Crew (by knockout)
+Winner: Pathio (by knockout)
 ```
 
 ### Scenario 2: Bali Group Trip
 ```
 Situation: 5 friends, need to split 20+ expenses
 
-Travel Crew:
+Pathio:
 • "$45 dinner" → 2 taps, auto-split
 • Time: 5 seconds per expense
 • Total time: 100 seconds (1.5 min)
@@ -312,14 +312,14 @@ Splitwise:
 • Total time: 900 seconds (15 min)
 ⚠️ No trip context
 
-Winner: Travel Crew (10x faster)
+Winner: Pathio (10x faster)
 ```
 
 ### Scenario 3: Planning Tokyo Trip
 ```
 Need: Itinerary, expenses, coordination
 
-Travel Crew:
+Pathio:
 ✅ One app for everything
 ✅ Itinerary builder
 ✅ Expense tracking
@@ -335,7 +335,7 @@ Competitors:
 ❌ No templates
 Time: 2 hours
 
-Winner: Travel Crew (4x faster)
+Winner: Pathio (4x faster)
 ```
 
 ---
@@ -344,7 +344,7 @@ Winner: Travel Crew (4x faster)
 
 Features that make users say "WOW":
 
-### Travel Crew
+### Pathio
 1. 📶 "It works WITHOUT INTERNET?!" (Offline messaging)
 2. 🤖 "This AI actually knows my trip!" (Claude)
 3. ⚡ "That was so fast!" (5-sec expense split)
@@ -360,7 +360,7 @@ Features that make users say "WOW":
 1. Maybe one or two "that's nice" moments
 **Wow moments per user**: 1-2
 
-**Winner**: Travel Crew (4x more delight)
+**Winner**: Pathio (4x more delight)
 
 ---
 
@@ -420,7 +420,7 @@ Low Price       │      High Price
 
 ## 📊 Final Verdict
 
-| Category | Travel Crew | Best Competitor | Gap |
+| Category | Pathio | Best Competitor | Gap |
 |----------|-------------|-----------------|-----|
 | Unique Features | 8 | 1 | **8x better** |
 | Design Quality | 10/10 | 7/10 | **43% better** |
@@ -432,4 +432,4 @@ Low Price       │      High Price
 
 ---
 
-**Travel Crew isn't just better. It's in a different league.** 🏆
+**Pathio isn't just better. It's in a different league.** 🏆

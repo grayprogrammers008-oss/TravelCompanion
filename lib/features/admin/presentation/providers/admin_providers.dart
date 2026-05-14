@@ -1,19 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travel_crew/core/providers/supabase_provider.dart';
-import 'package:travel_crew/features/admin/data/datasources/admin_remote_datasource.dart';
-import 'package:travel_crew/features/admin/data/repositories/admin_repository_impl.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_activity_log.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_dashboard_stats.dart';
-import 'package:travel_crew/features/admin/domain/entities/admin_user.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_role.dart';
-import 'package:travel_crew/features/admin/domain/entities/user_status.dart';
-import 'package:travel_crew/features/admin/domain/repositories/admin_repository.dart';
-import 'package:travel_crew/features/admin/domain/usecases/activate_user_usecase.dart';
-import 'package:travel_crew/features/admin/domain/usecases/get_all_users_usecase.dart';
-import 'package:travel_crew/features/admin/domain/usecases/get_dashboard_stats_usecase.dart';
-import 'package:travel_crew/features/admin/domain/usecases/is_admin_usecase.dart';
-import 'package:travel_crew/features/admin/domain/usecases/suspend_user_usecase.dart';
-import 'package:travel_crew/features/admin/domain/usecases/update_user_role_usecase.dart';
+import 'package:pathio/core/providers/supabase_provider.dart';
+import 'package:pathio/features/admin/data/datasources/admin_remote_datasource.dart';
+import 'package:pathio/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:pathio/features/admin/domain/entities/admin_activity_log.dart';
+import 'package:pathio/features/admin/domain/entities/admin_dashboard_stats.dart';
+import 'package:pathio/features/admin/domain/entities/admin_user.dart';
+import 'package:pathio/features/admin/domain/entities/user_role.dart';
+import 'package:pathio/features/admin/domain/entities/user_status.dart';
+import 'package:pathio/features/admin/domain/repositories/admin_repository.dart';
+import 'package:pathio/features/admin/domain/usecases/activate_user_usecase.dart';
+import 'package:pathio/features/admin/domain/usecases/get_all_users_usecase.dart';
+import 'package:pathio/features/admin/domain/usecases/get_dashboard_stats_usecase.dart';
+import 'package:pathio/features/admin/domain/usecases/is_admin_usecase.dart';
+import 'package:pathio/features/admin/domain/usecases/suspend_user_usecase.dart';
+import 'package:pathio/features/admin/domain/usecases/update_user_role_usecase.dart';
 
 // ============================================================================
 // DATA SOURCE PROVIDERS

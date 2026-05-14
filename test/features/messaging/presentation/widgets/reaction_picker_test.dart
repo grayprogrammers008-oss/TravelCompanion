@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/features/messaging/presentation/widgets/reaction_picker.dart';
+import 'package:pathio/features/messaging/presentation/widgets/reaction_picker.dart';
 
 void main() {
   group('ReactionPicker Widget', () {

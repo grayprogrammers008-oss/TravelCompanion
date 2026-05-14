@@ -1,4 +1,4 @@
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 /// Use case for searching itinerary items by query text
 /// Searches across itinerary item title, description, and location

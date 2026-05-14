@@ -1,4 +1,4 @@
-import 'package:travel_crew/features/admin/domain/repositories/admin_repository.dart';
+import 'package:pathio/features/admin/domain/repositories/admin_repository.dart';
 
 /// Use Case: Suspend User
 /// Suspends a user account (admin only)

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:travel_crew/features/itinerary/domain/repositories/itinerary_repository.dart';
-import 'package:travel_crew/features/itinerary/domain/usecases/get_itinerary_by_days_usecase.dart';
-import 'package:travel_crew/shared/models/itinerary_model.dart';
+import 'package:pathio/features/itinerary/domain/repositories/itinerary_repository.dart';
+import 'package:pathio/features/itinerary/domain/usecases/get_itinerary_by_days_usecase.dart';
+import 'package:pathio/shared/models/itinerary_model.dart';
 
 import 'get_itinerary_by_days_usecase_test.mocks.dart';
 

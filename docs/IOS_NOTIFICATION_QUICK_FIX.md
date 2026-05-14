@@ -89,7 +89,7 @@ If you see these ✅ = notification was sent!
 On **Lock Screen** or **Notification Center**:
 ```
 ┌────────────────────────────┐
-│ TravelCrew                 │
+│ Pathio                 │
 │ 🎉 Test Notification       │
 │ Firebase notifications are │
 │ working! This is a test... │
@@ -100,7 +100,7 @@ On **Lock Screen** or **Notification Center**:
 ## Still Not Seeing It?
 
 ### Check Permissions
-1. **Settings → Notifications → TravelCrew**
+1. **Settings → Notifications → Pathio**
 2. Ensure these are ON:
    - Allow Notifications ✓
    - Lock Screen ✓

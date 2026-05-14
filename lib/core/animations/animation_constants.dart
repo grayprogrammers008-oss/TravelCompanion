@@ -1,6 +1,6 @@
 import 'package:flutter/animation.dart';
 
-/// Premium animation constants for Travel Crew
+/// Premium animation constants for Pathio
 ///
 /// These values create a cohesive, delightful animation system
 /// that makes every interaction feel smooth and responsive.

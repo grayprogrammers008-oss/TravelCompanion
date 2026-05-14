@@ -19,12 +19,12 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:travel_crew/features/ai_itinerary/data/services/gemini_service.dart'
+import 'package:pathio/features/ai_itinerary/data/services/gemini_service.dart'
     show AiCompleteTripPlan;
-import 'package:travel_crew/features/ai_itinerary/data/services/groq_service.dart';
+import 'package:pathio/features/ai_itinerary/data/services/groq_service.dart';
 // `AiItineraryDay` and `AiItineraryActivity` are also declared by
 // gemini_service.dart, so hide the domain copies to avoid ambiguity.
-import 'package:travel_crew/features/ai_itinerary/domain/entities/ai_itinerary.dart'
+import 'package:pathio/features/ai_itinerary/domain/entities/ai_itinerary.dart'
     hide AiItineraryDay, AiItineraryActivity;
 
 /// A queue-driven fake of [GroqHttpClient]. Calls to [post] return the

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_crew/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:pathio/features/onboarding/presentation/providers/onboarding_provider.dart';
 
 void main() {
   group('OnboardingStateProvider', () {

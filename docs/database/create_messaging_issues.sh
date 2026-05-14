@@ -5,7 +5,7 @@
 
 REPO_OWNER="vinothvsbe"  # GitHub username
 REPO_NAME="TravelCompanion"
-PROJECT_NAME="Travel Crew MVP - 8 Week Sprint"
+PROJECT_NAME="Pathio MVP - 8 Week Sprint"
 
 echo "🚀 Creating Messaging Module Issues for Phase 1..."
 echo ""
@@ -17,7 +17,7 @@ gh issue create \
   --body "## 📱 Core Messaging Infrastructure
 
 ### Description
-Implement the foundational messaging system for Travel Crew with real-time and offline capabilities.
+Implement the foundational messaging system for Pathio with real-time and offline capabilities.
 
 ### Requirements
 
@@ -185,14 +185,14 @@ Others' messages:
 - [ ] Typing indicators work
 - [ ] Offline messages show in queue
 - [ ] Works perfectly on small screens (iPhone SE)
-- [ ] Follows Travel Crew design system
+- [ ] Follows Pathio design system
 
 ### Estimated Time: 4 days
 
 ### Design References
 - WhatsApp chat UI (familiar UX)
 - Telegram bubbles (clean design)
-- Travel Crew glossy design system
+- Pathio glossy design system
 
 ### Files to Create
 \`\`\`
@@ -683,7 +683,7 @@ Enable true offline messaging between devices using Bluetooth Low Energy when in
 
 #### BLE Communication
 - [ ] Use GATT server/client architecture
-- [ ] Create custom service UUID for Travel Crew
+- [ ] Create custom service UUID for Pathio
 - [ ] Characteristics for:
   - Message exchange (write)
   - Message acknowledgment (notify)
@@ -772,7 +772,7 @@ ADD COLUMN ble_metadata JSONB DEFAULT '{}'::jsonb;
 
 #### BLE Service Structure
 \`\`\`
-Travel Crew BLE Service
+Pathio BLE Service
 UUID: 0000TCMSG-0000-1000-8000-00805F9B34FB
 
 Characteristics:
@@ -996,7 +996,7 @@ Auto-select best available method
 <string>Find nearby crew members for offline messaging</string>
 <key>NSBonjourServices</key>
 <array>
-  <string>_travelcrew._tcp</string>
+  <string>_pathio._tcp</string>
 </array>
 \`\`\`
 
@@ -1053,7 +1053,7 @@ lib/features/messaging/domain/services/p2p_encryption_service.dart
 lib/features/messaging/presentation/providers/wifi_connection_provider.dart
 lib/features/messaging/presentation/widgets/p2p_connection_status.dart
 lib/features/messaging/presentation/pages/p2p_devices_page.dart
-android/app/src/main/kotlin/com/example/travelcrew/WiFiDirectPlugin.kt
+android/app/src/main/kotlin/com/example/pathio/WiFiDirectPlugin.kt
 ios/Runner/MultipeerPlugin.swift
 \`\`\`
 
@@ -1417,7 +1417,7 @@ echo "  • Conflict resolution and deduplication"
 echo ""
 echo "🔗 Next Steps:"
 echo "  1. Run this script to create all GitHub issues"
-echo "  2. Add issues to 'Travel Crew MVP - 8 Week' project"
+echo "  2. Add issues to 'Pathio MVP - 8 Week' project"
 echo "  3. Prioritize based on MVP requirements"
 echo "  4. Consider: Do you need ALL offline features for Phase 1?"
 echo "     - Core messaging (Issues 1-6): Essential"

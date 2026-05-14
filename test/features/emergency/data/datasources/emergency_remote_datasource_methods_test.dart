@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_crew/features/emergency/data/datasources/emergency_queries.dart';
-import 'package:travel_crew/features/emergency/data/datasources/emergency_remote_datasource.dart';
-import 'package:travel_crew/shared/models/emergency_alert_model.dart';
-import 'package:travel_crew/shared/models/emergency_number_model.dart';
-import 'package:travel_crew/shared/models/location_share_model.dart';
+import 'package:pathio/features/emergency/data/datasources/emergency_queries.dart';
+import 'package:pathio/features/emergency/data/datasources/emergency_remote_datasource.dart';
+import 'package:pathio/shared/models/emergency_alert_model.dart';
+import 'package:pathio/shared/models/emergency_number_model.dart';
+import 'package:pathio/shared/models/location_share_model.dart';
 
 /// Comprehensive unit tests for [EmergencyRemoteDataSourceImpl].
 ///

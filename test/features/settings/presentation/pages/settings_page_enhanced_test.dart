@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Removed AuthLocalDataSource import - no longer needed
-import 'package:travel_crew/features/auth/domain/entities/user_entity.dart';
-import 'package:travel_crew/features/auth/presentation/providers/auth_providers.dart';
-import 'package:travel_crew/features/settings/presentation/pages/settings_page_enhanced.dart';
-import 'package:travel_crew/core/theme/app_theme_data.dart';
-import 'package:travel_crew/core/theme/theme_access.dart';
+import 'package:pathio/features/auth/domain/entities/user_entity.dart';
+import 'package:pathio/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pathio/features/settings/presentation/pages/settings_page_enhanced.dart';
+import 'package:pathio/core/theme/app_theme_data.dart';
+import 'package:pathio/core/theme/theme_access.dart';
 
 void main() {
   group('SettingsPageEnhanced Widget Tests', () {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:travel_crew/core/network/supabase_client.dart';
+import 'package:pathio/core/network/supabase_client.dart';
 
 /// Tests for the static [SupabaseClientWrapper] facade.
 ///
