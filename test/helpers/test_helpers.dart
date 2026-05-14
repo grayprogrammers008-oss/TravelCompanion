@@ -32,7 +32,7 @@ class TestHelpers {
         authStateProvider.overrideWith((ref) => Stream.value(user.id)),
 
         // Trip providers
-        userTripsProvider.overrideWith((ref) => Stream.value(trips)),
+        userTripsProvider.overrideWith((ref) => trips),
       ],
       child: MaterialApp(
         home: child,
