@@ -1,1 +1,26 @@
-{}
+{
+  "git.ignoredRepositories": [
+    "${workspaceFolder}/flutter"
+  ],
+  "git.openRepositoryInParentFolders": "never",
+  "git.repositoryScanIgnoredFolders": [
+    "node_modules",
+    ".git",
+    "build",
+    ".dart_tool",
+    "flutter"
+  ],
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/build/**": true,
+    "**/.dart_tool/**": true,
+    "**/flutter/**": true
+  },
+  "search.exclude": {
+    "**/flutter": true,
+    "**/build": true,
+    "**/.dart_tool": true
+  }
+}
