@@ -1,0 +1,77 @@
+# Default behavior: auto-detect text files and let core.autocrlf handle endings
+* text=auto
+
+# Force CRLF for Windows-specific files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.rc text eol=crlf
+*.sln text eol=crlf
+*.vcxproj* text eol=crlf
+
+# Force LF for Unix-specific files (or they break)
+*.sh text eol=lf
+*.bash text eol=lf
+Makefile text eol=lf
+*.mk text eol=lf
+gradlew text eol=lf
+
+# Explicit text formats
+*.dart text
+*.kt text
+*.kts text
+*.gradle text
+*.java text
+*.swift text
+*.md text
+*.yaml text
+*.yml text
+*.json text
+*.xml text
+*.html text
+*.css text
+*.js text
+*.ts text
+*.sql text
+*.plist text
+*.xcconfig text
+*.cc text
+*.cpp text
+*.h text
+*.hpp text
+
+# Binary files (never normalize)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+*.jks binary
+*.keystore binary
+*.p12 binary
+*.cer binary
+*.apk binary
+*.aab binary
+*.ipa binary
+*.so binary
+*.dll binary
+*.dylib binary
+*.exe binary
+*.jar binary
+*.class binary
+*.mp3 binary
+*.mp4 binary
+*.mov binary
+*.wav binary
