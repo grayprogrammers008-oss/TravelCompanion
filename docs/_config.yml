@@ -1,0 +1,58 @@
+title: Pathio
+description: Plan trips together — AI-powered, multilingual, group travel companion.
+url: "https://grayprogrammers008-oss.github.io"
+baseurl: "/TravelCompanion"
+theme: jekyll-theme-minimal
+permalink: pretty
+
+# Only the files below are part of the public Pathio website.
+# Everything else in docs/ is internal developer documentation
+# and must be explicitly excluded so it does NOT get published.
+exclude:
+  # Internal developer docs at docs/ root
+  - APPLE_APP_STORE_DEPLOYMENT.md
+  - APP_STORE_QUICK_GUIDE.md
+  - CLAUDE.md
+  - EMERGENCY_HOSPITALS_SETUP.md
+  - FIREBASE_NOTIFICATIONS_IMPLEMENTATION_COMPLETE.md
+  - FIREBASE_PUSH_NOTIFICATIONS.md
+  - GOOGLE_PLAY_STORE_DEPLOYMENT.md
+  - HOSPITAL_DATA_SOURCES.md
+  - IMPORT_SOUTH_INDIA_HOSPITALS.md
+  - IOS_NOTIFICATION_QUICK_FIX.md
+  - IOS_SIMULATOR_NOTIFICATIONS.md
+  - NOTIFICATION_SETUP_GUIDE.md
+  - NOTIFICATION_TROUBLESHOOTING.md
+  - OSM_HOSPITAL_IMPORT_GUIDE.md
+  - PHASE1_PROGRESS.md
+  - PLAY_STORE_QUICK_GUIDE.md
+  - PROFILE_PHOTO_TESTING.md
+  - PROFILE_PHOTO_UPLOAD_IMPLEMENTATION.md
+  - README.md
+  - TESTER_UDID_GUIDE.md
+  - TESTFLIGHT_TESTER_GUIDE.md
+  - TEST_NOTIFICATION_BUTTON.md
+  - UPI_PAYMENT_QUICK_REFERENCE.md
+  - UPI_PAYMENT_TESTING_GUIDE.md
+  - UX_DESIGN_V1.0_BACKUP.md
+  - UX_IMPROVEMENT_ROADMAP.md
+  - claude.md
+  # Internal subdirectories
+  - architecture/
+  - archive/
+  - database/
+  - design/
+  - features/
+  - fixes/
+  - implementation/
+  - messaging/
+  - realtime/
+  - setup/
+  - testing/
+  - theming/
+  - troubleshooting/
+  # Jekyll/build artifacts
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .bundle/
