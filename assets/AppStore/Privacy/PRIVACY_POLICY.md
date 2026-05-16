@@ -167,7 +167,7 @@ We may update this policy. When we do:
 **Website**: https://grayprogrammers008-oss.github.io/TravelCompanion/
 
 **Grievance Officer** (for India users under DPDP Act):
-   - Name: *[Your Full Name — required before launch]*
+   - Name: Balakrishnan Arullingam
    - Email: grayprogrammers008@gmail.com
    - Response time: Within 7 business days
 
@@ -194,8 +194,8 @@ This policy is provided to give you transparency and control over your data. If 
 ## ⚠️ TODO Before Production Launch
 
 1. ✅ Support email set to `grayprogrammers008@gmail.com` (monitor this inbox!)
-2. ❗ **Add Grievance Officer name** (Section 13) — required for India DPDP compliance
+2. ✅ Grievance Officer set: Balakrishnan Arullingam
 3. ✅ Hosted at `https://grayprogrammers008-oss.github.io/TravelCompanion/privacy/` via GitHub Pages
-4. ❗ **Have a lawyer review** — especially DPDP Act language for India launch
+4. ❗ **Have a lawyer review** — especially DPDP Act language for India launch (recommended, not blocking)
 5. ❗ **Add business address** if you incorporate (Section 13)
 6. ❗ **Confirm Supabase data region** — update Section 6 with actual region
