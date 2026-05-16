@@ -30,7 +30,7 @@ Pathio is a mobile app that helps friends and families plan amazing trips togeth
 
 - [Privacy Policy](/privacy/)
 - [Support](/support/)
-- [Contact](mailto:support@pathio.travel)
+- [Contact](mailto:grayprogrammers008@gmail.com)
 
 ---
 

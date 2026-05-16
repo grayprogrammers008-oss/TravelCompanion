@@ -10,7 +10,7 @@ We're here to help. Here's how to reach us and find answers to common questions.
 
 ## Contact Us
 
-- **Email**: [support@pathio.travel](mailto:support@pathio.travel)
+- **Email**: [grayprogrammers008@gmail.com](mailto:grayprogrammers008@gmail.com)
 - **Response time**: Within 48 business hours
 
 For data protection or privacy concerns, please write to us with the subject line: **"Privacy Request — [your request type]"**.
@@ -53,10 +53,10 @@ You can revoke any permission anytime in your device's Settings.
 1. Check your internet connection
 2. Pull-to-refresh on the trip list
 3. Sign out and sign back in (Settings → Account)
-4. If the issue persists, email us at [support@pathio.travel](mailto:support@pathio.travel) with a screenshot
+4. If the issue persists, email us at [grayprogrammers008@gmail.com](mailto:grayprogrammers008@gmail.com) with a screenshot
 
 ### How do I report a bug or suggest a feature?
-Email us at [support@pathio.travel](mailto:support@pathio.travel) with the subject line **"Bug Report"** or **"Feature Request"**.
+Email us at [grayprogrammers008@gmail.com](mailto:grayprogrammers008@gmail.com) with the subject line **"Bug Report"** or **"Feature Request"**.
 
 Please include:
 - Your device model and OS version
@@ -69,7 +69,7 @@ Please include:
 For Indian users — under the **Digital Personal Data Protection Act, 2023**, you have the right to file a grievance.
 
 **Grievance Officer**:
-- Email: [grievance@pathio.travel](mailto:grievance@pathio.travel)
+- Email: [grayprogrammers008@gmail.com](mailto:grayprogrammers008@gmail.com)
 - Response time: Within 7 business days
 
 ## Other Resources

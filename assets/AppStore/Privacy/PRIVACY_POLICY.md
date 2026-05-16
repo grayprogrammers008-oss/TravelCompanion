@@ -115,7 +115,7 @@ For India users — your rights under the **Digital Personal Data Protection Act
 For EU users — your rights under **GDPR** apply.
 For California users — your rights under **CCPA** apply.
 
-**To exercise these rights, email**: `support@pathio.travel`
+**To exercise these rights, email**: `grayprogrammers008@gmail.com`
 
 ## 8. Data Retention
 
@@ -163,11 +163,12 @@ We may update this policy. When we do:
 
 ## 13. Contact Us
 
-**Email**: support@pathio.travel
-**Website**: https://pathio.travel
+**Email**: grayprogrammers008@gmail.com
+**Website**: https://grayprogrammers008-oss.github.io/TravelCompanion/
+
 **Grievance Officer** (for India users under DPDP Act):
-   - Name: *[Add name before launch]*
-   - Email: grievance@pathio.travel
+   - Name: *[Your Full Name — required before launch]*
+   - Email: grayprogrammers008@gmail.com
    - Response time: Within 7 business days
 
 For data protection inquiries, write to us with the subject line: "Privacy Request — [your request type]".
@@ -192,9 +193,9 @@ This policy is provided to give you transparency and control over your data. If 
 
 ## ⚠️ TODO Before Production Launch
 
-1. ❗ **Verify support email is live**: `support@pathio.travel`
+1. ✅ Support email set to `grayprogrammers008@gmail.com` (monitor this inbox!)
 2. ❗ **Add Grievance Officer name** (Section 13) — required for India DPDP compliance
-3. ❗ **Host this file at a public URL** (e.g., `https://pathio.travel/privacy`) — Play Store requires this
+3. ✅ Hosted at `https://grayprogrammers008-oss.github.io/TravelCompanion/privacy/` via GitHub Pages
 4. ❗ **Have a lawyer review** — especially DPDP Act language for India launch
 5. ❗ **Add business address** if you incorporate (Section 13)
 6. ❗ **Confirm Supabase data region** — update Section 6 with actual region

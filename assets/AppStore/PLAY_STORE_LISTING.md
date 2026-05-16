@@ -113,7 +113,7 @@ Free to use. No premium tier yet. Just open it and start planning your next adve
 
 Built with ❤️ in India, for travelers everywhere.
 
-Questions? Feedback? Email us: support@pathio.travel
+Questions? Feedback? Email us: grayprogrammers008@gmail.com
 ```
 
 *(~3,200 characters — under the 4000 limit, room for additions)*
@@ -225,10 +225,10 @@ Declare in Play Console → App Content → Data Safety:
 ## 10. Privacy Policy URL (Required)
 
 ```
-https://pathio.travel/privacy
+https://grayprogrammers008-oss.github.io/TravelCompanion/privacy/
 ```
 
-**❗ Action Required:** Host [PRIVACY_POLICY.md](assets/AppStore/Privacy/PRIVACY_POLICY.md) at this URL before submitting.
+**✅ Already hosted** via GitHub Pages from [docs/privacy.md](docs/privacy.md).
 
 **Quick hosting options:**
 - **GitHub Pages** (free): Push to a public repo, enable Pages
@@ -266,19 +266,19 @@ Built with ❤️ in India.
 Add to Play Console → App Content → App access:
 
 ```
-Email: reviewer@pathio.travel
+Email: pathio.reviewer@gmail.com (or any test Gmail you create)
 Password: ReviewerTest2026!
 Note: Pre-seeded with sample trips, checklists, and 1 group chat to demonstrate all features.
 ```
 
-**❗ Action Required:** Create this test account in your Supabase backend before submission.
+**❗ Action Required:** Create a dedicated reviewer Gmail account + seed it with sample data in Supabase before submission.
 
 ---
 
 ## 13. Submission Checklist
 
-- [ ] Privacy Policy hosted at https://pathio.travel/privacy
-- [ ] Support email working (support@pathio.travel)
+- [x] Privacy Policy hosted at https://grayprogrammers008-oss.github.io/TravelCompanion/privacy/
+- [x] Support email working (grayprogrammers008@gmail.com)
 - [ ] Test account created and seeded with demo data
 - [ ] All 8 screenshots captured at 1080×1920
 - [ ] Feature graphic designed (1024×500)
