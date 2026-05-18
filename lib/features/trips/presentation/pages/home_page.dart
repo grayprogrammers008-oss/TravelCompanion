@@ -2450,7 +2450,6 @@ class _HomePageState extends ConsumerState<HomePage>
                         vertical: AppTheme.spacingMd + 4,
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.all(8),
@@ -2465,27 +2464,34 @@ class _HomePageState extends ConsumerState<HomePage>
                             ),
                           ),
                           const SizedBox(width: AppTheme.spacingMd),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Plan a Trip',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Plan a Trip',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              Text(
-                                'AI creates itinerary & packing list',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 13,
+                                Text(
+                                  'AI creates itinerary & packing list',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 13,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                          const Spacer(),
+                          const SizedBox(width: AppTheme.spacingSm),
                           Icon(
                             Icons.arrow_forward,
                             color: Colors.white.withValues(alpha: 0.8),
