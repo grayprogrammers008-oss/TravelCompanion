@@ -76,6 +76,23 @@ abstract class ExpenseQueries {
     String settlementId,
     Map<String, dynamic> data,
   );
+
+  // ---- Ghost participants -------------------------------------------------
+
+  /// Insert a new trip_ghost_participants row, returning it.
+  Future<Map<String, dynamic>> insertGhost(Map<String, dynamic> data);
+
+  /// All ghosts for a trip (newest first), with creator name joined.
+  Future<List<Map<String, dynamic>>> findGhostsForTrip(String tripId);
+
+  /// Update a ghost row by id (typically just `name`), returning it.
+  Future<Map<String, dynamic>> updateGhostById(
+    String ghostId,
+    Map<String, dynamic> data,
+  );
+
+  /// Delete a ghost row by id. Splits referencing it cascade.
+  Future<void> deleteGhostById(String ghostId);
 }
 
 /// Production implementation that talks to Supabase. Each method is a
@@ -90,7 +107,8 @@ class ExpenseQueriesImpl implements ExpenseQueries {
             trips:trips(name),
             expense_splits(
               *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
+              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url),
+              ghost:trip_ghost_participants(id, name, created_by, guardian_user_id)
             ),
             payer:profiles!expenses_paid_by_fkey(full_name)
           ''';
@@ -99,7 +117,8 @@ class ExpenseQueriesImpl implements ExpenseQueries {
             *,
             expense_splits(
               *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url)
+              user:profiles!expense_splits_user_id_fkey(id, full_name, avatar_url),
+              ghost:trip_ghost_participants(id, name, created_by, guardian_user_id)
             ),
             payer:profiles!expenses_paid_by_fkey(full_name)
           ''';
@@ -108,7 +127,8 @@ class ExpenseQueriesImpl implements ExpenseQueries {
             *,
             expense_splits(
               *,
-              user:profiles!expense_splits_user_id_fkey(id, full_name)
+              user:profiles!expense_splits_user_id_fkey(id, full_name),
+              ghost:trip_ghost_participants(id, name, created_by, guardian_user_id)
             ),
             payer:profiles!expenses_paid_by_fkey(full_name)
           ''';
@@ -302,5 +322,54 @@ class ExpenseQueriesImpl implements ExpenseQueries {
         .select()
         .single();
     return Map<String, dynamic>.from(response);
+  }
+
+  // ---- Ghost participants -------------------------------------------------
+
+  // We intentionally do NOT join profiles here: the FK lives on auth.users,
+  // which PostgREST can't traverse to from public.* tables. The creator name
+  // (only used for a tooltip) is left null and resolved client-side from the
+  // trip member list when needed.
+  static const String _ghostJoinSelect = '*';
+
+  @override
+  Future<Map<String, dynamic>> insertGhost(Map<String, dynamic> data) async {
+    final response = await _client
+        .from('trip_ghost_participants')
+        .insert(data)
+        .select(_ghostJoinSelect)
+        .single();
+    return Map<String, dynamic>.from(response);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> findGhostsForTrip(String tripId) async {
+    final response = await _client
+        .from('trip_ghost_participants')
+        .select(_ghostJoinSelect)
+        .eq('trip_id', tripId)
+        .order('created_at', ascending: false);
+    return (response as List)
+        .map((row) => Map<String, dynamic>.from(row as Map))
+        .toList();
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateGhostById(
+    String ghostId,
+    Map<String, dynamic> data,
+  ) async {
+    final response = await _client
+        .from('trip_ghost_participants')
+        .update(data)
+        .eq('id', ghostId)
+        .select(_ghostJoinSelect)
+        .single();
+    return Map<String, dynamic>.from(response);
+  }
+
+  @override
+  Future<void> deleteGhostById(String ghostId) async {
+    await _client.from('trip_ghost_participants').delete().eq('id', ghostId);
   }
 }

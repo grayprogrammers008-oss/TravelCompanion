@@ -149,7 +149,7 @@ class InviteController extends Notifier<InviteState> {
       state = state.copyWith(
         isLoading: false,
         lastCreatedInvite: invite,
-        successMessage: 'Invite created successfully!',
+        successMessage: 'Invite ready — share code or link',
       );
 
       return invite;

@@ -58,6 +58,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     String? category,
     required String paidBy,
     required List<String> splitWith,
+    List<String> ghostSplitWith = const [],
     String splitType = 'equal',
     DateTime? transactionDate,
   }) async {
@@ -70,6 +71,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
         category: category,
         paidBy: paidBy,
         splitWith: splitWith,
+        ghostSplitWith: ghostSplitWith,
         splitType: splitType,
         transactionDate: transactionDate,
       );
@@ -188,5 +190,40 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     } catch (e) {
       throw Exception('Failed to watch user expenses: $e');
     }
+  }
+
+  // ---- Ghost participants -----------------------------------------------
+
+  @override
+  Future<GhostParticipantModel> createGhostParticipant({
+    required String tripId,
+    required String name,
+    required String createdBy,
+    String? guardianUserId,
+  }) {
+    return _remoteDataSource.createGhost(
+      tripId: tripId,
+      name: name,
+      createdBy: createdBy,
+      guardianUserId: guardianUserId,
+    );
+  }
+
+  @override
+  Future<List<GhostParticipantModel>> getGhostParticipants(String tripId) {
+    return _remoteDataSource.getGhostsForTrip(tripId);
+  }
+
+  @override
+  Future<GhostParticipantModel> renameGhostParticipant({
+    required String ghostId,
+    required String name,
+  }) {
+    return _remoteDataSource.renameGhost(ghostId: ghostId, name: name);
+  }
+
+  @override
+  Future<void> deleteGhostParticipant(String ghostId) {
+    return _remoteDataSource.deleteGhost(ghostId);
   }
 }

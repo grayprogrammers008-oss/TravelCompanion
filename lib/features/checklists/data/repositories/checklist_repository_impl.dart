@@ -164,9 +164,14 @@ class ChecklistRepositoryImpl implements ChecklistRepository {
     int? orderIndex,
   }) async {
     try {
-      // Note: Remote datasource doesn't have getChecklistItem by ID
-      // We'll need to fetch all items and find the one we need
-      throw UnimplementedError('updateChecklistItem not fully implemented for remote datasource');
+      final updated = await remoteDataSource.updateChecklistItem(
+        itemId: itemId,
+        title: title,
+        isCompleted: isCompleted,
+        assignedTo: assignedTo,
+        orderIndex: orderIndex,
+      );
+      return updated.toEntity();
     } catch (e) {
       throw Exception('Failed to update checklist item: $e');
     }

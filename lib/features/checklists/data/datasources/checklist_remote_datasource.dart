@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/checklist_model.dart';
 import 'checklist_queries.dart';
@@ -89,6 +90,39 @@ class ChecklistRemoteDataSource {
       await _queries.deleteChecklistItemById(itemId);
     } catch (e) {
       throw Exception('Failed to delete checklist item from Supabase: $e');
+    }
+  }
+
+  /// Update a checklist item's mutable fields (title, assigned_to, etc.)
+  ///
+  /// Only the non-null fields are sent. `updated_at` is always refreshed.
+  /// Returns the updated row.
+  Future<ChecklistItemModel> updateChecklistItem({
+    required String itemId,
+    String? title,
+    bool? isCompleted,
+    String? assignedTo,
+    int? orderIndex,
+  }) async {
+    debugPrint('🔵 [DS.updateChecklistItem] itemId=$itemId title=$title isCompleted=$isCompleted');
+    try {
+      final Map<String, dynamic> updates = {
+        'updated_at': _clock().toIso8601String(),
+      };
+      if (title != null) updates['title'] = title;
+      if (isCompleted != null) updates['is_completed'] = isCompleted;
+      if (assignedTo != null) updates['assigned_to'] = assignedTo;
+      if (orderIndex != null) updates['order_index'] = orderIndex;
+
+      debugPrint('🔵 [DS.updateChecklistItem] sending updates: $updates');
+      final response =
+          await _queries.updateChecklistItemById(itemId, updates);
+      debugPrint('🔵 [DS.updateChecklistItem] response: $response');
+      return ChecklistItemModel.fromJson(response);
+    } catch (e, st) {
+      debugPrint('🔴 [DS.updateChecklistItem] EXCEPTION: $e');
+      debugPrint('   stack: $st');
+      throw Exception('Failed to update checklist item in Supabase: $e');
     }
   }
 

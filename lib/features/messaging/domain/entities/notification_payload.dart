@@ -82,6 +82,10 @@ class NotificationPayload extends Equatable {
         return 'Member Added';
       case 'member_removed':
         return 'Member Removed';
+      case 'poll_created':
+        return 'New poll in $tripName';
+      case 'poll_closed':
+        return 'Poll closed in $tripName';
       default:
         return tripName;
     }
@@ -107,6 +111,10 @@ class NotificationPayload extends Equatable {
         return '${memberName ?? "Someone"} joined $tripName';
       case 'member_removed':
         return '${memberName ?? "Someone"} left $tripName';
+      case 'poll_created':
+        return '${senderName ?? "Organizer"} asks: ${messageText ?? "Cast your vote"}';
+      case 'poll_closed':
+        return messageText ?? 'A vote has finished';
       default:
         return messageText ?? '';
     }

@@ -545,6 +545,18 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
     final titleController = TextEditingController(
       text: location.placeName ?? '',
     );
+    // Capture the page-level messenger now; the sheet's context becomes
+    // invalid after Navigator.pop, so reusing it post-await throws
+    // "Looking up a deactivated widget's ancestor".
+    final messenger = ScaffoldMessenger.of(context);
+
+    // Derive how many days the trip spans so the user can pick a day.
+    final tripStartDate = ref.read(tripProvider(widget.tripId)).value?.trip.startDate;
+    final tripEndDate = ref.read(tripProvider(widget.tripId)).value?.trip.endDate;
+    final dayCount = (tripStartDate != null && tripEndDate != null)
+        ? tripEndDate.difference(tripStartDate).inDays + 1
+        : 7;
+    var selectedDay = 1;
 
     showModalBottomSheet(
       context: context,
@@ -553,7 +565,8 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
         padding: EdgeInsets.only(
           left: 20,
           right: 20,
@@ -770,6 +783,44 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             ),
             const SizedBox(height: 20),
 
+            // Day selector
+            Text(
+              'Add to Day',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 44,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: dayCount,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final day = index + 1;
+                  final isSelected = selectedDay == day;
+                  return ChoiceChip(
+                    label: Text('Day $day'),
+                    selected: isSelected,
+                    onSelected: (_) => setSheetState(() => selectedDay = day),
+                    selectedColor: Colors.teal,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : Colors.grey[800],
+                      fontWeight: FontWeight.w600,
+                    ),
+                    backgroundColor: Colors.grey[100],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+
             // Add button
             SizedBox(
               width: double.infinity,
@@ -790,17 +841,18 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                       location: location.placeName,
                       latitude: location.latitude,
                       longitude: location.longitude,
+                      dayNumber: selectedDay,
                     );
 
                     if (mounted) {
                       HapticFeedback.mediumImpact();
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      messenger.showSnackBar(
                         SnackBar(
                           content: Row(
                             children: [
                               const Icon(Icons.check_circle, color: Colors.white),
                               const SizedBox(width: 8),
-                              Expanded(child: Text('Added "$title" to itinerary')),
+                              Expanded(child: Text('Added "$title" to Day $selectedDay')),
                             ],
                           ),
                           backgroundColor: Colors.green,
@@ -813,7 +865,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
                     }
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      messenger.showSnackBar(
                         SnackBar(
                           content: Text('Failed to add: $e'),
                           backgroundColor: Colors.red,
@@ -837,6 +889,7 @@ class _ItineraryListPageState extends ConsumerState<ItineraryListPage> {
             ),
             const SizedBox(height: 8),
           ],
+        ),
         ),
       ),
     );

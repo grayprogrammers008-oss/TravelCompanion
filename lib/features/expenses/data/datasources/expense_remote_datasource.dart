@@ -144,7 +144,11 @@ class ExpenseRemoteDataSource {
     }
   }
 
-  /// Create a new expense with splits
+  /// Create a new expense with splits.
+  ///
+  /// [splitWith] is the list of real-member user ids and [ghostSplitWith] is
+  /// the list of ghost participant ids that should each take an equal share.
+  /// The amount is divided evenly across (members + ghosts).
   Future<ExpenseModel> createExpense({
     String? tripId,
     required String title,
@@ -153,13 +157,19 @@ class ExpenseRemoteDataSource {
     String? category,
     required String paidBy,
     required List<String> splitWith,
+    List<String> ghostSplitWith = const [],
     String splitType = 'equal',
     DateTime? transactionDate,
   }) async {
     try {
       if (kDebugMode) {
         debugPrint(
-            '💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId');
+            '💰 Creating expense: $title, amount: $amount, category: $category, tripId: $tripId, members: ${splitWith.length}, ghosts: ${ghostSplitWith.length}');
+      }
+
+      final totalParticipants = splitWith.length + ghostSplitWith.length;
+      if (totalParticipants == 0) {
+        throw Exception('Expense must have at least one participant');
       }
 
       // Create expense
@@ -181,19 +191,23 @@ class ExpenseRemoteDataSource {
         debugPrint('✅ Expense created with ID: ${expense.id}');
       }
 
-      // Calculate split amounts
-      final splitAmount = amount / splitWith.length;
+      // Even split across every participant (members + ghosts count alike).
+      final splitAmount = amount / totalParticipants;
 
-      // Create splits
-      final splitsData = splitWith
-          .map(
-            (userId) => {
-              'expense_id': expense.id,
-              'user_id': userId,
-              'amount': splitAmount,
-            },
-          )
-          .toList();
+      final splitsData = <Map<String, dynamic>>[
+        for (final userId in splitWith)
+          {
+            'expense_id': expense.id,
+            'user_id': userId,
+            'amount': splitAmount,
+          },
+        for (final ghostId in ghostSplitWith)
+          {
+            'expense_id': expense.id,
+            'ghost_id': ghostId,
+            'amount': splitAmount,
+          },
+      ];
 
       await _queries.insertExpenseSplits(splitsData);
       if (kDebugMode) {
@@ -259,6 +273,9 @@ class ExpenseRemoteDataSource {
 
       // Calculate balances
       final Map<String, BalanceSummary> balances = {};
+      // Track distinct ghost names per real-user balance owner so the
+      // settlement summary can show "includes guests: X, Y" inline.
+      final Map<String, Set<String>> guestsPerOwner = {};
 
       for (var expenseJson in response) {
         final expense = ExpenseModel.fromJson(expenseJson);
@@ -296,43 +313,67 @@ class ExpenseRemoteDataSource {
           balance: 0, // Will calculate later
         );
 
-        // Track splits
+        // Track splits. Ghost shares fold into their creator's balance
+        // (split.effectiveUserId returns ghostCreatedBy for ghost rows).
         for (var split in splits) {
-          final splitUserName = split.userName ?? split.userId;
-          if (!balances.containsKey(split.userId)) {
-            balances[split.userId] = BalanceSummary(
-              userId: split.userId,
-              userName: splitUserName,
+          final ownerId = split.effectiveUserId;
+          if (ownerId == null) continue; // unattributable; skip defensively
+          // Record the ghost's name against its guardian so the UI can list
+          // "incl. guests: X, Y" under the responsible member.
+          if (split.isGhost && split.ghostName != null) {
+            (guestsPerOwner[ownerId] ??= <String>{}).add(split.ghostName!);
+          }
+          final splitOwnerName = split.isGhost
+              ? (split.userName ?? ownerId) // ghost: use guardian's joined name if present
+              : (split.userName ?? ownerId);
+          if (!balances.containsKey(ownerId)) {
+            balances[ownerId] = BalanceSummary(
+              userId: ownerId,
+              userName: splitOwnerName,
               totalPaid: 0,
               totalOwed: 0,
               balance: 0,
             );
           }
           // Preserve existing proper name (not a UUID) if we have one
-          final existingSplitName = balances[split.userId]!.userName;
+          final existingSplitName = balances[ownerId]!.userName;
           final bestSplitName = _isProperName(existingSplitName)
               ? existingSplitName
-              : splitUserName;
-          balances[split.userId] = BalanceSummary(
-            userId: split.userId,
+              : splitOwnerName;
+          balances[ownerId] = BalanceSummary(
+            userId: ownerId,
             userName: bestSplitName,
-            totalPaid: balances[split.userId]!.totalPaid,
-            totalOwed: balances[split.userId]!.totalOwed + split.amount,
+            totalPaid: balances[ownerId]!.totalPaid,
+            totalOwed: balances[ownerId]!.totalOwed + split.amount,
             balance: 0, // Will calculate later
           );
         }
       }
 
       // Calculate final balances
-      return balances.values.map((b) {
+      final result = balances.values.map((b) {
+        final guests = guestsPerOwner[b.userId];
         return BalanceSummary(
           userId: b.userId,
           userName: b.userName,
           totalPaid: b.totalPaid,
           totalOwed: b.totalOwed,
           balance: b.totalPaid - b.totalOwed,
+          guestNames:
+              guests == null ? const [] : (guests.toList()..sort()),
         );
       }).toList();
+      if (kDebugMode) {
+        debugPrint('💰 [balances] tripId=$tripId rows=${result.length}, '
+            'guestsPerOwner=${guestsPerOwner.map((k, v) => MapEntry(k.substring(0, 8), v.toList()))}');
+        for (final b in result) {
+          debugPrint(
+              '💰 [balances]   ${b.userName} (${b.userId.substring(0, 8)}): '
+              'paid=${b.totalPaid} owed=${b.totalOwed} '
+              'guests=${b.guestNames}');
+        }
+      }
+      return result;
     } catch (e) {
       throw Exception('Failed to get balances: $e');
     }
@@ -413,6 +454,64 @@ class ExpenseRemoteDataSource {
       return SettlementModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to update settlement: $e');
+    }
+  }
+
+  // ---- Ghost participants -------------------------------------------------
+
+  /// Add a non-member participant to a trip. Returns the inserted row.
+  /// [guardianUserId] is the trip member whose balance picks up the
+  /// ghost's debts. Defaults to [createdBy] when omitted.
+  Future<GhostParticipantModel> createGhost({
+    required String tripId,
+    required String name,
+    required String createdBy,
+    String? guardianUserId,
+  }) async {
+    try {
+      final response = await _queries.insertGhost({
+        'trip_id': tripId,
+        'name': name.trim(),
+        'created_by': createdBy,
+        'guardian_user_id': guardianUserId ?? createdBy,
+      });
+      return GhostParticipantModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to add guest: $e');
+    }
+  }
+
+  /// All ghost participants for a trip.
+  Future<List<GhostParticipantModel>> getGhostsForTrip(String tripId) async {
+    try {
+      final rows = await _queries.findGhostsForTrip(tripId);
+      return rows.map(GhostParticipantModel.fromJson).toList();
+    } catch (e) {
+      throw Exception('Failed to load guests: $e');
+    }
+  }
+
+  /// Rename a ghost participant.
+  Future<GhostParticipantModel> renameGhost({
+    required String ghostId,
+    required String name,
+  }) async {
+    try {
+      final response =
+          await _queries.updateGhostById(ghostId, {'name': name.trim()});
+      return GhostParticipantModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to rename guest: $e');
+    }
+  }
+
+  /// Remove a ghost participant. Existing splits referencing them are
+  /// removed by the DB cascade defined in the migration.
+  Future<void> deleteGhost(String ghostId) async {
+    try {
+      await _queries.deleteGhostById(ghostId);
+    } catch (e) {
+      throw Exception('Failed to remove guest: $e');
     }
   }
 

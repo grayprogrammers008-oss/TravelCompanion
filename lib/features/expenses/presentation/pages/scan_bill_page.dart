@@ -10,6 +10,7 @@ import '../../../../core/services/bill_scanner_service.dart';
 import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_form_fields.dart';
 import '../../../../core/widgets/premium_header.dart' show GlossyButton, GlossyCard;
+import '../../../../core/widgets/member_picker.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/network/supabase_client.dart';
@@ -19,10 +20,7 @@ import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
 
 /// Groq API Key for bill parsing
-const String _groqApiKey = String.fromEnvironment(
-  'GROQ_API_KEY',
-  defaultValue: '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',
-);
+const String _groqApiKey = String.fromEnvironment('GROQ_API_KEY');
 
 /// Page for scanning bills/receipts and adding them as expenses
 class ScanBillPage extends ConsumerStatefulWidget {
@@ -48,6 +46,12 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
   bool _isScanning = false;
   bool _isSubmitting = false;
   String _currency = 'INR';
+  // Split participants. Pre-filled from trip members when a trip is picked;
+  // user can deselect anyone or add ghosts before submitting.
+  List<String> _selectedMemberIds = [];
+  final List<String> _selectedGhostIds = [];
+  // Track which trip the member list was seeded from so we re-seed on change.
+  String? _seededFromTripId;
 
   IconData _getCurrencyIcon(String currency) {
     switch (currency.toUpperCase()) {
@@ -201,12 +205,19 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
         throw Exception('User not logged in');
       }
 
-      // Get the selected trip to determine split members
-      List<String> memberIds = [currentUserId]; // Default: just current user
-
+      // For a trip expense, use what the user actually selected in the
+      // picker (default = all members). For a standalone expense, the
+      // current user covers it.
+      List<String> memberIds;
+      List<String> ghostIds = const [];
       if (_selectedTripId != null) {
-        final trip = await ref.read(tripProvider(_selectedTripId!).future);
-        memberIds = trip.members.map((m) => m.userId).toList();
+        if (_selectedMemberIds.isEmpty && _selectedGhostIds.isEmpty) {
+          throw Exception('Please select at least one participant to split with');
+        }
+        memberIds = _selectedMemberIds;
+        ghostIds = _selectedGhostIds;
+      } else {
+        memberIds = [currentUserId];
       }
 
       // Create expense
@@ -220,6 +231,7 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
             category: _selectedCategory?.toLowerCase(),
             paidBy: currentUserId,
             splitWith: memberIds,
+            ghostSplitWith: ghostIds,
             transactionDate: _transactionDate ?? DateTime.now(),
           );
 
@@ -254,6 +266,202 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  /// Renders the trip-member picker. Pre-seeds [_selectedMemberIds] to every
+  /// member on first render of a new trip; the user can deselect anyone
+  /// before submitting.
+  Widget _buildMemberPicker() {
+    final tripId = _selectedTripId;
+    if (tripId == null) return const SizedBox.shrink();
+    final tripAsync = ref.watch(tripProvider(tripId));
+    final frequencyAsync = ref.watch(memberFrequencyProvider(tripId));
+
+    return tripAsync.when(
+      data: (trip) {
+        final members = trip.members;
+        final frequency = frequencyAsync.when(
+          data: (data) => data,
+          loading: () => <String, int>{},
+          error: (_, _) => <String, int>{},
+        );
+
+        // Seed on first render OR when the user changes trips.
+        if (_seededFromTripId != tripId && members.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _selectedMemberIds = members.map((m) => m.userId).toList();
+                _selectedGhostIds.clear();
+                _seededFromTripId = tripId;
+              });
+            }
+          });
+        }
+
+        return MemberPickerWidget(
+          members: members,
+          selectedMemberIds: _selectedMemberIds,
+          memberFrequency: frequency,
+          labelText: 'Split With *',
+          hintText: 'Select members to split this expense',
+          onSelectionChanged: (selectedIds) {
+            setState(() {
+              _selectedMemberIds = selectedIds;
+            });
+          },
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.all(AppTheme.spacingMd),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, _) => Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        child: Text(
+          'Failed to load members',
+          style: TextStyle(color: AppTheme.error),
+        ),
+      ),
+    );
+  }
+
+  /// Picker for trip-scoped ghost (non-member) participants. Mirrors the
+  /// one on AddExpensePage — see [add_expense_page.dart] for the design
+  /// rationale (ghost shares fold into the creator's balance).
+  Widget _buildGhostPicker() {
+    final tripId = _selectedTripId;
+    if (tripId == null) return const SizedBox.shrink();
+    final currentUserId = SupabaseClientWrapper.currentUserId;
+    final ghostsAsync = ref.watch(tripGhostParticipantsProvider(tripId));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Row(
+            children: [
+              Icon(Icons.person_add_alt_1, size: 18, color: AppTheme.neutral700),
+              const SizedBox(width: 6),
+              Text(
+                'Guests (non-members)',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.neutral700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        ghostsAsync.when(
+          data: (ghosts) {
+            return Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final ghost in ghosts)
+                  FilterChip(
+                    label: Text(ghost.name),
+                    avatar: const Icon(Icons.child_care, size: 18),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                    selected: _selectedGhostIds.contains(ghost.id),
+                    onSelected: _isSubmitting
+                        ? null
+                        : (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedGhostIds.add(ghost.id);
+                              } else {
+                                _selectedGhostIds.remove(ghost.id);
+                              }
+                            });
+                          },
+                    tooltip: ghost.creatorName != null
+                        ? 'Added by ${ghost.creatorName} — share goes to them'
+                        : null,
+                  ),
+                ActionChip(
+                  avatar: const Icon(Icons.add, size: 18),
+                  label: const Text('Add guest'),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: _isSubmitting || currentUserId == null
+                      ? null
+                      : () => _showAddGuestDialog(tripId, currentUserId),
+                ),
+              ],
+            );
+          },
+          loading: () => const Padding(
+            padding: EdgeInsets.all(8),
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          error: (_, _) => Text(
+            'Failed to load guests',
+            style: TextStyle(color: AppTheme.error, fontSize: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showAddGuestDialog(String tripId, String currentUserId) async {
+    final controller = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Add guest'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            hintText: 'e.g., My son, Mom, Alice (friend)',
+          ),
+          onSubmitted: (v) => Navigator.of(dialogContext).pop(v.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(controller.text.trim()),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+    if (name == null || name.isEmpty) return;
+    try {
+      final repo = ref.read(expenseRepositoryProvider);
+      final ghost = await repo.createGhostParticipant(
+        tripId: tripId,
+        name: name,
+        createdBy: currentUserId,
+      );
+      ref.invalidate(tripGhostParticipantsProvider(tripId));
+      if (mounted) {
+        setState(() => _selectedGhostIds.add(ghost.id));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add guest: $e'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
       }
     }
   }
@@ -304,13 +512,15 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
 
                   const SizedBox(height: AppTheme.spacingLg),
 
-                  // Trip Selector
-                  FadeSlideAnimation(
-                    delay: AppAnimations.staggerSmall,
-                    child: _buildTripSelector(userTripsAsync, activeTripAsync),
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingLg),
+                  // Trip Selector — hide when opened from a specific trip's
+                  // expenses page (tripId already known from the route).
+                  if (widget.tripId == null) ...[
+                    FadeSlideAnimation(
+                      delay: AppAnimations.staggerSmall,
+                      child: _buildTripSelector(userTripsAsync, activeTripAsync),
+                    ),
+                    const SizedBox(height: AppTheme.spacingLg),
+                  ],
 
                   // Form fields (only show after scanning)
                   if (_parsedData != null || _selectedImage != null) ...[
@@ -361,6 +571,20 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
                         enabled: !_isSubmitting,
                       ),
                     ),
+
+                    // Split-with + guests pickers (only when a trip is selected)
+                    if (_selectedTripId != null) ...[
+                      const SizedBox(height: AppTheme.spacingLg),
+                      FadeSlideAnimation(
+                        delay: AppAnimations.staggerSmall * 3,
+                        child: _buildMemberPicker(),
+                      ),
+                      const SizedBox(height: AppTheme.spacingLg),
+                      FadeSlideAnimation(
+                        delay: AppAnimations.staggerSmall * 3,
+                        child: _buildGhostPicker(),
+                      ),
+                    ],
 
                     const SizedBox(height: AppTheme.spacingLg),
 
@@ -664,13 +888,28 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
         // Filter to non-completed trips
         final activeTrips = trips.where((t) => !t.trip.isCompleted).toList();
 
+        // Reset _selectedTripId if it no longer matches any dropdown item —
+        // otherwise DropdownButton asserts with "zero or 2+ items with the
+        // same value". Happens after a trip is completed/deleted under us.
+        final selectedStillExists = _selectedTripId == null ||
+            activeTrips.any((t) => t.trip.id == _selectedTripId);
+        if (!selectedStillExists) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _selectedTripId = null);
+          });
+        }
+
         // If no trip selected, try to use active trip
         if (_selectedTripId == null && activeTrips.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               final activeTrip = activeTripAsync.value;
+              final activeId = activeTrip?.trip.id;
+              final activeInList = activeId != null &&
+                  activeTrips.any((t) => t.trip.id == activeId);
               setState(() {
-                _selectedTripId = activeTrip?.trip.id ?? activeTrips.first.trip.id;
+                _selectedTripId =
+                    activeInList ? activeId : activeTrips.first.trip.id;
               });
             }
           });
@@ -707,8 +946,12 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String?>(
-                  value: _selectedTripId,
+                  value: selectedStillExists ? _selectedTripId : null,
                   isExpanded: true,
+                  // Allow each item to size to its contents instead of being
+                  // clamped to kMinInteractiveDimension (48dp). The trip name
+                  // + destination column is ~50dp and was overflowing by 2px.
+                  itemHeight: null,
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.spacingMd,
                     vertical: AppTheme.spacingSm,
@@ -737,7 +980,7 @@ class _ScanBillPageState extends ConsumerState<ScanBillPage> {
                     // Trip options
                     ...activeTrips.map((t) {
                       final isActive = activeTripAsync.value?.trip.id == t.trip.id;
-                      return DropdownMenuItem<String>(
+                      return DropdownMenuItem<String?>(
                         value: t.trip.id,
                         child: Row(
                           children: [

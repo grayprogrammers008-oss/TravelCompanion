@@ -21,6 +21,8 @@ import '../../features/itinerary/presentation/pages/itinerary_list_page.dart';
 import '../../features/itinerary/presentation/pages/add_edit_itinerary_item_page_new.dart';
 import '../../features/checklists/presentation/pages/checklist_list_page.dart';
 import '../../features/checklists/presentation/pages/checklist_detail_page.dart';
+import '../../features/polls/presentation/pages/trip_polls_page.dart';
+import '../../features/polls/presentation/pages/poll_detail_page.dart';
 import '../../features/messaging/presentation/pages/chat_screen.dart';
 import '../../features/messaging/presentation/pages/message_queue_screen.dart';
 import '../../features/messaging/presentation/pages/conversation_list_page.dart';
@@ -99,6 +101,8 @@ class AppRoutes {
   static const String editItineraryItem = '/trips/:tripId/itinerary/:itemId/edit';
   static const String checklistList = '/trips/:tripId/checklists';
   static const String checklistDetail = '/trips/:tripId/checklists/:checklistId';
+  static const String tripPolls = '/trips/:tripId/polls';
+  static const String pollDetail = '/trips/:tripId/polls/:pollId';
   static const String chat = '/trips/:tripId/chat';
   static const String messageQueue = '/trips/:tripId/messages/queue';
   static const String conversations = '/trips/:tripId/conversations';
@@ -522,6 +526,23 @@ final routerProvider = Provider<GoRouter>((ref) {
           final tripId = state.pathParameters['tripId']!;
           final checklistId = state.pathParameters['checklistId']!;
           return ChecklistDetailPage(tripId: tripId, checklistId: checklistId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.tripPolls,
+        name: 'tripPolls',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          return TripPollsPage(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.pollDetail,
+        name: 'pollDetail',
+        builder: (context, state) {
+          final tripId = state.pathParameters['tripId']!;
+          final pollId = state.pathParameters['pollId']!;
+          return PollDetailPage(tripId: tripId, pollId: pollId);
         },
       ),
       GoRoute(

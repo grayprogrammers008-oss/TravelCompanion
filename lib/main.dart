@@ -30,8 +30,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   // Catch any uncaught errors in the app
   FlutterError.onError = (FlutterErrorDetails details) {
-    debugPrint('❌ Flutter Error: ${details.exception}');
-    debugPrint('Stack trace: ${details.stack}');
+    // Network image loads (e.g. Google Places photo URLs that return 400 when a
+    // photo reference expires) surface here as non-fatal errors even though the
+    // widgets already show a fallback via errorWidget. Don't spam the log with them.
+    if (details.library == 'image resource service') {
+      return;
+    }
+    // Use Flutter's own presenter — it prints the failing widget and tree
+    // context (essential for diagnosing RenderFlex overflows), not just the
+    // bare exception which often has a null stack.
+    FlutterError.presentError(details);
   };
 
   // Ensure bindings are initialized first (critical for all subsequent operations)

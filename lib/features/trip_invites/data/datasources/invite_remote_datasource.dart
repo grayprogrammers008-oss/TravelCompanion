@@ -130,7 +130,12 @@ class InviteRemoteDataSource {
       }
 
       return createdInvite;
-    } catch (e) {
+    } catch (e, stack) {
+      if (kDebugMode) {
+        debugPrint('❌ createInvite failed: $e');
+        debugPrint('   tripId=$tripId email=$email');
+        debugPrint('$stack');
+      }
       throw Exception('Failed to create invite: $e');
     }
   }

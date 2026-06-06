@@ -1375,13 +1375,14 @@ class _ExpensesHomePageState extends ConsumerState<ExpensesHomePage> {
                   itemCount: splits.length,
                   itemBuilder: (context, index) {
                     final split = splits[index];
+                    final label = split.displayName;
                     return ListTile(
                       leading: UserAvatarWidget(
                         imageUrl: split.avatarUrl,
-                        userName: split.userName ?? split.userId,
+                        userName: label,
                         size: 40,
                       ),
-                      title: Text(split.userName ?? 'User ${split.userId}'),
+                      title: Text(split.isGhost ? '$label (guest)' : label),
                       trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,

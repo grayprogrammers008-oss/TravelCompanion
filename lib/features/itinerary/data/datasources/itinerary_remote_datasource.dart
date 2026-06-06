@@ -67,7 +67,9 @@ class ItineraryRemoteDataSource {
         'place_id': placeId,
         'start_time': startTime?.toIso8601String(),
         'end_time': endTime?.toIso8601String(),
-        'day_number': dayNumber,
+        // day_number is NOT NULL in the DB; callers like "Add from Maps" don't
+        // pick a day, so default unscheduled items to day 1.
+        'day_number': dayNumber ?? 1,
         'order_index': orderIndex,
         'created_by': userId,
         'created_at': now.toIso8601String(),

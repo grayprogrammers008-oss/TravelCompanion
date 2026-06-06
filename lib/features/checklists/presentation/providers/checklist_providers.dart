@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/checklist_entity.dart';
 import '../../domain/repositories/checklist_repository.dart';
@@ -208,6 +209,7 @@ class ChecklistController extends Notifier<ChecklistState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      debugPrint('🟢 [Controller.updateItem] START itemId=$itemId title=$title');
       final params = UpdateChecklistItemParams(
         itemId: itemId,
         title: title,
@@ -216,8 +218,11 @@ class ChecklistController extends Notifier<ChecklistState> {
       final useCase = UpdateChecklistItemUseCase(_repository);
       await useCase(params);
       state = state.copyWith(isLoading: false);
+      debugPrint('✅ [Controller.updateItem] SUCCESS');
       return true;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('❌ [Controller.updateItem] FAILED: $e');
+      debugPrint('   stack: $st');
       state = state.copyWith(isLoading: false, error: e.toString());
       return false;
     }
@@ -231,6 +236,7 @@ class ChecklistController extends Notifier<ChecklistState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      debugPrint('🟢 [Controller.toggleItemCompletion] START itemId=$itemId isCompleted=$isCompleted');
       final params = ToggleItemCompletionParams(
         itemId: itemId,
         isCompleted: isCompleted,
@@ -239,8 +245,11 @@ class ChecklistController extends Notifier<ChecklistState> {
       final useCase = ToggleItemCompletionUseCase(_repository);
       await useCase(params);
       state = state.copyWith(isLoading: false);
+      debugPrint('✅ [Controller.toggleItemCompletion] SUCCESS');
       return true;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('❌ [Controller.toggleItemCompletion] FAILED: $e');
+      debugPrint('   stack: $st');
       state = state.copyWith(isLoading: false, error: e.toString());
       return false;
     }

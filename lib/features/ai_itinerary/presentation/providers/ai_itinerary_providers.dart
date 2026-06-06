@@ -19,10 +19,7 @@ import '../../../templates/presentation/providers/template_providers.dart';
 
 /// Groq API Key - Primary provider (1,000 requests/day FREE)
 /// Get your key at: https://console.groq.com
-const String _groqApiKey = String.fromEnvironment(
-  'GROQ_API_KEY',
-  defaultValue: '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',
-);
+const String _groqApiKey = String.fromEnvironment('GROQ_API_KEY');
 
 /// Gemini API Key - Fallback provider (25 requests/day FREE)
 /// Used when Groq is rate-limited

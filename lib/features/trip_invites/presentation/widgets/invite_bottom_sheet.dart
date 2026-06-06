@@ -311,8 +311,8 @@ Let's make it an adventure! 🎉
           const SizedBox(height: AppTheme.spacingXs),
           Text(
             _inviteGenerated
-                ? 'Share this invite to add member to ${widget.tripName}'
-                : 'Send an invitation to join ${widget.tripName}',
+                ? 'Invite ready — share the code or link below to add them to ${widget.tripName}'
+                : 'Create an invite code or link to share with someone for ${widget.tripName}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
@@ -498,7 +498,7 @@ Let's make it an adventure! 🎉
                     const Icon(Icons.send, color: Colors.white),
                     const SizedBox(width: AppTheme.spacingMd),
                     Text(
-                      'Generate Invite',
+                      'Create Invite',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,

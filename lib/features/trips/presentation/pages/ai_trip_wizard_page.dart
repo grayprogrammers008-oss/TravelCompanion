@@ -117,10 +117,7 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   }
 
   void _initWhisperService() {
-    const groqApiKey = String.fromEnvironment(
-      'GROQ_API_KEY',
-      defaultValue: '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',
-    );
+    const groqApiKey = String.fromEnvironment('GROQ_API_KEY');
     _whisperService = GroqWhisperService(groqApiKey);
     _audioRecorder = AudioRecorder();
     debugPrint('✅ Whisper service initialized');

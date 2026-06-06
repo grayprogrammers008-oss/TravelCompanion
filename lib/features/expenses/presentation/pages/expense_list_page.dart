@@ -718,28 +718,70 @@ class ExpenseListPage extends ConsumerWidget {
                   itemCount: splits.length,
                   itemBuilder: (context, index) {
                     final split = splits[index];
+                    final label = split.displayName;
+                    // Look up the guardian's display name for ghost splits
+                    // so the row can read "Mary · for Nithya".
+                    String? guardianName;
+                    if (split.isGhost) {
+                      final guardianId =
+                          split.ghostGuardianId ?? split.ghostCreatedBy;
+                      if (guardianId != null) {
+                        guardianName = tripAsync.whenOrNull(
+                          data: (t) {
+                            for (final m in t.members) {
+                              if (m.userId == guardianId) {
+                                return (m.fullName?.trim().isNotEmpty ?? false)
+                                    ? m.fullName!
+                                    : (m.email ?? 'member');
+                              }
+                            }
+                            return null;
+                          },
+                        );
+                      }
+                    }
                     return ListTile(
                       leading: CircleAvatar(
                         child: Text(
-                          (split.userName ?? split.userId)
-                              .substring(0, 1)
-                              .toUpperCase(),
+                          label.isEmpty
+                              ? '?'
+                              : label.substring(0, 1).toUpperCase(),
                         ),
                       ),
-                      title: Text(split.userName ?? 'Member ${split.userId}'),
+                      title: Text(
+                        split.isGhost
+                            ? (guardianName != null
+                                ? '$label · for $guardianName'
+                                : '$label (guest)')
+                            : label,
+                      ),
                       trailing: Text(
                         split.amount.toCurrency(expense.currency),
                         style: context.titleMedium,
                       ),
-                      subtitle: split.isSettled
+                      subtitle: split.isGhost
                           ? Text(
-                              'Settled',
-                              style: TextStyle(color: context.successColor),
+                              'Guest share — paid by '
+                              '${guardianName ?? "their member"}',
+                              style: TextStyle(
+                                color:
+                                    context.textColor.withValues(alpha: 0.65),
+                                fontStyle: FontStyle.italic,
+                                fontSize: 12,
+                              ),
                             )
-                          : Text(
-                              'Not settled',
-                              style: TextStyle(color: context.textColor.withValues(alpha: 0.7)),
-                            ),
+                          : split.isSettled
+                              ? Text(
+                                  'Settled',
+                                  style:
+                                      TextStyle(color: context.successColor),
+                                )
+                              : Text(
+                                  'Not settled',
+                                  style: TextStyle(
+                                      color: context.textColor
+                                          .withValues(alpha: 0.7)),
+                                ),
                     );
                   },
                 ),

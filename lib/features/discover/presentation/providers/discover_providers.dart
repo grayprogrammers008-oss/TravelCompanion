@@ -449,6 +449,28 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
     try {
       debugPrint('🔍 [Discover] Loading Popular Nearby (all categories)...');
 
+      // Step 0: Show cached Popular Nearby instantly if we have a fresh
+      // copy. Saves the user from waiting and burns no API quota — Popular
+      // costs 5 nearby calls × up to 3 pages each = up to 15 / 50 daily.
+      if (_cacheInitialized && !skipCache) {
+        final cachedPopular = await _localDataSource.getPopularNearby(
+          latitude: lat,
+          longitude: lng,
+        );
+        if (cachedPopular != null && cachedPopular.isNotEmpty) {
+          debugPrint(
+              '📦 [Discover] Popular Nearby served from cache (${cachedPopular.length} places)');
+          state = state.copyWith(
+            places: cachedPopular,
+            isLoading: false,
+            isFromCache: true,
+            error: null,
+          );
+          // Fresh cache means we don't need to spend any API budget. Bail.
+          return;
+        }
+      }
+
       // Check connectivity
       final hasInternet = await _hasConnectivity();
 
@@ -506,16 +528,54 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
 
       debugPrint('📊 [Discover] Total Popular Nearby: ${allPlaces.length} places from ${categoriesToFetch.length} categories');
 
-      // Sort by rating (highest first)
-      allPlaces.sort((a, b) {
-        if (a.rating == null && b.rating == null) return 0;
-        if (a.rating == null) return 1;
-        if (b.rating == null) return -1;
-        return b.rating!.compareTo(a.rating!);
+      // Deduplicate by place id — categories can return the same place.
+      final byId = <String, DiscoverPlace>{};
+      for (final p in allPlaces) {
+        byId.putIfAbsent(p.placeId, () => p);
+      }
+
+      // "Popular" = top-rated nearby, using the same quality bar as the
+      // home page's "Explore Nearby" section so the two surfaces feel
+      // consistent. A 3.5★ place with 10+ reviews qualifies; a 5.0★ joint
+      // with 1 review doesn't.
+      const minRating = 3.5;
+      const minReviews = 10;
+      final qualified = byId.values.where((p) {
+        final rating = p.rating;
+        final reviews = p.userRatingsTotal ?? 0;
+        return rating != null && rating >= minRating && reviews >= minReviews;
+      }).toList();
+
+      // If strict filter wipes everyone out (sparse-review area), fall
+      // back to rating >= 3.0 (mirrors Explore Nearby's fallback) so the
+      // tab isn't empty.
+      final pool = qualified.isNotEmpty
+          ? qualified
+          : byId.values
+              .where((p) => p.rating != null && p.rating! >= 3.0)
+              .toList();
+
+      // Sort by rating desc; tiebreak on review count so a 4.6★ place with
+      // 5000 reviews ranks above a 4.6★ place with 30.
+      pool.sort((a, b) {
+        final byRating = (b.rating ?? 0).compareTo(a.rating ?? 0);
+        if (byRating != 0) return byRating;
+        return (b.userRatingsTotal ?? 0).compareTo(a.userRatingsTotal ?? 0);
       });
 
-      // Take top 60 results
-      final topPlaces = allPlaces.take(60).toList();
+      final topPlaces = pool.take(60).toList();
+
+      // Persist for subsequent taps within the cache TTL — avoids
+      // re-spending API quota on Popular every time the user re-enters
+      // the tab. Only cache non-empty results so a transient API failure
+      // doesn't pin an empty Popular state.
+      if (_cacheInitialized && topPlaces.isNotEmpty) {
+        await _localDataSource.savePopularNearby(
+          places: topPlaces,
+          latitude: lat,
+          longitude: lng,
+        );
+      }
 
       state = state.copyWith(
         places: topPlaces,
@@ -524,7 +584,9 @@ class DiscoverStateNotifier extends Notifier<DiscoverState> {
         error: null,
       );
 
-      debugPrint('✅ [Discover] Showing ${topPlaces.length} top-rated places nearby');
+      debugPrint('✅ [Discover] Showing ${topPlaces.length} top-rated places '
+          '(${qualified.length} passed quality filter, fell back to '
+          '${qualified.isEmpty ? "any rated place" : "qualified set"})');
     } catch (e) {
       debugPrint('❌ [Discover] Error loading Popular Nearby: $e');
       state = state.copyWith(

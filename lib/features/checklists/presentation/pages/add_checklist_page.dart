@@ -97,27 +97,49 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
           debugPrint('   Created By: ${checklist.createdBy}');
           debugPrint('   Created At: ${checklist.createdAt}');
 
+          // Track per-item success so a silent RLS / network failure
+          // can't mask itself behind a generic "✅ added" log line.
+          int added = 0;
+          int failed = 0;
+
           // If smart checklist is enabled, add smart items
           if (_useSmartChecklist && _smartItems != null) {
             debugPrint('Adding ${_smartItems!.length} smart checklist items...');
             for (final smartItem in _smartItems!) {
-              await controller.addItem(
+              final item = await controller.addItem(
                 checklistId: checklist.id,
                 title: smartItem.title,
               );
+              if (item != null) {
+                added++;
+              } else {
+                failed++;
+                debugPrint('❌ Failed to add item: ${smartItem.title}');
+              }
             }
-            debugPrint('✅ All smart items added!');
           }
           // If a template was selected, add all template items
           else if (_selectedTemplate != null) {
             debugPrint('Adding ${_selectedTemplate!.items.length} items from template...');
             for (final itemTitle in _selectedTemplate!.items) {
-              await controller.addItem(
+              final item = await controller.addItem(
                 checklistId: checklist.id,
                 title: itemTitle,
               );
+              if (item != null) {
+                added++;
+              } else {
+                failed++;
+                debugPrint('❌ Failed to add item: $itemTitle');
+              }
             }
-            debugPrint('✅ All template items added!');
+          }
+
+          final lastError = ref.read(checklistControllerProvider).error;
+          if (failed > 0) {
+            debugPrint('⚠️ Added $added items, $failed FAILED (last error: ${lastError ?? "unknown"})');
+          } else if (added > 0) {
+            debugPrint('✅ All $added items added!');
           }
 
           debugPrint('========== CREATE CHECKLIST SUCCESS ==========');
@@ -125,21 +147,41 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
           // Invalidate the trip checklists provider to refresh the list
           ref.invalidate(tripChecklistsProvider(tripId));
 
+          // Re-check mounted after the addItem await loop above.
+          if (!mounted) return;
           Navigator.of(context).pop(true);
 
-          final itemCount = _useSmartChecklist && _smartItems != null
-              ? _smartItems!.length
-              : _selectedTemplate?.items.length;
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(itemCount != null
-                  ? 'Created "${checklist.name}" with $itemCount items'
+          final SnackBar resultSnack;
+          if (failed > 0 && added == 0) {
+            // Total failure — surface the underlying error.
+            resultSnack = SnackBar(
+              content: Text(
+                'Created "${checklist.name}" but no items could be added.'
+                '${lastError != null ? "\n$lastError" : ""}',
+              ),
+              backgroundColor: AppTheme.error,
+              duration: const Duration(seconds: 6),
+            );
+          } else if (failed > 0) {
+            // Partial failure
+            resultSnack = SnackBar(
+              content: Text(
+                'Created "${checklist.name}" — added $added items, '
+                '$failed failed.${lastError != null ? "\n$lastError" : ""}',
+              ),
+              backgroundColor: AppTheme.warning,
+              duration: const Duration(seconds: 5),
+            );
+          } else {
+            resultSnack = SnackBar(
+              content: Text(added > 0
+                  ? 'Created "${checklist.name}" with $added items'
                   : 'Created "${checklist.name}"'),
               backgroundColor: AppTheme.success,
               behavior: SnackBarBehavior.floating,
-            ),
-          );
+            );
+          }
+          ScaffoldMessenger.of(context).showSnackBar(resultSnack);
         } else {
           // Check controller state for error
           final error = ref.read(checklistControllerProvider).error;
@@ -326,7 +368,10 @@ class _AddChecklistPageState extends ConsumerState<AddChecklistPage> {
 
             // Template grid with Smart Packing List
             SizedBox(
-              height: 130,
+              // Was 130 — too tight on phones where the emoji icon (fontSize
+              // 28) + 2-line template name + item count + padding rounds to
+              // ~143px. Bumped to 150 to leave breathing room.
+              height: 150,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [

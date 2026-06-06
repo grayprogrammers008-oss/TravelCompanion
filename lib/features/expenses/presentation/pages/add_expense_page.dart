@@ -34,6 +34,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
   DateTime? _transactionDate;
   bool _isLoading = false;
   List<String> _selectedMemberIds = [];
+  final List<String> _selectedGhostIds = []; // Non-member ("ghost") participants
   String? _paidByUserId; // Who paid for this expense
   String _currency = 'INR'; // Trip currency for display
 
@@ -107,14 +108,16 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
       }
 
       List<String> memberIds;
+      List<String> ghostIds = const [];
 
       // Get split members
       if (widget.tripId != null) {
-        // Trip expense: use selected members from picker
-        if (_selectedMemberIds.isEmpty) {
-          throw Exception('Please select at least one member to split with');
+        // Trip expense: use selected members + ghosts from picker
+        if (_selectedMemberIds.isEmpty && _selectedGhostIds.isEmpty) {
+          throw Exception('Please select at least one participant to split with');
         }
         memberIds = _selectedMemberIds;
+        ghostIds = _selectedGhostIds;
       } else {
         // Standalone expense: split with just current user
         memberIds = [currentUserId];
@@ -131,6 +134,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
             category: _selectedCategory?.toLowerCase(),
             paidBy: _paidByUserId ?? currentUserId, // Use selected payer or default to current user
             splitWith: memberIds,
+            ghostSplitWith: ghostIds,
             transactionDate: _transactionDate ?? DateTime.now(),
           );
 
@@ -243,6 +247,232 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
     );
   }
 
+  /// Picker for trip-scoped "ghost" participants — non-members like kids or
+  /// guests. Each ghost's share folds into its creator's balance, so it's
+  /// effectively the creator paying extra.
+  Widget _buildGhostPicker() {
+    if (widget.tripId == null) return const SizedBox.shrink();
+    final tripId = widget.tripId!;
+    final currentUserId = SupabaseClientWrapper.currentUserId;
+    final ghostsAsync = ref.watch(tripGhostParticipantsProvider(tripId));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Row(
+            children: [
+              Icon(Icons.person_add_alt_1, size: 18, color: AppTheme.neutral700),
+              const SizedBox(width: 6),
+              Text(
+                'Guests (non-members)',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.neutral700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        ghostsAsync.when(
+          data: (ghosts) {
+            return Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final ghost in ghosts)
+                  FilterChip(
+                    label: Text(ghost.name),
+                    avatar: const Icon(Icons.child_care, size: 18),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                    selected: _selectedGhostIds.contains(ghost.id),
+                    onSelected: _isLoading
+                        ? null
+                        : (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedGhostIds.add(ghost.id);
+                              } else {
+                                _selectedGhostIds.remove(ghost.id);
+                              }
+                            });
+                          },
+                    tooltip: ghost.creatorName != null
+                        ? 'Added by ${ghost.creatorName} — share goes to them'
+                        : null,
+                  ),
+                ActionChip(
+                  avatar: const Icon(Icons.add, size: 18),
+                  label: const Text('Add guest'),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: _isLoading || currentUserId == null
+                      ? null
+                      : () => _showAddGuestDialog(tripId, currentUserId),
+                ),
+              ],
+            );
+          },
+          loading: () => const Padding(
+            padding: EdgeInsets.all(8),
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          error: (_, __) => Text(
+            'Failed to load guests',
+            style: TextStyle(color: AppTheme.error, fontSize: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showAddGuestDialog(String tripId, String currentUserId) async {
+    final tripAsync = ref.read(tripProvider(tripId));
+    final memberOptions = tripAsync.maybeWhen(
+      data: (t) => t.members
+          .map((m) => _GuestGuardianOption(
+                userId: m.userId,
+                name: (m.fullName?.trim().isNotEmpty ?? false)
+                    ? m.fullName!
+                    : (m.email ?? 'Member'),
+                isCurrentUser: m.userId == currentUserId,
+              ))
+          .toList(),
+      orElse: () => <_GuestGuardianOption>[],
+    )..sort((a, b) {
+        // Current user first, then by name.
+        if (a.isCurrentUser != b.isCurrentUser) {
+          return a.isCurrentUser ? -1 : 1;
+        }
+        return a.name.compareTo(b.name);
+      });
+
+    final nameController = TextEditingController();
+    String selectedGuardianId = currentUserId;
+
+    final result = await showDialog<_AddGuestResult>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return AlertDialog(
+              title: const Text('Add guest'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      hintText: 'e.g., My son, Mom, Alice (friend)',
+                      labelText: 'Guest name',
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  if (memberOptions.isNotEmpty) ...[
+                    Text(
+                      'Belongs to',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedGuardianId,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                      items: [
+                        for (final opt in memberOptions)
+                          DropdownMenuItem(
+                            value: opt.userId,
+                            child: Text(
+                              opt.isCurrentUser
+                                  ? '${opt.name} (you)'
+                                  : opt.name,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
+                      onChanged: (v) {
+                        if (v == null) return;
+                        setDialogState(() => selectedGuardianId = v);
+                      },
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'This member\'s balance will cover the guest\'s share.',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppTheme.neutral600,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(
+                    _AddGuestResult(
+                      name: nameController.text.trim(),
+                      guardianUserId: selectedGuardianId,
+                    ),
+                  ),
+                  child: const Text('Add'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (result == null || result.name.isEmpty) return;
+    try {
+      final repo = ref.read(expenseRepositoryProvider);
+      final ghost = await repo.createGhostParticipant(
+        tripId: tripId,
+        name: result.name,
+        createdBy: currentUserId,
+        guardianUserId: result.guardianUserId,
+      );
+      ref.invalidate(tripGhostParticipantsProvider(tripId));
+      if (mounted) {
+        setState(() => _selectedGhostIds.add(ghost.id));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add guest: $e'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
   Widget _buildWhoPaidPicker() {
     if (widget.tripId == null) return const SizedBox.shrink();
 
@@ -297,6 +527,9 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                 child: DropdownButton<String>(
                   value: _paidByUserId ?? currentUserId,
                   isExpanded: true,
+                  // 2-line items (name + email) exceed kMinInteractiveDimension
+                  // by a couple px; allow variable item heights.
+                  itemHeight: null,
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppTheme.spacingMd,
                     vertical: AppTheme.spacingSm,
@@ -589,6 +822,16 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                   if (!isStandalone && widget.tripId != null)
                     const SizedBox(height: AppTheme.spacingLg),
 
+                  // Ghost / guest picker (only for trip expenses)
+                  if (!isStandalone && widget.tripId != null)
+                    FadeSlideAnimation(
+                      delay: AppAnimations.staggerSmall * 4,
+                      child: _buildGhostPicker(),
+                    ),
+
+                  if (!isStandalone && widget.tripId != null)
+                    const SizedBox(height: AppTheme.spacingLg),
+
                   // Who Paid Picker (only for trip expenses)
                   if (!isStandalone && widget.tripId != null)
                     FadeSlideAnimation(
@@ -708,4 +951,23 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
       ),
     );
   }
+}
+
+/// One row in the "Belongs to" dropdown of the Add Guest dialog.
+class _GuestGuardianOption {
+  final String userId;
+  final String name;
+  final bool isCurrentUser;
+  const _GuestGuardianOption({
+    required this.userId,
+    required this.name,
+    required this.isCurrentUser,
+  });
+}
+
+/// Result returned by the Add Guest dialog: the name plus chosen guardian.
+class _AddGuestResult {
+  final String name;
+  final String guardianUserId;
+  const _AddGuestResult({required this.name, required this.guardianUserId});
 }

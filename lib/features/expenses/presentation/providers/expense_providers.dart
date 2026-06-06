@@ -117,6 +117,17 @@ final tripSettlementsProvider =
       return await repository.getSettlements(tripId: tripId);
     });
 
+// Ghost Participants for a trip. Invalidate this after adding/removing
+// a ghost so the picker and "Guests" list refresh.
+final tripGhostParticipantsProvider =
+    FutureProvider.family<List<GhostParticipantModel>, String>((
+  ref,
+  tripId,
+) async {
+  final repository = ref.watch(expenseRepositoryProvider);
+  return await repository.getGhostParticipants(tripId);
+});
+
 // Expense Controller State
 class ExpenseState {
   final bool isLoading;
@@ -139,7 +150,9 @@ class ExpenseController extends Notifier<ExpenseState> {
     return ExpenseState();
   }
 
-  /// Create expense (supports standalone)
+  /// Create expense (supports standalone). [ghostSplitWith] are ghost
+  /// participant ids that should each take an equal share alongside the
+  /// real members in [splitWith].
   Future<ExpenseModel> createExpense({
     String? tripId, // Optional for standalone
     required String title,
@@ -148,6 +161,7 @@ class ExpenseController extends Notifier<ExpenseState> {
     String? category,
     required String paidBy,
     required List<String> splitWith,
+    List<String> ghostSplitWith = const [],
     DateTime? transactionDate,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -160,6 +174,7 @@ class ExpenseController extends Notifier<ExpenseState> {
         category: category,
         paidBy: paidBy,
         splitWith: splitWith,
+        ghostSplitWith: ghostSplitWith,
         transactionDate: transactionDate,
       );
       state = state.copyWith(isLoading: false);
@@ -273,7 +288,10 @@ final memberFrequencyProvider = FutureProvider.family<Map<String, int>, String>(
 
     for (final expenseWithSplits in expensesAsync) {
       for (final split in expenseWithSplits.splits) {
-        frequencyMap[split.userId] = (frequencyMap[split.userId] ?? 0) + 1;
+        // Only count real-user splits for "people you split with" stats.
+        final uid = split.userId;
+        if (uid == null) continue;
+        frequencyMap[uid] = (frequencyMap[uid] ?? 0) + 1;
       }
     }
 

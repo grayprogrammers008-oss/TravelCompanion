@@ -36,7 +36,6 @@ class _ChecklistDetailPageState extends ConsumerState<ChecklistDetailPage> {
   @override
   Widget build(BuildContext context) {
     final themeData = context.appThemeData;
-    // Use future provider with ref.invalidate for immediate updates
     final checklistAsync = ref.watch(checklistWithItemsProvider(widget.checklistId));
 
     return Scaffold(
@@ -45,7 +44,6 @@ class _ChecklistDetailPageState extends ConsumerState<ChecklistDetailPage> {
         data: (checklistWithItems) {
           final checklist = checklistWithItems.checklist;
           final items = checklistWithItems.items;
-          final progress = checklistWithItems.progress;
 
           return CustomScrollView(
             slivers: [
@@ -87,40 +85,60 @@ class _ChecklistDetailPageState extends ConsumerState<ChecklistDetailPage> {
                                 color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                               ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              child: Consumer(
+                                builder: (context, ref, _) {
+                                  final optimistic = ref.watch(
+                                      checklistItemOptimisticStateProvider);
+                                  final liveCompletedCount = items
+                                      .where((item) =>
+                                          optimistic[item.id] ??
+                                          item.isCompleted)
+                                      .length;
+                                  final liveProgress = items.isEmpty
+                                      ? 0.0
+                                      : liveCompletedCount / items.length;
+                                  return Column(
                                     children: [
-                                      Text(
-                                        '${checklistWithItems.completedCount} / ${items.length} items',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '$liveCompletedCount / ${items.length} items',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${(liveProgress * 100).toStringAsFixed(0)}%',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        '${(progress * 100).toStringAsFixed(0)}%',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
+                                      const SizedBox(
+                                          height: AppTheme.spacingXs),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                            AppTheme.radiusFull),
+                                        child: LinearProgressIndicator(
+                                          value: liveProgress,
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.3),
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                  Color>(Colors.white),
+                                          minHeight: 6,
                                         ),
                                       ),
                                     ],
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingXs),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                                    child: LinearProgressIndicator(
-                                      value: progress,
-                                      backgroundColor: Colors.white.withValues(alpha: 0.3),
-                                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                                      minHeight: 6,
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
                             ),
                           ],

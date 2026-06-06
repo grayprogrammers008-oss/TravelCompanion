@@ -163,11 +163,17 @@ class ExpenseModel {
   }
 }
 
-/// Expense split model
+/// Expense split model.
+///
+/// A split row points at exactly one of a real user ([userId]) or a ghost
+/// participant ([ghostId]) — the DB enforces the XOR. Ghost-backed splits
+/// are folded into [ghostCreatedBy]'s balance at calc time; the ghost
+/// itself never owes or is owed.
 class ExpenseSplitModel {
   final String id;
   final String expenseId;
-  final String userId;
+  final String? userId; // nullable when this split is for a ghost
+  final String? ghostId;
   final double amount;
   final bool isSettled;
   final DateTime? settledAt;
@@ -175,40 +181,72 @@ class ExpenseSplitModel {
   // Joined data
   final String? userName;
   final String? avatarUrl;
+  final String? ghostName;
+  final String? ghostCreatedBy;
+  /// Trip member who is financially responsible for the ghost (the
+  /// "guardian"). Joined from `trip_ghost_participants.guardian_user_id`.
+  /// Falls back to [ghostCreatedBy] for older rows that pre-date the
+  /// guardian split.
+  final String? ghostGuardianId;
 
   const ExpenseSplitModel({
     required this.id,
     required this.expenseId,
-    required this.userId,
+    this.userId,
+    this.ghostId,
     required this.amount,
     this.isSettled = false,
     this.settledAt,
     this.createdAt,
     this.userName,
     this.avatarUrl,
+    this.ghostName,
+    this.ghostCreatedBy,
+    this.ghostGuardianId,
   });
+
+  /// True when this split row represents a ghost participant.
+  bool get isGhost => ghostId != null;
+
+  /// The real user whose balance this split affects. For real-user splits
+  /// it's [userId]; for ghost splits it's the ghost's guardian (the
+  /// member who's financially responsible), falling back to creator for
+  /// pre-guardian rows.
+  String? get effectiveUserId =>
+      isGhost ? (ghostGuardianId ?? ghostCreatedBy) : userId;
+
+  /// Display name — falls back through joined user / ghost / 'Unknown'.
+  String get displayName => userName ?? ghostName ?? 'Unknown';
 
   ExpenseSplitModel copyWith({
     String? id,
     String? expenseId,
     String? userId,
+    String? ghostId,
     double? amount,
     bool? isSettled,
     DateTime? settledAt,
     DateTime? createdAt,
     String? userName,
     String? avatarUrl,
+    String? ghostName,
+    String? ghostCreatedBy,
+    String? ghostGuardianId,
   }) {
     return ExpenseSplitModel(
       id: id ?? this.id,
       expenseId: expenseId ?? this.expenseId,
       userId: userId ?? this.userId,
+      ghostId: ghostId ?? this.ghostId,
       amount: amount ?? this.amount,
       isSettled: isSettled ?? this.isSettled,
       settledAt: settledAt ?? this.settledAt,
       createdAt: createdAt ?? this.createdAt,
       userName: userName ?? this.userName,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      ghostName: ghostName ?? this.ghostName,
+      ghostCreatedBy: ghostCreatedBy ?? this.ghostCreatedBy,
+      ghostGuardianId: ghostGuardianId ?? this.ghostGuardianId,
     );
   }
 
@@ -217,20 +255,28 @@ class ExpenseSplitModel {
       'id': id,
       'expense_id': expenseId,
       'user_id': userId,
+      'ghost_id': ghostId,
       'amount': amount,
       'is_settled': isSettled,
       'settled_at': settledAt?.toIso8601String(),
       'created_at': createdAt?.toIso8601String(),
       'user_name': userName,
       'avatar_url': avatarUrl,
+      'ghost_name': ghostName,
+      'ghost_created_by': ghostCreatedBy,
     };
   }
 
   factory ExpenseSplitModel.fromJson(Map<String, dynamic> json) {
+    // Joined ghost row may arrive under either alias depending on the
+    // PostgREST select string used by the caller.
+    final ghostJoin = (json['ghost'] ?? json['trip_ghost_participants'])
+        as Map<String, dynamic>?;
     return ExpenseSplitModel(
       id: json['id'] as String,
       expenseId: json['expense_id'] as String,
-      userId: json['user_id'] as String,
+      userId: json['user_id'] as String?,
+      ghostId: json['ghost_id'] as String?,
       amount: (json['amount'] as num).toDouble(),
       isSettled: (json['is_settled'] is int)
           ? (json['is_settled'] as int) == 1
@@ -243,6 +289,12 @@ class ExpenseSplitModel {
           : null,
       userName: json['user_name'] as String?,
       avatarUrl: json['avatar_url'] as String?,
+      ghostName: (json['ghost_name'] as String?) ??
+          (ghostJoin?['name'] as String?),
+      ghostCreatedBy: (json['ghost_created_by'] as String?) ??
+          (ghostJoin?['created_by'] as String?),
+      ghostGuardianId: (json['ghost_guardian_id'] as String?) ??
+          (ghostJoin?['guardian_user_id'] as String?),
     );
   }
 
@@ -253,12 +305,15 @@ class ExpenseSplitModel {
         other.id == id &&
         other.expenseId == expenseId &&
         other.userId == userId &&
+        other.ghostId == ghostId &&
         other.amount == amount &&
         other.isSettled == isSettled &&
         other.settledAt == settledAt &&
         other.createdAt == createdAt &&
         other.userName == userName &&
-        other.avatarUrl == avatarUrl;
+        other.avatarUrl == avatarUrl &&
+        other.ghostName == ghostName &&
+        other.ghostCreatedBy == ghostCreatedBy;
   }
 
   @override
@@ -267,19 +322,125 @@ class ExpenseSplitModel {
       id,
       expenseId,
       userId,
+      ghostId,
       amount,
       isSettled,
       settledAt,
       createdAt,
       userName,
       avatarUrl,
+      ghostName,
+      ghostCreatedBy,
     );
   }
 
   @override
   String toString() {
-    return 'ExpenseSplitModel(id: $id, expenseId: $expenseId, userId: $userId, amount: $amount, isSettled: $isSettled, settledAt: $settledAt, createdAt: $createdAt, userName: $userName, avatarUrl: $avatarUrl)';
+    return 'ExpenseSplitModel(id: $id, expenseId: $expenseId, userId: $userId, ghostId: $ghostId, amount: $amount, isSettled: $isSettled, displayName: $displayName)';
   }
+}
+
+/// A trip-scoped ghost participant — someone who is part of the trip's
+/// expense math but doesn't have an app account (kids, elderly relatives,
+/// guests). The [createdBy] user owns the ghost's debts.
+class GhostParticipantModel {
+  final String id;
+  final String tripId;
+  final String name;
+  final String createdBy;
+  /// Trip member whose balance this ghost's debts fold into. Defaults to
+  /// [createdBy] but may be set to any other trip member.
+  final String guardianUserId;
+  final DateTime? createdAt;
+  final String? creatorName; // joined display name (who inserted the row)
+  final String? guardianName; // joined display name (who pays for the ghost)
+
+  const GhostParticipantModel({
+    required this.id,
+    required this.tripId,
+    required this.name,
+    required this.createdBy,
+    required this.guardianUserId,
+    this.createdAt,
+    this.creatorName,
+    this.guardianName,
+  });
+
+  GhostParticipantModel copyWith({
+    String? id,
+    String? tripId,
+    String? name,
+    String? createdBy,
+    String? guardianUserId,
+    DateTime? createdAt,
+    String? creatorName,
+    String? guardianName,
+  }) {
+    return GhostParticipantModel(
+      id: id ?? this.id,
+      tripId: tripId ?? this.tripId,
+      name: name ?? this.name,
+      createdBy: createdBy ?? this.createdBy,
+      guardianUserId: guardianUserId ?? this.guardianUserId,
+      createdAt: createdAt ?? this.createdAt,
+      creatorName: creatorName ?? this.creatorName,
+      guardianName: guardianName ?? this.guardianName,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'trip_id': tripId,
+      'name': name,
+      'created_by': createdBy,
+      'guardian_user_id': guardianUserId,
+      'created_at': createdAt?.toIso8601String(),
+      'creator_name': creatorName,
+      'guardian_name': guardianName,
+    };
+  }
+
+  factory GhostParticipantModel.fromJson(Map<String, dynamic> json) {
+    final creatorJoin = json['creator'] as Map<String, dynamic>?;
+    final guardianJoin = json['guardian'] as Map<String, dynamic>?;
+    final createdBy = json['created_by'] as String;
+    return GhostParticipantModel(
+      id: json['id'] as String,
+      tripId: json['trip_id'] as String,
+      name: json['name'] as String,
+      createdBy: createdBy,
+      // Fall back to created_by for rows still in flight before the
+      // migration backfills guardian_user_id.
+      guardianUserId:
+          (json['guardian_user_id'] as String?) ?? createdBy,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : null,
+      creatorName: (json['creator_name'] as String?) ??
+          (creatorJoin?['full_name'] as String?),
+      guardianName: (json['guardian_name'] as String?) ??
+          (guardianJoin?['full_name'] as String?),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is GhostParticipantModel &&
+        other.id == id &&
+        other.tripId == tripId &&
+        other.name == name &&
+        other.createdBy == createdBy &&
+        other.createdAt == createdAt;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, tripId, name, createdBy, createdAt);
+
+  @override
+  String toString() =>
+      'GhostParticipantModel(id: $id, tripId: $tripId, name: $name, createdBy: $createdBy)';
 }
 
 /// Expense with splits
@@ -497,6 +658,9 @@ class BalanceSummary {
   final double totalPaid;
   final double totalOwed;
   final double balance; // positive = owed to them, negative = they owe
+  /// Names of guests this member is financially responsible for. Empty
+  /// when the member has no guests folded into their balance.
+  final List<String> guestNames;
 
   BalanceSummary({
     required this.userId,
@@ -505,6 +669,7 @@ class BalanceSummary {
     required this.totalPaid,
     required this.totalOwed,
     required this.balance,
+    this.guestNames = const [],
   });
 }
 

@@ -116,7 +116,9 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return null; // Use keyword search to include all wildlife areas, not just zoos
       case PlaceCategory.religious:
-        return null; // Use keyword search for better global coverage
+        // Use place_of_worship type so Google returns temples/churches/mosques
+        // even when their names are in a non-English language (e.g. Tamil "Kovil").
+        return 'place_of_worship';
       case PlaceCategory.nature:
         return 'park';
       case PlaceCategory.urban:
@@ -145,7 +147,9 @@ extension PlaceCategoryExtension on PlaceCategory {
       case PlaceCategory.wildlife:
         return 'wildlife sanctuary zoo';
       case PlaceCategory.religious:
-        return 'temple church mosque';
+        // Includes Tamil ("kovil") and Punjabi ("gurudwara") so Indian
+        // temples / Sikh shrines aren't drowned out by English-named mosques.
+        return 'temple kovil church mosque gurudwara';
       case PlaceCategory.nature:
         return 'waterfall lake garden';
       case PlaceCategory.urban:

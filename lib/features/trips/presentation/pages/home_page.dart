@@ -20,6 +20,7 @@ import '../../../../shared/models/trip_model.dart';
 import '../../../../shared/models/itinerary_model.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
+import '../../../polls/presentation/providers/poll_providers.dart';
 import '../providers/trip_providers.dart';
 import '../widgets/ai_suggestions_card.dart';
 
@@ -559,6 +560,145 @@ class _HomePageState extends ConsumerState<HomePage>
     });
   }
 
+  /// Bottom sheet listing trips with open polls. Tapping a row opens
+  /// that trip's polls list.
+  void _showPendingPollsSheet(
+    BuildContext context,
+    PendingPollsSummary summary,
+  ) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    HapticFeedback.lightImpact();
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppTheme.spacingLg,
+              AppTheme.spacingLg,
+              AppTheme.spacingLg,
+              AppTheme.spacingMd,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEC407A).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.how_to_vote,
+                          color: Color(0xFFEC407A), size: 20),
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            summary.totalUnvoted > 0
+                                ? '${summary.totalUnvoted} poll${summary.totalUnvoted == 1 ? "" : "s"} need your vote'
+                                : 'Voting in progress',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          if (summary.totalOpen > summary.totalUnvoted)
+                            Text(
+                              '${summary.totalOpen - summary.totalUnvoted} you\'ve voted on still open',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppTheme.neutral600,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(ctx).size.height * 0.5,
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: summary.rows.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (_, i) {
+                      final row = summary.rows[i];
+                      final needsVote = row.unvoted > 0;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: needsVote
+                                ? const Color(0xFFEC407A)
+                                : AppTheme.neutral200,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              needsVote ? '${row.unvoted}' : '${row.open}',
+                              style: TextStyle(
+                                color: needsVote
+                                    ? Colors.white
+                                    : AppTheme.neutral700,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          row.tripName,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          needsVote
+                              ? '${row.unvoted} of ${row.open} need${row.unvoted == 1 ? "s" : ""} your vote'
+                              : 'You\'ve voted • ${row.open} still open',
+                          style: TextStyle(
+                            color: needsVote
+                                ? const Color(0xFFEC407A)
+                                : AppTheme.neutral600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: Icon(Icons.chevron_right,
+                            color: primaryColor),
+                        onTap: () {
+                          Navigator.of(ctx).pop();
+                          context.push('/trips/${row.tripId}/polls');
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// Show filter options in a bottom sheet
   void _showFilterBottomSheet(BuildContext context, dynamic themeData) {
     // Use local variables for modal state management
@@ -855,6 +995,72 @@ class _HomePageState extends ConsumerState<HomePage>
                 centerTitle: false,
                 titleSpacing: 4,
                 actions: [
+                  // Polls notification bell — opens a bottom sheet listing
+                  // trips with open polls (unvoted bubble to the top).
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final summary =
+                          ref.watch(pendingPollsSummaryProvider);
+                      if (summary.totalOpen == 0) {
+                        return const SizedBox.shrink();
+                      }
+                      return IconButton(
+                        tooltip: 'Pending polls',
+                        onPressed: () =>
+                            _showPendingPollsSheet(context, summary),
+                        icon: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            const Icon(Icons.notifications_outlined,
+                                color: Colors.white),
+                            if (summary.totalUnvoted > 0)
+                              Positioned(
+                                right: -4,
+                                top: -4,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 1),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEC407A),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: Colors.white, width: 1.5),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                      minWidth: 18, minHeight: 18),
+                                  child: Text(
+                                    '${summary.totalUnvoted}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: AppTheme.neutral400,
+                                        width: 1),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   // Settings Icon only (consolidated menu)
                   IconButton(
                     icon: const Icon(Icons.settings_outlined, color: Colors.white),
@@ -1021,7 +1227,117 @@ class _HomePageState extends ConsumerState<HomePage>
                 ];
               }
 
+              // Read once at the outer level — ConsumerStatefulWidget gives
+              // us ref directly without needing a nested Consumer.
+              final pollSummary = ref.watch(pendingPollsSummaryProvider);
+              debugPrint(
+                  '🏠 [BANNER] outer build, totalOpen=${pollSummary.totalOpen} totalUnvoted=${pollSummary.totalUnvoted}');
               return [
+                // Pending polls banner — only renders when at least one trip
+                // has an open poll. Tappable, opens the per-trip sheet.
+                SliverToBoxAdapter(
+                  child: Builder(
+                    builder: (context) {
+                      final summary = pollSummary;
+                      if (summary.totalOpen == 0) {
+                        return const SizedBox.shrink();
+                      }
+                      final needsVote = summary.totalUnvoted > 0;
+                      final tripCount = summary.rows.length;
+                      final color = needsVote
+                          ? const Color(0xFFEC407A)
+                          : AppTheme.neutral500;
+                      final headline = needsVote
+                          ? (summary.totalUnvoted == 1
+                              ? '1 poll needs your vote'
+                              : '${summary.totalUnvoted} polls need your vote')
+                          : 'Voting in progress';
+                      final subtitle = needsVote
+                          ? (tripCount == 1
+                              ? 'in ${summary.rows.first.tripName}'
+                              : 'across $tripCount trips · tap to view')
+                          : (summary.totalOpen == 1
+                              ? '1 poll still open · check back for results'
+                              : '${summary.totalOpen} polls still open · tap to view');
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppTheme.spacingMd,
+                          AppTheme.spacingSm,
+                          AppTheme.spacingMd,
+                          0,
+                        ),
+                        child: InkWell(
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusLg),
+                          onTap: () {
+                            // Single-trip shortcut: jump straight in.
+                            if (summary.rows.length == 1) {
+                              context.push(
+                                  '/trips/${summary.rows.first.tripId}/polls');
+                            } else {
+                              _showPendingPollsSheet(context, summary);
+                            }
+                          },
+                          child: Container(
+                            padding:
+                                const EdgeInsets.all(AppTheme.spacingMd),
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusLg),
+                              border: Border.all(
+                                color: color.withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: color,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.how_to_vote,
+                                      color: Colors.white, size: 22),
+                                ),
+                                const SizedBox(width: AppTheme.spacingMd),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        headline,
+                                        style: TextStyle(
+                                          color: color,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        subtitle,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: AppTheme.neutral700,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right, color: color),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
                 // AI Suggestions Card
                 SliverToBoxAdapter(
                   child: AiSuggestionsCard(themeData: themeData),
@@ -1777,6 +2093,73 @@ class _HomePageState extends ConsumerState<HomePage>
                             ),
                           ],
                         ),
+
+                        // Poll alert pill (on dark hero — inverted styling)
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final counts = ref.watch(
+                                pollBadgeCountsProvider(trip.id));
+                            if (!counts.hasAny) {
+                              return const SizedBox.shrink();
+                            }
+                            final needsVote = counts.unvoted > 0;
+                            final label = needsVote
+                                ? (counts.unvoted == 1
+                                    ? '1 poll needs your vote'
+                                    : '${counts.unvoted} polls need your vote')
+                                : (counts.open == 1
+                                    ? 'Voting in progress'
+                                    : '${counts.open} polls open');
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  top: AppTheme.spacingSm),
+                              child: GestureDetector(
+                                onTap: () => context.push(
+                                    '/trips/${trip.id}/polls'),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: needsVote
+                                        ? const Color(0xFFEC407A)
+                                        : Colors.white
+                                            .withValues(alpha: 0.18),
+                                    borderRadius: BorderRadius.circular(
+                                        AppTheme.radiusFull),
+                                    boxShadow: needsVote
+                                        ? [
+                                            BoxShadow(
+                                              color: const Color(0xFFEC407A)
+                                                  .withValues(alpha: 0.4),
+                                              blurRadius: 6,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.how_to_vote,
+                                          size: 14, color: Colors.white),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        label,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                         const SizedBox(height: AppTheme.spacingMd),
 
                         // What's Next section
@@ -2210,6 +2593,57 @@ class _HomePageState extends ConsumerState<HomePage>
                   ),
                 ],
               ),
+            ),
+            // Polls indicator (icon + count badge when there's unvoted)
+            Consumer(
+              builder: (context, ref, _) {
+                final counts =
+                    ref.watch(pollBadgeCountsProvider(trip.id));
+                if (!counts.hasAny) return const SizedBox.shrink();
+                final pink = const Color(0xFFEC407A);
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        Icons.how_to_vote,
+                        size: 20,
+                        color: counts.unvoted > 0
+                            ? pink
+                            : AppTheme.neutral500,
+                      ),
+                      if (counts.unvoted > 0)
+                        Positioned(
+                          right: -6,
+                          top: -4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: pink,
+                              borderRadius: BorderRadius.circular(8),
+                              border:
+                                  Border.all(color: Colors.white, width: 1),
+                            ),
+                            constraints: const BoxConstraints(
+                                minWidth: 14, minHeight: 14),
+                            child: Text(
+                              '${counts.unvoted}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                height: 1.1,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
             ),
             // Role badge (small indicator for organizer)
             if (currentUserId != null && isOrganizer) ...[
@@ -4122,6 +4556,69 @@ class TripCard extends StatelessWidget {
                     ),
 
                     const SizedBox(height: AppTheme.spacingXs),
+
+                    // Poll pill — strong pink when the user hasn't voted yet,
+                    // softer gray once they've voted but voting is still live.
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final counts =
+                            ref.watch(pollBadgeCountsProvider(trip.id));
+                        if (!counts.hasAny) return const SizedBox.shrink();
+
+                        final needsVote = counts.unvoted > 0;
+                        final color = needsVote
+                            ? const Color(0xFFEC407A) // pink
+                            : AppTheme.neutral600;
+                        final label = needsVote
+                            ? (counts.unvoted == 1
+                                ? '1 poll needs your vote'
+                                : '${counts.unvoted} polls need your vote')
+                            : (counts.open == 1
+                                ? 'Voting in progress'
+                                : '${counts.open} polls open');
+
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: AppTheme.spacingXs),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: color.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusFull),
+                                border: Border.all(
+                                  color: color.withValues(alpha: 0.4),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.how_to_vote,
+                                    size: 12,
+                                    color: color,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    label,
+                                    style: TextStyle(
+                                      color: color,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
 
                     // Bottom Row: Cost + Members
                     Row(

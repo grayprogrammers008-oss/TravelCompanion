@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/place_category.dart';
@@ -169,6 +172,73 @@ class DiscoverLocalDataSource {
     } catch (e, stackTrace) {
       debugPrint('❌ [DiscoverLocal] getPlaces FAILED: $e');
       debugPrint('   Stack Trace: $stackTrace');
+      return null;
+    }
+  }
+
+  // ---- Popular Nearby cache (cross-category) -----------------------------
+
+  /// Cache key for the synthetic "Popular Nearby" bucket — the set of
+  /// top-rated places aggregated across multiple categories. Kept separate
+  /// from per-category caches so refreshing one doesn't invalidate the
+  /// other.
+  String _getPopularCacheKey(double lat, double lng) {
+    final roundedLat = (lat * 100).round() / 100;
+    final roundedLng = (lng * 100).round() / 100;
+    return 'popular_nearby_${roundedLat}_$roundedLng';
+  }
+
+  /// Save the Popular Nearby aggregate for this location.
+  Future<void> savePopularNearby({
+    required List<DiscoverPlace> places,
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final cacheKey = _getPopularCacheKey(latitude, longitude);
+      debugPrint(
+          '🔵 [DiscoverLocal] savePopularNearby: $cacheKey (${places.length} places)');
+      final models = places
+          .take(_maxPlacesPerCategory)
+          .map((p) => DiscoverPlaceModel.fromEntity(p))
+          .toList();
+      await _places.put(cacheKey, {
+        'places': models.map((m) => m.toJson()).toList(),
+        'cached_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      debugPrint('❌ [DiscoverLocal] savePopularNearby FAILED: $e');
+    }
+  }
+
+  /// Read the Popular Nearby aggregate, honoring [_placesCacheExpiry].
+  Future<List<DiscoverPlace>?> getPopularNearby({
+    required double latitude,
+    required double longitude,
+    bool ignoreExpiry = false,
+  }) async {
+    try {
+      final cacheKey = _getPopularCacheKey(latitude, longitude);
+      final data = _places.get(cacheKey);
+      if (data == null) return null;
+
+      final placesJson = Map<String, dynamic>.from(data);
+      final cachedAt = DateTime.parse(placesJson['cached_at'] as String);
+      if (!ignoreExpiry &&
+          DateTime.now().difference(cachedAt) > _placesCacheExpiry) {
+        return null;
+      }
+
+      final placesList = (placesJson['places'] as List?)
+              ?.map((p) => DiscoverPlaceModel.fromJson(
+                  Map<String, dynamic>.from(p)).toEntity())
+              .toList() ??
+          [];
+      debugPrint(
+          '🔵 [DiscoverLocal] getPopularNearby: ${placesList.length} places from cache');
+      return placesList;
+    } catch (e) {
+      debugPrint('❌ [DiscoverLocal] getPopularNearby FAILED: $e');
       return null;
     }
   }
@@ -346,14 +416,23 @@ class DiscoverLocalDataSource {
   // PHOTO URL CACHING
   // ============================================================================
 
+  /// Hash a photo reference into a fixed-length Hive key.
+  ///
+  /// Google Places photo references are 300-700 chars long, which exceeds
+  /// Hive's 255-char string key limit. SHA-256 hex digest is 64 chars,
+  /// safely under the limit, and stable per-reference.
+  String _photoCacheKey(String photoReference) {
+    final digest = sha256.convert(utf8.encode(photoReference));
+    return 'photo_${digest.toString()}';
+  }
+
   /// Cache a photo URL for a photo reference
   Future<void> cachePhotoUrl({
     required String photoReference,
     required String url,
   }) async {
     try {
-      // Create a key with expiry timestamp
-      final cacheKey = 'photo_$photoReference';
+      final cacheKey = _photoCacheKey(photoReference);
       final cacheData = '$url|${DateTime.now().add(_photoUrlCacheExpiry).toIso8601String()}';
 
       await _photoUrls.put(cacheKey, cacheData);
@@ -373,7 +452,7 @@ class DiscoverLocalDataSource {
   /// Get cached photo URL
   Future<String?> getCachedPhotoUrl(String photoReference) async {
     try {
-      final cacheKey = 'photo_$photoReference';
+      final cacheKey = _photoCacheKey(photoReference);
       final cacheData = _photoUrls.get(cacheKey);
 
       if (cacheData == null) return null;

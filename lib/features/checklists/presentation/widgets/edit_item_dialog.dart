@@ -34,7 +34,9 @@ class _EditItemDialogState extends ConsumerState<EditItemDialog> {
   }
 
   Future<void> _saveChanges() async {
+    debugPrint('🐛🐛🐛 EDIT DIALOG SAVE TAPPED — itemId=${widget.item.id}');
     final title = _titleController.text.trim();
+    debugPrint('🐛🐛🐛 title from input: "$title"');
 
     if (title.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,6 +50,7 @@ class _EditItemDialogState extends ConsumerState<EditItemDialog> {
 
     setState(() => _isLoading = true);
 
+    debugPrint('🟢 [EditItem] Updating itemId=${widget.item.id} title="$title"');
     final controller = ref.read(checklistControllerProvider.notifier);
     final success = await controller.updateItem(
       itemId: widget.item.id,
@@ -59,12 +62,30 @@ class _EditItemDialogState extends ConsumerState<EditItemDialog> {
 
     if (mounted) {
       if (success) {
+        debugPrint('✅ [EditItem] Update succeeded');
         Navigator.of(context).pop(true);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to update item'),
-            backgroundColor: AppTheme.error,
+        final err = ref.read(checklistControllerProvider).error;
+        debugPrint('❌ [EditItem] Update failed: ${err ?? "(no error msg)"}');
+        // Show the FULL exception text in a persistent dialog so the user
+        // can read & copy it. SnackBars truncate and auto-dismiss too fast
+        // to diagnose this kind of issue.
+        await showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('❌ Update failed'),
+            content: SingleChildScrollView(
+              child: SelectableText(
+                err ?? '(no error reported — controller returned false silently)',
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Close'),
+              ),
+            ],
           ),
         );
       }

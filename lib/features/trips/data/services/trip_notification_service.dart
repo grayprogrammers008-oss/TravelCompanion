@@ -159,6 +159,65 @@ class TripNotificationService {
     }
   }
 
+  /// Send notification when a new poll is opened.
+  Future<void> notifyPollCreated({
+    required String tripId,
+    required String tripName,
+    required String pollId,
+    required String question,
+    required String creatorId,
+    required String creatorName,
+  }) async {
+    try {
+      final payload = NotificationPayload(
+        type: 'poll_created',
+        tripId: tripId,
+        tripName: tripName,
+        messageId: pollId,
+        senderId: creatorId,
+        senderName: creatorName,
+        messageText: question,
+      );
+      await _sendNotification(
+        tripId: tripId,
+        payload: payload,
+        excludeUserId: creatorId,
+      );
+    } catch (e) {
+      debugPrint('❌ [TripNotification] Poll created notification failed: $e');
+    }
+  }
+
+  /// Send notification when a poll is closed and a result is in.
+  Future<void> notifyPollClosed({
+    required String tripId,
+    required String tripName,
+    required String pollId,
+    required String question,
+    required String winnerLabel,
+    required String closerId,
+    required String closerName,
+  }) async {
+    try {
+      final payload = NotificationPayload(
+        type: 'poll_closed',
+        tripId: tripId,
+        tripName: tripName,
+        messageId: pollId,
+        senderId: closerId,
+        senderName: closerName,
+        messageText: '$question → $winnerLabel',
+      );
+      await _sendNotification(
+        tripId: tripId,
+        payload: payload,
+        excludeUserId: closerId,
+      );
+    } catch (e) {
+      debugPrint('❌ [TripNotification] Poll closed notification failed: $e');
+    }
+  }
+
   /// Internal method to send notification via Supabase Edge Function
   Future<void> _sendNotification({
     required String tripId,

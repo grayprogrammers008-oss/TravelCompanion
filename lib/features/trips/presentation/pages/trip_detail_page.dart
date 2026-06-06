@@ -29,6 +29,7 @@ import '../widgets/copy_trip_dialog.dart';
 import '../../../trip_invites/presentation/widgets/invite_bottom_sheet.dart';
 import '../../../../core/services/pdf_export_service.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
+import '../../../polls/presentation/providers/poll_providers.dart';
 import '../../../itinerary/domain/entities/itinerary_entity.dart';
 // TODO: Re-enable when budget tracking is fully implemented
 // import '../../../budget/presentation/widgets/budget_overview_card.dart';
@@ -1047,6 +1048,41 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        // Row 3: Polls
+        Row(
+          children: [
+            Expanded(
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final counts =
+                      ref.watch(pollBadgeCountsProvider(widget.tripId));
+                  final String value;
+                  if (counts.unvoted > 0) {
+                    value = '${counts.unvoted} to vote';
+                  } else if (counts.open > 0) {
+                    value = counts.open == 1
+                        ? '1 open'
+                        : '${counts.open} open';
+                  } else {
+                    value = 'Group votes';
+                  }
+                  return _buildCompactTile(
+                    context,
+                    icon: Icons.how_to_vote_rounded,
+                    title: 'Polls',
+                    value: value,
+                    color: const Color(0xFFEC407A),
+                    badge: counts.unvoted > 0 ? counts.unvoted : null,
+                    onTap: () => context.push('/trips/${widget.tripId}/polls'),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(child: SizedBox.shrink()),
+          ],
+        ),
       ],
     );
   }
@@ -1088,6 +1124,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Icon row with optional badge
@@ -1124,20 +1161,26 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             // Title
             Text(
               title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Colors.black54,
+                height: 1.2,
               ),
             ),
             const SizedBox(height: 2),
             // Value
             Text(
               value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: color,
+                height: 1.2,
               ),
             ),
             // Hint text for long press action
@@ -1151,12 +1194,16 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
                     color: color.withValues(alpha: 0.6),
                   ),
                   const SizedBox(width: 3),
-                  Text(
-                    hint,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
-                      color: color.withValues(alpha: 0.6),
+                  Flexible(
+                    child: Text(
+                      hint,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: color.withValues(alpha: 0.6),
+                      ),
                     ),
                   ),
                 ],
@@ -1196,6 +1243,7 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Icon row with Quick Add button
@@ -1254,20 +1302,26 @@ class _TripDetailPageState extends ConsumerState<TripDetailPage> {
             // Title
             const Text(
               'Expenses',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Colors.black54,
+                height: 1.2,
               ),
             ),
             const SizedBox(height: 2),
             // Value
             Text(
               '${_getCurrencySymbol(trip.trip.currency)}${_formatAmount(totalExpenses)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: color,
+                height: 1.2,
               ),
             ),
           ],

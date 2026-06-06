@@ -10,6 +10,7 @@ import '../../../../core/widgets/gradient_page_backgrounds.dart';
 import '../../../../core/widgets/premium_header.dart';
 import '../../../../core/widgets/confetti_animation.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/itinerary_providers.dart';
 
 class AddEditItineraryItemPageNew extends ConsumerStatefulWidget {
@@ -200,6 +201,16 @@ class _AddEditItineraryItemPageNewState
   Widget build(BuildContext context) {
     final isEdit = widget.itemId != null;
 
+    // Clamp the day dropdown to the trip's actual length instead of a fixed 30.
+    final trip = ref.watch(tripProvider(widget.tripId)).value?.trip;
+    var dayCount = 7;
+    if (trip?.startDate != null && trip?.endDate != null) {
+      dayCount = trip!.endDate!.difference(trip.startDate!).inDays + 1;
+    }
+    if (dayCount < 1) dayCount = 1;
+    // Don't drop an already-saved day that falls outside the computed range.
+    if (_dayNumber != null && _dayNumber! > dayCount) dayCount = _dayNumber!;
+
     // Show loading while fetching existing item
     if (isEdit && !_isInitialized) {
       final themeData = context.appThemeData;
@@ -357,7 +368,7 @@ class _AddEditItineraryItemPageNewState
                       hintText: 'Select day number',
                       prefixIcon: Icons.calendar_today,
                       items: List.generate(
-                        30,
+                        dayCount,
                         (index) => DropdownMenuItem(
                           value: index + 1,
                           child: Text('Day ${index + 1}'),

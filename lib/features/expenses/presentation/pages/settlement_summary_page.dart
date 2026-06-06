@@ -596,7 +596,10 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 2,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       'Paid: ${balance.totalPaid.toCurrency(currency)}',
@@ -604,12 +607,10 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                         color: context.textColor.withValues(alpha: 0.6),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       '•',
                       style: TextStyle(color: context.textColor.withValues(alpha: 0.3)),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       'Share: ${balance.totalOwed.toCurrency(currency)}',
                       style: context.bodySmall.copyWith(
@@ -618,6 +619,47 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
                     ),
                   ],
                 ),
+                if (balance.guestNames.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEC407A).withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: const Color(0xFFEC407A).withValues(alpha: 0.3),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.child_care,
+                            size: 14,
+                            color: Color(0xFFEC407A),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Paying for ${balance.guestNames.length} guest${balance.guestNames.length == 1 ? "" : "s"}: '
+                              '${balance.guestNames.join(", ")}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Color(0xFFEC407A),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -840,11 +882,12 @@ class _SettlementSummaryPageState extends ConsumerState<SettlementSummaryPage> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,

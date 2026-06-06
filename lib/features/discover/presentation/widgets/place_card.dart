@@ -229,25 +229,29 @@ class PlaceCard extends ConsumerWidget {
                         ],
                         if (place.statusText != null) ...[
                           if (place.rating != null) const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: place.openNow == true
-                                  ? Colors.green.withValues(alpha: 0.1)
-                                  : Colors.red.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                            child: Text(
-                              place.statusText!,
-                              style: context.bodySmall.copyWith(
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 1,
+                              ),
+                              decoration: BoxDecoration(
                                 color: place.openNow == true
-                                    ? Colors.green[700]
-                                    : Colors.red[700],
-                                fontWeight: FontWeight.w600,
-                                fontSize: 9,
+                                    ? Colors.green.withValues(alpha: 0.1)
+                                    : Colors.red.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: Text(
+                                place.statusText!,
+                                style: context.bodySmall.copyWith(
+                                  color: place.openNow == true
+                                      ? Colors.green[700]
+                                      : Colors.red[700],
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 9,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),

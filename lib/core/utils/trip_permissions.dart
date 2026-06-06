@@ -134,6 +134,17 @@ class TripPermissions {
     return _isAdmin(currentUserId, tripWithMembers);
   }
 
+  /// Check if the user can create/close polls. Only the trip organizer
+  /// (creator) can run targeted votes.
+  static bool canManagePolls({
+    required String? currentUserId,
+    required TripWithMembers tripWithMembers,
+  }) {
+    if (currentUserId == null) return false;
+    if (tripWithMembers.trip.isCompleted) return false;
+    return tripWithMembers.trip.createdBy == currentUserId;
+  }
+
   /// Check if the user can mark the trip as completed
   static bool canCompletTrip({
     required String? currentUserId,

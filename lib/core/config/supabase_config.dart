@@ -27,10 +27,7 @@ class SupabaseConfig {
   );
 
   /// Brevo (SendinBlue) API Configuration for Email Invites
-  static const String brevoApiKey = String.fromEnvironment(
-    'BREVO_API_KEY',
-    defaultValue: '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',
-  );
+  static const String brevoApiKey = String.fromEnvironment('BREVO_API_KEY');
 
   static const String brevoSenderEmail = String.fromEnvironment(
     'BREVO_SENDER_EMAIL',

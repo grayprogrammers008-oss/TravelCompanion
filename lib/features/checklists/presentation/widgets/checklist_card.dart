@@ -26,6 +26,7 @@ class ChecklistCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeData = context.appThemeData;
     final checklistWithItemsAsync = ref.watch(checklistWithItemsProvider(checklist.id));
+    final optimisticStates = ref.watch(checklistItemOptimisticStateProvider);
 
     return Card(
       elevation: 0,
@@ -40,9 +41,12 @@ class ChecklistCard extends ConsumerWidget {
           padding: const EdgeInsets.all(AppTheme.spacingLg),
           child: checklistWithItemsAsync.when(
             data: (checklistWithItems) {
-              final progress = checklistWithItems.progress;
-              final completedCount = checklistWithItems.completedCount;
               final totalCount = checklistWithItems.items.length;
+              // Overlay optimistic state so the card reflects in-flight toggles.
+              final completedCount = checklistWithItems.items
+                  .where((item) => optimisticStates[item.id] ?? item.isCompleted)
+                  .length;
+              final progress = totalCount == 0 ? 0.0 : completedCount / totalCount;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

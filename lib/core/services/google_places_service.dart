@@ -31,7 +31,7 @@ class GooglePlacesService {
   static const int _dailyAutocompleteLimit = 300;  // 9,000/month (under 10K free)
   static const int _dailyDetailsLimit = 300;       // 9,000/month (under 10K free)
   static const int _dailyPhotoLimit = 100;         // 3,000/month - increased for better UX
-  static const int _dailyNearbyLimit = 50;         // 1,500/month (under 10K free, conservative)
+  static const int _dailyNearbyLimit = 300;        // 9,000/month — still safely under 10K free tier
   // Total monthly cost: $0 (all within free tiers!)
   // ============================================================
 

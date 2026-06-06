@@ -8,7 +8,7 @@ import 'package:pathio/core/widgets/app_loading_indicator.dart';
 import 'package:pathio/features/trips/presentation/providers/trip_providers.dart';
 import 'package:pathio/features/trips/domain/usecases/get_trip_history_usecase.dart';
 import 'package:pathio/features/trips/domain/usecases/filter_trips_usecase.dart';
-import '../../../../shared/models/trip_model.dart';
+import 'package:pathio/shared/models/trip_model.dart';
 import 'package:intl/intl.dart';
 
 /// Trip History Page - Shows completed trips with ratings and statistics
