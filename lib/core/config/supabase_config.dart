@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'secrets.dart';
 
 /// Supabase Configuration
 ///
@@ -27,7 +28,10 @@ class SupabaseConfig {
   );
 
   /// Brevo (SendinBlue) API Configuration for Email Invites
-  static const String brevoApiKey = String.fromEnvironment('BREVO_API_KEY');
+  static const String brevoApiKey = String.fromEnvironment(
+    'BREVO_API_KEY',
+    defaultValue: kBrevoApiKey,
+  );
 
   static const String brevoSenderEmail = String.fromEnvironment(
     'BREVO_SENDER_EMAIL',

@@ -160,3 +160,6 @@ flutter/
 
 # Stray Windows redirect artifact
 /nul
+
+# Local secrets — never commit
+lib/core/config/secrets.dart

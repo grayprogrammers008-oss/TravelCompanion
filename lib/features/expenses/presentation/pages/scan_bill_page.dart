@@ -13,14 +13,17 @@ import '../../../../core/widgets/premium_header.dart' show GlossyButton, GlossyC
 import '../../../../core/widgets/member_picker.dart';
 import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
+import '../../../../core/config/secrets.dart';
 import '../../../../core/network/supabase_client.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../../home/presentation/providers/dashboard_providers.dart';
 import '../../../trips/presentation/providers/trip_providers.dart';
 import '../providers/expense_providers.dart';
 
-/// Groq API Key for bill parsing
-const String _groqApiKey = String.fromEnvironment('GROQ_API_KEY');
+const String _groqApiKey = String.fromEnvironment(
+  'GROQ_API_KEY',
+  defaultValue: kGroqApiKey,
+);
 
 /// Page for scanning bills/receipts and adding them as expenses
 class ScanBillPage extends ConsumerStatefulWidget {

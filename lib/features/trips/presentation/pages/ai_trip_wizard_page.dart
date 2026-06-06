@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
 import '../../../../core/theme/app_theme_data.dart';
+import '../../../../core/config/secrets.dart';
 import '../../../../core/services/groq_whisper_service.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
@@ -117,7 +118,10 @@ class _AiTripWizardPageState extends ConsumerState<AiTripWizardPage>
   }
 
   void _initWhisperService() {
-    const groqApiKey = String.fromEnvironment('GROQ_API_KEY');
+    const groqApiKey = String.fromEnvironment(
+      'GROQ_API_KEY',
+      defaultValue: kGroqApiKey,
+    );
     _whisperService = GroqWhisperService(groqApiKey);
     _audioRecorder = AudioRecorder();
     debugPrint('✅ Whisper service initialized');

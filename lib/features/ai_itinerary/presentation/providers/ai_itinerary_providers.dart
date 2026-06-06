@@ -6,6 +6,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/config/secrets.dart';
 import '../../../../core/providers/supabase_provider.dart';
 import '../../data/services/gemini_service.dart';
 import '../../data/services/groq_service.dart';
@@ -19,7 +20,10 @@ import '../../../templates/presentation/providers/template_providers.dart';
 
 /// Groq API Key - Primary provider (1,000 requests/day FREE)
 /// Get your key at: https://console.groq.com
-const String _groqApiKey = String.fromEnvironment('GROQ_API_KEY');
+const String _groqApiKey = String.fromEnvironment(
+  'GROQ_API_KEY',
+  defaultValue: kGroqApiKey,
+);
 
 /// Gemini API Key - Fallback provider (25 requests/day FREE)
 /// Used when Groq is rate-limited
