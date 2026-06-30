@@ -184,11 +184,14 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
         debugPrint('🔍 Fetching trips for user: $userId');
       }
 
-      // Get trip IDs where user is a member
+      // Get trip IDs where user is a member — deduplicate to guard against
+      // any edge case where trip_members could have multiple rows per trip.
       final memberRows = await _queries.findTripIdsForUser(userId);
 
-      final tripIds =
-          memberRows.map((row) => row['trip_id'] as String).toList();
+      final tripIds = memberRows
+          .map((row) => row['trip_id'] as String)
+          .toSet()  // deduplicate
+          .toList();
 
       if (kDebugMode) {
         debugPrint('🔍 Found ${tripIds.length} trip IDs: $tripIds');
@@ -209,12 +212,13 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
       // Fetch trips with all their members
       final response = await _queries.findTripsWithMembersByIds(tripIds);
 
+      final seen = <String>{};
       final trips = response
           .map((tripData) {
             final trip = _parseTripWithMembers(tripData);
-            // Set isFavorite based on whether trip ID is in favorites
             return trip.copyWith(isFavorite: favoriteSet.contains(trip.trip.id));
           })
+          .where((t) => seen.add(t.trip.id))  // deduplicate by trip ID
           .toList();
 
       if (kDebugMode) {
@@ -296,8 +300,7 @@ class TripRemoteDataSourceImpl implements TripRemoteDataSource {
   @override
   Future<void> deleteTrip(String tripId) async {
     try {
-      // Use the admin_delete_trip RPC function to properly cascade delete all related data
-      // This function handles: trip_members, expenses, checklists, itinerary_items, then the trip
+      // Use user_delete_trip RPC — deletes all related data in correct FK order
       final result = await _queries.rpcDeleteTrip(tripId);
 
       if (result == false) {

@@ -2,7 +2,7 @@ name: pathio
 description: "Pathio - Your ultimate group travel companion app"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.2+3
 
 environment:
   sdk: ^3.9.0
@@ -88,8 +88,8 @@ dependencies:
   # Bluetooth LE for P2P Messaging
   flutter_blue_plus: ^1.32.12
 
-  # WiFi Direct P2P Messaging (Android)
-  flutter_p2p_connection: ^3.0.3
+  # WiFi Direct P2P Messaging (Android) - removed: ClassCastException crash on startup with Flutter 3.35
+  # flutter_p2p_connection: ^3.0.3
 
   # Multipeer Connectivity P2P Messaging (iOS) - TODO: Find alternative package
   # nearby_service: ^0.3.2  # Package not available on pub.dev

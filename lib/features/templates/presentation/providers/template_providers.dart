@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/supabase_provider.dart';
 import '../../data/datasources/template_remote_datasource.dart';
+import '../../data/hardcoded_template_details.dart';
+import '../../data/hardcoded_templates.dart';
 import '../../domain/entities/trip_template.dart';
 import '../../domain/entities/ai_usage.dart';
 
@@ -24,22 +26,39 @@ final templateDataSourceProvider = Provider<TemplateRemoteDataSource>((ref) {
 /// All templates with optional filters
 final templatesProvider = FutureProvider.family<List<TripTemplate>, TemplateFilters?>(
   (ref, filters) async {
-    final dataSource = ref.watch(templateDataSourceProvider);
-    return dataSource.getTemplates(
-      category: filters?.category,
-      minDays: filters?.minDays,
-      maxDays: filters?.maxDays,
-      maxBudget: filters?.maxBudget,
-      featuredOnly: filters?.featuredOnly,
-      search: filters?.search,
-    );
+    try {
+      final dataSource = ref.watch(templateDataSourceProvider);
+      final results = await dataSource.getTemplates(
+        category: filters?.category,
+        minDays: filters?.minDays,
+        maxDays: filters?.maxDays,
+        maxBudget: filters?.maxBudget,
+        featuredOnly: filters?.featuredOnly,
+        search: filters?.search,
+      );
+      if (results.isEmpty) {
+        return HardcodedTemplates.filtered(filters);
+      }
+      return results;
+    } catch (_) {
+      // DB unavailable or error — always show hardcoded templates
+      return HardcodedTemplates.filtered(filters);
+    }
   },
 );
 
 /// Featured templates for home page
 final featuredTemplatesProvider = FutureProvider<List<TripTemplate>>((ref) async {
-  final dataSource = ref.watch(templateDataSourceProvider);
-  return dataSource.getFeaturedTemplates();
+  try {
+    final dataSource = ref.watch(templateDataSourceProvider);
+    final results = await dataSource.getFeaturedTemplates();
+    if (results.isEmpty) {
+      return HardcodedTemplates.filtered(const TemplateFilters(featuredOnly: true));
+    }
+    return results;
+  } catch (_) {
+    return HardcodedTemplates.filtered(const TemplateFilters(featuredOnly: true));
+  }
 });
 
 /// Popular templates
@@ -60,7 +79,37 @@ final templateByIdProvider = FutureProvider.family<TripTemplate?, String>(
 final templateDetailsProvider = FutureProvider.family<TripTemplate?, String>(
   (ref, templateId) async {
     final dataSource = ref.watch(templateDataSourceProvider);
-    return dataSource.getTemplateWithDetails(templateId);
+    TripTemplate? template = await dataSource.getTemplateWithDetails(templateId);
+
+    // If DB returned nothing, try hardcoded base template + details
+    if (template == null) {
+      final base = HardcodedTemplates.all.where((t) => t.id == templateId).firstOrNull;
+      if (base != null) {
+        final details = HardcodedTemplateDetails.getById(templateId);
+        if (details != null) {
+          return base.copyWith(
+            itineraryItems: details.itineraryItems,
+            checklists: details.checklists,
+          );
+        }
+        return base;
+      }
+      return null;
+    }
+
+    // DB has the template but itinerary/checklists are empty — use hardcoded details
+    if ((template.itineraryItems?.isEmpty ?? true) ||
+        (template.checklists?.isEmpty ?? true)) {
+      final details = HardcodedTemplateDetails.getById(templateId);
+      if (details != null) {
+        return template.copyWith(
+          itineraryItems: details.itineraryItems,
+          checklists: details.checklists,
+        );
+      }
+    }
+
+    return template;
   },
 );
 
@@ -153,16 +202,29 @@ class TemplateController extends Notifier<TemplateControllerState> {
 
     try {
       final dataSource = ref.read(templateDataSourceProvider);
-      final success = await dataSource.applyTemplateToTrip(
-        templateId: templateId,
-        tripId: tripId,
-        userId: userId,
-      );
+      bool success;
 
-      debugPrint('✅ Template: Apply result = $success');
+      // Prefer hardcoded data when available — RPC returns true even with empty tables
+      final hasHardcoded = HardcodedTemplateDetails.getById(templateId) != null;
+      if (hasHardcoded) {
+        debugPrint('🎯 Template: Using hardcoded template data for $templateId');
+        success = await dataSource.applyHardcodedTemplateToTrip(
+          templateId: templateId,
+          tripId: tripId,
+          userId: userId,
+        );
+        debugPrint('✅ Template: Hardcoded apply result = $success');
+      } else {
+        debugPrint('🎯 Template: Using RPC for $templateId');
+        success = await dataSource.applyTemplateToTrip(
+          templateId: templateId,
+          tripId: tripId,
+          userId: userId,
+        );
+        debugPrint('✅ Template: RPC apply result = $success');
+      }
 
       if (success) {
-        // Invalidate template to update use count
         ref.invalidate(templateByIdProvider(templateId));
       }
 

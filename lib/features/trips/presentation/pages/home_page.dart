@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
-import '../../../../core/services/location_service.dart';
-import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_data.dart';
 import '../../../../core/theme/theme_provider.dart' as theme_provider;
@@ -18,11 +17,11 @@ import '../../../../core/animations/animation_constants.dart';
 import '../../../../core/animations/animated_widgets.dart';
 import '../../../../shared/models/trip_model.dart';
 import '../../../../shared/models/itinerary_model.dart';
+import '../../../../core/services/location_service.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../itinerary/presentation/providers/itinerary_providers.dart';
 import '../../../polls/presentation/providers/poll_providers.dart';
 import '../providers/trip_providers.dart';
-import '../widgets/ai_suggestions_card.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -49,7 +48,11 @@ class _HomePageState extends ConsumerState<HomePage>
   // Sort options: 'recent', 'name', 'startDate', 'budget'
   String _sortBy = 'recent';
 
-  // Simplified view state
+  // When true the user has explicitly tapped a filter chip — show flat list.
+  // False = default home view with grouped sections.
+  bool _filterExplicitlySet = false;
+
+  // Controls whether past trips section is expanded
   bool _pastTripsExpanded = false;
 
   @override
@@ -556,6 +559,7 @@ class _HomePageState extends ConsumerState<HomePage>
       _createdBefore = null;
       _statusFilter = 'all';
       _sortBy = 'recent';
+      _filterExplicitlySet = false;
       _searchController.clear();
     });
   }
@@ -988,7 +992,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 elevation: 0,
                 leading: Padding(
                   padding: const EdgeInsets.only(left: AppTheme.spacingSm),
-                  child: _buildProfileAvatar(ref),
+                  child: _buildProfileAvatar(context, ref),
                 ),
                 leadingWidth: 60,
                 title: _buildGreetingTitle(ref, userTripsAsync),
@@ -1338,9 +1342,9 @@ class _HomePageState extends ConsumerState<HomePage>
                   ),
                 ),
 
-                // AI Suggestions Card
+                // Get Ideas banner
                 SliverToBoxAdapter(
-                  child: AiSuggestionsCard(themeData: themeData),
+                  child: _buildQuickActionsSection(context, themeData),
                 ),
 
                 // Quick Stats Header
@@ -1359,8 +1363,9 @@ class _HomePageState extends ConsumerState<HomePage>
                     child: _buildNoSearchResults(context),
                   )
                 else
-                  // Show grouped sections when viewing "All" and no search/filters active
-                  ...(_statusFilter == 'all' && _searchController.text.isEmpty && !_hasActiveFilters
+                  // Grouped sections on the default home view; flat list when the
+                  // user has explicitly tapped a filter chip or typed a search.
+                  ...(_statusFilter == 'all' && !_filterExplicitlySet && _searchController.text.isEmpty && !_hasActiveFilters
                       ? _buildGroupedTripList(context, filteredTrips, themeData, currentUserId)
                       : [_buildFlatTripList(context, filteredTrips, currentUserId)]),
 
@@ -1568,6 +1573,7 @@ class _HomePageState extends ConsumerState<HomePage>
       onTap: () {
         setState(() {
           _statusFilter = 'favorites';
+          _filterExplicitlySet = true;
         });
       },
       child: AnimatedContainer(
@@ -1642,6 +1648,7 @@ class _HomePageState extends ConsumerState<HomePage>
       onTap: () {
         setState(() {
           _statusFilter = value;
+          _filterExplicitlySet = true;
         });
       },
       child: AnimatedContainer(
@@ -2352,86 +2359,86 @@ class _HomePageState extends ConsumerState<HomePage>
   /// Build quick actions section when no active trip
   Widget _buildQuickActionsSection(BuildContext context, AppThemeData themeData) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      child: Row(
-        children: [
-          // New Trip button
-          Expanded(
-            child: _buildBigActionButton(
-              context,
-              icon: Icons.add_circle,
-              label: 'New Trip',
-              color: themeData.primaryColor,
-              onTap: () => _showCreateTripOptions(context, themeData),
-            ),
+      padding: const EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingSm,
+        AppTheme.spacingMd,
+        AppTheme.spacingSm,
+      ),
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          context.push('/templates');
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingLg,
+            vertical: AppTheme.spacingMd,
           ),
-          const SizedBox(width: AppTheme.spacingMd),
-          // Ideas/Templates button
-          Expanded(
-            child: _buildBigActionButton(
-              context,
-              icon: Icons.lightbulb_outline,
-              label: 'Get Ideas',
-              color: const Color(0xFFFF9800),
-              onTap: () => context.push('/templates'),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
             ),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF9800).withValues(alpha: 0.35),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.lightbulb_outline,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Get Ideas',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'Browse trip templates',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white70,
+                size: 16,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  /// Build a big action button
-  Widget _buildBigActionButton(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// Build "Coming Up" section for upcoming trips
   Widget _buildComingUpSection(
@@ -3208,30 +3215,6 @@ class _HomePageState extends ConsumerState<HomePage>
     }
   }
 
-  /// Build favorite button for hero cards (used in grouped view sections)
-  Widget _buildHeroFavoriteButton(BuildContext context, TripWithMembers tripWithMembers) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        _toggleFavorite(context, ref, tripWithMembers.trip.id);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: tripWithMembers.isFavorite
-              ? const Color(0xFFE91E63)
-              : Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(
-          tripWithMembers.isFavorite ? Icons.favorite : Icons.favorite_border,
-          size: 20,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
   Future<void> _deleteTrip(
       BuildContext context, WidgetRef ref, TripModel trip) async {
     final confirmed = await showDialog<bool>(
@@ -3319,7 +3302,7 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   /// Build profile avatar for the app bar leading widget
-  Widget _buildProfileAvatar(WidgetRef ref) {
+  Widget _buildProfileAvatar(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
 
     return Padding(
@@ -3470,6 +3453,8 @@ class _HomePageState extends ConsumerState<HomePage>
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         );
@@ -3493,172 +3478,6 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  void _showProfileMenu(BuildContext context, WidgetRef ref) {
-    // Capture the parent context that has router access
-    final parentContext = context;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      builder: (bottomSheetContext) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(AppTheme.radiusXl),
-            topRight: Radius.circular(AppTheme.radiusXl),
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Handle
-                Container(
-                  margin: const EdgeInsets.only(top: AppTheme.spacingMd),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppTheme.neutral300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingLg),
-
-                // Menu Items - Trip-specific actions only (Profile/Settings/Theme accessible via bottom nav)
-                ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.fitonistPurple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.card_membership,
-                    color: AppTheme.fitonistPurple,
-                  ),
-                ),
-                title: const Text('Join Trip by Code'),
-                subtitle: const Text('Enter an invite code'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/join-trip');
-                  }
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.success.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.history,
-                    color: AppTheme.success,
-                  ),
-                ),
-                title: const Text('Trip History'),
-                subtitle: const Text('View completed trips'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/trip-history');
-                  }
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.emergency,
-                    color: AppTheme.error,
-                  ),
-                ),
-                title: const Text('Emergency Services'),
-                subtitle: const Text('SOS, hospitals & emergency help'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/emergency');
-                  }
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: Colors.purple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.admin_panel_settings,
-                    color: Colors.purple,
-                  ),
-                ),
-                title: const Text('Control Room'),
-                subtitle: const Text('User management & analytics'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  // Wait for bottom sheet to close before navigating
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  if (parentContext.mounted) {
-                    parentContext.push('/settings/admin');
-                  }
-                },
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingXs),
-                  decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.logout,
-                    color: AppTheme.error,
-                  ),
-                ),
-                title: const Text(
-                  'Logout',
-                  style: TextStyle(color: AppTheme.error),
-                ),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  await ref.read(authControllerProvider.notifier).signOut();
-                  if (parentContext.mounted) {
-                    parentContext.go('/');
-                  }
-                },
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-            ],
-          ),
-          ),
-        ),
-      ),
-    );
-  }
-
   // Packing luggage animation
   Widget _buildPackingAnimation(BuildContext context) {
     return Center(
@@ -3669,7 +3488,33 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  /// Show SOS emergency bottom sheet with emergency features
+
+  /// Build favorite button for hero cards (used in grouped view sections)
+  Widget _buildHeroFavoriteButton(BuildContext context, TripWithMembers tripWithMembers) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        _toggleFavorite(context, ref, tripWithMembers.trip.id);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: tripWithMembers.isFavorite
+              ? const Color(0xFFE91E63)
+              : Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          tripWithMembers.isFavorite ? Icons.favorite : Icons.favorite_border,
+          size: 20,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+
+
   void _showSOSBottomSheet(BuildContext context, TripWithMembers tripWithMembers) {
     final destination = tripWithMembers.trip.destination ?? 'Unknown';
     final members = tripWithMembers.members;
@@ -4210,6 +4055,7 @@ class _HomePageState extends ConsumerState<HomePage>
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
+
 }
 
 class TripCard extends StatelessWidget {
@@ -4350,90 +4196,97 @@ class TripCard extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Left: Status Badge + Role Badge
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // Status Badge
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingSm,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: status.color,
-                                        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: status.color.withValues(alpha: 0.4),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
+                                // Left: Status Badge + Role Badge — FittedBox scales
+                                // badges down as a unit when space is tight
+                                Expanded(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Status Badge
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: AppTheme.spacingSm,
+                                            vertical: 4,
                                           ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            status.icon,
-                                            size: 12,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            status.label,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Role Badge (Organizer or Member)
-                                    if (currentUserId != null) ...[
-                                      const SizedBox(width: 6),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: AppTheme.spacingSm,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: isOrganizer
-                                              ? const Color(0xFFFF9800) // Orange for organizer
-                                              : Colors.white.withValues(alpha: 0.9),
-                                          borderRadius: BorderRadius.circular(AppTheme.radiusFull),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.2),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              isOrganizer ? Icons.star : Icons.person,
-                                              size: 12,
-                                              color: isOrganizer ? Colors.white : AppTheme.neutral600,
-                                            ),
-                                            const SizedBox(width: 3),
-                                            Text(
-                                              isOrganizer ? 'Organizer' : 'Member',
-                                              style: TextStyle(
-                                                color: isOrganizer ? Colors.white : AppTheme.neutral700,
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w600,
+                                          decoration: BoxDecoration(
+                                            color: status.color,
+                                            borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: status.color.withValues(alpha: 0.4),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 2),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                status.icon,
+                                                size: 12,
+                                                color: Colors.white,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                status.label,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ],
+                                        // Role Badge (Organizer or Member)
+                                        if (currentUserId != null) ...[
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AppTheme.spacingSm,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: isOrganizer
+                                                  ? const Color(0xFFFF9800)
+                                                  : Colors.white.withValues(alpha: 0.9),
+                                              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withValues(alpha: 0.2),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  isOrganizer ? Icons.star : Icons.person,
+                                                  size: 12,
+                                                  color: isOrganizer ? Colors.white : AppTheme.neutral600,
+                                                ),
+                                                const SizedBox(width: 3),
+                                                Text(
+                                                  isOrganizer ? 'Organizer' : 'Member',
+                                                  style: TextStyle(
+                                                    color: isOrganizer ? Colors.white : AppTheme.neutral700,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
                                 ),
                                 // Actions
                                 Row(

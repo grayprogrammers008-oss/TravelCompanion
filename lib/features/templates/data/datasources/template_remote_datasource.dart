@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/trip_template.dart';
 import '../../domain/entities/ai_usage.dart';
+import '../hardcoded_template_details.dart';
 import 'template_queries.dart';
 
 class TemplateRemoteDataSource {
@@ -137,6 +138,91 @@ class TemplateRemoteDataSource {
       debugPrint('❌ DataSource: RPC error: $e');
       debugPrint('Stack: $stack');
       rethrow;
+    }
+  }
+
+  /// Fallback: apply hardcoded template data directly to a trip when DB tables are empty
+  Future<bool> applyHardcodedTemplateToTrip({
+    required String templateId,
+    required String tripId,
+    required String userId,
+  }) async {
+    final details = HardcodedTemplateDetails.getById(templateId);
+    if (details == null) return false;
+
+    try {
+      // Get trip start date
+      final tripRow = await _client
+          .from('trips')
+          .select('start_date')
+          .eq('id', tripId)
+          .single();
+      final startDate = tripRow['start_date'] != null
+          ? DateTime.parse(tripRow['start_date'] as String)
+          : DateTime.now();
+
+      // Insert itinerary items
+      for (final item in details.itineraryItems) {
+        DateTime? startTime;
+        DateTime? endTime;
+        if (item.startTime != null) {
+          final p = item.startTime!.split(':');
+          final d = startDate.add(Duration(days: item.dayNumber - 1));
+          startTime = DateTime(d.year, d.month, d.day, int.parse(p[0]), int.parse(p[1]));
+        }
+        if (item.endTime != null) {
+          final p = item.endTime!.split(':');
+          final d = startDate.add(Duration(days: item.dayNumber - 1));
+          endTime = DateTime(d.year, d.month, d.day, int.parse(p[0]), int.parse(p[1]));
+        }
+
+        await _client.from('itinerary_items').insert({
+          'trip_id': tripId,
+          'day_number': item.dayNumber,
+          'order_index': item.orderIndex,
+          'title': item.title,
+          'description': item.description,
+          'location': item.location,
+          'start_time': startTime?.toIso8601String(),
+          'end_time': endTime?.toIso8601String(),
+          'created_by': userId,
+        });
+      }
+
+      // Insert checklists and their items
+      for (final checklist in details.checklists) {
+        final clRow = await _client
+            .from('checklists')
+            .insert({
+              'trip_id': tripId,
+              'name': checklist.name,
+              'created_by': userId,
+            })
+            .select('id')
+            .single();
+        final newChecklistId = clRow['id'] as String;
+
+        if (checklist.items != null) {
+          for (final item in checklist.items!) {
+            await _client.from('checklist_items').insert({
+              'checklist_id': newChecklistId,
+              'content': item.content,
+              'is_completed': false,
+              'order_index': item.orderIndex,
+            });
+          }
+        }
+      }
+
+      if (kDebugMode) {
+        debugPrint('✅ Hardcoded template applied to trip $tripId');
+      }
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to apply hardcoded template: $e');
+      }
+      return false;
     }
   }
 

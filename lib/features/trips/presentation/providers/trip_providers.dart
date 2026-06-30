@@ -115,7 +115,20 @@ final userTripsProvider = FutureProvider<List<TripWithMembers>>((ref) async {
   if (authState.value == null) return [];
 
   final repository = ref.watch(tripRepositoryProvider);
-  return await repository.getUserTrips();
+  final trips = await repository.getUserTrips();
+
+  // Merge favorite status into trips
+  List<String> favoriteIds = [];
+  try {
+    favoriteIds = await repository.getFavoriteTripIds();
+  } catch (_) {}
+
+  final favoriteSet = favoriteIds.toSet();
+  final seen = <String>{};
+  return trips
+      .map((t) => t.copyWith(isFavorite: favoriteSet.contains(t.trip.id)))
+      .where((t) => seen.add(t.trip.id))
+      .toList();
 });
 
 // Has Trips Provider - Quick check if user has any trips (for routing)
@@ -698,10 +711,8 @@ class TripFavoritesController extends Notifier<AsyncValue<void>> {
         debugPrint('⭐ Trip $tripId is now ${isFavorite ? 'favorited' : 'unfavorited'}');
       }
 
-      // Only invalidate favoriteTripIdsProvider - other providers watch it and will auto-update
-      // This prevents showing loading state on the entire list
       ref.invalidate(favoriteTripIdsProvider);
-      // Also invalidate the specific trip provider to update trip detail page
+      ref.invalidate(userTripsProvider);
       ref.invalidate(tripProvider(tripId));
 
       return isFavorite;

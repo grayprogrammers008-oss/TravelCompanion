@@ -493,11 +493,9 @@ class _ChecklistDetailPageState extends ConsumerState<ChecklistDetailPage> {
             ? tripAsync.value!.trip.endDate!.difference(tripAsync.value!.trip.startDate!).inDays + 1
             : null;
 
-        // Get Gemini service
-        final geminiService = ref.read(geminiServiceProvider);
-
-        // Generate checklist items using AI
-        final aiItems = await geminiService.generateChecklistItems(
+        // Generate checklist items using AI (Groq primary, Gemini fallback)
+        final aiService = ref.read(multiProviderAiServiceProvider);
+        final aiItems = await aiService.generateChecklistItems(
           voicePrompt: voiceText,
           destination: destination,
           tripType: tripName,

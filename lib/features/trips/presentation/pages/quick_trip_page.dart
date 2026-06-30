@@ -429,16 +429,28 @@ class _QuickTripPageState extends ConsumerState<QuickTripPage> {
                                 children: [
                                   const Icon(Icons.check_circle, color: Colors.green, size: 20),
                                   const SizedBox(width: AppTheme.spacingSm),
-                                  Text(
-                                    '${_getDayName(_startDate!)}, ${_formatDate(_startDate!)}',
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            '${_getDayName(_startDate!)}, ${_formatDate(_startDate!)}',
+                                            style: const TextStyle(fontWeight: FontWeight.w600),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const Text(' → '),
+                                        Flexible(
+                                          child: Text(
+                                            '${_getDayName(_endDate!)}, ${_formatDate(_endDate!)}',
+                                            style: const TextStyle(fontWeight: FontWeight.w600),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const Text(' → '),
-                                  Text(
-                                    '${_getDayName(_endDate!)}, ${_formatDate(_endDate!)}',
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  const Spacer(),
+                                  const SizedBox(width: AppTheme.spacingSm),
                                   Text(
                                     '${_endDate!.difference(_startDate!).inDays + 1} days',
                                     style: TextStyle(

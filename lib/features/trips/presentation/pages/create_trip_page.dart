@@ -55,6 +55,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   bool _isPublic = true; // Trip visibility: true = public, false = private
   bool _isLoading = false;
 
+  String? _destinationError;
+  String? _startDateError;
+
   // Cover image from Google Places
   String? _coverImageUrl;
 
@@ -237,6 +240,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     if (picked != null) {
       setState(() {
         _startDate = picked;
+        _startDateError = null;
 
         // Auto-calculate end date when template is active
         if (_templateDurationDays != null && _templateDurationDays! > 0) {
@@ -295,6 +299,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
       debugPrint('🔍 [CreateTrip] Photos count: ${result.photos.length}');
 
       setState(() {
+        _destinationError = null;
         _destinationController.text = result.shortName;
         // Get cover image from Google Places photos
         if (result.photos.isNotEmpty) {
@@ -312,7 +317,15 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
   }
 
   Future<void> _handleCreateTrip() async {
+    setState(() {
+      _destinationError = _destinationController.text.trim().isEmpty
+          ? 'Destination is required'
+          : null;
+      _startDateError = _startDate == null ? 'Start date is required' : null;
+    });
+
     if (!_formKey.currentState!.validate()) return;
+    if (_destinationError != null || _startDateError != null) return;
 
     setState(() => _isLoading = true);
 
@@ -641,6 +654,7 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
                               icon: Icons.calendar_today,
                               date: _startDate,
                               onTap: _selectStartDate,
+                              errorText: _startDateError,
                             ),
                           ),
                           const SizedBox(width: AppTheme.spacingMd),
@@ -856,7 +870,10 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppTheme.neutral200, width: 1.5),
+              border: Border.all(
+                color: _destinationError != null ? AppTheme.error : AppTheme.neutral200,
+                width: 1.5,
+              ),
               boxShadow: AppTheme.shadowSm,
             ),
             child: Row(
@@ -884,6 +901,14 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
             ),
           ),
         ),
+        if (_destinationError != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 12),
+            child: Text(
+              _destinationError!,
+              style: const TextStyle(color: AppTheme.error, fontSize: 12),
+            ),
+          ),
       ],
     );
   }
@@ -893,8 +918,12 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
     required IconData icon,
     required DateTime? date,
     required VoidCallback onTap,
+    String? errorText,
   }) {
-    return AnimatedScaleButton(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+    AnimatedScaleButton(
       onTap: _isLoading ? null : onTap,
       child: Container(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -902,6 +931,9 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           boxShadow: AppTheme.shadowSm,
+          border: errorText != null
+              ? Border.all(color: AppTheme.error, width: 1.5)
+              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -932,6 +964,16 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage>
           ],
         ),
       ),
+    ),
+    if (errorText != null)
+      Padding(
+        padding: const EdgeInsets.only(top: 6, left: 12),
+        child: Text(
+          errorText,
+          style: const TextStyle(color: AppTheme.error, fontSize: 12),
+        ),
+      ),
+      ],
     );
   }
 

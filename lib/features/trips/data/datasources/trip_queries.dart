@@ -223,7 +223,7 @@ class TripQueriesImpl implements TripQueries {
 
   @override
   Future<dynamic> rpcDeleteTrip(String tripId) async {
-    return _client.rpc('admin_delete_trip', params: {'p_trip_id': tripId});
+    return _client.rpc('user_delete_trip', params: {'p_trip_id': tripId});
   }
 
   @override

@@ -1,10 +1,10 @@
 // Multi-Provider AI Service
 //
 // Handles automatic failover between AI providers:
-// 1. Primary: Groq (1,000 requests/day free)
+// 1. Primary: Groq llama-3.1-8b-instant (14,400 requests/day free)
 // 2. Fallback: Gemini (25 requests/day free)
 //
-// Total: ~1,025 free AI generations per day
+// Total: ~14,425 free AI generations per day
 
 import 'package:flutter/foundation.dart';
 import 'groq_service.dart';
@@ -36,7 +36,7 @@ class MultiProviderAiService {
     int? groupSize,
   }) async {
     debugPrint('🔄 MultiProviderAiService: Starting trip plan generation');
-    debugPrint('   Primary: Groq (1,000 RPD)');
+    debugPrint('   Primary: Groq (14,400 RPD)');
     debugPrint('   Fallback: Gemini (25 RPD)');
 
     // Try Groq first (primary - 1,000 requests/day)
@@ -101,7 +101,7 @@ class MultiProviderAiService {
   }) async {
     debugPrint('🔄 MultiProviderAiService: Starting voice-based trip generation');
     debugPrint('   Voice input: $voiceInput');
-    debugPrint('   Primary: Groq (1,000 RPD)');
+    debugPrint('   Primary: Groq (14,400 RPD)');
     debugPrint('   Fallback: Gemini (25 RPD)');
 
     // Try Groq first (primary - 1,000 requests/day)
@@ -196,7 +196,7 @@ class MultiProviderAiService {
   /// Tries Groq first (1,000 RPD), falls back to Gemini (25 RPD) if rate limited
   Future<AiGeneratedItinerary> generateItinerary(AiItineraryRequest request) async {
     debugPrint('🔄 MultiProviderAiService: Starting itinerary generation');
-    debugPrint('   Primary: Groq (1,000 RPD)');
+    debugPrint('   Primary: Groq (14,400 RPD)');
     debugPrint('   Fallback: Gemini (25 RPD)');
 
     // Try Groq first (primary - 1,000 requests/day)
@@ -229,19 +229,46 @@ class MultiProviderAiService {
     }
   }
 
-  /// Generate checklist items (uses Gemini directly as it has this method)
+  /// Generate checklist items with automatic failover
+  /// Tries Groq first (14,400 RPD), falls back to Gemini (25 RPD) if rate limited
   Future<List<AiChecklistItem>> generateChecklistItems({
     required String voicePrompt,
     required String destination,
     required String tripType,
     int? durationDays,
   }) async {
-    debugPrint('🔄 MultiProviderAiService: Generating checklist (Gemini)');
-    return _geminiService.generateChecklistItems(
-      voicePrompt: voicePrompt,
-      destination: destination,
-      tripType: tripType,
-      durationDays: durationDays,
-    );
+    debugPrint('🔄 MultiProviderAiService: Generating checklist');
+    debugPrint('   Primary: Groq (14,400 RPD)');
+    debugPrint('   Fallback: Gemini (25 RPD)');
+
+    try {
+      debugPrint('🚀 Trying Groq for checklist generation...');
+      final items = await _groqService.generateChecklistItems(
+        voicePrompt: voicePrompt,
+        destination: destination,
+        tripType: tripType,
+        durationDays: durationDays,
+      );
+      debugPrint('✅ Groq checklist succeeded! Items: ${items.length}');
+      return items;
+    } catch (groqError) {
+      debugPrint('⚠️ Groq checklist failed: $groqError');
+      debugPrint('🔄 Falling back to Gemini for checklist...');
+      try {
+        final items = await _geminiService.generateChecklistItems(
+          voicePrompt: voicePrompt,
+          destination: destination,
+          tripType: tripType,
+          durationDays: durationDays,
+        );
+        debugPrint('✅ Gemini checklist fallback succeeded! Items: ${items.length}');
+        return items;
+      } catch (geminiError) {
+        debugPrint('❌ Both providers failed for checklist!');
+        debugPrint('   Groq error: $groqError');
+        debugPrint('   Gemini error: $geminiError');
+        throw Exception('AI service is currently unavailable. Groq: $groqError | Gemini: $geminiError');
+      }
+    }
   }
 }

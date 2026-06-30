@@ -166,11 +166,15 @@ class AiSuggestionsCard extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Text(
-                          '• ${suggestions.contextLabel}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppTheme.neutral500,
+                        Flexible(
+                          child: Text(
+                            '• ${suggestions.contextLabel}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.neutral500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

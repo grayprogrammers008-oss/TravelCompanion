@@ -239,31 +239,36 @@ class TemplateCard extends StatelessWidget {
                     // Info Row
                     Row(
                       children: [
-                        // Budget Range
-                        if (template.budgetMin != null || template.budgetMax != null)
-                          _buildInfoChip(
-                            context,
-                            icon: _getCurrencyIcon(template.currency),
-                            label: template.budgetDisplay,
+                        // Left: Budget + Difficulty chips (flexible so they shrink on small screens)
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (template.budgetMin != null || template.budgetMax != null) ...[
+                                _buildInfoChip(
+                                  context,
+                                  icon: _getCurrencyIcon(template.currency),
+                                  label: template.budgetDisplay,
+                                ),
+                                const SizedBox(width: AppTheme.spacingSm),
+                              ],
+                              _buildInfoChip(
+                                context,
+                                icon: template.difficultyLevel.icon,
+                                label: template.difficultyLevel.displayName,
+                                color: template.difficultyLevel.color,
+                              ),
+                            ],
                           ),
-
-                        if (template.budgetMin != null || template.budgetMax != null)
-                          const SizedBox(width: AppTheme.spacingSm),
-
-                        // Difficulty
-                        _buildInfoChip(
-                          context,
-                          icon: template.difficultyLevel.icon,
-                          label: template.difficultyLevel.displayName,
-                          color: template.difficultyLevel.color,
                         ),
 
-                        const Spacer(),
+                        const SizedBox(width: AppTheme.spacingSm),
 
-                        // Use Count and Rating
-                        if (template.useCount > 0)
-                          Row(
-                            children: [
+                        // Right: Use Count and Rating (always visible)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (template.useCount > 0) ...[
                               Icon(
                                 Icons.people_outline,
                                 size: 14,
@@ -278,14 +283,9 @@ class TemplateCard extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          ),
-
-                        if (template.useCount > 0 && template.rating > 0)
-                          const SizedBox(width: AppTheme.spacingSm),
-
-                        if (template.rating > 0)
-                          Row(
-                            children: [
+                            if (template.useCount > 0 && template.rating > 0)
+                              const SizedBox(width: AppTheme.spacingSm),
+                            if (template.rating > 0) ...[
                               const Icon(
                                 Icons.star,
                                 size: 14,
@@ -301,7 +301,8 @@ class TemplateCard extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          ),
+                          ],
+                        ),
                       ],
                     ),
 
@@ -369,6 +370,8 @@ class TemplateCard extends StatelessWidget {
               color: color ?? context.textColor.withValues(alpha: 0.7),
               fontWeight: color != null ? FontWeight.w600 : null,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ],
       ),
